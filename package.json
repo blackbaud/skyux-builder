@@ -27,7 +27,7 @@
     "@angular/router": "3.0.0-rc.1",
     "angular2-template-loader": "0.4.0",
     "blackbaud-skyux2": "2.0.0-alpha.1",
-    "blackbaud-sky-pages": "blackbaud/sky-pages",
+    "blackbaud-sky-pages": "blackbaud/sky-pages-cli",
     "codelyzer": "0.0.26",
     "core-js": "2.4.1",
     "extract-text-webpack-plugin": "1.0.1",
