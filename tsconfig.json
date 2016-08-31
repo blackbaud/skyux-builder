@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "module": "commonjs",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "noEmitHelpers": true,
+    "noEmitOnError": true
+  },
+  "awesomeTypescriptLoaderOptions": {
+    "useWebpackText": true
+  },
+  "compileOnSave": false,
+  "buildOnSave": false
+}

@@ -1,0 +1,10 @@
+{
+  "blackbaud-stache-in-fs": {
+    "indexPattern": "src/app/**/index.html",
+    "siblingPattern": "*.component.ts",
+    "assets": {
+      "appComponentTemplate": "src/app/app.component.html",
+      "appComponentStyles": "src/app/app.component.scss"
+    }
+  }
+}
