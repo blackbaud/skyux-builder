@@ -203,14 +203,13 @@ const getSource = (SKY_PAGES, source) => {
     @NgModule({
       declarations: [ ${join(componentNames, ',')} ],
       imports: [ CommonModule, SkyModule, routing ],
+      exports: [ ${join(componentNames, ',')} ],
       providers: [
         appRoutingProviders,
         { provide: SkyPagesProvider, useValue: SKY_PAGES }
       ]
     })
-    export class SkyPagesModule {
-      constructor() { console.log('SkyPagesModule is running'); }
-    }
+    export class SkyPagesModule {}
   `;
 }
 

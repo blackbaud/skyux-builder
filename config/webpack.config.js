@@ -1,3 +1,6 @@
+/*jslint node: true */
+'use strict';
+
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -11,13 +14,18 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
  */
 const getExports = (skyPagesConfig) => {
 
-  const extractCSS = new ExtractTextPlugin('stylesheets/[name].[hash].css')
+  const appConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'].app;
   const assetLoader = path.resolve(__dirname, '..', 'sky-pages-asset-loader');
   const moduleLoader = path.resolve(__dirname, '..', 'sky-pages-module-loader');
   const resolves = [
     path.join(__dirname, '..'),
     path.join(__dirname, '..', 'node_modules')
   ];
+
+  // Add the default template unless user has overridden
+  if (!appConfig.template) {
+    appConfig.template = path.resolve(__dirname, '..', 'src', 'main.ejs');
+  }
 
   return {
     entry: {
@@ -79,13 +87,14 @@ const getExports = (skyPagesConfig) => {
       ]
     },
     plugins: [
+      new HtmlWebpackPlugin(appConfig),
       new webpack.optimize.CommonsChunkPlugin({
         name: ['app', 'vendor', 'polyfills']
       }),
-      new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, '..', 'src', 'index.html')
-      }),
-      extractCSS
+      new webpack.optimize.UglifyJsPlugin({
+        compress: { warnings: false },
+        mangle: { screw_ie8: true, keep_fnames: true }
+      })
     ]
   };
 };

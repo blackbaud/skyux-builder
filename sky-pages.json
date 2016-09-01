@@ -1,4 +1,9 @@
 {
+  "blackbaud-sky-pages-out-skyux2": {
+    "app": {
+      "title": "Blackbaud - Sky Pages"
+    }
+  },
   "blackbaud-sky-pages-in-fs": {
     "indexPattern": "src/app/**/index.html",
     "siblingPattern": "*.component.ts",
