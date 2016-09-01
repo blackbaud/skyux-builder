@@ -1,5 +1,5 @@
 {
-  "blackbaud-stache-in-fs": {
+  "blackbaud-sky-pages-in-fs": {
     "indexPattern": "src/app/**/index.html",
     "siblingPattern": "*.component.ts",
     "assets": {
