@@ -22,7 +22,7 @@ const getSkyPagesConfig = () => {
     if (json.devDependencies) {
       for (let d in json.devDependencies) {
         if (/(.*)-sky-pages-in-(.*)/gi.test(d)) {
-          const module = require(d);
+          const module = require(path.join(process.cwd(), 'node_modules', d));
           if (typeof module.getSkyPagesConfig === 'function') {
             config = module.getSkyPagesConfig(config);
           }
