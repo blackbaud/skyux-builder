@@ -4,16 +4,16 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 /**
  * Called when loaded via require.
- * @name getExports
+ * @name getWebpackConfig
  * @param {SkyPagesConfig} skyPagesConfig
  * @returns {WebpackConfig} webpackConfig
  */
-const getExports = (skyPagesConfig) => {
+const getWebpackConfig = () => {
 
+  const skyPagesConfig = require('../sky-pages.json');
   const appConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'].app;
   const assetLoader = path.resolve(__dirname, '..', 'sky-pages-asset-loader');
   const moduleLoader = path.resolve(__dirname, '..', 'sky-pages-module-loader');
@@ -99,5 +99,4 @@ const getExports = (skyPagesConfig) => {
   };
 };
 
-// Expose to require
-module.exports = getExports;
+module.exports = getWebpackConfig();
