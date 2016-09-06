@@ -10,7 +10,8 @@ const logger = require('winston');
  * @name onWebpackDone
  */
 const onWebpackDone = (stats) => {
-  logger.info(stats.toJson());
+  logger.info('SKY Pages serve running.');
+  logger.verbose(stats.toJson());
 };
 
 /**
@@ -26,9 +27,15 @@ const onWebpackDevServerReady = (err) => {
 /**
  * Executes the serve command.
  * @name serve
+ * @name {Object} argv
+ * @name {SkyPagesConfig} skyPagesConfig
+ * @name {Webpack} webpack
+ * @name {WebpackDevServer} WebpackDevServer
+ * @returns null
  */
-const serve = (argv, webpack, WebpackDevServer) => {
+const serve = (argv, skyPagesConfig, webpack, WebpackDevServer) => {
   let config = require('../config/serve.webpack.config');
+  config.SKY_PAGES = skyPagesConfig;
 
   if (config.devServer.inline) {
     const url = util.format(

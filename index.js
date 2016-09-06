@@ -3,7 +3,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const merge = require('merge');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
@@ -22,8 +21,9 @@ const getSkyPagesConfig = () => {
     if (json.devDependencies) {
       for (let d in json.devDependencies) {
         if (/(.*)-sky-pages-in-(.*)/gi.test(d)) {
-          if (typeof d.getSkyPagesConfig === 'function') {
-            config = merge(config, d.getSkyPagesConfig());
+          const module = require(d);
+          if (typeof module.getSkyPagesConfig === 'function') {
+            config = module.getSkyPagesConfig(config);
           }
         }
       }
@@ -38,7 +38,7 @@ module.exports = {
     const skyPagesConfig = getSkyPagesConfig();
     switch (command) {
       case 'build':
-        require('./cli/build')(skyPagesConfig);
+        require('./cli/build')(argv, skyPagesConfig);
         break;
       case 'serve':
         require('./cli/serve')(argv, skyPagesConfig, webpack, WebpackDevServer);
