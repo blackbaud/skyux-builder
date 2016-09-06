@@ -15,7 +15,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const getSkyPagesConfig = () => {
 
   const jsonPath = path.join(process.cwd(), 'package.json');
-  let config = require('sky-pages.json');
+  let config = require(path.join(__dirname, 'sky-pages.json'));
 
   if (fs.existsSync(jsonPath)) {
     const json = require(jsonPath);
