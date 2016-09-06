@@ -4,28 +4,31 @@
 const fs = require('fs');
 const path = require('path');
 const webpackMerge = require('webpack-merge');
-const failPlugin = require('webpack-fail-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const commonConfig = require('./common.webpack.config');
 
 /**
  * Returns the default webpackConfig.
  * @name getDefaultWebpackConfig
  * @returns {WebpackConfig} webpackConfig
  */
-const getWebpackConfig = () => {
+const getWebpackConfig = (skyPagesConfig) => {
+  const common = require('./common.webpack.config');
+  const skyPagesConfigServe = webpackMerge(skyPagesConfig, {
+    command: 'serve',
+    host: {
+      url: 'https://blackbaud-shell.azurewebsites.net/',
+      qsKey: 'hash'
+    }
+  });
+
   const resolves = [
     process.cwd(),
     path.join(process.cwd(), 'node_modules'),
     path.join(__dirname, '..'),
     path.join(__dirname, '..', 'node_modules')
   ];
-  return webpackMerge(commonConfig, {
-    entry: {
-      polyfills: [path.resolve(__dirname, '..', 'src', 'polyfills.ts')],
-      vendor: [path.resolve(__dirname, '..', 'src', 'vendor.ts')],
-      app: [path.resolve(__dirname, '..', 'src', 'main.ts')]
-    },
+
+  return webpackMerge(common.getWebpackConfig(skyPagesConfigServe), {
     output: {
       filename: '[name].js',
       chunkFilename: '[id].[chunkhash].chunk.js'
@@ -59,18 +62,12 @@ const getWebpackConfig = () => {
         },
       ]
     },
-    SKY_PAGES: {
-      command: 'serve',
-      host: {
-        url: 'https://blackbaud-shell.azurewebsites.net/',
-        qsKey: 'hash'
-      }
-    },
     plugins: [
-      new ProgressBarPlugin(),
-      failPlugin
+      new ProgressBarPlugin()
     ]
   });
 };
 
-module.exports = getWebpackConfig();
+module.exports = {
+  getWebpackConfig: getWebpackConfig
+};

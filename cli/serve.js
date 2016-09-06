@@ -34,8 +34,10 @@ const onWebpackDevServerReady = (err) => {
  * @returns null
  */
 const serve = (argv, skyPagesConfig, webpack, WebpackDevServer) => {
-  let config = require('../config/serve.webpack.config');
-  config.SKY_PAGES = skyPagesConfig;
+  const webpackConfig = require('../config/serve.webpack.config');
+  let config = webpackConfig.getWebpackConfig(skyPagesConfig);
+
+  console.log(config);
 
   if (config.devServer.inline) {
     const url = util.format(

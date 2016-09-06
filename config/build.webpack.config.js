@@ -33,13 +33,10 @@ const getDefaultWebpackConfig = () => ({
  * @name getWebpackConfig
  * @returns {WebpackConfig} webpackConfig
  */
-const getWebpackConfig = () =>
-  merge.smart(serve.getWebpackConfig(), getDefaultWebpackConfig());
+const getWebpackConfig = (skyPagesConfig) =>
+  merge(serve.getWebpackConfig(skyPagesConfig), getDefaultWebpackConfig());
 
 // Expose
 module.exports = {
-  getModules: serve.getModules,
-  getDefaultSkyPagesConfig: serve.getDefaultSkyPagesConfig,
-  getDefaultWebpackConfig: getDefaultWebpackConfig,
   getWebpackConfig: getWebpackConfig
 };

@@ -4,6 +4,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const failPlugin = require('webpack-fail-plugin');
 
 /**
  * Called when loaded via require.
@@ -11,9 +12,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
  * @param {SkyPagesConfig} skyPagesConfig
  * @returns {WebpackConfig} webpackConfig
  */
-const getWebpackConfig = () => {
+const getWebpackConfig = (skyPagesConfig) => {
 
-  const skyPagesConfig = require('../sky-pages.json');
   const appConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'].app;
   const assetLoader = path.resolve(__dirname, '..', 'sky-pages-asset-loader');
   const moduleLoader = path.resolve(__dirname, '..', 'sky-pages-module-loader');
@@ -86,6 +86,7 @@ const getWebpackConfig = () => {
         }
       ]
     },
+    SKY_PAGES: skyPagesConfig,
     plugins: [
       new HtmlWebpackPlugin(appConfig),
       new webpack.optimize.CommonsChunkPlugin({
@@ -94,9 +95,15 @@ const getWebpackConfig = () => {
       new webpack.optimize.UglifyJsPlugin({
         compress: { warnings: false },
         mangle: { screw_ie8: true, keep_fnames: true }
-      })
+      }),
+      new webpack.DefinePlugin({
+        'SKY_PAGES': JSON.stringify(skyPagesConfig)
+      }),
+      failPlugin
     ]
   };
 };
 
-module.exports = getWebpackConfig();
+module.exports = {
+  getWebpackConfig: getWebpackConfig
+};
