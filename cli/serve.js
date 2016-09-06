@@ -6,15 +6,6 @@ const util = require('util');
 const logger = require('winston');
 
 /**
- * Handles the webpack done plugin.
- * @name onWebpackDone
- */
-const onWebpackDone = (stats) => {
-  logger.info('SKY Pages serve running.');
-  logger.verbose(stats.toJson());
-};
-
-/**
  * Handles the webpack-dev-server callback.
  * @name onWebpackDevServerReady
  */
@@ -37,8 +28,6 @@ const serve = (argv, skyPagesConfig, webpack, WebpackDevServer) => {
   const webpackConfig = require('../config/serve.webpack.config');
   let config = webpackConfig.getWebpackConfig(skyPagesConfig);
 
-  console.log(config);
-
   if (config.devServer.inline) {
     const url = util.format(
       'webpack-dev-server/client?https://localhost:%s',
@@ -52,7 +41,6 @@ const serve = (argv, skyPagesConfig, webpack, WebpackDevServer) => {
   const compiler = webpack(config);
   const server = new WebpackDevServer(compiler, config.devServer);
 
-  compiler.plugin('done', onWebpackDone);
   server.listen(config.devServer.port, onWebpackDevServerReady);
 };
 

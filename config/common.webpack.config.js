@@ -4,6 +4,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const failPlugin = require('webpack-fail-plugin');
 
 /**
@@ -18,6 +19,8 @@ const getWebpackConfig = (skyPagesConfig) => {
   const assetLoader = path.resolve(__dirname, '..', 'sky-pages-asset-loader');
   const moduleLoader = path.resolve(__dirname, '..', 'sky-pages-module-loader');
   const resolves = [
+    process.cwd(),
+    path.join(process.cwd(), 'node_modules'),
     path.join(__dirname, '..'),
     path.join(__dirname, '..', 'node_modules')
   ];
@@ -99,6 +102,7 @@ const getWebpackConfig = (skyPagesConfig) => {
       new webpack.DefinePlugin({
         'SKY_PAGES': JSON.stringify(skyPagesConfig)
       }),
+      new ProgressBarPlugin(),
       failPlugin
     ]
   };

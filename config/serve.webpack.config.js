@@ -4,7 +4,17 @@
 const fs = require('fs');
 const path = require('path');
 const webpackMerge = require('webpack-merge');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+
+/**
+ * Opens the host service url.
+ * @name WebpackPluginDone
+ */
+const WebpackPluginDone = function () {
+  console.log(this.plugin);
+  this.plugin('done', () => {
+    console.log('DONE!');
+  });
+};
 
 /**
  * Returns the default webpackConfig.
@@ -21,17 +31,11 @@ const getWebpackConfig = (skyPagesConfig) => {
     }
   });
 
-  const resolves = [
-    process.cwd(),
-    path.join(process.cwd(), 'node_modules'),
-    path.join(__dirname, '..'),
-    path.join(__dirname, '..', 'node_modules')
-  ];
-
   return webpackMerge(common.getWebpackConfig(skyPagesConfigServe), {
+    watch: true,
     output: {
       filename: '[name].js',
-      chunkFilename: '[id].[chunkhash].chunk.js'
+      chunkFilename: '[id].chunk.js'
     },
     devServer: {
       port: 31337,
@@ -48,12 +52,6 @@ const getWebpackConfig = (skyPagesConfig) => {
     },
     debug: true,
     devtool: 'cheap-module-eval-source-map',
-    resolve: {
-      root: resolves
-    },
-    resolveLoader: {
-      root: resolves
-    },
     module: {
       loaders: [
         {
@@ -63,7 +61,7 @@ const getWebpackConfig = (skyPagesConfig) => {
       ]
     },
     plugins: [
-      new ProgressBarPlugin()
+      WebpackPluginDone
     ]
   });
 };
