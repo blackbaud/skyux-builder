@@ -178,6 +178,7 @@ const getSource = (SKY_PAGES) => {
       OpaqueToken
     } from '@angular/core';
     import { CommonModule } from '@angular/common';
+    import { HttpModule } from '@angular/http';
     import { ActivatedRoute, RouterModule, Routes } from '@angular/router';
     import { Subscription } from 'rxjs/Subscription';
     import { SkyModule } from 'blackbaud-skyux2/dist/core';
@@ -199,7 +200,7 @@ const getSource = (SKY_PAGES) => {
 
     @NgModule({
       declarations: [ ${join(componentNames, ',')} ],
-      imports: [ CommonModule, SkyModule, routing ],
+      imports: [ CommonModule, HttpModule, SkyModule, routing ],
       exports: [ ${join(componentNames, ',')} ],
       providers: [
         appRoutingProviders,

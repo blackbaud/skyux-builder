@@ -10,7 +10,6 @@ const webpackMerge = require('webpack-merge');
  * @name WebpackPluginDone
  */
 const WebpackPluginDone = function () {
-  console.log(this.plugin);
   this.plugin('done', () => {
     console.log('DONE!');
   });
