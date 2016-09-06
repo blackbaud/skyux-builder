@@ -1,7 +1,5 @@
+/*jshint node: true*/
 'use strict';
-
-const glob = require('glob');
-const util = require('util');
 
 /**
  * Given a path part, extract the param.
@@ -12,7 +10,7 @@ const util = require('util');
 const getParam = (part) => {
   const param = /{(.*)}/.exec(part);
   return param ? param[1] : part;
-}
+};
 
 /**
  * Given a entry, extract the params, and SKYUX2 path.
@@ -41,7 +39,7 @@ const getPathParams = (entry) => {
     path: path.join('/'),
     params: params
   };
-}
+};
 
 /**
  * Given an entry, reads it and extracts any component names.
@@ -54,7 +52,7 @@ const getSiblingComponentName = (entry) => {
   if (groups.length > 2) {
     return groups[2];
   }
-}
+};
 
 /**
  * Given an entry, return a component name.
@@ -73,7 +71,7 @@ const getGeneratedComponentName = (entry) => {
     }
   });
   return name + 'IndexComponent';
-}
+};
 
 /**
  * Given an entry, return a component definition.
@@ -88,7 +86,7 @@ const getComponentDefinition = (name, path, params) => {
 
   params.forEach((param) => {
     paramsExpose += `public ${param}: any;\n`;
-    paramsSet += `this.${param} = params['${param}'];\n`
+    paramsSet += `this.${param} = params['${param}'];\n`;
   });
 
   return `
@@ -112,7 +110,7 @@ const getComponentDefinition = (name, path, params) => {
      }
     }
   `;
-}
+};
 
 /**
  * Joins an array with the given separator.
@@ -124,7 +122,7 @@ const getComponentDefinition = (name, path, params) => {
 const join = (items, sep) => {
   sep = sep || '\n';
   return items.join(sep);
-}
+};
 
 /**
  * Generates the source necessary to register all routes + components.
@@ -132,12 +130,11 @@ const join = (items, sep) => {
  * @param {string} source
  * @returns {string} source
  */
-const getSource = (SKY_PAGES, source) => {
+const getSource = (SKY_PAGES) => {
   let componentNames = [];
   let components = [];
   let siblingPaths = [];
   let routes = [];
-  let isNotFoundDefined = false;
 
   SKY_PAGES.entries.forEach((entry) => {
 
@@ -145,9 +142,9 @@ const getSource = (SKY_PAGES, source) => {
     const componentName = getGeneratedComponentName(entry);
 
     entry.siblings.forEach((sibling) => {
-        const siblingName = getSiblingComponentName(sibling);
-        componentNames.push(siblingName);
-        siblingPaths.push(`import { ${siblingName} } from '${sibling.pathWeb}'`);
+      const siblingName = getSiblingComponentName(sibling);
+      componentNames.push(siblingName);
+      siblingPaths.push(`import { ${siblingName} } from '${sibling.pathWeb}'`);
     });
 
     routes.push(`{ path: '${pathParams.path}', component: ${componentName}}`);
@@ -212,10 +209,10 @@ const getSource = (SKY_PAGES, source) => {
     })
     export class SkyPagesModule {}
   `;
-}
+};
 
 // fat-arrow method definition does not work here.
 // webpack doesn't apply correct context to this if we did.
-module.exports = function (source, map) {
-  return getSource(this.options.SKY_PAGES, source);
+module.exports = function () {
+  return getSource(this.options.SKY_PAGES);
 };

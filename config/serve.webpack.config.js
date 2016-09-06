@@ -21,6 +21,11 @@ const getWebpackConfig = () => {
     path.join(__dirname, '..', 'node_modules')
   ];
   return webpackMerge(commonConfig, {
+    entry: {
+      polyfills: [path.resolve(__dirname, '..', 'src', 'polyfills.ts')],
+      vendor: [path.resolve(__dirname, '..', 'src', 'vendor.ts')],
+      app: [path.resolve(__dirname, '..', 'src', 'main.ts')]
+    },
     output: {
       filename: '[name].js',
       chunkFilename: '[id].[chunkhash].chunk.js'
