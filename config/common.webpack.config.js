@@ -2,10 +2,22 @@
 'use strict';
 
 const path = require('path');
+const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const failPlugin = require('webpack-fail-plugin');
+
+/**
+ * Reads the name field of package.json.
+ * Removes "blackbaud-sky-pages-spa-" and wraps in "/".
+ * @name getAppName
+ * @returns {String} appName
+ */
+const getAppBase = () => {
+  const name = require(path.join(process.cwd(), 'package.json')).name;
+  return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
+};
 
 /**
  * Called when loaded via require.
@@ -15,7 +27,6 @@ const failPlugin = require('webpack-fail-plugin');
  */
 const getWebpackConfig = (skyPagesConfig) => {
 
-  const appConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'].app;
   const assetLoader = path.resolve(__dirname, '..', 'sky-pages-asset-loader');
   const moduleLoader = path.resolve(__dirname, '..', 'sky-pages-module-loader');
   const resolves = [
@@ -25,10 +36,11 @@ const getWebpackConfig = (skyPagesConfig) => {
     path.join(__dirname, '..', 'node_modules')
   ];
 
-  // Add the default template unless user has overridden
-  if (!appConfig.template) {
-    appConfig.template = path.resolve(__dirname, '..', 'src', 'main.ejs');
-  }
+  // Merge in our defaults
+  const appConfig = merge(skyPagesConfig['blackbaud-sky-pages-out-skyux2'].app, {
+    template: path.resolve(__dirname, '..', 'src', 'main.ejs'),
+    base: getAppBase()
+  });
 
   return {
     entry: {
@@ -37,7 +49,8 @@ const getWebpackConfig = (skyPagesConfig) => {
       app: [path.resolve(__dirname, '..', 'src', 'main.ts')]
     },
     output: {
-      path: path.join(process.cwd(), 'dist')
+      path: path.join(process.cwd(), 'dist'),
+      publicPath: appConfig.base
     },
     resolveLoader: {
       root: resolves

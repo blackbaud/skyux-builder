@@ -3,6 +3,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const util = require('util');
+const logger = require('winston');
 const webpackMerge = require('webpack-merge');
 
 /**
@@ -10,8 +12,17 @@ const webpackMerge = require('webpack-merge');
  * @name WebpackPluginDone
  */
 const WebpackPluginDone = function () {
+  let reported = false;
+  const url = util.format(
+    'https://localhost:%s%s',
+    this.options.devServer.port,
+    this.options.devServer.publicPath
+  );
   this.plugin('done', () => {
-    console.log('DONE!');
+    if (!reported) {
+      reported = true;
+      logger.info('AVAILABLE AT: %s\n', url);
+    }
   });
 };
 
@@ -21,7 +32,7 @@ const WebpackPluginDone = function () {
  * @returns {WebpackConfig} webpackConfig
  */
 const getWebpackConfig = (skyPagesConfig) => {
-  const common = require('./common.webpack.config');
+
   const skyPagesConfigServe = webpackMerge(skyPagesConfig, {
     command: 'serve',
     host: {
@@ -29,8 +40,10 @@ const getWebpackConfig = (skyPagesConfig) => {
       qsKey: 'hash'
     }
   });
+  const common = require('./common.webpack.config')
+    .getWebpackConfig(skyPagesConfigServe);
 
-  return webpackMerge(common.getWebpackConfig(skyPagesConfigServe), {
+  return webpackMerge(common, {
     watch: true,
     output: {
       filename: '[name].js',
@@ -42,12 +55,15 @@ const getWebpackConfig = (skyPagesConfig) => {
       colors: true,
       compress: true,
       inline: true,
-      historyApiFallback: true,
+      historyApiFallback: {
+        index: common.output.publicPath
+      },
       stats: 'minimal',
       https: {
         key: fs.readFileSync(path.join(__dirname, '../ssl/server.key')),
         cert: fs.readFileSync(path.join(__dirname, '../ssl/server.crt'))
-      }
+      },
+      publicPath: common.output.publicPath
     },
     debug: true,
     devtool: 'cheap-module-eval-source-map',
