@@ -6,6 +6,7 @@ const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const WebpackMd5Hash = require('webpack-md5-hash');
 const failPlugin = require('webpack-fail-plugin');
 
 /**
@@ -116,6 +117,7 @@ const getWebpackConfig = (skyPagesConfig) => {
         'SKY_PAGES': JSON.stringify(skyPagesConfig)
       }),
       new ProgressBarPlugin(),
+      new WebpackMd5Hash(),
       failPlugin
     ]
   };

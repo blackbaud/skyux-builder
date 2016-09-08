@@ -48,6 +48,7 @@
     "webpack": "1.13.1",
     "webpack-dev-server": "1.15.1",
     "webpack-fail-plugin": "1.0.5",
+    "webpack-md5-hash": "0.0.5",
     "webpack-merge": "0.14.1",
     "winston": "2.2.0",
     "zone.js": "0.6.12"
