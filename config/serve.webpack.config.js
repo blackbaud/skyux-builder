@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('fs');
+const open = require('open');
 const path = require('path');
 const util = require('util');
 const logger = require('winston');
@@ -13,16 +14,31 @@ const webpackMerge = require('webpack-merge');
  */
 const WebpackPluginDone = function () {
   let reported = false;
-  const url = util.format(
-    'https://localhost:%s%s',
-    this.options.devServer.port,
-    this.options.devServer.publicPath
-  );
-  this.plugin('done', () => {
-    if (!reported) {
-      reported = true;
-      logger.info('AVAILABLE AT: %s\n', url);
+  const base = this.options.SKY_PAGES['blackbaud-sky-pages-out-skyux2'].host.url;
+  const host = base + this.options.devServer.publicPath;
+
+  this.plugin('done', (stats) => {
+    if (reported) {
+      return;
     }
+
+    logger.info('AVAILABLE AT: %s\n', host);
+    reported = true;
+
+    if (!host || this.options.argv.noOpen) {
+      return;
+    }
+
+    const spConfig = {
+      assets: stats.toJson().assetsByChunkName,
+      local: util.format(
+        'https://localhost:%s%s',
+        this.options.devServer.port,
+        this.options.devServer.publicPath
+      )
+    };
+    const encoded = new Buffer(JSON.stringify(spConfig)).toString('base64');
+    open(host + '?_sp.cfg=' + encodeURIComponent(encoded));
   });
 };
 
@@ -34,11 +50,7 @@ const WebpackPluginDone = function () {
 const getWebpackConfig = (skyPagesConfig) => {
 
   const skyPagesConfigServe = webpackMerge(skyPagesConfig, {
-    command: 'serve',
-    host: {
-      url: 'https://blackbaud-shell.azurewebsites.net/',
-      qsKey: 'hash'
-    }
+    command: 'serve'
   });
   const common = require('./common.webpack.config')
     .getWebpackConfig(skyPagesConfigServe);
