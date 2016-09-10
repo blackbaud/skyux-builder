@@ -16,13 +16,18 @@ const WebpackPluginDone = function () {
   let reported = false;
   const base = this.options.SKY_PAGES['blackbaud-sky-pages-out-skyux2'].host.url;
   const host = base + this.options.devServer.publicPath;
+  const local = util.format(
+    'https://localhost:%s%s',
+    this.options.devServer.port,
+    this.options.devServer.publicPath
+  );
 
   this.plugin('done', (stats) => {
     if (reported) {
       return;
     }
 
-    logger.info('AVAILABLE AT: %s\n', host);
+    logger.info('Local files available at:\n%s\n', local);
     reported = true;
 
     if (!host || this.options.argv.noOpen) {
@@ -31,13 +36,11 @@ const WebpackPluginDone = function () {
 
     const spConfig = {
       assets: stats.toJson().assetsByChunkName,
-      local: util.format(
-        'https://localhost:%s%s',
-        this.options.devServer.port,
-        this.options.devServer.publicPath
-      )
+      local: local
     };
     const encoded = new Buffer(JSON.stringify(spConfig)).toString('base64');
+
+    logger.info('Automatically opening host url:\n%s\n', host);
     open(host + '?_sp.cfg=' + encodeURIComponent(encoded));
   });
 };
