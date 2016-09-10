@@ -18,6 +18,9 @@
     "url": "https://github.com/blackbaud/sky-pages-out-skyux2/issues"
   },
   "homepage": "https://github.com/blackbaud/sky-pages-out-skyux2#readme",
+  "peerDependencies": {
+    "blackbaud-skyux2": "2.x"
+  },
   "dependencies": {
     "@angular/common": "2.0.0-rc.5",
     "@angular/compiler": "2.0.0-rc.5",
@@ -27,7 +30,6 @@
     "@angular/platform-browser-dynamic": "2.0.0-rc.5",
     "@angular/router": "3.0.0-rc.1",
     "angular2-template-loader": "0.4.0",
-    "blackbaud-skyux2": "2.0.0-alpha.1",
     "codelyzer": "0.0.26",
     "core-js": "2.4.1",
     "extract-text-webpack-plugin": "1.0.1",

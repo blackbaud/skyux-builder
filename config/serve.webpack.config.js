@@ -45,10 +45,6 @@ const getWebpackConfig = (skyPagesConfig) => {
 
   return webpackMerge(common, {
     watch: true,
-    output: {
-      filename: '[name].js',
-      chunkFilename: '[id].chunk.js'
-    },
     devServer: {
       port: 31337,
       secure: false,

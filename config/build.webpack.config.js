@@ -30,10 +30,6 @@ const getWebpackConfig = (skyPagesConfig) => {
 
   return webpackMerge(common.getWebpackConfig(skyPagesConfigServe), {
     devtool: 'source-map',
-    output: {
-      filename: '[name].[chunkhash].js',
-      chunkFilename: '[id].[chunkhash].chunk.js'
-    },
     plugins: [
       SaveStats,
       new webpack.optimize.DedupePlugin(),

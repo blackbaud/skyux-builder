@@ -47,9 +47,12 @@ const getWebpackConfig = (skyPagesConfig) => {
     entry: {
       polyfills: [path.resolve(__dirname, '..', 'src', 'polyfills.ts')],
       vendor: [path.resolve(__dirname, '..', 'src', 'vendor.ts')],
+      skyux: [path.resolve(__dirname, '..', 'src', 'skyux.ts')],
       app: [path.resolve(__dirname, '..', 'src', 'main.ts')]
     },
     output: {
+      filename: '[name].js',
+      chunkFilename: '[id].chunk.js',
       path: path.join(process.cwd(), 'dist'),
       publicPath: appConfig.base
     },
@@ -107,11 +110,7 @@ const getWebpackConfig = (skyPagesConfig) => {
     plugins: [
       new HtmlWebpackPlugin(appConfig),
       new webpack.optimize.CommonsChunkPlugin({
-        name: ['app', 'vendor', 'polyfills']
-      }),
-      new webpack.optimize.UglifyJsPlugin({
-        compress: { warnings: false },
-        mangle: { screw_ie8: true, keep_fnames: true }
+        name: ['app', 'skyux', 'vendor', 'polyfills']
       }),
       new webpack.DefinePlugin({
         'SKY_PAGES': JSON.stringify(skyPagesConfig)

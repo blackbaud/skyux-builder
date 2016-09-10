@@ -1,9 +1,6 @@
-/// <reference path="../typings/index.d.ts"/>
-
 import 'core-js/es6';
-import 'reflect-metadata';
+import 'core-js/es7/reflect';
 import 'zone.js/dist/zone';
-
 import 'ts-helpers';
 
 if (process.env.ENV === 'production') {
