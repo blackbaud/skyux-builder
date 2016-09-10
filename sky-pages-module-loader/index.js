@@ -56,6 +56,7 @@ const getSiblingComponentName = (entry) => {
 
 /**
  * Given an entry, return a component name.
+ * Removes any non-word items.
  * @name getGeneratedComponentName
  * @param {SkyPagesEntry} entry
  * @returns {string} componentName
@@ -63,7 +64,7 @@ const getSiblingComponentName = (entry) => {
 const getGeneratedComponentName = (entry) => {
   let name = '';
   entry.pathParts.forEach((part) => {
-    part = getParam(part);
+    part = getParam(part).replace(/\W+/g, '');
     if (part.length > 1) {
       name += part[0].toUpperCase() + part.substr(1).toLowerCase();
     } else {
