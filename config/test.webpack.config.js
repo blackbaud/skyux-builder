@@ -63,13 +63,7 @@ module.exports = {
 
       {
         test: /\.ts$/,
-        loader: 'awesome-typescript-loader',
-        query: {
-          compilerOptions: {
-            removeComments: true
-
-          }
-        },
+        loader: 'ts-loader',
         exclude: [/\.e2e\.ts$/]
       },
 
