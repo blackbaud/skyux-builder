@@ -7,14 +7,30 @@ var ENV = process.env.ENV = process.env.NODE_ENV = 'test';
 
 var srcPath = path.resolve(process.cwd(), 'src');
 
+const resolves = [
+  process.cwd(),
+  path.join(process.cwd(), 'node_modules'),
+  path.join(__dirname, '..'),
+  path.join(__dirname, '..', 'node_modules')
+];
+
 module.exports = {
 
   devtool: 'inline-source-map',
 
-  resolve: {
-    extensions: ['', '.ts', '.js'],
-    root: srcPath,
+  resolveLoader: {
+    root: resolves
   },
+  resolve: {
+    root: resolves,
+    extensions: [
+      '',
+      '.js',
+      '.ts'
+    ],
+  },
+
+  debug: true,
 
   module: {
 
@@ -37,15 +53,19 @@ module.exports = {
     ],
 
     loaders: [
+      {
+        test: /\.ts$/,
+        loaders: [
+          'ts-loader?silent=true',
+          'angular2-template-loader'
+        ]
+      },
 
       {
         test: /\.ts$/,
         loader: 'awesome-typescript-loader',
         query: {
           compilerOptions: {
-
-            // Remove TypeScript helpers to be injected
-            // below by DefinePlugin
             removeComments: true
 
           }
@@ -77,18 +97,18 @@ module.exports = {
 
     postLoaders: [
 
-      {
-        test: /\.(js|ts)$/,
-        loader: 'istanbul-instrumenter-loader!source-map-inline-loader',
-        include: srcPath,
-        exclude: [
-          /\.(e2e|spec)\.ts$/,
-          /node_modules/,
-          /index\.ts/,
-          /fixtures/,
-          /testing/
-        ]
-      }
+      // {
+      //   test: /\.(js|ts)$/,
+      //   loader: 'istanbul-instrumenter-loader!source-map-inline-loader',
+      //   include: srcPath,
+      //   exclude: [
+      //     /\.(e2e|spec)\.ts$/,
+      //     /node_modules/,
+      //     /index\.ts/,
+      //     /fixtures/,
+      //     /testing/
+      //   ]
+      // }
 
     ]
   },

@@ -11,15 +11,18 @@ module.exports = function (config) {
     basePath: '',
     frameworks: ['jasmine'],
     exclude: [],
-    files: [{
-      pattern: '../../utils/spec-bundle.js',
-      watched: false
-    }, {
-      pattern: '../utils/spec-styles.js',
-      watched: false
-    }],
+    files: [
+      {
+        pattern: '../../utils/spec-bundle.js',
+        watched: false
+      },
+      // {
+      //   pattern: '../utils/spec-styles.js',
+      //   watched: false
+      // }
+    ],
     preprocessors: {
-      '../utils/spec-styles.js': ['webpack'],
+      // '../utils/spec-styles.js': ['webpack'],
       '../../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
     },
     webpack: testWebpackConfig,
