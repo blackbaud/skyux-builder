@@ -19,19 +19,18 @@ module.exports = {
   module: {
 
     preLoaders: [
-      // {
-      //   test: /\.ts$/,
-      //   loader: 'tslint-loader',
-      //   exclude: [path.resolve(srcPath, '..', 'node_modules')]
-      // },
+      {
+        test: /\.ts$/,
+        loader: 'tslint-loader',
+        exclude: [path.resolve(srcPath, '..', 'node_modules')]
+      },
 
       {
         test: /\.js$/,
         loader: 'source-map-loader',
         exclude: [
           // these packages have problems with their sourcemaps
-          path.resolve(srcPath, 'node_modules/rxjs'),
-          path.resolve(srcPath, 'node_modules/@angular/compiler')
+          path.resolve(srcPath, 'node_modules')
         ]
       }
 
