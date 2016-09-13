@@ -19,11 +19,11 @@ module.exports = {
   module: {
 
     preLoaders: [
-      {
-        test: /\.ts$/,
-        loader: 'tslint-loader',
-        exclude: [path.resolve(srcPath, '..', 'node_modules')]
-      },
+      // {
+      //   test: /\.ts$/,
+      //   loader: 'tslint-loader',
+      //   exclude: [path.resolve(srcPath, '..', 'node_modules')]
+      // },
 
       {
         test: /\.js$/,
