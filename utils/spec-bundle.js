@@ -39,8 +39,6 @@ testing.getTestBed().initTestEnvironment(
 
 Object.assign(global, testing);
 
-console.log(ROOT_DIR);
-
 /*
  * Ok, this is kinda crazy. We can use the the context method on
  * require that webpack created in order to tell webpack
