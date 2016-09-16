@@ -41,7 +41,11 @@ const WebpackPluginDone = function () {
     const encoded = new Buffer(JSON.stringify(spConfig)).toString('base64');
 
     logger.info('Automatically opening host url:\n%s\n', host);
-    open(host + '?_sp.cfg=' + encodeURIComponent(encoded));
+
+    // TODO: Pass config to host when it can process it.  For now host just assumes
+    // vendor/polyfills/app files.
+    // open(host + '?_sp.cfg=' + encodeURIComponent(encoded));
+    open(host + '?local=true');
   });
 };
 

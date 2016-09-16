@@ -1,12 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES5",
+    "target": "es5",
     "module": "commonjs",
+    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
     "noEmitHelpers": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "lib": [
+      "dom",
+      "es6"
+    ],
+    "types": [
+      "jasmine",
+      "node"
+    ]
   },
   "awesomeTypescriptLoaderOptions": {
     "useWebpackText": true

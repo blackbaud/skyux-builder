@@ -6,6 +6,7 @@ module.exports = function (config) {
 
   let testWebpackConfig = require('../test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
+  let skyPagesConfig = require('../sky-pages.config').getSkyPagesConfig();
 
   config.set({
     basePath: '',
@@ -25,7 +26,7 @@ module.exports = function (config) {
       // '../utils/spec-styles.js': ['webpack'],
       '../../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
     },
-    webpack: testWebpackConfig,
+    webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig),
     coverageReporter: {
       dir: '../../coverage/',
       reporters: [
