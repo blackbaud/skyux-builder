@@ -1,7 +1,7 @@
 {
   "blackbaud-sky-pages-out-skyux2": {
     "host": {
-      "url": "https://blackbaud-sky-pages-host.azurewebsites.net"
+      "url": "https://sky.blackbaud-dev.com"
     },
     "app": {
       "title": "Blackbaud - Sky Pages"
