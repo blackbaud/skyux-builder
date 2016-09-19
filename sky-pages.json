@@ -1,5 +1,6 @@
 {
   "blackbaud-sky-pages-out-skyux2": {
+    "mode": "advanced",
     "host": {
       "url": "https://sky.blackbaud-dev.com"
     },
