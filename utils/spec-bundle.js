@@ -39,6 +39,16 @@ testing.getTestBed().initTestEnvironment(
 
 Object.assign(global, testing);
 
+// var SkyPagesModule = require('../src/app/sky-pages.module');
+
+// // console.log(SkyPagesModule);
+
+// testing.getTestBed().configureTestingModule({
+//   imports: [
+//     SkyPagesModule
+//   ]
+// });
+
 /*
  * Ok, this is kinda crazy. We can use the the context method on
  * require that webpack created in order to tell webpack

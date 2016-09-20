@@ -132,7 +132,6 @@ const join = (items, sep) => {
  * @returns {string} source
  */
 const getSource = (SKY_PAGES) => {
-    console.log(SKY_PAGES);
   let componentNames = [];
   let components = [];
   let siblingPaths = [];
@@ -168,7 +167,7 @@ const getSource = (SKY_PAGES) => {
     `);
   }
 
-  let result = `
+  return `
     import {
       Component,
       enableProdMode,
@@ -181,11 +180,10 @@ const getSource = (SKY_PAGES) => {
     } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { HttpModule } from '@angular/http';
-    import { ReactiveFormsModule } from '@angular/forms';
     import { ActivatedRoute, RouterModule, Routes } from '@angular/router';
     import { Subscription } from 'rxjs/Subscription';
     import { SkyModule } from 'blackbaud-skyux2/dist/core';
-    
+
     // Needed before component declarations since the provider is injected.
     const SkyPagesProvider = new OpaqueToken('SKY_PAGES');
 
@@ -203,28 +201,15 @@ const getSource = (SKY_PAGES) => {
 
     @NgModule({
       declarations: [ ${join(componentNames, ',')} ],
-      imports: [ 
-        CommonModule, 
-        HttpModule,
-        ReactiveFormsModule, 
-        SkyModule, 
-        routing 
-      ],
+      imports: [ CommonModule, HttpModule, SkyModule, routing ],
       exports: [ ${join(componentNames, ',')} ],
       providers: [
         appRoutingProviders,
-        { 
-          provide: SkyPagesProvider, 
-          useValue: SKY_PAGES 
-        }
+        { provide: SkyPagesProvider, useValue: SKY_PAGES }
       ]
     })
-    export class SkyPagesModule { }
+    export class SkyPagesModule {}
   `;
-
-  console.log(result);
-
-  return result;
 };
 
 // fat-arrow method definition does not work here.
