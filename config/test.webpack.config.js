@@ -1,3 +1,6 @@
+/*jslint node: true */
+'use strict';
+
 function getWebpackConfig(skyPagesConfig) {
   const path = require('path');
 
@@ -15,7 +18,10 @@ function getWebpackConfig(skyPagesConfig) {
     path.join(__dirname, '..', 'node_modules')
   ];
 
-  const moduleLoader = path.resolve(__dirname, '..', 'sky-pages-module-loader');
+  const excludes = [
+    path.join(process.cwd(), 'node_modules'),
+    path.resolve(__dirname, '..', 'node_modules')
+  ];
 
   return {
     devtool: 'inline-source-map',
@@ -47,16 +53,13 @@ function getWebpackConfig(skyPagesConfig) {
         {
           test: /\.ts$/,
           loader: 'tslint-loader',
-          exclude: [path.resolve(srcPath, '..', 'node_modules')]
+          exclude: excludes
         },
 
         {
           test: /\.js$/,
           loader: 'source-map-loader',
-          exclude: [
-            // these packages have problems with their sourcemaps
-            path.resolve(srcPath, 'node_modules')
-          ]
+          exclude: excludes
         }
 
       ],

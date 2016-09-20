@@ -1,9 +1,12 @@
+/*jslint node: true */
+'use strict';
+
 /**
 * Common Karma configuration shared between local / CI testing.
 */
 module.exports = function (config) {
-  'use strict';
 
+  const path = require('path');
   let testWebpackConfig = require('../test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
   let skyPagesConfig = require('../sky-pages.config').getSkyPagesConfig();
@@ -28,7 +31,7 @@ module.exports = function (config) {
     },
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig),
     coverageReporter: {
-      dir: '../../coverage/',
+      dir: path.join(process.cwd(), 'coverage'),
       reporters: [
         { type: 'json' },
         { type: 'html' }
@@ -38,7 +41,8 @@ module.exports = function (config) {
       }
     },
     webpackServer: {
-      noInfo: true
+      noInfo: true,
+      stats: 'minimal'
     },
     reporters: ['mocha', 'coverage'],
     port: 9876,
