@@ -28,8 +28,8 @@ const getAppBase = () => {
  */
 const getWebpackConfig = (skyPagesConfig) => {
 
-  const assetLoader = path.resolve(__dirname, '..', 'loader', 'sky-pages-asset');
-  const moduleLoader = path.resolve(__dirname, '..', 'loader', 'sky-pages-module');
+  const assetLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-asset');
+  const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
   const resolves = [
     process.cwd(),
     path.join(process.cwd(), 'node_modules'),
@@ -43,21 +43,21 @@ const getWebpackConfig = (skyPagesConfig) => {
       appPath = path.join(process.cwd(), 'src', 'main.ts');
     break;
     default:
-      appPath = path.resolve(__dirname, '..', 'src', 'main.ts');
+      appPath = path.resolve(__dirname, '..', '..', 'src', 'main.ts');
     break;
   }
 
   // Merge in our defaults
   const appConfig = merge(skyPagesConfig['blackbaud-sky-pages-out-skyux2'].app, {
-    template: path.resolve(__dirname, '..', 'src', 'main.ejs'),
+    template: path.resolve(__dirname, '..', '..', 'src', 'main.ejs'),
     base: getAppBase()
   });
 
   return {
     entry: {
-      polyfills: [path.resolve(__dirname, '..', 'src', 'polyfills.ts')],
-      vendor: [path.resolve(__dirname, '..', 'src', 'vendor.ts')],
-      skyux: [path.resolve(__dirname, '..', 'src', 'skyux.ts')],
+      polyfills: [path.resolve(__dirname, '..', '..', 'src', 'polyfills.ts')],
+      vendor: [path.resolve(__dirname, '..', '..', 'src', 'vendor.ts')],
+      skyux: [path.resolve(__dirname, '..', '..', 'src', 'skyux.ts')],
       app: [appPath]
     },
     output: {

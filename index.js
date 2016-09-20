@@ -1,12 +1,10 @@
 /*jshint node: true*/
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const logger = require('winston');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const config = require('./config/sky-pages.config');
+const config = require('./config/sky-pages/sky-pages.config');
 
 module.exports = {
   runCommand: (command, argv) => {

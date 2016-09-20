@@ -9,7 +9,7 @@ const logger = require('winston');
  * @name version
  */
 const version = () => {
-  const packageJson = require(path.resolve(__dirname, '..', 'package.json'));
+  const packageJson = require(path.resolve(__dirname, '..', '..', 'package.json'));
   logger.info('sky-pages-out-skyux2: %s', packageJson.version);
 };
 

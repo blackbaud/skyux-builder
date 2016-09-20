@@ -1,9 +1,11 @@
+/*jshint node: true*/
+'use strict';
+
 /**
  * @author: @AngularClass
  */
 
 module.exports = function (config) {
-  'use strict';
 
   require('./shared.karma.conf')(config);
 

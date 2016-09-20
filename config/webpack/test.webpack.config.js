@@ -4,23 +4,20 @@
 function getWebpackConfig(skyPagesConfig) {
   const path = require('path');
 
-  var ProvidePlugin = require('webpack/lib/ProvidePlugin');
-  var DefinePlugin = require('webpack/lib/DefinePlugin');
-
-  var ENV = process.env.ENV = process.env.NODE_ENV = 'test';
-
-  var srcPath = path.resolve(process.cwd(), 'src');
-
+  const DefinePlugin = require('webpack/lib/DefinePlugin');
+  const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
+  const srcPath = path.resolve(process.cwd(), 'src');
+  const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
   const resolves = [
     process.cwd(),
     path.join(process.cwd(), 'node_modules'),
-    path.join(__dirname, '..'),
-    path.join(__dirname, '..', 'node_modules')
+    path.join(__dirname, '..', '..'),
+    path.join(__dirname, '..', '..', 'node_modules')
   ];
 
   const excludes = [
     path.join(process.cwd(), 'node_modules'),
-    path.resolve(__dirname, '..', 'node_modules')
+    path.resolve(__dirname, '..', '..', 'node_modules')
   ];
 
   return {
@@ -43,13 +40,12 @@ function getWebpackConfig(skyPagesConfig) {
     module: {
 
       preLoaders: [
-        // {
-        //   test: /sky-pages\.module\.ts$/,
-        //   loaders: [
-        //     moduleLoader
-        //   ]
-        // },
-
+        {
+          test: /sky-pages\.module\.ts$/,
+          loaders: [
+            moduleLoader
+          ]
+        },
         {
           test: /\.ts$/,
           loader: 'tslint-loader',

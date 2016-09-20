@@ -25,10 +25,10 @@ const onWebpackDevServerReady = (err) => {
  * @returns null
  */
 const serve = (argv, skyPagesConfig, webpack, WebpackDevServer) => {
-  const webpackConfig = require('../config/serve.webpack.config');
+  const webpackConfig = require('../config/webpack/serve.webpack.config');
   let config = webpackConfig.getWebpackConfig(skyPagesConfig);
   config.argv = argv;
-  
+
   if (config.devServer.inline) {
     const url = util.format(
       'webpack-dev-server/client?https://localhost:%s',

@@ -2,7 +2,7 @@
 'use strict';
 
 const logger = require('winston');
-const buildConfig = require('../config/build.webpack.config');
+const buildConfig = require('../config/webpack/build.webpack.config');
 
 /**
  * Executes the build command.

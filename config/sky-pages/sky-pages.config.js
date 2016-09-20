@@ -3,16 +3,19 @@
 
 const fs = require('fs');
 const path = require('path');
+const merge = require('merge');
 
 module.exports = {
   /**
    * Iterates object's devDependencies to find applicable modules.
+   * Includes project's sky-pages.json last.
    * @name getSkyPagesConfig
    * @returns [SkyPagesConfig] skyPagesConfig
    */
   getSkyPagesConfig: () => {
     const jsonPath = path.join(process.cwd(), 'package.json');
-    let config = require(path.join(__dirname, '../sky-pages.json'));
+    const skyPagesPath = path.join(process.cwd(), 'sky-pages.json');
+    let config = require(path.join(__dirname, '../../sky-pages.json'));
 
     if (fs.existsSync(jsonPath)) {
       const json = require(jsonPath);
@@ -26,6 +29,13 @@ module.exports = {
           }
         }
       }
+    }
+
+    if (fs.existsSync(skyPagesPath)) {
+      const skyPagesJson = JSON.parse(
+        fs.readFileSync(skyPagesPath, { encoding: 'utf8' })
+      );
+      merge.recursive(config, skyPagesJson);
     }
 
     return config;

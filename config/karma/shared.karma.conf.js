@@ -7,9 +7,9 @@
 module.exports = function (config) {
 
   const path = require('path');
-  let testWebpackConfig = require('../test.webpack.config');
+  let testWebpackConfig = require('../webpack/test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
-  let skyPagesConfig = require('../sky-pages.config').getSkyPagesConfig();
+  let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig();
 
   config.set({
     basePath: '',
@@ -19,14 +19,9 @@ module.exports = function (config) {
       {
         pattern: '../../utils/spec-bundle.js',
         watched: false
-      },
-      // {
-      //   pattern: '../utils/spec-styles.js',
-      //   watched: false
-      // }
+      }
     ],
     preprocessors: {
-      // '../utils/spec-styles.js': ['webpack'],
       '../../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
     },
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig),
