@@ -78,6 +78,7 @@ const getWebpackConfig = (skyPagesConfig) => {
         key: fs.readFileSync(path.join(__dirname, '../../ssl/server.key')),
         cert: fs.readFileSync(path.join(__dirname, '../../ssl/server.crt'))
       },
+      contentBase: path.join(process.cwd(), 'src', 'app'),
       publicPath: common.output.publicPath
     },
     debug: true,
