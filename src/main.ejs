@@ -14,5 +14,8 @@ It is never actually called when using the host service.
 </head>
 <body>
   <sky-pages-app>Loading...</stache-app>
+  <script>
+    __webpack_public_path__ = '<%= htmlWebpackPlugin.options.base %>';
+  </script>
 </body>
 </html>

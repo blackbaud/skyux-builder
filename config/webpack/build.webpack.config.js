@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
+const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 
 /**
  * Saves the stats.json file (needed for entry order)
@@ -33,6 +34,10 @@ const getWebpackConfig = (skyPagesConfig) => {
     plugins: [
       SaveStats,
       new webpack.optimize.DedupePlugin(),
+      new ChunkManifestPlugin({
+        filename: "manifest.json",
+        manifestVariable: "webpackManifest"
+      }),
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,
         comments: false,
