@@ -37,10 +37,11 @@ const SaveStats = function () {
  * @name SaveMetadata
  */
 const SaveMetadata = function () {
+  const metadata = [];
+
   this.plugin('emit', (compilation, done) => {
     const formatName = 'SKY_PAGES_READY_%s';
     const formatDeclare = '%s\nvar %s = true;\n';
-    const metadata = [];
 
     // Only care about JS files
     Object.keys(compilation.assets).forEach((key) => {
@@ -61,9 +62,11 @@ const SaveMetadata = function () {
         fallback: fallback
       });
     });
-
-    writeJson('metadata.json', metadata);
     done();
+  });
+
+  this.plugin('done', () => {
+    writeJson('metadata.json', metadata);
   });
 };
 
