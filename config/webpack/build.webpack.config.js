@@ -38,15 +38,14 @@ const SaveStats = function () {
  */
 const SaveMetadata = function () {
   this.plugin('emit', (compilation, done) => {
-    const formatName = 'SKYUX_READY_%s';
+    const formatName = 'SKY_PAGES_READY_%s';
     const formatDeclare = '%s\nvar %s = true;\n';
     const metadata = [];
 
     // Only care about JS files
     Object.keys(compilation.assets).forEach((key) => {
-      const parsed = path.parse(key);
 
-      console.log(parsed);
+      const parsed = path.parse(key);
       if (parsed.ext !== '.js') {
         return;
       }
