@@ -30,7 +30,7 @@ const build = (argv, skyPagesConfig, webpack) => {
     logger.info(stats.toString({
       chunks: false,
       colors: false
-    }))
+    }));
   });
 };
 

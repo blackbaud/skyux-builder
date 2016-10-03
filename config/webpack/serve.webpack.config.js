@@ -46,7 +46,7 @@ const WebpackPluginDone = function () {
     // TODO: Pass config to host when it can process it.  For now host just assumes
     // vendor/polyfills/app files.
     // open(host + '?_sp.cfg=' + encodeURIComponent(encoded));
-    open(host + '?local=true');
+    open(host + '?local=true&_cfg=' + encoded);
   });
 };
 

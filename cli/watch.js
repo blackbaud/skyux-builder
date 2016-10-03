@@ -5,7 +5,7 @@ const path = require('path');
 const spawn = require('cross-spawn');
 
 module.exports = () => {
-  const npmProcess = spawn(
+  spawn(
     'node',
     [
       '--max-old-space-size=4096',
