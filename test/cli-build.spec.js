@@ -6,6 +6,10 @@ const logger = require('winston');
 
 describe('cli build', () => {
 
+  afterAll(() => {
+    mock.stop('../config/webpack/build.webpack.config');
+  });
+
   it('should call getWebpackConfig', () => {
     let called = false;
     mock('../config/webpack/build.webpack.config', {
