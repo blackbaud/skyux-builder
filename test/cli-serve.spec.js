@@ -30,8 +30,8 @@ describe('cli serve', () => {
   it('should prepend devServer url to entries', (done) => {
     const url = 'test-url';
     const port = 1234;
-
-    mock('../config/webpack/serve.webpack.config', {
+    const f = '../config/webpack/serve.webpack.config';
+    mock(f, {
       getWebpackConfig: () => ({
         entry: {
           'test': [url]
@@ -53,15 +53,17 @@ describe('cli serve', () => {
       expect(config.entry.test.length).toEqual(2);
       expect(config.entry.test[0]).toContain(port);
       expect(config.entry.test[1]).toContain(url);
+      mock.stop(f);
       done();
     }, webpackDevServer);
   });
 
   it('should handle a webpackDevServer error', () => {
     const err = 'custom-error1';
+    const f = '../config/webpack/serve.webpack.config';
 
     spyOn(logger, 'error');
-    mock('../config/webpack/serve.webpack.config', {
+    mock(f, {
       getWebpackConfig: () => ({
         devServer: {}
       })
@@ -72,6 +74,7 @@ describe('cli serve', () => {
         listen: (port, cb) => {
           cb(err);
           expect(logger.error).toHaveBeenCalledWith(err);
+          mock.stop(f);
         }
       };
     }

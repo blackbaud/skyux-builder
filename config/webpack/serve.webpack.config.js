@@ -13,7 +13,7 @@ const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
  * Opens the host service url.
  * @name WebpackPluginDone
  */
-const WebpackPluginDone = function () {
+const WebpackPluginDone = function WebpackPluginDone() {
   let reported = false;
   const base = this.options.SKY_PAGES['blackbaud-sky-pages-out-skyux2'].host.url;
   const host = base + this.options.appConfig.base;

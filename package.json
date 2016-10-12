@@ -4,11 +4,11 @@
   "description": "SKY Pages output for skyux2.",
   "main": "index.js",
   "scripts": {
-    "istanbul": "istanbul cover --report=html --include-all-sources jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "coverage": "istanbul cover --report=html jasmine JASMINE_CONFIG_PATH=jasmine.json",
     "jscs": "jscs cli config loader src utils",
     "jshint": "jshint cli config loader src utils",
     "lint": "npm run jshint && npm run jscs",
-    "test": "npm run lint && npm run istanbul"
+    "test": "npm run lint && npm run coverage"
   },
   "repository": {
     "type": "git",

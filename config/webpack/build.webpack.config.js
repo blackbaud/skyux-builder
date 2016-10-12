@@ -25,7 +25,7 @@ const writeJson = (name, json) => {
  * Saves the stats.json file
  * @name SaveStats
  */
-const SaveStats = function () {
+const SaveStats = function SaveStats() {
   this.plugin('done', (stats) => {
     writeJson('stats.json', stats.toJson());
   });
@@ -36,7 +36,7 @@ const SaveStats = function () {
  * Used to store order, fallback variable, etc.
  * @name SaveMetadata
  */
-const SaveMetadata = function () {
+const SaveMetadata = function SaveMetadata() {
   const metadata = [];
 
   this.plugin('emit', (compilation, done) => {

@@ -7,7 +7,8 @@ describe('config karma shared', () => {
 
   it('should load the webpack config', (done) => {
     let called = false;
-    mock('../config/webpack/test.webpack.config', {
+    const f = '../config/webpack/test.webpack.config';
+    mock(f, {
       getWebpackConfig: () => {
         called = true;
         return {};
@@ -22,6 +23,7 @@ describe('config karma shared', () => {
         expect(called).toEqual(true);
         expect(typeof config.coverageReporter._onWriteReport).toEqual('function');
         expect(config.coverageReporter._onWriteReport(collector)).toBeDefined();
+        mock.stop(f);
         done();
       }
     });

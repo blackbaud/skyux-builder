@@ -49,7 +49,7 @@ const getPathParams = (entry) => {
  */
 const getSiblingComponentName = (entry) => {
   const groups = /(class )([^\s]+)/gi.exec(entry.get());
-  if (groups.length > 2) {
+  if (groups && groups.length > 2) {
     return groups[2];
   }
 };
