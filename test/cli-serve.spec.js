@@ -82,4 +82,27 @@ describe('cli serve', () => {
     require('../cli/serve')({}, {}, () => {}, webpackDevServer);
   });
 
+  it('should handle a webpackDevServer error', () => {
+    const f = '../config/webpack/serve.webpack.config';
+
+    spyOn(logger, 'error');
+    mock(f, {
+      getWebpackConfig: () => ({
+        devServer: {}
+      })
+    });
+
+    function webpackDevServer() {
+      return {
+        listen: (port, cb) => {
+          cb();
+          expect(logger.error).not.toHaveBeenCalled();
+          mock.stop(f);
+        }
+      };
+    }
+
+    require('../cli/serve')({}, {}, () => {}, webpackDevServer);
+  });
+
 });

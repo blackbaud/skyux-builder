@@ -10,7 +10,6 @@ const logger = require('winston');
  * @name onWebpackDevServerReady
  */
 const onWebpackDevServerReady = (err) => {
-  /* istanbul ignore else */
   if (err) {
     logger.error(err);
   }

@@ -68,4 +68,28 @@ describe('cli build', () => {
     }));
   });
 
+  it('should call webpack and handle no stats errors and no warnings', (done) => {
+    spyOn(logger, 'error');
+    spyOn(logger, 'warn');
+    spyOn(logger, 'info');
+
+    mock('../config/webpack/build.webpack.config', {
+      getWebpackConfig: () => ({})
+    });
+
+    require('../cli/build')({}, {}, () => ({
+      run: (cb) => {
+        cb(null, {
+          toJson: () => ({
+            errors: [],
+            warnings: []
+          })
+        });
+        expect(logger.error).not.toHaveBeenCalled();
+        expect(logger.warn).not.toHaveBeenCalled();
+        done();
+      }
+    }));
+  });
+
 });

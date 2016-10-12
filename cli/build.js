@@ -14,7 +14,6 @@ const build = (argv, skyPagesConfig, webpack) => {
 
   compiler.run((err, stats) => {
 
-    /* istanbul ignore else */
     if (err) {
       logger.error(err);
       return;
@@ -22,12 +21,10 @@ const build = (argv, skyPagesConfig, webpack) => {
 
     const jsonStats = stats.toJson();
 
-    /* istanbul ignore else */
     if (jsonStats.errors.length) {
       logger.error(jsonStats.errors);
     }
 
-    /* istanbul ignore else */
     if (jsonStats.warnings.length) {
       logger.warn(jsonStats.warnings);
     }
