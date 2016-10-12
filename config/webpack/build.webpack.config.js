@@ -14,29 +14,29 @@ const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
  * @param {String} name
  * @param {String} json
  */
-const writeJson = (name, json) => {
+function writeJson(name, json) {
   fs.writeFileSync(
     path.join(process.cwd(), 'dist', name),
     JSON.stringify(json, null, '\t')
   );
-};
+}
 
 /**
  * Saves the stats.json file
  * @name SaveStats
  */
-const SaveStats = function SaveStats() {
+function SaveStats() {
   this.plugin('done', (stats) => {
     writeJson('stats.json', stats.toJson());
   });
-};
+}
 
 /**
  * Saves the metadata.json file.
  * Used to store order, fallback variable, etc.
  * @name SaveMetadata
  */
-const SaveMetadata = function SaveMetadata() {
+function SaveMetadata() {
   const metadata = [];
 
   this.plugin('emit', (compilation, done) => {
@@ -68,14 +68,14 @@ const SaveMetadata = function SaveMetadata() {
   this.plugin('done', () => {
     writeJson('metadata.json', metadata);
   });
-};
+}
 
 /**
  * Returns the default webpackConfig.
  * @name getDefaultWebpackConfig
  * @returns {WebpackConfig} webpackConfig
  */
-const getWebpackConfig = (skyPagesConfig) => {
+function getWebpackConfig(skyPagesConfig) {
   const common = require('./common.webpack.config');
   const skyPagesConfigServe = webpackMerge(skyPagesConfig, {
     command: 'build'
@@ -99,7 +99,7 @@ const getWebpackConfig = (skyPagesConfig) => {
       })
     ]
   });
-};
+}
 
 module.exports = {
   getWebpackConfig: getWebpackConfig

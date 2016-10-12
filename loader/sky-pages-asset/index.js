@@ -3,7 +3,13 @@
 
 const loaderUtils = require('loader-utils');
 
-module.exports = function (source) {
+/**
+ * Generates the source necessary to register all routes + components.
+ * Declared in order to satisfy jshint.
+ * @name getSource
+ * @returns {string} source
+ */
+const getSource = function (source) {
   const query = loaderUtils.parseQuery(this.query);
   const assets = this.options.SKY_PAGES.assets;
 
@@ -14,3 +20,5 @@ module.exports = function (source) {
 
   return source;
 };
+
+module.exports = getSource;

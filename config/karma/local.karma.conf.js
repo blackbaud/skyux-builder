@@ -2,17 +2,17 @@
 'use strict';
 
 /**
- * @author: @AngularClass
+ * Requires the shared karma config and sets any local properties.
+ * @name getConfig
+ * @param {Object} config
  */
-
-module.exports = function (config) {
-
+function getConfig(config) {
   require('./shared.karma.conf')(config);
-
   config.set({
     browsers: [
       'Chrome'
     ]
   });
+}
 
-};
+module.exports = getConfig;

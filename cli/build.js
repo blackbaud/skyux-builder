@@ -7,7 +7,7 @@ const logger = require('winston');
  * Executes the build command.
  * @name build
  */
-const build = (argv, skyPagesConfig, webpack) => {
+function build(argv, skyPagesConfig, webpack) {
   const buildConfig = require('../config/webpack/build.webpack.config');
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
   const compiler = webpack(config);
@@ -34,6 +34,6 @@ const build = (argv, skyPagesConfig, webpack) => {
       colors: false
     }));
   });
-};
+}
 
 module.exports = build;

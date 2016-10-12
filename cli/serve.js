@@ -6,16 +6,6 @@ const util = require('util');
 const logger = require('winston');
 
 /**
- * Handles the webpack-dev-server callback.
- * @name onWebpackDevServerReady
- */
-const onWebpackDevServerReady = (err) => {
-  if (err) {
-    logger.error(err);
-  }
-};
-
-/**
  * Executes the serve command.
  * @name serve
  * @name {Object} argv
@@ -24,7 +14,7 @@ const onWebpackDevServerReady = (err) => {
  * @name {WebpackDevServer} WebpackDevServer
  * @returns null
  */
-const serve = (argv, skyPagesConfig, webpack, WebpackDevServer) => {
+function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
 
   const webpackConfig = require('../config/webpack/serve.webpack.config');
   let config = webpackConfig.getWebpackConfig(skyPagesConfig);
@@ -43,8 +33,12 @@ const serve = (argv, skyPagesConfig, webpack, WebpackDevServer) => {
 
   const compiler = webpack(config);
   const server = new WebpackDevServer(compiler, config.devServer);
-  server.listen(config.devServer.port, onWebpackDevServerReady);
+  server.listen(config.devServer.port, (err) => {
+    if (err) {
+      logger.error(err);
+    }
+  });
 
-};
+}
 
 module.exports = serve;

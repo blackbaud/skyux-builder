@@ -7,10 +7,10 @@
  * @param {string} part
  * @returns {string} param
  */
-const getParam = (part) => {
+function getParam(part) {
   const param = /{(.*)}/.exec(part);
   return param ? param[1] : part;
-};
+}
 
 /**
  * Given a entry, extract the params, and SKYUX2 path.
@@ -18,7 +18,7 @@ const getParam = (part) => {
  * @param {SkyPagesEntry} entry
  * @returns {Object} cleanedName
  */
-const getPathParams = (entry) => {
+function getPathParams(entry) {
   let path = [];
   let params = [];
 
@@ -39,7 +39,7 @@ const getPathParams = (entry) => {
     path: path.join('/'),
     params: params
   };
-};
+}
 
 /**
  * Given an entry, reads it and extracts any component names.
@@ -47,12 +47,12 @@ const getPathParams = (entry) => {
  * @param {SkyPagesEntry} entry
  * @returns {string} componentName
  */
-const getSiblingComponentName = (entry) => {
+function getSiblingComponentName(entry) {
   const groups = /(class )([^\s]+)/gi.exec(entry.get());
   if (groups && groups.length > 2) {
     return groups[2];
   }
-};
+}
 
 /**
  * Given an entry, return a component name.
@@ -61,7 +61,7 @@ const getSiblingComponentName = (entry) => {
  * @param {SkyPagesEntry} entry
  * @returns {string} componentName
  */
-const getGeneratedComponentName = (entry) => {
+function getGeneratedComponentName(entry) {
   let name = '';
   entry.pathParts.forEach((part) => {
     part = getParam(part).replace(/\W+/g, '');
@@ -72,7 +72,7 @@ const getGeneratedComponentName = (entry) => {
     }
   });
   return name + 'IndexComponent';
-};
+}
 
 /**
  * Given an entry, return a component definition.
@@ -81,7 +81,7 @@ const getGeneratedComponentName = (entry) => {
  * @param {Array} [params]
  * @returns {string} componentDefinition
  */
-const getComponentDefinition = (name, path, params) => {
+function getComponentDefinition(name, path, params) {
   let paramsExpose = '';
   let paramsSet = '';
 
@@ -111,7 +111,7 @@ const getComponentDefinition = (name, path, params) => {
      }
     }
   `;
-};
+}
 
 /**
  * Joins an array with the given separator.
@@ -120,24 +120,24 @@ const getComponentDefinition = (name, path, params) => {
  * @param {string} [sep=\n] - Separator
  * @returns {string} componentName
  */
-const join = (items, sep) => {
+function join(items, sep) {
   sep = sep || '\n';
   return items.join(sep);
-};
+}
 
 /**
  * Generates the source necessary to register all routes + components.
+ * Declared in order to satisfy jshint.
  * @name getSource
- * @param {string} source
  * @returns {string} source
  */
-const getSource = (SKY_PAGES) => {
+const getSource = function () {
   let componentNames = [];
   let components = [];
   let siblingPaths = [];
   let routes = [];
 
-  SKY_PAGES.entries.forEach((entry) => {
+  this.options.SKY_PAGES.entries.forEach((entry) => {
 
     const pathParams = getPathParams(entry);
     const componentName = getGeneratedComponentName(entry);
@@ -212,8 +212,4 @@ const getSource = (SKY_PAGES) => {
   `;
 };
 
-// fat-arrow method definition does not work here.
-// webpack doesn't apply correct context to this if we did.
-module.exports = function () {
-  return getSource(this.options.SKY_PAGES);
-};
+module.exports = getSource;

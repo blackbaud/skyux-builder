@@ -4,7 +4,11 @@
 const path = require('path');
 const spawn = require('cross-spawn');
 
-module.exports = () => {
+/**
+ * Spawns the karam start command, with auto-watch.
+ * @name watch
+ */
+function watch() {
   spawn(
     'node',
     [
@@ -19,4 +23,6 @@ module.exports = () => {
       stdio: 'inherit'
     }
   );
-};
+}
+
+module.exports = watch;
