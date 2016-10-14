@@ -14,10 +14,10 @@ const failPlugin = require('webpack-fail-plugin');
  * @name getAppName
  * @returns {String} appName
  */
-const getAppBase = () => {
+function getAppBase() {
   const name = require(path.join(process.cwd(), 'package.json')).name;
   return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
-};
+}
 
 /**
  * Called when loaded via require.
@@ -25,7 +25,7 @@ const getAppBase = () => {
  * @param {SkyPagesConfig} skyPagesConfig
  * @returns {WebpackConfig} webpackConfig
  */
-const getWebpackConfig = (skyPagesConfig) => {
+function getWebpackConfig(skyPagesConfig) {
 
   const assetLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-asset');
   const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
@@ -128,7 +128,7 @@ const getWebpackConfig = (skyPagesConfig) => {
       failPlugin
     ]
   };
-};
+}
 
 module.exports = {
   getWebpackConfig: getWebpackConfig

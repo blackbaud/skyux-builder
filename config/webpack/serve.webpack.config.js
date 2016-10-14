@@ -13,7 +13,7 @@ const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
  * Opens the host service url.
  * @name WebpackPluginDone
  */
-const WebpackPluginDone = function () {
+function WebpackPluginDone() {
   let reported = false;
   const base = this.options.SKY_PAGES['blackbaud-sky-pages-out-skyux2'].host.url;
   const host = base + this.options.appConfig.base;
@@ -46,16 +46,16 @@ const WebpackPluginDone = function () {
     // TODO: Pass config to host when it can process it.  For now host just assumes
     // vendor/polyfills/app files.
     // open(host + '?_sp.cfg=' + encodeURIComponent(encoded));
-    open(host + '?local=true');
+    open(host + '?local=true&_cfg=' + encoded);
   });
-};
+}
 
 /**
  * Returns the default webpackConfig.
  * @name getDefaultWebpackConfig
  * @returns {WebpackConfig} webpackConfig
  */
-const getWebpackConfig = (skyPagesConfig) => {
+function getWebpackConfig(skyPagesConfig) {
 
   const skyPagesConfigServe = webpackMerge(skyPagesConfig, {
     command: 'serve'
@@ -97,7 +97,7 @@ const getWebpackConfig = (skyPagesConfig) => {
       WebpackPluginDone
     ]
   });
-};
+}
 
 module.exports = {
   getWebpackConfig: getWebpackConfig
