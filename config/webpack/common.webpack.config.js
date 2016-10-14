@@ -33,8 +33,6 @@ function getWebpackConfig(skyPagesConfig) {
   const resolves = [
     process.cwd(),
     path.join(process.cwd(), 'node_modules'),
-    path.join(__dirname, '..'),
-    path.join(__dirname, '..', 'node_modules'),
     path.join(__dirname, '..', '..', 'node_modules')
   ];
 
