@@ -7,6 +7,7 @@ const path = require('path');
 const util = require('util');
 const logger = require('winston');
 const webpackMerge = require('webpack-merge');
+const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 
 /**
  * Opens the host service url.
@@ -15,7 +16,7 @@ const webpackMerge = require('webpack-merge');
 const WebpackPluginDone = function () {
   let reported = false;
   const base = this.options.SKY_PAGES['blackbaud-sky-pages-out-skyux2'].host.url;
-  const host = base + this.options.devServer.publicPath;
+  const host = base + this.options.appConfig.base;
   const local = util.format(
     'https://localhost:%s%s',
     this.options.devServer.port,
@@ -70,6 +71,7 @@ const getWebpackConfig = (skyPagesConfig) => {
       colors: true,
       compress: true,
       inline: true,
+      contentBase: path.join(process.cwd(), 'src', 'app'),
       historyApiFallback: {
         index: common.output.publicPath
       },
@@ -78,7 +80,7 @@ const getWebpackConfig = (skyPagesConfig) => {
         key: fs.readFileSync(path.join(__dirname, '../../ssl/server.key')),
         cert: fs.readFileSync(path.join(__dirname, '../../ssl/server.crt'))
       },
-      publicPath: common.output.publicPath
+      publicPath: common.appConfig.base
     },
     debug: true,
     devtool: 'cheap-module-eval-source-map',
@@ -91,6 +93,7 @@ const getWebpackConfig = (skyPagesConfig) => {
       ]
     },
     plugins: [
+      new NamedModulesPlugin(),
       WebpackPluginDone
     ]
   });

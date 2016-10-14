@@ -6,7 +6,6 @@ const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const WebpackMd5Hash = require('webpack-md5-hash');
 const failPlugin = require('webpack-fail-plugin');
 
 /**
@@ -35,6 +34,7 @@ const getWebpackConfig = (skyPagesConfig) => {
     path.join(process.cwd(), 'node_modules'),
     path.join(__dirname, '..'),
     path.join(__dirname, '..', 'node_modules'),
+    path.join(__dirname, '..', '..', 'node_modules'),
     path.join(process.cwd(), skyPagesConfig['blackbaud-sky-pages-out-skyux2'].skyux.importPath)
   ];
 
@@ -55,6 +55,7 @@ const getWebpackConfig = (skyPagesConfig) => {
   });
 
   return {
+    appConfig: appConfig,
     entry: {
       polyfills: [path.resolve(__dirname, '..', '..', 'src', 'polyfills.ts')],
       vendor: [path.resolve(__dirname, '..', '..', 'src', 'vendor.ts')],
@@ -65,7 +66,6 @@ const getWebpackConfig = (skyPagesConfig) => {
       filename: '[name].js',
       chunkFilename: '[id].chunk.js',
       path: path.join(process.cwd(), 'dist'),
-      publicPath: appConfig.base
     },
     resolveLoader: {
       root: resolves
@@ -120,14 +120,14 @@ const getWebpackConfig = (skyPagesConfig) => {
     SKY_PAGES: skyPagesConfig,
     plugins: [
       new HtmlWebpackPlugin(appConfig),
+      new webpack.optimize.OccurenceOrderPlugin(true),
       new webpack.optimize.CommonsChunkPlugin({
-        name: ['app', 'skyux', 'vendor', 'polyfills']
+        name: ['skyux', 'vendor', 'polyfills']
       }),
       new webpack.DefinePlugin({
         'SKY_PAGES': JSON.stringify(skyPagesConfig)
       }),
       new ProgressBarPlugin(),
-      new WebpackMd5Hash(),
       failPlugin
     ]
   };

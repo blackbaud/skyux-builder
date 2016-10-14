@@ -31,6 +31,7 @@
     "@types/jasmine": "2.2.33",
     "@types/node": "6.0.38",
     "angular2-template-loader": "0.5.0",
+    "chunk-manifest-webpack-plugin": "0.1.0",
     "codelyzer": "0.0.28",
     "core-js": "2.4.1",
     "cross-spawn": "4.0.0",

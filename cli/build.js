@@ -26,6 +26,11 @@ const build = (argv, skyPagesConfig, webpack) => {
     if (jsonStats.warnings.length) {
       logger.warn(stats.warnings);
     }
+
+    logger.info(stats.toString({
+      chunks: false,
+      colors: false
+    }))
   });
 };
 
