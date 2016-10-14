@@ -180,6 +180,7 @@ const getSource = (SKY_PAGES) => {
     } from '@angular/core';
     import { CommonModule } from '@angular/common';
     import { HttpModule } from '@angular/http';
+    import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     import { ActivatedRoute, RouterModule, Routes } from '@angular/router';
     import { Subscription } from 'rxjs/Subscription';
     import { SkyModule } from '${SKY_PAGES['blackbaud-sky-pages-out-skyux2'].skyux.importPath}/core';
@@ -201,7 +202,14 @@ const getSource = (SKY_PAGES) => {
 
     @NgModule({
       declarations: [ ${join(componentNames, ',')} ],
-      imports: [ CommonModule, HttpModule, SkyModule, routing ],
+      imports: [
+        CommonModule,
+        HttpModule,
+        FormsModule,
+        ReactiveFormsModule,
+        SkyModule,
+        routing
+      ],
       exports: [ ${join(componentNames, ',')} ],
       providers: [
         appRoutingProviders,
