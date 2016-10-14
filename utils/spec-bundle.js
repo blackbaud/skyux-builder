@@ -1,4 +1,5 @@
 /*jslint node: true */
+/*global ROOT_DIR*/
 'use strict';
 
 /**
@@ -73,4 +74,4 @@ function requireAll(requireContext) {
 }
 
 // requires and returns all modules that match
-var modules = requireAll(testContext);
+requireAll(testContext);

@@ -2,9 +2,10 @@
 'use strict';
 
 /**
-* Common Karma configuration shared between local / CI testing.
-*/
-module.exports = function (config) {
+ * Common Karma configuration shared between local / CI testing.
+ * @name getConfig
+ */
+function getConfig(config) {
 
   const path = require('path');
   let testWebpackConfig = require('../webpack/test.webpack.config');
@@ -46,4 +47,6 @@ module.exports = function (config) {
     autoWatch: false,
     singleRun: true
   });
-};
+}
+
+module.exports = getConfig;

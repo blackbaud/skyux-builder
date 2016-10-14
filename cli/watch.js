@@ -4,8 +4,12 @@
 const path = require('path');
 const spawn = require('cross-spawn');
 
-module.exports = () => {
-  const npmProcess = spawn(
+/**
+ * Spawns the karam start command, with auto-watch.
+ * @name watch
+ */
+function watch() {
+  spawn(
     'node',
     [
       '--max-old-space-size=4096',
@@ -19,4 +23,6 @@ module.exports = () => {
       stdio: 'inherit'
     }
   );
-};
+}
+
+module.exports = watch;
