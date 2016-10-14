@@ -182,7 +182,7 @@ const getSource = (SKY_PAGES) => {
     import { HttpModule } from '@angular/http';
     import { ActivatedRoute, RouterModule, Routes } from '@angular/router';
     import { Subscription } from 'rxjs/Subscription';
-    import { SkyModule } from 'blackbaud-skyux2/dist/core';
+    import { SkyModule } from '${SKY_PAGES['blackbaud-sky-pages-out-skyux2'].skyux.importPath}/core';
 
     // Needed before component declarations since the provider is injected.
     const SkyPagesProvider = new OpaqueToken('SKY_PAGES');

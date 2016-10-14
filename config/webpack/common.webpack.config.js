@@ -34,7 +34,8 @@ const getWebpackConfig = (skyPagesConfig) => {
     process.cwd(),
     path.join(process.cwd(), 'node_modules'),
     path.join(__dirname, '..'),
-    path.join(__dirname, '..', 'node_modules')
+    path.join(__dirname, '..', 'node_modules'),
+    path.join(process.cwd(), skyPagesConfig['blackbaud-sky-pages-out-skyux2'].skyux.importPath)
   ];
 
   let appPath;
