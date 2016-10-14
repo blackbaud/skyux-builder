@@ -157,4 +157,23 @@ describe('webpack module loader', () => {
     );
   });
 
+  it('should import SKY UX from the specified import path', () => {
+    const importPath = './some-folder';
+
+    const source = loader.apply({
+      options: {
+        SKY_PAGES: {
+          'blackbaud-sky-pages-out-skyux2': {
+            skyux: {
+              importPath: importPath
+            }
+          },
+          entries: []
+        }
+      }
+    });
+
+    expect(source).toContain(`import { SkyModule } from '${importPath}/core'`);
+  });
+
 });
