@@ -29,14 +29,21 @@ function getWebpackConfig(skyPagesConfig) {
 
   const assetLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-asset');
   const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
+  const skyPagesOutConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
   const resolves = [
     process.cwd(),
     path.join(process.cwd(), 'node_modules'),
     path.join(__dirname, '..', '..', 'node_modules')
   ];
 
+  if (skyPagesOutConfig && skyPagesOutConfig.skyux && skyPagesOutConfig.skyux.importPath) {
+    resolves.push(
+      path.join(process.cwd(), skyPagesOutConfig.skyux.importPath)
+    );
+  }
+
   let appPath;
-  switch (skyPagesConfig['blackbaud-sky-pages-out-skyux2'].mode) {
+  switch (skyPagesOutConfig.mode) {
     case 'advanced':
       appPath = path.join(process.cwd(), 'src', 'main.ts');
     break;
@@ -46,7 +53,7 @@ function getWebpackConfig(skyPagesConfig) {
   }
 
   // Merge in our defaults
-  const appConfig = merge(skyPagesConfig['blackbaud-sky-pages-out-skyux2'].app, {
+  const appConfig = merge(skyPagesOutConfig.app, {
     template: path.resolve(__dirname, '..', '..', 'src', 'main.ejs'),
     base: getAppBase()
   });
