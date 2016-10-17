@@ -18,7 +18,7 @@ module.exports = {
         break;
       case 'test':
       case 'watch':
-        require('./cli/test')(argv);
+        require('./cli/test')(command);
         break;
       case 'version':
         require('./cli/version')();
