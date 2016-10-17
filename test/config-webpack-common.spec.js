@@ -22,20 +22,36 @@ describe('config webpack common', () => {
   it('should look in the specified import path when resolving SKY UX', () => {
     const lib = require('../config/webpack/common.webpack.config');
     const importPath = './some-folder';
+    const cssPath = path.join(importPath, '/scss/sky.scss');
 
-    const config = lib.getWebpackConfig({
+    let config = lib.getWebpackConfig({
       'blackbaud-sky-pages-out-skyux2': {
         mode: 'advanced',
         skyux: {
-          importPath: importPath
+          importPath: importPath,
         }
       }
     });
 
-    const resolves = config.resolve.root;
-    const lastResolve = resolves[resolves.length - 1];
-    const expectedResolve = path.join(process.cwd(), importPath);
+    let alias = config.resolve.alias;
 
-    expect(lastResolve).toBe(expectedResolve);
+    expect(
+      alias['blackbaud-skyux2/dist']
+    ).toBe(path.join(process.cwd(), importPath));
+
+    config = lib.getWebpackConfig({
+      'blackbaud-sky-pages-out-skyux2': {
+        mode: 'advanced',
+        skyux: {
+          cssPath: cssPath
+        }
+      }
+    });
+
+    alias = config.resolve.alias;
+
+    expect(
+      alias['blackbaud-skyux2/dist/css/sky.css']
+    ).toBe(path.join(process.cwd(), cssPath));
   });
 });
