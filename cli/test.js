@@ -1,14 +1,14 @@
 /*jslint node: true */
 'use strict';
 
-const path = require('path');
-const spawn = require('cross-spawn');
-
 /**
  * Spawns the karam start command.
  * @name test
  */
 function test(command) {
+
+  const path = require('path');
+  const spawn = require('cross-spawn');
 
   const karmaConfigPath = path.resolve(
     __dirname,

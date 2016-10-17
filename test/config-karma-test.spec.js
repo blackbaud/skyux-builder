@@ -22,4 +22,5 @@ describe('config karma test', () => {
     });
 
   });
+
 });
