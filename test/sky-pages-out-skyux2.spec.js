@@ -13,20 +13,35 @@ describe('sky-pages-out-skyux2', () => {
 
   it('should handle known commands', () => {
     const lib = require('../index');
-    const cmds = [
-      'build',
-      'serve',
-      'watch',
-      'version'
-    ];
+    const cmds = {
+      'build': {
+        cmd: 'build',
+        lib: 'build'
+      },
+      'serve': {
+        cmd: 'serve',
+        lib: 'serve'
+      },
+      'test': {
+        cmd: 'test',
+        lib: 'test'
+      },
+      'watch': {
+        cmd: 'watch',
+        lib: 'test'
+      },
+      'version': {
+        cmd: 'version',
+        lib: 'version'
+      }
+    };
 
-    cmds.forEach((cmd) => {
-      let called = false;
-      mock('../cli/' + cmd, () => {
-        called = true;
+    Object.keys(cmds).forEach((key) => {
+      mock('../cli/' + cmds[key].lib, () => {
+        cmds[key].called = true;
       });
-      lib.runCommand(cmd);
-      expect(called).toEqual(true);
+      lib.runCommand(cmds[key].cmd);
+      expect(cmds[key].called).toEqual(true);
     });
   });
 

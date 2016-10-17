@@ -3,7 +3,7 @@
 
 const mock = require('mock-require');
 
-describe('cli watch', () => {
+describe('cli test', () => {
   it('should spawn karma', () => {
 
     let called = false;
@@ -11,7 +11,7 @@ describe('cli watch', () => {
       called = true;
     });
 
-    require('../cli/watch')();
+    require('../cli/test')({ _: ['test'] });
     expect(called).toEqual(true);
   });
 });
