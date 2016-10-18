@@ -14,8 +14,14 @@ const failPlugin = require('webpack-fail-plugin');
  * @name getAppName
  * @returns {String} appName
  */
-function getAppBase() {
-  const name = require(path.join(process.cwd(), 'package.json')).name;
+function getAppBase(skyPagesConfig) {
+  let name;
+  if (skyPagesConfig.name) {
+    name = skyPagesConfig.name;
+  } else {
+    name = require(path.join(process.cwd(), 'package.json')).name;
+  }
+
   return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
 }
 
@@ -71,7 +77,7 @@ function getWebpackConfig(skyPagesConfig) {
   // Merge in our defaults
   const appConfig = merge(skyPagesOutConfig.app, {
     template: path.resolve(__dirname, '..', '..', 'src', 'main.ejs'),
-    base: getAppBase()
+    base: getAppBase(skyPagesConfig)
   });
 
   return {
