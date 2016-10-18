@@ -29,17 +29,33 @@ function getWebpackConfig(skyPagesConfig) {
 
   const assetLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-asset');
   const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
+
   const skyPagesOutConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
+
   const resolves = [
     process.cwd(),
     path.join(process.cwd(), 'node_modules'),
     path.join(__dirname, '..', '..', 'node_modules')
   ];
 
-  if (skyPagesOutConfig && skyPagesOutConfig.skyux && skyPagesOutConfig.skyux.importPath) {
-    resolves.push(
-      path.join(process.cwd(), skyPagesOutConfig.skyux.importPath)
-    );
+  let alias = {};
+
+  if (skyPagesOutConfig && skyPagesOutConfig.skyux) {
+    // Order here is very important; the more specific CSS alias must go before
+    // the more generic dist one.
+    if (skyPagesOutConfig.skyux.cssPath) {
+      alias['blackbaud-skyux2/dist/css/sky.css'] = path.join(
+        process.cwd(),
+        skyPagesOutConfig.skyux.cssPath
+      );
+    }
+
+    if (skyPagesOutConfig.skyux.importPath) {
+      alias['blackbaud-skyux2/dist'] = path.join(
+        process.cwd(),
+        skyPagesOutConfig.skyux.importPath
+      );
+    }
   }
 
   let appPath;
@@ -75,6 +91,7 @@ function getWebpackConfig(skyPagesConfig) {
       root: resolves
     },
     resolve: {
+      alias: alias,
       root: resolves,
       extensions: [
         '',

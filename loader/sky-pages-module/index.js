@@ -132,18 +132,10 @@ function join(items, sep) {
  * @returns {string} source
  */
 const getSource = function () {
-  const skyPagesOutConfig = this.options.SKY_PAGES['blackbaud-sky-pages-out-skyux2'];
-
   let componentNames = [];
   let components = [];
   let siblingPaths = [];
   let routes = [];
-
-  let skyuxImportPath = 'blackbaud/skyux2';
-
-  if (skyPagesOutConfig && skyPagesOutConfig.skyux && skyPagesOutConfig.skyux.importPath) {
-    skyuxImportPath = skyPagesOutConfig.skyux.importPath;
-  }
 
   this.options.SKY_PAGES.entries.forEach((entry) => {
 
@@ -191,7 +183,7 @@ const getSource = function () {
     import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     import { ActivatedRoute, RouterModule, Routes } from '@angular/router';
     import { Subscription } from 'rxjs/Subscription';
-    import { SkyModule } from '${skyuxImportPath}/core';
+    import { SkyModule } from 'blackbaud-skyux2/dist/core';
 
     // Needed before component declarations since the provider is injected.
     const SkyPagesProvider = new OpaqueToken('SKY_PAGES');
