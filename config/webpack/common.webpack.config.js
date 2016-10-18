@@ -118,6 +118,13 @@ function getWebpackConfig(skyPagesConfig) {
           query: {
             key: 'appComponentStyles'
           }
+        },
+        {
+          test: /app\-extras\.module\.ts$/,
+          loader: assetLoader,
+          query: {
+            key: 'appExtrasModule'
+          }
         }
       ],
       loaders: [

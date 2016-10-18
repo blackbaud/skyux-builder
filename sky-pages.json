@@ -8,7 +8,7 @@
       "title": "Blackbaud - Sky Pages"
     },
     "skyux": {
-      "importPath": "blackbaud-skyux2/dist"
+      "importPath": "node_modules/blackbaud-skyux2/dist"
     }
   },
   "blackbaud-sky-pages-in-fs": {
@@ -16,7 +16,8 @@
     "siblingPattern": "*.component.ts",
     "assets": {
       "appComponentTemplate": "src/app/app.component.html",
-      "appComponentStyles": "src/app/app.component.scss"
+      "appComponentStyles": "src/app/app.component.scss",
+      "appExtrasModule": "src/app/app-extras.module.ts"
     }
   }
 }
