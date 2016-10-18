@@ -8,7 +8,7 @@
       "title": "Blackbaud - Sky Pages"
     },
     "skyux": {
-      "importPath": "blackbaud-skyux2/dist"
+      "importPath": "node_modules/blackbaud-skyux2/dist"
     }
   },
   "blackbaud-sky-pages-in-fs": {
