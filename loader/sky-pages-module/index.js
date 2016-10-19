@@ -184,6 +184,7 @@ const getSource = function () {
     import { ActivatedRoute, RouterModule, Routes } from '@angular/router';
     import { Subscription } from 'rxjs/Subscription';
     import { SkyModule } from 'blackbaud-skyux2/dist/core';
+    import { AppExtrasModule } from 'sky-pages-internal/app-extras.module';
 
     // Needed before component declarations since the provider is injected.
     const SkyPagesProvider = new OpaqueToken('SKY_PAGES');
@@ -208,6 +209,7 @@ const getSource = function () {
         FormsModule,
         ReactiveFormsModule,
         SkyModule,
+        AppExtrasModule,
         routing
       ],
       exports: [ ${join(componentNames, ',')} ],
