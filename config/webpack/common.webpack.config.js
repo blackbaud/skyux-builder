@@ -35,8 +35,14 @@ function spaPath() {
  * @name getAppName
  * @returns {String} appName
  */
-function getAppBase() {
-  const name = require(spaPath('package.json')).name;
+function getAppBase(skyPagesConfig) {
+  let name;
+  if (skyPagesConfig.name) {
+    name = skyPagesConfig.name;
+  } else {
+    name = require(spaPath('package.json')).name;
+  }
+
   return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
 }
 
@@ -97,8 +103,13 @@ function getWebpackConfig(skyPagesConfig) {
 
   // Merge in our defaults
   const appConfig = merge(skyPagesOutConfig.app, {
+<<<<<<< HEAD
     template: outPath('src', 'main.ejs'),
     base: getAppBase()
+=======
+    template: path.resolve(__dirname, '..', '..', 'src', 'main.ejs'),
+    base: getAppBase(skyPagesConfig)
+>>>>>>> master
   });
 
   return {
