@@ -16,8 +16,7 @@
     "siblingPattern": "*.component.ts",
     "assets": {
       "appComponentTemplate": "src/app/app.component.html",
-      "appComponentStyles": "src/app/app.component.scss",
-      "appExtrasModule": "src/app/app-extras.module.ts"
+      "appComponentStyles": "src/app/app.component.scss"
     }
   }
 }
