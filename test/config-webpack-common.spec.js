@@ -2,8 +2,39 @@
 'use strict';
 
 const path = require('path');
+const fs = require('fs');
 
 describe('config webpack common', () => {
+  function validateAppExtras(spaVersionExists) {
+    const lib = require('../config/webpack/common.webpack.config');
+
+    let existsSync = fs.existsSync;
+
+    spyOn(fs, 'existsSync').and.callFake(function (path) {
+      if (path.indexOf('app-extras.module') >= 0) {
+        return spaVersionExists;
+      }
+
+      return existsSync.apply(fs, arguments);
+    });
+
+    let config = lib.getWebpackConfig({
+      'blackbaud-sky-pages-out-skyux2': {
+        mode: 'advanced'
+      }
+    });
+
+    let alias = config.resolve.alias;
+
+    let expectedAppExtrasAlias = spaVersionExists ?
+      path.join(process.cwd(), 'src', 'app', 'app-extras.module.ts') :
+      path.join(__dirname, '..', 'src', 'app', 'app-extras.module.ts');
+
+    expect(
+      alias['sky-pages-internal/app-extras.module']
+    ).toBe(expectedAppExtrasAlias);
+  }
+
   it('should expose a getWebpackConfig method', () => {
     const lib = require('../config/webpack/common.webpack.config');
     expect(typeof lib.getWebpackConfig).toEqual('function');
@@ -53,5 +84,13 @@ describe('config webpack common', () => {
     expect(
       alias['blackbaud-skyux2/dist/css/sky.css']
     ).toBe(path.join(process.cwd(), cssPath));
+  });
+
+  it('should default to the local app-extras module when not present in the SPA', () => {
+    validateAppExtras(false);
+  });
+
+  it('should allow for an app-extras module to be provided by the SPA project', () => {
+    validateAppExtras(true);
   });
 });

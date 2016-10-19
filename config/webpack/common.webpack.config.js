@@ -40,6 +40,16 @@ function getAppBase() {
   return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
 }
 
+function setAppExtrasAlias(alias) {
+  let appExtrasPath = path.join('src', 'app', 'app-extras.module.ts');
+  let appExtrasResolvedPath = spaPath(appExtrasPath);
+
+  if (!fs.existsSync(appExtrasResolvedPath)) {
+    appExtrasResolvedPath = outPath(appExtrasPath);
+  }
+
+  alias['sky-pages-internal/app-extras.module'] = appExtrasResolvedPath;
+}
 /**
  * Called when loaded via require.
  * @name getWebpackConfig
@@ -73,10 +83,7 @@ function getWebpackConfig(skyPagesConfig) {
     }
   }
 
-  let appExtrasPath = spaPath('src', 'app', 'app-extras.module.ts');
-  if (fs.existsSync(appExtrasPath)) {
-    alias['sky-pages-internal/app-extras.module'] = appExtrasPath;
-  }
+  setAppExtrasAlias(alias);
 
   let appPath;
   switch (skyPagesOutConfig.mode) {
