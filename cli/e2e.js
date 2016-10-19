@@ -4,9 +4,47 @@
 const path = require('path');
 const spawn = require('cross-spawn');
 const logger = require('winston');
+const selenium = require('selenium-standalone');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const webpackMerge = require('webpack-merge');
+
+const spawnOptions = { stdio: 'inherit' };
+let webpackServer;
+let seleniumServer;
+
+/**
+ * Function to get the protractorConfigPath
+ * @name getProtractorConfigPath
+ * @returns {string} protractorConfigPath
+ */
+function getProtractorConfigPath() {
+  return path.resolve(
+    __dirname,
+    '..',
+    'config',
+    'protractor',
+    'protractor.conf.js'
+  );
+}
+
+/**
+ * Handles killing off the selenium and webpack servers.
+ * @name killServers
+ */
+function killServers() {
+
+  logger.info('Cleaning up running servers');
+  if (seleniumServer) {
+    logger.info('Closing selenium server');
+    seleniumServer.kill();
+  }
+
+  if (webpackServer) {
+    logger.info('Closing webpack server');
+    webpackServer.close();
+  }
+}
 
 /**
  * Spawns the protractor command.
@@ -15,31 +53,58 @@ const webpackMerge = require('webpack-merge');
  */
 function spawnProtractor() {
 
-  const webdriverManagerPath = path.resolve(
-    'node_modules',
-    '.bin',
-    'webdriver-manager'
-  );
-
+  logger.info('Beginning e2e tests.');
   const protractorPath = path.resolve(
     'node_modules',
     '.bin',
     'protractor'
   );
 
-  const protractorConfigPath = path.resolve(
-    __dirname,
-    '..',
-    'config',
-    'protractor',
-    'protractor.conf.js'
+  const protractor = spawn(
+    protractorPath,
+    [getProtractorConfigPath()],
+    spawnOptions
   );
 
-  const options = { stdio: 'inherit' };
+  protractor.on('exit', killServers);
+}
 
-  spawn.sync(webdriverManagerPath, ['update'], options);
-  spawn(webdriverManagerPath, ['start'], options);
-  spawn(protractorPath, [protractorConfigPath], options);
+
+/**
+ * Spawns the selenium server if directConnect is not enabled.
+ * @name spawnSelenium
+ */
+function spawnSelenium() {
+
+  const config = require(getProtractorConfigPath()).config;
+
+  // directConnect uses drivers instead of selenium
+  if (config.directConnect) {
+    logger.info('Not using selenium since directConnect was specified.');
+    spawnProtractor();
+  }
+
+  // Assumes we're running selenium oursevles, so we should prep it
+  else if (config.seleniumAddress) {
+    selenium.install({ logger: logger.info }, () => {
+      selenium.start((err, child) => {
+        seleniumServer = child;
+        logger.info('Selenium server is ready.');
+        spawnProtractor();
+      });
+    });
+
+  // Otherwise we need to prep protractor's selenium
+  } else {
+    const webdriverManagerPath = path.resolve(
+      'node_modules',
+      '.bin',
+      'webdriver-manager'
+    );
+    spawn.sync(webdriverManagerPath, ['update'], spawnOptions);
+    spawnProtractor();
+  }
+
 }
 
 /**
@@ -48,20 +113,26 @@ function spawnProtractor() {
  */
 function WebpackDonePlugin() {
   this.plugin('done', () => {
-    logger.info('Webpack ready.  Beginning e2e tests now.');
-    spawnProtractor();
+    logger.info('Webpack server is ready.');
+    spawnSelenium();
   });
 }
 
 /**
- * Spawns the protractor config.
- * @name test
+ * Spawns the protractor command.
+ * @name e2e
  */
 function e2e(argv) {
 
+  // Politely kill any of our servers
+  process.on('SIGINT', () => {
+    killServers();
+    process.exit(1);
+  });
+
   // Allows serve to be run independently
   if (argv.noServe) {
-    spawnProtractor();
+    spawnSelenium();
     return;
   }
 
@@ -76,8 +147,8 @@ function e2e(argv) {
   );
 
   const compiler = webpack(config);
-  const server = new WebpackDevServer(compiler, config.devServer);
-  server.listen(config.devServer.port);
+  webpackServer = new WebpackDevServer(compiler, config.devServer);
+  webpackServer.listen(config.devServer.port);
 }
 
 module.exports = e2e;
