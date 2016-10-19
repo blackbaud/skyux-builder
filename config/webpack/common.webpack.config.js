@@ -16,7 +16,7 @@ const failPlugin = require('webpack-fail-plugin');
  */
 function outPath() {
   let args = [__dirname, '..', '..'].concat(Array.prototype.slice.call(arguments));
-  return path.resolve.apply(path.resolve, args);
+  return path.resolve.apply(path, args);
 }
 
 /**
@@ -26,7 +26,7 @@ function outPath() {
  */
 function spaPath() {
   let args = [process.cwd()].concat(Array.prototype.slice.call(arguments));
-  return path.resolve.apply(path.resolve, args);
+  return path.resolve.apply(path, args);
 }
 
 /**
