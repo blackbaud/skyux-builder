@@ -126,7 +126,6 @@ function getWebpackConfig(skyPagesConfig) {
     resolve: {
       alias: alias,
       root: resolves,
-      fallback: resolves,
       extensions: [
         '',
         '.js',
