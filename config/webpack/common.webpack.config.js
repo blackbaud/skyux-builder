@@ -103,13 +103,8 @@ function getWebpackConfig(skyPagesConfig) {
 
   // Merge in our defaults
   const appConfig = merge(skyPagesOutConfig.app, {
-<<<<<<< HEAD
     template: outPath('src', 'main.ejs'),
-    base: getAppBase()
-=======
-    template: path.resolve(__dirname, '..', '..', 'src', 'main.ejs'),
     base: getAppBase(skyPagesConfig)
->>>>>>> master
   });
 
   return {
