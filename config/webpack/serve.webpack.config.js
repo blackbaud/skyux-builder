@@ -84,14 +84,6 @@ function getWebpackConfig(skyPagesConfig) {
     },
     debug: true,
     devtool: 'cheap-module-eval-source-map',
-    module: {
-      loaders: [
-        {
-          test: /\.json$/,
-          loader: 'json'
-        },
-      ]
-    },
     plugins: [
       new NamedModulesPlugin(),
       WebpackPluginDone
