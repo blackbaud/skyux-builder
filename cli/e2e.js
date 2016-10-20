@@ -78,14 +78,8 @@ function spawnSelenium() {
 
   const config = require(getProtractorConfigPath()).config;
 
-  // directConnect uses drivers instead of selenium
-  if (config.directConnect) {
-    logger.info('Not using selenium since directConnect was specified.');
-    spawnProtractor();
-  }
-
   // Assumes we're running selenium oursevles, so we should prep it
-  else if (config.seleniumAddress) {
+  if (config.seleniumAddress) {
     selenium.install({ logger: logger.info }, () => {
       selenium.start((err, child) => {
         seleniumServer = child;
