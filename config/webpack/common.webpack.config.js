@@ -168,6 +168,10 @@ function getWebpackConfig(skyPagesConfig) {
         {
           test: /\.html$/,
           loader: 'raw-loader'
+        },
+        {
+          test: /\.json$/,
+          loader: 'json'
         }
       ]
     },
