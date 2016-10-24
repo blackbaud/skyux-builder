@@ -69,7 +69,6 @@ function spawnProtractor() {
   protractor.on('exit', killServers);
 }
 
-
 /**
  * Spawns the selenium server if directConnect is not enabled.
  * @name spawnSelenium
@@ -135,7 +134,12 @@ function e2e(argv) {
   const config = webpackMerge(
     webpackConfig.getWebpackConfig(skyPagesConfig.getSkyPagesConfig()),
     {
-      argv: { noOpen: true },
+      argv: {
+        noOpen: true
+      },
+      devServer: {
+        colors: false
+      },
       plugins: [WebpackDonePlugin]
     }
   );
