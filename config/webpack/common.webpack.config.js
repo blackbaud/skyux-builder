@@ -1,6 +1,7 @@
 /*jslint node: true */
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const merge = require('merge');
 const webpack = require('webpack');
@@ -9,16 +10,52 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const failPlugin = require('webpack-fail-plugin');
 
 /**
+ * Takes one or more path parts and returns the fully-qualified path to the file
+ * contained in this project (sky-pages-out-skyux2).
+ * @returns {String} The fully-qualified path.
+ */
+function outPath() {
+  let args = [__dirname, '..', '..'].concat(Array.prototype.slice.call(arguments));
+  return path.resolve.apply(path, args);
+}
+
+/**
+ * Takes one or more path parts and returns the fully-qualified path to the file
+ * contained in the SPA project.
+ * @returns {String} The fully-qualified path.
+ */
+function spaPath() {
+  let args = [process.cwd()].concat(Array.prototype.slice.call(arguments));
+  return path.resolve.apply(path, args);
+}
+
+/**
  * Reads the name field of package.json.
  * Removes "blackbaud-sky-pages-spa-" and wraps in "/".
  * @name getAppName
  * @returns {String} appName
  */
-function getAppBase() {
-  const name = require(path.join(process.cwd(), 'package.json')).name;
+function getAppBase(skyPagesConfig) {
+  let name;
+  if (skyPagesConfig.name) {
+    name = skyPagesConfig.name;
+  } else {
+    name = require(spaPath('package.json')).name;
+  }
+
   return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
 }
 
+function setAppExtrasAlias(alias) {
+  let appExtrasPath = path.join('src', 'app', 'app-extras.module.ts');
+  let appExtrasResolvedPath = spaPath(appExtrasPath);
+
+  if (!fs.existsSync(appExtrasResolvedPath)) {
+    appExtrasResolvedPath = outPath(appExtrasPath);
+  }
+
+  alias['sky-pages-internal/app-extras.module'] = appExtrasResolvedPath;
+}
 /**
  * Called when loaded via require.
  * @name getWebpackConfig
@@ -27,15 +64,15 @@ function getAppBase() {
  */
 function getWebpackConfig(skyPagesConfig) {
 
-  const assetLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-asset');
-  const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
+  const assetLoader = outPath('loader', 'sky-pages-asset');
+  const moduleLoader = outPath('loader', 'sky-pages-module');
 
   const skyPagesOutConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
 
   const resolves = [
     process.cwd(),
-    path.join(process.cwd(), 'node_modules'),
-    path.join(__dirname, '..', '..', 'node_modules')
+    spaPath('node_modules'),
+    outPath('node_modules')
   ];
 
   let alias = {};
@@ -44,48 +81,44 @@ function getWebpackConfig(skyPagesConfig) {
     // Order here is very important; the more specific CSS alias must go before
     // the more generic dist one.
     if (skyPagesOutConfig.skyux.cssPath) {
-      alias['blackbaud-skyux2/dist/css/sky.css'] = path.join(
-        process.cwd(),
-        skyPagesOutConfig.skyux.cssPath
-      );
+      alias['blackbaud-skyux2/dist/css/sky.css'] = spaPath(skyPagesOutConfig.skyux.cssPath);
     }
 
     if (skyPagesOutConfig.skyux.importPath) {
-      alias['blackbaud-skyux2/dist'] = path.join(
-        process.cwd(),
-        skyPagesOutConfig.skyux.importPath
-      );
+      alias['blackbaud-skyux2/dist'] = spaPath(skyPagesOutConfig.skyux.importPath);
     }
   }
+
+  setAppExtrasAlias(alias);
 
   let appPath;
   switch (skyPagesOutConfig.mode) {
     case 'advanced':
-      appPath = path.join(process.cwd(), 'src', 'main.ts');
-    break;
+      appPath = spaPath('src', 'main.ts');
+      break;
     default:
-      appPath = path.resolve(__dirname, '..', '..', 'src', 'main.ts');
-    break;
+      appPath = outPath('src', 'main.ts');
+      break;
   }
 
   // Merge in our defaults
   const appConfig = merge(skyPagesOutConfig.app, {
-    template: path.resolve(__dirname, '..', '..', 'src', 'main.ejs'),
-    base: getAppBase()
+    template: outPath('src', 'main.ejs'),
+    base: getAppBase(skyPagesConfig)
   });
 
   return {
     appConfig: appConfig,
     entry: {
-      polyfills: [path.resolve(__dirname, '..', '..', 'src', 'polyfills.ts')],
-      vendor: [path.resolve(__dirname, '..', '..', 'src', 'vendor.ts')],
-      skyux: [path.resolve(__dirname, '..', '..', 'src', 'skyux.ts')],
+      polyfills: [outPath('src', 'polyfills.ts')],
+      vendor: [outPath('src', 'vendor.ts')],
+      skyux: [outPath('src', 'skyux.ts')],
       app: [appPath]
     },
     output: {
       filename: '[name].js',
       chunkFilename: '[id].chunk.js',
-      path: path.join(process.cwd(), 'dist'),
+      path: spaPath('dist'),
     },
     resolveLoader: {
       root: resolves
@@ -135,6 +168,10 @@ function getWebpackConfig(skyPagesConfig) {
         {
           test: /\.html$/,
           loader: 'raw-loader'
+        },
+        {
+          test: /\.json$/,
+          loader: 'json'
         }
       ]
     },

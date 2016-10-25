@@ -14,6 +14,6 @@ import { SkyPagesModule } from './sky-pages.module';
       RouterModule,
       SkyPagesModule
     ],
-    bootstrap: [ AppComponent ],
+    bootstrap: [ AppComponent ]
 })
-export class AppModule {}
+export class AppModule { }
