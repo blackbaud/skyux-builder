@@ -2,7 +2,6 @@
 'use strict';
 
 const path = require('path');
-const tsnode = require('ts-node');
 const SpecReporter = require('jasmine-spec-reporter');
 
 exports.config = {
@@ -31,7 +30,7 @@ exports.config = {
   },
   useAllAngular2AppRoots: true,
   beforeLaunch: function () {
-    tsnode.register();
+    require('ts-node').register();
   },
 
   onPrepare: function () {

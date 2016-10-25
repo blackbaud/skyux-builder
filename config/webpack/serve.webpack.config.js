@@ -2,7 +2,6 @@
 'use strict';
 
 const fs = require('fs');
-const open = require('open');
 const path = require('path');
 const util = require('util');
 const logger = require('winston');
@@ -46,6 +45,7 @@ function WebpackPluginDone() {
     // TODO: Pass config to host when it can process it.  For now host just assumes
     // vendor/polyfills/app files.
     // open(host + '?_sp.cfg=' + encodeURIComponent(encoded));
+    const open = require('open');
     open(host + '?local=true&_cfg=' + encoded);
   });
 }

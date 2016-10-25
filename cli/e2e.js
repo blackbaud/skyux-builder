@@ -60,7 +60,7 @@ function spawnProtractor() {
     'protractor'
   );
 
-  const protractor = spawn(
+  const protractor = spawn.spawn(
     protractorPath,
     [getProtractorConfigPath()],
     spawnOptions
@@ -102,9 +102,9 @@ function spawnSelenium() {
 
 /**
  * Webpack plugin which binds to the done event.
- * @name WebpackDonePlugin
+ * @name WebpackPluginDoneE2E
  */
-function WebpackDonePlugin() {
+function WebpackPluginDoneE2E() {
   this.plugin('done', () => {
     logger.info('Webpack server is ready.');
     spawnSelenium();
@@ -116,6 +116,10 @@ function WebpackDonePlugin() {
  * @name e2e
  */
 function e2e(argv) {
+
+  // Multiple runs could cause conflicts
+  webpackServer = null;
+  seleniumServer = null;
 
   // Politely kill any of our servers
   process.on('SIGINT', () => {
@@ -140,7 +144,7 @@ function e2e(argv) {
       devServer: {
         colors: false
       },
-      plugins: [WebpackDonePlugin]
+      plugins: [WebpackPluginDoneE2E]
     }
   );
 

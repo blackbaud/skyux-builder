@@ -4,7 +4,6 @@
 describe('config protractor test', () => {
 
   const mock = require('mock-require');
-  const proxyquire = require('proxyquire');
 
   let lib;
   let config;
@@ -18,7 +17,7 @@ describe('config protractor test', () => {
     expect(lib.config).toBeDefined();
   });
 
-  it('sholud provide a method for beforeLaunch', () => {
+  it('should provide a method for beforeLaunch', () => {
     let called = false;
     mock('ts-node', {
       register: () => {
@@ -29,6 +28,7 @@ describe('config protractor test', () => {
     expect(config.beforeLaunch).toBeDefined();
     config.beforeLaunch();
     expect(called).toBe(true);
+    
     mock.stop('ts-node');
 
   });
