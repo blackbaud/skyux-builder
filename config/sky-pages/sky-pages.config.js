@@ -5,6 +5,13 @@ const fs = require('fs');
 const path = require('path');
 const merge = require('merge');
 
+/**
+ * Resolves a path given a root path and an array-like arguments object.
+ * @name resolve
+ * @param {String} root The root path.
+ * @param {Array} args An array or array-like object of additional path parts to add to the root.
+ * @returns {String} The resolved path.
+*/
 function resolve(root, args) {
   args = root.concat(Array.prototype.slice.call(args));
   return path.resolve.apply(path, args);
