@@ -136,11 +136,13 @@ function e2e(argv) {
   const webpackConfig = require('../config/webpack/serve.webpack.config');
   const skyPagesConfig = require('../config/sky-pages/sky-pages.config');
   const config = webpackMerge(
-    webpackConfig.getWebpackConfig(skyPagesConfig.getSkyPagesConfig()),
-    {
-      argv: {
+    webpackConfig.getWebpackConfig(
+      {
         noOpen: true
       },
+      skyPagesConfig.getSkyPagesConfig()
+    ),
+    {
       devServer: {
         colors: false
       },

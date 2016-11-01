@@ -6,7 +6,7 @@ const mock = require('mock-require');
 const logger = require('winston');
 const selenium = require('selenium-standalone');
 
-describe('cli test', () => {
+describe('cli e2e', () => {
 
   let returnSeleniumServer;
   let webpackDevServerCalled;
