@@ -5,8 +5,12 @@ function getWebpackConfig(skyPagesConfig) {
   const path = require('path');
 
   const DefinePlugin = require('webpack/lib/DefinePlugin');
+  const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+  const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+  const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
-  const srcPath = path.resolve(process.cwd(), 'src');
+  const srcPath = path.resolve(process.cwd(), 'src', 'app');
   const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
   const resolves = [
     process.cwd(),
@@ -24,55 +28,47 @@ function getWebpackConfig(skyPagesConfig) {
     devtool: 'inline-source-map',
 
     resolveLoader: {
-      root: resolves
+      modules: resolves
     },
     resolve: {
-      root: resolves,
+      modules: resolves,
       extensions: [
-        '',
         '.js',
         '.ts'
       ],
     },
 
-    debug: true,
-
     module: {
 
-      preLoaders: [
+      loaders: [
         {
+          enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
           loaders: [
             moduleLoader
           ]
         },
+
         {
+          enforce: 'pre',
           test: /\.ts$/,
           loader: 'tslint-loader',
           exclude: excludes
         },
 
         {
+          enforce: 'pre',
           test: /\.js$/,
           loader: 'source-map-loader',
           exclude: excludes
-        }
-
-      ],
-
-      loaders: [
-
-        {
-          test: /\.ts$/,
-          loaders: [
-            'ts-loader?silent=true',
-            'angular2-template-loader'
-          ]
         },
 
         {
           test: /\.ts$/,
-          loader: 'ts-loader',
+          loaders: [
+            'awesome-typescript-loader',
+            'angular2-template-loader'
+          ],
           exclude: [/\.e2e\.ts$/]
         },
 
@@ -96,11 +92,8 @@ function getWebpackConfig(skyPagesConfig) {
           loader: 'raw-loader!sass-loader'
         }
 
-      ],
-
-      postLoaders: [
-
         // {
+        //   enforce: 'post',
         //   test: /\.(js|ts)$/,
         //   loader: 'istanbul-instrumenter-loader!source-map-inline-loader',
         //   include: srcPath,
@@ -114,12 +107,21 @@ function getWebpackConfig(skyPagesConfig) {
         // }
 
       ]
+
     },
 
-    // Referenced by the module loader.
-    SKY_PAGES: skyPagesConfig,
-
     plugins: [
+
+      new LoaderOptionsPlugin({
+        debug: true,
+        options: {
+          tslint: {
+            emitErrors: false,
+            failOnHint: false,
+            resourcePath: 'src'
+          }
+        }
+      }),
 
       new DefinePlugin({
         'ENV': JSON.stringify(ENV),
@@ -132,16 +134,16 @@ function getWebpackConfig(skyPagesConfig) {
         'ROOT_DIR': JSON.stringify(srcPath),
         'SKY_PAGES': JSON.stringify(skyPagesConfig)
       }),
+
+      new ContextReplacementPlugin(
+        // The (\\|\/) piece accounts for path separators in *nix and Windows
+        /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+        skyPagesConfigUtil.spaPath('src') // location of your src
+      )
     ],
 
-    tslint: {
-      emitErrors: false,
-      failOnHint: false,
-      resourcePath: 'src'
-    },
-
     node: {
-      global: 'window',
+      global: true,
       process: false,
       crypto: 'empty',
       module: false,

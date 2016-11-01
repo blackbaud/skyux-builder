@@ -107,7 +107,7 @@ describe('webpack module loader', () => {
         }
       }
     });
-    expect(source).toContain("import { MeComponent } from 'me.component.ts'");
+    expect(source).toContain("import { MeComponent } from 'sky-pages-spa/me.component'");
   });
 
   it('should generate a component name', () => {

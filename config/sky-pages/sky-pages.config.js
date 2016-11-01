@@ -5,6 +5,11 @@ const fs = require('fs');
 const path = require('path');
 const merge = require('merge');
 
+function resolve(root, args) {
+  args = root.concat(Array.prototype.slice.call(args));
+  return path.resolve.apply(path, args);
+}
+
 module.exports = {
   /**
    * Iterates object's devDependencies to find applicable modules.
@@ -12,7 +17,7 @@ module.exports = {
    * @name getSkyPagesConfig
    * @returns [SkyPagesConfig] skyPagesConfig
    */
-  getSkyPagesConfig: () => {
+  getSkyPagesConfig: function () {
     const jsonPath = path.join(process.cwd(), 'package.json');
     const skyPagesPath = path.join(process.cwd(), 'sky-pages.json');
     let config = require(path.join(__dirname, '../../sky-pages.json'));
@@ -39,5 +44,40 @@ module.exports = {
     }
 
     return config;
+  },
+
+  /**
+   * Reads the name field of package.json.
+   * Removes "blackbaud-sky-pages-spa-" and wraps in "/".
+   * @name getAppName
+   * @returns {String} appName
+   */
+  getAppBase: function (skyPagesConfig) {
+    let name;
+    if (skyPagesConfig.name) {
+      name = skyPagesConfig.name;
+    } else {
+      name = require(this.spaPath('package.json')).name;
+    }
+
+    return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
+  },
+
+  /**
+   * Takes one or more path parts and returns the fully-qualified path to the file
+   * contained in this project (sky-pages-out-skyux2).
+   * @returns {String} The fully-qualified path.
+   */
+  outPath: function () {
+    return resolve([__dirname, '..', '..'], arguments);
+  },
+
+  /**
+   * Takes one or more path parts and returns the fully-qualified path to the file
+   * contained in the SPA project.
+   * @returns {String} The fully-qualified path.
+   */
+  spaPath: function () {
+    return resolve([process.cwd()], arguments);
   }
 };

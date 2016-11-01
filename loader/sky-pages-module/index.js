@@ -91,25 +91,25 @@ function getComponentDefinition(name, path, params) {
   });
 
   return `
-    @Component({ template: require('${path}') })
-    class ${name} implements OnInit, OnDestroy {
-     private sub: Subscription;
-     ${paramsExpose}
+@Component({ template: require('${path}') })
+class ${name} implements OnInit, OnDestroy {
+  private sub: Subscription;
+  ${paramsExpose}
 
-     constructor(
-       @Inject(SkyPagesProvider) public SKY_PAGES: any,
-       private route: ActivatedRoute
-     ) { }
-     ngOnInit() {
-       this.sub = this.route.params.subscribe(params => {
-         ${paramsSet}
-       });
-     }
+  constructor(
+    @Inject(SkyPagesProvider) public SKY_PAGES: any,
+    private route: ActivatedRoute
+  ) { }
+  ngOnInit() {
+    this.sub = this.route.params.subscribe(params => {
+      ${paramsSet}
+    });
+  }
 
-     ngOnDestroy() {
-       this.sub.unsubscribe();
-     }
-    }
+  ngOnDestroy() {
+    this.sub.unsubscribe();
+  }
+}
   `;
 }
 
@@ -123,6 +123,10 @@ function getComponentDefinition(name, path, params) {
 function join(items, sep) {
   sep = sep || '\n';
   return items.join(sep);
+}
+
+function importPath(path) {
+  return 'sky-pages-spa/' + path.replace(/\.[^\.]+$/, '');
 }
 
 /**
@@ -145,7 +149,7 @@ const getSource = function () {
     entry.siblings.forEach((sibling) => {
       const siblingName = getSiblingComponentName(sibling);
       componentNames.push(siblingName);
-      siblingPaths.push(`import { ${siblingName} } from '${sibling.pathWeb}'`);
+      siblingPaths.push(`import { ${siblingName} } from '${importPath(sibling.pathWeb)}'`);
     });
 
     routes.push(`{ path: '${pathParams.path}', component: ${componentName}}`);
@@ -162,63 +166,65 @@ const getSource = function () {
   if (componentNames.indexOf('NotFoundComponent') === -1) {
     componentNames.push('NotFoundComponent');
     components.push(`
-      @Component({ template: '404' })
-      class NotFoundComponent {}
+@Component({ template: '404' })
+class NotFoundComponent {}
     `);
   }
 
   return `
-    import {
-      Component,
-      enableProdMode,
-      Inject,
-      NgModule,
-      NgZone,
-      OnInit,
-      OnDestroy,
-      OpaqueToken
-    } from '@angular/core';
-    import { CommonModule } from '@angular/common';
-    import { HttpModule } from '@angular/http';
-    import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-    import { ActivatedRoute, RouterModule, Routes } from '@angular/router';
-    import { Subscription } from 'rxjs/Subscription';
-    import { SkyModule } from 'blackbaud-skyux2/dist/core';
-    import { AppExtrasModule } from 'sky-pages-internal/app-extras.module';
+import {
+  Component,
+  enableProdMode,
+  Inject,
+  NgModule,
+  NgZone,
+  OnInit,
+  OnDestroy,
+  OpaqueToken
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpModule } from '@angular/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule, Routes } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
+import { SkyModule } from 'blackbaud-skyux2/dist/core';
+import { AppExtrasModule } from 'sky-pages-internal/app-extras.module';
 
-    // Needed before component declarations since the provider is injected.
-    const SkyPagesProvider = new OpaqueToken('SKY_PAGES');
+declare var SKY_PAGES: any;
 
-    ${join(siblingPaths)}
-    ${join(components)}
+// Needed before component declarations since the provider is injected.
+const SkyPagesProvider = new OpaqueToken('SKY_PAGES');
 
-    // Routes need to be defined after their corresponding components
-    const appRoutingProviders: any[] = [];
-    const routes: Routes = [ ${join(routes, ',')} ];
-    const routing = RouterModule.forRoot(routes);
+${join(siblingPaths)}
+${join(components)}
 
-    if (SKY_PAGES.command === 'build') {
-      enableProdMode();
-    }
+// Routes need to be defined after their corresponding components
+const appRoutingProviders: any[] = [];
+const routes: Routes = [ ${join(routes, ',')} ];
+const routing = RouterModule.forRoot(routes);
 
-    @NgModule({
-      declarations: [ ${join(componentNames, ',')} ],
-      imports: [
-        CommonModule,
-        HttpModule,
-        FormsModule,
-        ReactiveFormsModule,
-        SkyModule,
-        AppExtrasModule,
-        routing
-      ],
-      exports: [ ${join(componentNames, ',')} ],
-      providers: [
-        appRoutingProviders,
-        { provide: SkyPagesProvider, useValue: SKY_PAGES }
-      ]
-    })
-    export class SkyPagesModule {}
+if (SKY_PAGES.command === 'build') {
+  enableProdMode();
+}
+
+@NgModule({
+  declarations: [ ${join(componentNames, ',')} ],
+  imports: [
+    CommonModule,
+    HttpModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SkyModule,
+    AppExtrasModule,
+    routing
+  ],
+  exports: [ ${join(componentNames, ',')} ],
+  providers: [
+    appRoutingProviders,
+    { provide: SkyPagesProvider, useValue: SKY_PAGES }
+  ]
+})
+export class SkyPagesModule {}
   `;
 };
 

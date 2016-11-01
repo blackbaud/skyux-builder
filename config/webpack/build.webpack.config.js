@@ -6,7 +6,7 @@ const path = require('path');
 const util = require('util');
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
-const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
+// const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
 
 /**
  * Writes a json object to the dist folder.
@@ -86,11 +86,13 @@ function getWebpackConfig(skyPagesConfig) {
     plugins: [
       SaveStats,
       SaveMetadata,
-      new webpack.optimize.DedupePlugin(),
-      new ChunkManifestPlugin({
-        filename: 'manifest.json',
-        manifestVariable: 'webpackManifest'
-      }),
+      // These plugins don't work with Webpack 2.  If they're truly needed then we need
+      // to revisit at some point.
+      // new webpack.optimize.DedupePlugin(),
+      // new ChunkManifestPlugin({
+      //   filename: 'manifest.json',
+      //   manifestVariable: 'webpackManifest'
+      // }),
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,
         comments: false,
