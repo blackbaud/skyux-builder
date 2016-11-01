@@ -125,7 +125,15 @@ function join(items, sep) {
   return items.join(sep);
 }
 
+/**
+ * Converts the file path to an aliased path that can be pulled in by Webpack
+ * @name importPath
+ * @param {Array} path The path to convert.
+ * @returns {string} The converted path.
+ */
 function importPath(path) {
+  // Prepend the alias and remove the file extension since the file extension causes
+  // a TypeScript error.
   return 'sky-pages-spa/' + path.replace(/\.[^\.]+$/, '');
 }
 

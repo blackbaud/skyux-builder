@@ -140,16 +140,7 @@ function getWebpackConfig(skyPagesConfig) {
         /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
         skyPagesConfigUtil.spaPath('src') // location of your src
       )
-    ],
-
-    node: {
-      global: true,
-      process: false,
-      crypto: 'empty',
-      module: false,
-      clearImmediate: false,
-      setImmediate: false
-    }
+    ]
 
   };
 }
