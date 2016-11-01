@@ -56,6 +56,8 @@ describe('config webpack serve', () => {
 
   afterEach(() => {
     mock.stop('open');
+    lib = null;
+    config = null;
   });
 
   it('should expose a getWebpackConfig method', () => {

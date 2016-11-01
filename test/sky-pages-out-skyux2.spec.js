@@ -18,6 +18,10 @@ describe('sky-pages-out-skyux2', () => {
         cmd: 'build',
         lib: 'build'
       },
+      'e2e': {
+        cmd: 'e2e',
+        lib: 'e2e'
+      },
       'serve': {
         cmd: 'serve',
         lib: 'serve'

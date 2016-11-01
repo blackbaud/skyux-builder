@@ -13,6 +13,9 @@ module.exports = {
       case 'build':
         require('./cli/build')(argv, skyPagesConfig, webpack);
         break;
+      case 'e2e':
+        require('./cli/e2e')(argv);
+        break;
       case 'serve':
         require('./cli/serve')(argv, skyPagesConfig, webpack, WebpackDevServer);
         break;
