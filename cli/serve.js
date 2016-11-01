@@ -17,8 +17,7 @@ const logger = require('winston');
 function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
 
   const webpackConfig = require('../config/webpack/serve.webpack.config');
-  let config = webpackConfig.getWebpackConfig(skyPagesConfig);
-  config.argv = argv;
+  let config = webpackConfig.getWebpackConfig(argv, skyPagesConfig);
 
   /* istanbul ignore else */
   if (config.devServer.inline) {

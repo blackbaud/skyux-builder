@@ -17,11 +17,21 @@ describe('config webpack build', () => {
     });
 
     const lib = require('../config/webpack/build.webpack.config');
+    const skyPagesConfig = {
+      CUSTOM_PROP2: true,
+      'blackbaud-sky-pages-out-skyux2': 'advanced'
+    };
     const config = lib.getWebpackConfig({
       CUSTOM_PROP2: true,
       'blackbaud-sky-pages-out-skyux2': 'advanced'
     });
-    expect(config.SKY_PAGES.CUSTOM_PROP2).toEqual(true);
+
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'DefinePlugin') {
+        expect(JSON.parse(plugin.options.SKY_PAGES)).toBe(skyPagesConfig.CUSTOM_PROP2);
+      }
+    });
+
     mock.stop(f);
   });
 

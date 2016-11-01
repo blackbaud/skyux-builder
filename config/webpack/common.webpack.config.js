@@ -8,42 +8,18 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const failPlugin = require('webpack-fail-plugin');
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
-/**
- * Takes one or more path parts and returns the fully-qualified path to the file
- * contained in this project (sky-pages-out-skyux2).
- * @returns {String} The fully-qualified path.
- */
-function outPath() {
-  let args = [__dirname, '..', '..'].concat(Array.prototype.slice.call(arguments));
-  return path.resolve.apply(path, args);
-}
-
-/**
- * Takes one or more path parts and returns the fully-qualified path to the file
- * contained in the SPA project.
- * @returns {String} The fully-qualified path.
- */
 function spaPath() {
-  let args = [process.cwd()].concat(Array.prototype.slice.call(arguments));
-  return path.resolve.apply(path, args);
+  return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
 }
 
-/**
- * Reads the name field of package.json.
- * Removes "blackbaud-sky-pages-spa-" and wraps in "/".
- * @name getAppName
- * @returns {String} appName
- */
-function getAppBase(skyPagesConfig) {
-  let name;
-  if (skyPagesConfig.name) {
-    name = skyPagesConfig.name;
-  } else {
-    name = require(spaPath('package.json')).name;
-  }
-
-  return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
+function outPath() {
+  return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
 }
 
 function setAppExtrasAlias(alias) {
@@ -75,7 +51,9 @@ function getWebpackConfig(skyPagesConfig) {
     outPath('node_modules')
   ];
 
-  let alias = {};
+  let alias = {
+    'sky-pages-spa/src': spaPath('src')
+  };
 
   if (skyPagesOutConfig && skyPagesOutConfig.skyux) {
     // Order here is very important; the more specific CSS alias must go before
@@ -104,11 +82,10 @@ function getWebpackConfig(skyPagesConfig) {
   // Merge in our defaults
   const appConfig = merge(skyPagesOutConfig.app, {
     template: outPath('src', 'main.ejs'),
-    base: getAppBase(skyPagesConfig)
+    base: skyPagesConfigUtil.getAppBase(skyPagesConfig)
   });
 
   return {
-    appConfig: appConfig,
     entry: {
       polyfills: [outPath('src', 'polyfills.ts')],
       vendor: [outPath('src', 'vendor.ts')],
@@ -121,24 +98,25 @@ function getWebpackConfig(skyPagesConfig) {
       path: spaPath('dist'),
     },
     resolveLoader: {
-      root: resolves
+      modules: resolves
     },
     resolve: {
       alias: alias,
-      root: resolves,
+      modules: resolves,
       extensions: [
-        '',
         '.js',
         '.ts'
-      ],
+      ]
     },
     module: {
-      preLoaders: [
+      rules: [
         {
+          enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
           loader: moduleLoader
         },
         {
+          enforce: 'pre',
           test: /app\.component\.html$/,
           loader: assetLoader,
           query: {
@@ -146,18 +124,25 @@ function getWebpackConfig(skyPagesConfig) {
           }
         },
         {
+          enforce: 'pre',
           test: /app\.component\.scss$/,
           loader: assetLoader,
           query: {
             key: 'appComponentStyles'
           }
-        }
-      ],
-      loaders: [
+        },
         {
           test: /\.ts$/,
           loaders: [
-            'ts-loader?silent=true',
+            {
+              loader: 'awesome-typescript-loader',
+              options: {
+                // Ignore the "Cannot find module" error that occurs when referencing
+                // an aliased file.  Webpack will still throw an error when a module
+                // cannot be resolved via a file path or alias.
+                ignoreDiagnostics: [2307]
+              }
+            },
             'angular2-template-loader'
           ]
         },
@@ -175,18 +160,27 @@ function getWebpackConfig(skyPagesConfig) {
         }
       ]
     },
-    SKY_PAGES: skyPagesConfig,
     plugins: [
+      new ForkCheckerPlugin(),
       new HtmlWebpackPlugin(appConfig),
-      new webpack.optimize.OccurenceOrderPlugin(true),
-      new webpack.optimize.CommonsChunkPlugin({
+      new CommonsChunkPlugin({
         name: ['skyux', 'vendor', 'polyfills']
       }),
       new webpack.DefinePlugin({
         'SKY_PAGES': JSON.stringify(skyPagesConfig)
       }),
       new ProgressBarPlugin(),
-      failPlugin
+      failPlugin,
+      new LoaderOptionsPlugin({
+        options: {
+          SKY_PAGES: skyPagesConfig
+        }
+      }),
+      new ContextReplacementPlugin(
+        // The (\\|\/) piece accounts for path separators in *nix and Windows
+        /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+        spaPath('src') // location of your src
+      )
     ]
   };
 }

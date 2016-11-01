@@ -70,4 +70,16 @@ describe('config sky-pages', () => {
     expect(called).toEqual(true);
   });
 
+  it('should read name from sky-pages.json else package.json', () => {
+    const name = 'sky-pages-name';
+    const lib = require('../config/sky-pages/sky-pages.config');
+    const appBase = lib.getAppBase({
+      name: name,
+      'blackbaud-sky-pages-out-skyux2': {
+        mode: 'advanced'
+      }
+    });
+    expect(appBase).toEqual('/' + name + '/');
+  });
+
 });
