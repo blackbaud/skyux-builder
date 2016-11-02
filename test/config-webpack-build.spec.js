@@ -35,33 +35,11 @@ describe('config webpack build', () => {
     mock.stop(f);
   });
 
-  it('should write stats to a stats.json file', () => {
-    spyOn(fs, 'writeFileSync');
-
-    const lib = require('../config/webpack/build.webpack.config');
-    const config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: ''
-      }
+  it('should write metadata.json file and match entries order', () => {
+    let json;
+    spyOn(fs, 'writeFileSync').and.callFake((file, content) => {
+      json = JSON.parse(content);
     });
-
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'SaveStats') {
-        plugin.apply({
-          plugin: (evt, cb) => {
-            cb({
-              toJson: () => {}
-            });
-          }
-        });
-      }
-    });
-
-    expect(fs.writeFileSync).toHaveBeenCalled();
-  });
-
-  it('should write metadata to a metadata.json file', () => {
-    spyOn(fs, 'writeFileSync');
 
     const lib = require('../config/webpack/build.webpack.config');
     const config = lib.getWebpackConfig({
@@ -81,10 +59,25 @@ describe('config webpack build', () => {
                     test: {
                       source: () => {}
                     },
-                    'test.js': {
+                    'test1.js': {
+                      source: () => {}
+                    },
+                    'test2.js': {
+                      source: () => {}
+                    },
+                    'test3.js': {
                       source: () => {}
                     }
-                  }
+                  },
+                  getStats: () => ({
+                    toJson: () => ({
+                      chunks: [
+                        { entry: false },
+                        { entry: false },
+                        { entry: true }
+                      ]
+                    })
+                  })
                 }, () => {});
               break;
               case 'done':
@@ -97,6 +90,9 @@ describe('config webpack build', () => {
     });
 
     expect(fs.writeFileSync).toHaveBeenCalled();
+    expect(json[0].name).toEqual('test3.js');
+    expect(json[1].name).toEqual('test1.js');
+    expect(json[2].name).toEqual('test2.js');
   });
 
   it('should add the SKY_PAGES_READY_X variable to each entry', () => {
@@ -121,7 +117,14 @@ describe('config webpack build', () => {
                 };
 
                 cb({
-                  assets: assets
+                  assets: assets,
+                  getStats: () => ({
+                    toJson: () => ({
+                      chunks: [
+                        { entry: true }
+                      ]
+                    })
+                  })
                 }, () => {});
 
                 const source = assets['test.js'].source();

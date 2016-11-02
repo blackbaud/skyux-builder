@@ -6,30 +6,6 @@ const path = require('path');
 const util = require('util');
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
-// const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
-
-/**
- * Writes a json object to the dist folder.
- * @name writeFileToDist
- * @param {String} name
- * @param {String} json
- */
-function writeJson(name, json) {
-  fs.writeFileSync(
-    path.join(process.cwd(), 'dist', name),
-    JSON.stringify(json, null, '\t')
-  );
-}
-
-/**
- * Saves the stats.json file
- * @name SaveStats
- */
-function SaveStats() {
-  this.plugin('done', (stats) => {
-    writeJson('stats.json', stats.toJson());
-  });
-}
 
 /**
  * Saves the metadata.json file.
@@ -42,31 +18,40 @@ function SaveMetadata() {
   this.plugin('emit', (compilation, done) => {
     const formatName = 'SKY_PAGES_READY_%s';
     const formatDeclare = '%s\nvar %s = true;\n';
+    const chunks = compilation.getStats().toJson().chunks;
+    let index = 0;
 
-    // Only care about JS files
+    // Add our variable to the bottom of the JS source files
     Object.keys(compilation.assets).forEach((key) => {
-
       const parsed = path.parse(key);
-      if (parsed.ext !== '.js') {
-        return;
+      if (parsed.ext === '.js') {
+        const asset = compilation.assets[key];
+        const source = asset.source();
+        const fallback = util.format(formatName, parsed.name.toUpperCase());
+        const method = chunks[index].entry ? 'unshift' : 'push';
+
+        // Overwrite the default source method to add our fallback variable
+        asset.source = () => util.format(formatDeclare, source, fallback);
+
+        // Add "entry" to beginning of array, others at end
+        metadata[method]({
+          name: key,
+          fallback: fallback
+        });
+
+        // Chunks only contain js files, so we need our own index
+        index++;
       }
-
-      const asset = compilation.assets[key];
-      const source = asset.source();
-      const fallback = util.format(formatName, parsed.name.toUpperCase());
-
-      // Add our variable to the bottom of the source file
-      asset.source = () => util.format(formatDeclare, source, fallback);
-      metadata.push({
-        name: key,
-        fallback: fallback
-      });
     });
+
     done();
   });
 
   this.plugin('done', () => {
-    writeJson('metadata.json', metadata);
+    fs.writeFileSync(
+      path.join(process.cwd(), 'dist', 'metadata.json'),
+      JSON.stringify(metadata, null, '\t')
+    );
   });
 }
 
@@ -84,15 +69,7 @@ function getWebpackConfig(skyPagesConfig) {
   return webpackMerge(common.getWebpackConfig(skyPagesConfigServe), {
     devtool: 'source-map',
     plugins: [
-      SaveStats,
       SaveMetadata,
-      // These plugins don't work with Webpack 2.  If they're truly needed then we need
-      // to revisit at some point.
-      // new webpack.optimize.DedupePlugin(),
-      // new ChunkManifestPlugin({
-      //   filename: 'manifest.json',
-      //   manifestVariable: 'webpackManifest'
-      // }),
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,
         comments: false,
