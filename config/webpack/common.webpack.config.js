@@ -69,8 +69,10 @@ function getWebpackConfig(skyPagesConfig) {
 
   setAppExtrasAlias(alias);
 
+  const outConfigMode = skyPagesOutConfig && skyPagesOutConfig.mode;
   let appPath;
-  switch (skyPagesOutConfig.mode) {
+
+  switch (outConfigMode) {
     case 'advanced':
       appPath = spaPath('src', 'main.ts');
       break;
@@ -80,7 +82,7 @@ function getWebpackConfig(skyPagesConfig) {
   }
 
   // Merge in our defaults
-  const appConfig = merge(skyPagesOutConfig.app, {
+  const appConfig = merge((skyPagesOutConfig && skyPagesOutConfig.app) || {}, {
     template: outPath('src', 'main.ejs'),
     base: skyPagesConfigUtil.getAppBase(skyPagesConfig)
   });
@@ -130,21 +132,6 @@ function getWebpackConfig(skyPagesConfig) {
           query: {
             key: 'appComponentStyles'
           }
-        },
-        {
-          test: /\.ts$/,
-          loaders: [
-            {
-              loader: 'awesome-typescript-loader',
-              options: {
-                // Ignore the "Cannot find module" error that occurs when referencing
-                // an aliased file.  Webpack will still throw an error when a module
-                // cannot be resolved via a file path or alias.
-                ignoreDiagnostics: [2307]
-              }
-            },
-            'angular2-template-loader'
-          ]
         },
         {
           test: /\.s?css$/,

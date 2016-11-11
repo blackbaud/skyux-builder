@@ -3,10 +3,25 @@
 
 const fs = require('fs');
 const mock = require('mock-require');
+const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
-describe('config webpack build', () => {
+describe('config webpack build-aot', () => {
+  const ngtoolsWebpackPath = '@ngtools/webpack';
+
+  beforeEach(() => {
+    mock(ngtoolsWebpackPath, {
+      AotPlugin: function () {
+
+      }
+    });
+  });
+
+  afterEach(() => {
+    mock.stop(ngtoolsWebpackPath);
+  });
+
   it('should expose a getWebpackConfig method', () => {
-    const lib = require('../config/webpack/build.webpack.config');
+    const lib = require('../config/webpack/build-aot.webpack.config');
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
@@ -16,7 +31,7 @@ describe('config webpack build', () => {
       getWebpackConfig: () => ({})
     });
 
-    const lib = require('../config/webpack/build.webpack.config');
+    const lib = require('../config/webpack/build-aot.webpack.config');
 
     const skyPagesConfig = {
       CUSTOM_PROP2: true
@@ -35,13 +50,30 @@ describe('config webpack build', () => {
     mock.stop(f);
   });
 
+  it('should use the AoT entry module', () => {
+    const f = './common.webpack.config';
+    mock(f, {
+      getWebpackConfig: () => ({})
+    });
+
+    const lib = require('../config/webpack/build-aot.webpack.config');
+
+    const config = lib.getWebpackConfig({});
+
+    expect(
+      config.entry.app[0]
+    ).toBe(skyPagesConfigUtil.spaPathTempSrc('main.aot.ts'));
+
+    mock.stop(f);
+  });
+
   it('should write metadata.json file and match entries order', () => {
     let json;
     spyOn(fs, 'writeFileSync').and.callFake((file, content) => {
       json = JSON.parse(content);
     });
 
-    const lib = require('../config/webpack/build.webpack.config');
+    const lib = require('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
       'blackbaud-sky-pages-out-skyux2': {
         mode: ''
@@ -96,8 +128,7 @@ describe('config webpack build', () => {
   });
 
   it('should add the SKY_PAGES_READY_X variable to each entry', () => {
-
-    const lib = require('../config/webpack/build.webpack.config');
+    const lib = require('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
       'blackbaud-sky-pages-out-skyux2': {
         mode: ''
