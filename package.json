@@ -15,7 +15,7 @@
     "url": "git+https://github.com/blackbaud/sky-pages-out-skyux2.git"
   },
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 6.9.1"
   },
   "keywords": [],
   "author": "Blackbaud",
