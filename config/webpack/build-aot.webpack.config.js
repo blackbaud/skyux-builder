@@ -3,6 +3,8 @@
 
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
+const ngtools = require('@ngtools/webpack');
+const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const SaveMetadata = require('../../plugin/save-metadata');
 
 /**
@@ -16,28 +18,31 @@ function getWebpackConfig(skyPagesConfig) {
     command: 'build'
   });
 
-  return webpackMerge(common.getWebpackConfig(skyPagesConfigServe), {
+  let commonConfig = common.getWebpackConfig(skyPagesConfigServe);
+
+  commonConfig.entry = null;
+
+  return webpackMerge(commonConfig, {
+    entry: {
+      polyfills: [skyPagesConfigUtil.spaPathTempSrc('polyfills.ts')],
+      vendor: [skyPagesConfigUtil.spaPathTempSrc('vendor.ts')],
+      skyux: [skyPagesConfigUtil.spaPathTempSrc('skyux.ts')],
+      app: [skyPagesConfigUtil.spaPathTempSrc('main.aot.ts')]
+    },
     devtool: 'source-map',
     module: {
       rules: [
         {
           test: /\.ts$/,
-          loaders: [
-            {
-              loader: 'awesome-typescript-loader',
-              options: {
-                // Ignore the "Cannot find module" error that occurs when referencing
-                // an aliased file.  Webpack will still throw an error when a module
-                // cannot be resolved via a file path or alias.
-                ignoreDiagnostics: [2307]
-              }
-            },
-            'angular2-template-loader'
-          ]
+          loader: '@ngtools/webpack'
         }
       ]
     },
     plugins: [
+      new ngtools.AotPlugin({
+        tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
+        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule'
+      }),
       SaveMetadata,
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,

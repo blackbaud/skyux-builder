@@ -2,18 +2,115 @@
 'use strict';
 
 const logger = require('winston');
+const fs = require('fs-extra');
+const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+const generator = require('../lib/sky-pages-module-generator');
+
+function writeTSConfig() {
+  var config = {
+    'compilerOptions': {
+      'target': 'es5',
+      'module': 'es2015',
+      'moduleResolution': 'node',
+      'emitDecoratorMetadata': true,
+      'experimentalDecorators': true,
+      'sourceMap': true,
+      'noEmitHelpers': true,
+      'noImplicitAny': true,
+      'outDir': '../dist',
+      'rootDir': '.',
+      'inlineSources': true,
+      'declaration': true,
+      'skipLibCheck': true,
+      'lib': [
+        'es2015',
+        'dom'
+      ],
+      'types': [
+        'jasmine',
+        'node'
+      ]
+    },
+    'files': [
+      'app/app.module.ts',
+      'app/main.aot.ts'
+    ],
+    'exclude': [
+      '../../node_modules',
+      '../dist'
+    ],
+    'compileOnSave': false,
+    'buildOnSave': false,
+    'angularCompilerOptions': {
+      'debug': true,
+      'genDir': './ngfactory',
+      'skipMetadataEmit': true
+    }
+  };
+
+  fs.writeJSONSync(skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'), config);
+}
+
+function stageAot(skyPagesConfig) {
+  const spaPathTempSrc = skyPagesConfigUtil.spaPathTempSrc();
+
+  fs.ensureDirSync(spaPathTempSrc);
+  fs.emptyDirSync(spaPathTempSrc);
+
+  const skyPagesModuleSource = generator.getSource(
+    skyPagesConfig,
+    '.',
+    '../..',
+    '../',
+    true
+  );
+
+  fs.copySync(
+    skyPagesConfigUtil.outPath('src'),
+    spaPathTempSrc
+  );
+
+  fs.copySync(
+    skyPagesConfigUtil.spaPath('src'),
+    spaPathTempSrc
+  );
+
+  fs.writeFileSync(
+    skyPagesConfigUtil.spaPathTempSrc('app', 'sky-pages.module.ts'),
+    skyPagesModuleSource,
+    {
+      encoding: 'utf8'
+    }
+  );
+
+  writeTSConfig();
+}
+
+function cleanupAot() {
+  fs.removeSync(skyPagesConfigUtil.spaPathTemp());
+}
 
 /**
  * Executes the build command.
  * @name build
  */
 function build(argv, skyPagesConfig, webpack) {
-  const buildConfig = require('../config/webpack/build.webpack.config');
+  const outConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
+  const compileModeIsAoT = outConfig && outConfig.compileMode === 'aot';
+
+  let buildConfig;
+
+  if (compileModeIsAoT) {
+    stageAot(skyPagesConfig);
+    buildConfig = require('../config/webpack/build-aot.webpack.config');
+  } else {
+    buildConfig = require('../config/webpack/build.webpack.config');
+  }
+
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
   const compiler = webpack(config);
 
   compiler.run((err, stats) => {
-
     if (err) {
       logger.error(err);
       return;
@@ -33,6 +130,10 @@ function build(argv, skyPagesConfig, webpack) {
       chunks: false,
       colors: false
     }));
+
+    if (compileModeIsAoT) {
+      cleanupAot();
+    }
   });
 }
 

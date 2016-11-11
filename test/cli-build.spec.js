@@ -92,4 +92,88 @@ describe('cli build', () => {
     }));
   });
 
+  it('should write files to disk in AoT compile mode', (done) => {
+    const fs = require('fs-extra');
+    const generator = require('../lib/sky-pages-module-generator');
+    const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+
+    const f = '../config/webpack/build-aot.webpack.config';
+
+    mock(f, {
+      getWebpackConfig: () => ({})
+    });
+
+    const writeJSONSpy = spyOn(fs, 'writeJSONSync');
+    const copySpy = spyOn(fs, 'copySync');
+    const writeFileSpy = spyOn(fs, 'writeFileSync');
+    const removeSpy = spyOn(fs, 'removeSync');
+
+    spyOn(generator, 'getSource').and.callFake(function () {
+      return 'TESTSOURCE';
+    });
+
+    require('../cli/build')(
+      {},
+      {
+        'blackbaud-sky-pages-out-skyux2': {
+          compileMode: 'aot'
+        }
+      },
+      () => ({
+        run: (cb) => {
+          cb(
+            null,
+            {
+              toJson: () => ({
+                errors: [],
+                warnings: []
+              })
+            }
+          );
+
+          // The temp folder should be deleted after the build is complete.
+          expect(removeSpy).toHaveBeenCalledWith(
+            skyPagesConfigUtil.spaPathTemp()
+          );
+
+          done();
+        }
+      })
+    );
+
+    // The default SKY Pages source files should be written first.
+    expect(copySpy.calls.argsFor(0)).toEqual([
+      skyPagesConfigUtil.outPath('src'),
+      skyPagesConfigUtil.spaPathTempSrc()
+    ]);
+
+    // The SPA project's files should be written next, overwriting any
+    // files from SKY Pages' default source.
+    expect(copySpy.calls.argsFor(0)).toEqual([
+      skyPagesConfigUtil.spaPath('src'),
+      skyPagesConfigUtil.spaPathTempSrc()
+    ]);
+
+    // Ensure the SKY Pages module is written to disk.
+    expect(writeFileSpy).toHaveBeenCalledWith(
+      skyPagesConfigUtil.spaPathTempSrc('app', 'sky-pages.module.ts'),
+      'TESTSOURCE',
+      {
+        encoding: 'utf8'
+      }
+    );
+
+    // Ensure the TypeScript config file is written to disk.
+    expect(writeJSONSpy).toHaveBeenCalledWith(
+      skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
+      jasmine.objectContaining({
+        'files': [
+          'app/app.module.ts',
+          'app/main.aot.ts'
+        ]
+      })
+    );
+
+    mock.stop(f);
+  });
 });

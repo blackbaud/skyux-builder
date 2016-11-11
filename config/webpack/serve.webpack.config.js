@@ -10,6 +10,8 @@ const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
+const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
+
 /**
  * Returns the default webpackConfig.
  * @name getDefaultWebpackConfig
@@ -66,6 +68,30 @@ function getWebpackConfig(argv, skyPagesConfig) {
 
   return webpackMerge(common, {
     watch: true,
+    module: {
+      rules: [
+        {
+          enforce: 'pre',
+          test: /sky-pages\.module\.ts$/,
+          loader: moduleLoader
+        },
+        {
+          test: /\.ts$/,
+          loaders: [
+            {
+              loader: 'awesome-typescript-loader',
+              options: {
+                // Ignore the "Cannot find module" error that occurs when referencing
+                // an aliased file.  Webpack will still throw an error when a module
+                // cannot be resolved via a file path or alias.
+                ignoreDiagnostics: [2307]
+              }
+            },
+            'angular2-template-loader'
+          ]
+        }
+      ],
+    },
     devServer: {
       port: 31337,
       secure: false,

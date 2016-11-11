@@ -86,5 +86,23 @@ module.exports = {
    */
   spaPath: function () {
     return resolve([process.cwd()], arguments);
+  },
+
+  /**
+   * Takes one or more path parts and returns the fully-qualified path to the file
+   * contained in the temp source folder in the SPA project.
+   * @returns {String} The fully-qualified path.
+   */
+  spaPathTemp: function () {
+    return resolve([this.spaPath(), '.skypagestmp'], arguments);
+  },
+
+  /**
+   * Takes one or more path parts and returns the fully-qualified path to the file
+   * contained in the temp folder in the SPA project.
+   * @returns {String} The fully-qualified path.
+   */
+  spaPathTempSrc: function () {
+    return resolve([this.spaPathTemp(), 'src'], arguments);
   }
 };
