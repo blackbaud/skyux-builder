@@ -19,11 +19,10 @@ module.exports = function SaveMetadata() {
 
     // Sort chunks by dependency and use them to create metadata array
     const chunks = sorter.dependency(compilation.getStats().toJson().chunks);
-    console.log(chunks);
     chunks.forEach((chunk) => {
       metadata.push({
         name: chunk.files[0],
-        fallback: getFallbackName(chunk.name)
+        fallback: getFallbackName(chunk.names[0])
       });
     });
 
