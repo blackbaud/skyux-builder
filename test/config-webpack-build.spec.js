@@ -72,9 +72,9 @@ describe('config webpack build', () => {
                   getStats: () => ({
                     toJson: () => ({
                       chunks: [
-                        { entry: false },
-                        { entry: false },
-                        { entry: true }
+                        { id: 1, entry: false, parents: ['3'], name: 'test1', files: ['test1.js'] },
+                        { id: 2, entry: false, parents: ['3'], name: 'test2', files: ['test2.js'] },
+                        { id: 3, entry: true, name: 'test3', files: ['test3.js'] }
                       ]
                     })
                   })
@@ -121,7 +121,7 @@ describe('config webpack build', () => {
                   getStats: () => ({
                     toJson: () => ({
                       chunks: [
-                        { entry: true }
+                        { id: 1, entry: true, name: 'test', files: ['test.js'] }
                       ]
                     })
                   })
