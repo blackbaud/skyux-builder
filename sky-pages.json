@@ -7,9 +7,6 @@
     "app": {
       "title": "Blackbaud - Sky Pages"
     },
-    "skyux": {
-      "importPath": "node_modules/blackbaud-skyux2/dist"
-    },
     "compileMode": "jit"
   },
   "blackbaud-sky-pages-in-fs": {
