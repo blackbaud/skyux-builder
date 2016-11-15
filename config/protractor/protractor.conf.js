@@ -17,12 +17,12 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     'chromeOptions': {
-      'args': ['--disable-extensions']
+      'args': ['--disable-extensions --ignore-certificate-errors']
     }
   },
   directConnect: true,
   // seleniumAddress: 'http://localhost:4444/wd/hub',
-  baseUrl: 'http://sky.blackbaud-dev.com',
+  baseUrl: 'https://sky.blackbaud-dev.com',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,
