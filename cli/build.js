@@ -17,7 +17,6 @@ function writeTSConfig() {
       'sourceMap': true,
       'noEmitHelpers': true,
       'noImplicitAny': true,
-      'outDir': '../dist',
       'rootDir': '.',
       'inlineSources': true,
       'declaration': true,
@@ -32,12 +31,10 @@ function writeTSConfig() {
       ]
     },
     'files': [
-      'app/app.module.ts',
-      'app/main.aot.ts'
+      './app/app.module.ts'
     ],
     'exclude': [
-      '../../node_modules',
-      '../dist'
+      '../../node_modules'
     ],
     'compileOnSave': false,
     'buildOnSave': false,
@@ -52,6 +49,15 @@ function writeTSConfig() {
 }
 
 function stageAot(skyPagesConfig) {
+  let outConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
+
+  let skyuxImportPath = (outConfig && outConfig.skyux && outConfig.skyux.importPath) ||
+    'blackbaud-skyux2';
+
+  if (skyuxImportPath) {
+    skyuxImportPath = '../../' + skyuxImportPath;
+  }
+
   const spaPathTempSrc = skyPagesConfigUtil.spaPathTempSrc();
 
   fs.ensureDirSync(spaPathTempSrc);
@@ -61,7 +67,7 @@ function stageAot(skyPagesConfig) {
     skyPagesConfig,
     '.',
     '../..',
-    '../',
+    skyuxImportPath,
     true
   );
 
