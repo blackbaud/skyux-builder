@@ -51,8 +51,7 @@ function writeTSConfig() {
 function stageAot(skyPagesConfig) {
   let outConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
 
-  let skyuxImportPath = (outConfig && outConfig.skyux && outConfig.skyux.importPath) ||
-    'blackbaud-skyux2';
+  let skyuxImportPath = (outConfig && outConfig.skyux && outConfig.skyux.importPath);
 
   if (skyuxImportPath) {
     skyuxImportPath = '../../' + skyuxImportPath;

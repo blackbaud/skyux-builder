@@ -168,10 +168,61 @@ describe('cli build', () => {
       skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
       jasmine.objectContaining({
         'files': [
-          'app/app.module.ts',
-          'app/main.aot.ts'
+          './app/app.module.ts'
         ]
       })
+    );
+
+    mock.stop(f);
+  });
+
+  it('should allow the SKY UX import path to be overridden', (done) => {
+    const generator = require('../lib/sky-pages-module-generator');
+
+    const f = '../config/webpack/build-aot.webpack.config';
+
+    mock(f, {
+      getWebpackConfig: () => ({})
+    });
+
+    const getSourceSpy = spyOn(generator, 'getSource').and.callFake(function () {
+      return 'TESTSOURCE';
+    });
+
+    require('../cli/build')(
+      {},
+      {
+        'blackbaud-sky-pages-out-skyux2': {
+          compileMode: 'aot',
+          skyux: {
+            importPath: 'asdf'
+          }
+        }
+      },
+      () => ({
+        run: (cb) => {
+          cb(
+            null,
+            {
+              toJson: () => ({
+                errors: [],
+                warnings: []
+              })
+            }
+          );
+
+          done();
+        }
+      })
+    );
+
+    // The default SKY Pages source files should be written first.
+    expect(getSourceSpy).toHaveBeenCalledWith(
+      jasmine.any(),
+      jasmine.any(),
+      jasmine.any(),
+      '../../asdf',
+      jasmine.any()
     );
 
     mock.stop(f);
