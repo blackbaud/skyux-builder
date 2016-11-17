@@ -14,10 +14,10 @@ export class AppComponent implements OnInit {
   public ngOnInit() {
     // Without this code, navigating to a new route doesn't cause the window to be
     // scrolled to the top like the browser does automatically with non-SPA navigation.
-    this.router.events.filter(event =>
-      event instanceof NavigationEnd
-    ).subscribe(event => {
-      window.scroll(0, 0);
+    this.router.events.subscribe((event: any) => {
+      if (event instanceof NavigationEnd) {
+        window.scroll(0, 0);
+      }
     });
   }
 }
