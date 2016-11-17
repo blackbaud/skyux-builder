@@ -159,7 +159,7 @@ describe('cli e2e', () => {
       }
     });
     require('../cli/e2e')({ noServe: true });
-    expect(process.exit).toHaveBeenCalledWith(1);
+    expect(process.exit).toHaveBeenCalledWith(0);
   });
 
 });
