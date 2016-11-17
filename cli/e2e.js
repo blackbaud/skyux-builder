@@ -12,6 +12,7 @@ const webpackMerge = require('webpack-merge');
 const spawnOptions = { stdio: 'inherit' };
 let webpackServer;
 let seleniumServer;
+let protractor;
 
 /**
  * Function to get the protractorConfigPath
@@ -45,7 +46,12 @@ function killServers() {
     webpackServer.close();
   }
 
-  process.exit(1);
+  if (protractor) {
+    logger.info('Closing protractor');
+    protractor.kill();
+  }
+
+  process.exit(0);
 }
 
 /**
@@ -62,7 +68,7 @@ function spawnProtractor() {
     'protractor'
   );
 
-  const protractor = spawn.spawn(
+  protractor = spawn.spawn(
     protractorPath,
     [getProtractorConfigPath()],
     spawnOptions
