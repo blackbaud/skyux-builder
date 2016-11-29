@@ -44,6 +44,8 @@ function killServers() {
     logger.info('Closing webpack server');
     webpackServer.close();
   }
+
+  process.exit(0);
 }
 
 /**
@@ -124,7 +126,6 @@ function e2e(argv) {
   // Politely kill any of our servers
   process.on('SIGINT', () => {
     killServers();
-    process.exit(1);
   });
 
   // Allows serve to be run independently
