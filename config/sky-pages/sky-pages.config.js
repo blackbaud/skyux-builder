@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('fs');
+const glob = require('glob');
 const path = require('path');
 const merge = require('merge');
 
@@ -17,37 +18,45 @@ function resolve(root, args) {
   return path.resolve.apply(path, args);
 }
 
+/**
+ * Return an array of SkyPagesFile given a glob pattern.
+ * @name getFiles
+ * @param {string} pattern
+ * @returns {Array} files
+ */
+function getFiles(pattern) {
+  return glob.sync(pattern, { realpath: true }).map((file) => {
+    const relative = file.slice(process.cwd().length + 1);
+    return {
+      path: relative,
+      pathWeb: relative.replace(/\\/g, '/'),
+      pathParts: relative.split(path.sep).slice(2, -1),  // Needs configurable as above
+      get: () => fs.readFileSync(file, { encoding: 'utf8' })
+    };
+  });
+}
+
 module.exports = {
+
   /**
-   * Iterates object's devDependencies to find applicable modules.
-   * Includes project's sky-pages.json last.
+   * Builder's sky-pages is default.
+   * Add's routes, modules, and components next.
+   * Merges in SPA's sky-pages last.
    * @name getSkyPagesConfig
    * @returns [SkyPagesConfig] skyPagesConfig
    */
   getSkyPagesConfig: function () {
-    const jsonPath = path.join(process.cwd(), 'package.json');
-    const skyPagesPath = path.join(process.cwd(), 'sky-pages.json');
-    let config = require(path.join(__dirname, '../../sky-pages.json'));
+    const skyPagesSpaPath = this.spaPath('sky-pages.json');
+    let config = require(this.outPath('sky-pages.json'));
 
-    if (fs.existsSync(jsonPath)) {
-      const json = require(jsonPath);
-      if (json.devDependencies) {
-        for (let d in json.devDependencies) {
-          if (/(.*)-sky-pages-in-(.*)/gi.test(d)) {
-            const module = require(path.join(process.cwd(), 'node_modules', d));
-            if (typeof module.getSkyPagesConfig === 'function') {
-              config = module.getSkyPagesConfig(config);
-            }
-          }
-        }
-      }
-    }
+    merge.recursive(config, {
+      routes: getFiles('src/app/**/index.html'),
+      modules: getFiles('src/app/**/*.module.ts'),
+      components: getFiles('src/app/**/*.component.ts')
+    });
 
-    if (fs.existsSync(skyPagesPath)) {
-      const skyPagesJson = JSON.parse(
-        fs.readFileSync(skyPagesPath, { encoding: 'utf8' })
-      );
-      merge.recursive(config, skyPagesJson);
+    if (fs.existsSync(skyPagesSpaPath)) {
+      merge.recursive(config, require(skyPagesSpaPath));
     }
 
     return config;
