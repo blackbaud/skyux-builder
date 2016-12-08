@@ -31,6 +31,8 @@ describe('cli e2e', () => {
     spawnSyncConfig = null;
     spawnExitCb = null;
 
+    spyOn(process, 'exit');
+
     mock('webpack-dev-server', function (compiler) {
       webpackDevServerCalled = true;
       webpackCompiler = compiler;
@@ -151,15 +153,13 @@ describe('cli e2e', () => {
   });
 
   it('should listen for SIGINT and kill the servers', () => {
-
-    spyOn(process, 'exit');
     spyOn(process, 'on').and.callFake((evt, cb) => {
       if (evt === 'SIGINT') {
         cb();
       }
     });
     require('../cli/e2e')({ noServe: true });
-    expect(process.exit).toHaveBeenCalledWith(1);
+    expect(process.exit).toHaveBeenCalledWith(0);
   });
 
 });
