@@ -137,7 +137,7 @@ describe('cli build', () => {
           expect(removeSpy).toHaveBeenCalledWith(
             skyPagesConfigUtil.spaPathTemp()
           );
-          expect(passedConfig.skyuxPathAlias).toBeUndefined();
+          expect(passedConfig.hasOwnProperty('skyuxPathAlias')).toBe(false);
 
           done();
         }
