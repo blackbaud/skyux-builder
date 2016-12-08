@@ -2,7 +2,6 @@
 'use strict';
 
 const fs = require('fs');
-const glob = require('glob');
 const path = require('path');
 const merge = require('merge');
 
@@ -18,24 +17,6 @@ function resolve(root, args) {
   return path.resolve.apply(path, args);
 }
 
-/**
- * Return an array of SkyPagesFile given a glob pattern.
- * @name getFiles
- * @param {string} pattern
- * @returns {Array} files
- */
-function getFiles(pattern) {
-  return glob.sync(pattern, { realpath: true }).map((file) => {
-    const relative = file.slice(process.cwd().length + 1);
-    return {
-      path: relative,
-      pathWeb: relative.replace(/\\/g, '/'),
-      pathParts: relative.split(path.sep).slice(2, -1),  // Needs configurable as above
-      get: () => fs.readFileSync(file, { encoding: 'utf8' })
-    };
-  });
-}
-
 module.exports = {
 
   /**
@@ -48,12 +29,6 @@ module.exports = {
   getSkyPagesConfig: function () {
     const skyPagesSpaPath = this.spaPath('sky-pages.json');
     let config = require(this.outPath('sky-pages.json'));
-
-    merge.recursive(config, {
-      routes: getFiles('src/app/**/index.html'),
-      modules: getFiles('src/app/**/*.module.ts'),
-      components: getFiles('src/app/**/*.component.ts')
-    });
 
     if (fs.existsSync(skyPagesSpaPath)) {
       merge.recursive(config, require(skyPagesSpaPath));

@@ -67,7 +67,7 @@ function stageAot(skyPagesConfig) {
     spaPathAlias: '../..',
     skyPagesOutAlias: '.',
     skyuxPathAlias: skyuxImportPath,
-    useTemplatePath: true
+    useTemplateUrl: true
   });
 
   const skyPagesModuleSource = generator.getSource(skyPagesConfig);
