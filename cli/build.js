@@ -50,12 +50,15 @@ function writeTSConfig() {
 }
 
 function stageAot(skyPagesConfig) {
+  let skyPagesConfigOverrides = {
+    spaPathAlias: '../..',
+    skyPagesOutAlias: '.',
+    useTemplateUrl: true
+  };
+
   let outConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
-
-  let skyuxImportPath = (outConfig && outConfig.skyux && outConfig.skyux.importPath);
-
-  if (skyuxImportPath) {
-    skyuxImportPath = '../../' + skyuxImportPath;
+  if (outConfig && outConfig.skyux && outConfig.skyux.importPath) {
+    skyPagesConfigOverrides.skyuxPathAlias = '../../' + outConfig.skyux.importPath;
   }
 
   const spaPathTempSrc = skyPagesConfigUtil.spaPathTempSrc();
@@ -63,13 +66,7 @@ function stageAot(skyPagesConfig) {
   fs.ensureDirSync(spaPathTempSrc);
   fs.emptyDirSync(spaPathTempSrc);
 
-  merge(skyPagesConfig, {
-    spaPathAlias: '../..',
-    skyPagesOutAlias: '.',
-    skyuxPathAlias: skyuxImportPath,
-    useTemplateUrl: true
-  });
-
+  merge(skyPagesConfig, skyPagesConfigOverrides);
   const skyPagesModuleSource = generator.getSource(skyPagesConfig);
 
   fs.copySync(
