@@ -16,7 +16,10 @@ describe('SKY Pages component generator', () => {
     spyOn(glob, 'sync').and.returnValue([file]);
     spyOn(fs, 'readFileSync').and.returnValue('class MyCustomComponent');
 
-    const components = generator.getComponents({});
+    const components = generator.getComponents({
+      srcPath: '',
+      componentsPattern: ''
+    });
     expect(components.names).toContain('MyCustomComponent');
   });
 
@@ -29,7 +32,14 @@ describe('SKY Pages component generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('file without a class');
 
     const err = new Error(`Unable to locate an exported class in ${file}`);
-    expect(function () { generator.getComponents({}); }).toThrow(err);
+    const wrapper = function () {
+      generator.getComponents({
+        srcPath: '',
+        componentsPattern: ''
+      });
+    };
+
+    expect(wrapper).toThrow(err);
   });
 
   it('should import components', () => {
@@ -57,7 +67,9 @@ describe('SKY Pages component generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('class MyComponent');
 
     const components = generator.getComponents({
-      spaPathAlias: '../../',
+      srcPath: '',
+      componentsPattern: '',
+      spaPathAlias: '../..',
     });
 
     expect(components.imports).toContain(
