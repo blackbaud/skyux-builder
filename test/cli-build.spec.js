@@ -111,7 +111,6 @@ describe('cli build', () => {
     let passedConfig;
     spyOn(generator, 'getSource').and.callFake(function (c) {
       passedConfig = c;
-      console.log(c);
       return 'TESTSOURCE';
     });
 
