@@ -108,7 +108,9 @@ describe('cli build', () => {
     const writeFileSpy = spyOn(fs, 'writeFileSync');
     const removeSpy = spyOn(fs, 'removeSync');
 
-    spyOn(generator, 'getSource').and.callFake(function () {
+    let passedConfig;
+    spyOn(generator, 'getSource').and.callFake(function (c) {
+      passedConfig = c;
       return 'TESTSOURCE';
     });
 
@@ -135,6 +137,7 @@ describe('cli build', () => {
           expect(removeSpy).toHaveBeenCalledWith(
             skyPagesConfigUtil.spaPathTemp()
           );
+          expect(passedConfig.hasOwnProperty('skyuxPathAlias')).toBe(false);
 
           done();
         }
@@ -185,7 +188,9 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
-    const getSourceSpy = spyOn(generator, 'getSource').and.callFake(function () {
+    let calledConfig;
+    const getSourceSpy = spyOn(generator, 'getSource').and.callFake(function (c) {
+      calledConfig = c;
       return 'TESTSOURCE';
     });
 
@@ -211,20 +216,14 @@ describe('cli build', () => {
             }
           );
 
+          // The default SKY Pages source files should be written first.
+          expect(calledConfig.skyuxPathAlias).toEqual('../../asdf');
+
+          mock.stop(f);
           done();
         }
       })
     );
 
-    // The default SKY Pages source files should be written first.
-    expect(getSourceSpy).toHaveBeenCalledWith(
-      jasmine.any(),
-      jasmine.any(),
-      jasmine.any(),
-      '../../asdf',
-      jasmine.any()
-    );
-
-    mock.stop(f);
   });
 });
