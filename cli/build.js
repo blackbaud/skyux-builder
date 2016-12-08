@@ -3,6 +3,7 @@
 
 const logger = require('winston');
 const fs = require('fs-extra');
+const merge = require('merge');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 
@@ -62,13 +63,14 @@ function stageAot(skyPagesConfig) {
   fs.ensureDirSync(spaPathTempSrc);
   fs.emptyDirSync(spaPathTempSrc);
 
-  const skyPagesModuleSource = generator.getSource(
-    skyPagesConfig,
-    '.',
-    '../..',
-    skyuxImportPath,
-    true
-  );
+  merge(skyPagesConfig, {
+    spaPathAlias: '../..',
+    skyPagesOutAlias: '.',
+    skyuxPathAlias: skyuxImportPath,
+    useTemplateUrl: true
+  });
+
+  const skyPagesModuleSource = generator.getSource(skyPagesConfig);
 
   fs.copySync(
     skyPagesConfigUtil.outPath('src'),

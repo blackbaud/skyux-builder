@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "coverage": "istanbul cover --report=html jasmine JASMINE_CONFIG_PATH=jasmine.json",
-    "jscs": "jscs cli config loader src utils",
-    "jshint": "jshint cli config loader src utils",
+    "jscs": "jscs cli config lib loader plugin src utils",
+    "jshint": "jshint cli config lib loader plugin src utils",
     "lint": "npm run jshint && npm run jscs",
     "test": "npm run lint && npm run coverage"
   },
