@@ -65,4 +65,19 @@ describe('SKY Pages route generator', () => {
     expect(routes.declarations).not.toContain('my-src/');
   });
 
+  it('should support a custom routesPattern', () => {
+    let suppliedPattern;
+    spyOn(glob, 'sync').and.callFake((p) => {
+      suppliedPattern = p;
+      return ['my-custom-src/my-custom-route/index.html'];
+    });
+
+    generator.getRoutes({
+      srcPath: 'my-custom-src/',
+      routesPattern: 'my-custom-pattern',
+    });
+
+    expect(suppliedPattern).toEqual('my-custom-src/my-custom-pattern');
+  });
+
 });
