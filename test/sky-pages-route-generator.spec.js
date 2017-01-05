@@ -24,7 +24,7 @@ describe('SKY UX Builder route generator', () => {
   });
 
   it('should support route parameters', () => {
-    spyOn(glob, 'sync').and.returnValue(['{custom}/index.html']);
+    spyOn(glob, 'sync').and.returnValue(['(custom)/index.html']);
     spyOn(path, 'join').and.returnValue('');
     spyOn(fs, 'readFileSync').and.returnValue('');
 
