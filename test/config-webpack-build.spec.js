@@ -43,9 +43,7 @@ describe('config webpack build', () => {
 
     const lib = require('../config/webpack/build.webpack.config');
     const config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: ''
-      }
+      mode: ''
     });
 
     config.plugins.forEach(plugin => {
@@ -99,9 +97,7 @@ describe('config webpack build', () => {
 
     const lib = require('../config/webpack/build.webpack.config');
     const config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: ''
-      }
+      mode: ''
     });
 
     config.plugins.forEach(plugin => {

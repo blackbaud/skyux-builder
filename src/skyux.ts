@@ -1,2 +1,2 @@
-import 'blackbaud-skyux2/dist/css/sky.css';
-import 'blackbaud-skyux2/dist/core';
+import '@blackbaud/skyux/dist/css/sky.css';
+import '@blackbaud/skyux/dist/core';

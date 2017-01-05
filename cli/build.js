@@ -56,9 +56,8 @@ function stageAot(skyPagesConfig) {
     useTemplateUrl: true
   };
 
-  let outConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
-  if (outConfig && outConfig.skyux && outConfig.skyux.importPath) {
-    skyPagesConfigOverrides.skyuxPathAlias = '../../' + outConfig.skyux.importPath;
+  if (skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.importPath) {
+    skyPagesConfigOverrides.skyuxPathAlias = '../../' + skyPagesConfig.skyux.importPath;
   }
 
   const spaPathTempSrc = skyPagesConfigUtil.spaPathTempSrc();
@@ -99,8 +98,7 @@ function cleanupAot() {
  * @name build
  */
 function build(argv, skyPagesConfig, webpack) {
-  const outConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
-  const compileModeIsAoT = outConfig && outConfig.compileMode === 'aot';
+  const compileModeIsAoT = skyPagesConfig && skyPagesConfig.compileMode === 'aot';
 
   let buildConfig;
 

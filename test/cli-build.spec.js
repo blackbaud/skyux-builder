@@ -117,9 +117,7 @@ describe('cli build', () => {
     require('../cli/build')(
       {},
       {
-        'blackbaud-sky-pages-out-skyux2': {
-          compileMode: 'aot'
-        }
+        compileMode: 'aot'
       },
       () => ({
         run: (cb) => {
@@ -144,20 +142,20 @@ describe('cli build', () => {
       })
     );
 
-    // The default SKY Pages source files should be written first.
+    // The default SKY UX Builder source files should be written first.
     expect(copySpy.calls.argsFor(0)).toEqual([
       skyPagesConfigUtil.outPath('src'),
       skyPagesConfigUtil.spaPathTempSrc()
     ]);
 
     // The SPA project's files should be written next, overwriting any
-    // files from SKY Pages' default source.
+    // files from SKY UX Builder's default source.
     expect(copySpy.calls.argsFor(0)).toEqual([
       skyPagesConfigUtil.spaPath('src'),
       skyPagesConfigUtil.spaPathTempSrc()
     ]);
 
-    // Ensure the SKY Pages module is written to disk.
+    // Ensure the SKY UX Builder module is written to disk.
     expect(writeFileSpy).toHaveBeenCalledWith(
       skyPagesConfigUtil.spaPathTempSrc('app', 'sky-pages.module.ts'),
       'TESTSOURCE',
@@ -197,11 +195,9 @@ describe('cli build', () => {
     require('../cli/build')(
       {},
       {
-        'blackbaud-sky-pages-out-skyux2': {
-          compileMode: 'aot',
-          skyux: {
-            importPath: 'asdf'
-          }
+        compileMode: 'aot',
+        skyux: {
+          importPath: 'asdf'
         }
       },
       () => ({
@@ -216,7 +212,7 @@ describe('cli build', () => {
             }
           );
 
-          // The default SKY Pages source files should be written first.
+          // The default SKY UX Builder source files should be written first.
           expect(calledConfig.skyuxPathAlias).toEqual('../../asdf');
 
           mock.stop(f);

@@ -18,7 +18,7 @@ describe('cli version', () => {
 
     proxyquire('../cli/version', stubs)();
     expect(logger.info).toHaveBeenCalledWith(
-      'sky-pages-out-skyux2: %s',
+      '@blackbaud/skyux-builder: %s',
       version
     );
   });

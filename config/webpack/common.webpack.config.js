@@ -43,8 +43,6 @@ function getWebpackConfig(skyPagesConfig) {
   const assetLoader = outPath('loader', 'sky-pages-asset');
   const moduleLoader = outPath('loader', 'sky-pages-module');
 
-  const skyPagesOutConfig = skyPagesConfig['blackbaud-sky-pages-out-skyux2'];
-
   const resolves = [
     process.cwd(),
     spaPath('node_modules'),
@@ -55,21 +53,21 @@ function getWebpackConfig(skyPagesConfig) {
     'sky-pages-spa/src': spaPath('src')
   };
 
-  if (skyPagesOutConfig && skyPagesOutConfig.skyux) {
+  if (skyPagesConfig && skyPagesConfig.skyux) {
     // Order here is very important; the more specific CSS alias must go before
     // the more generic dist one.
-    if (skyPagesOutConfig.skyux.cssPath) {
-      alias['blackbaud-skyux2/dist/css/sky.css'] = spaPath(skyPagesOutConfig.skyux.cssPath);
+    if (skyPagesConfig.skyux.cssPath) {
+      alias['@blackbaud/skyux/dist/css/sky.css'] = spaPath(skyPagesConfig.skyux.cssPath);
     }
 
-    if (skyPagesOutConfig.skyux.importPath) {
-      alias['blackbaud-skyux2/dist'] = spaPath(skyPagesOutConfig.skyux.importPath);
+    if (skyPagesConfig.skyux.importPath) {
+      alias['@blackbaud/skyux/dist'] = spaPath(skyPagesConfig.skyux.importPath);
     }
   }
 
   setAppExtrasAlias(alias);
 
-  const outConfigMode = skyPagesOutConfig && skyPagesOutConfig.mode;
+  const outConfigMode = skyPagesConfig && skyPagesConfig.mode;
   let appPath;
 
   switch (outConfigMode) {
@@ -82,7 +80,7 @@ function getWebpackConfig(skyPagesConfig) {
   }
 
   // Merge in our defaults
-  const appConfig = merge((skyPagesOutConfig && skyPagesOutConfig.app) || {}, {
+  const appConfig = merge((skyPagesConfig && skyPagesConfig.app) || {}, {
     template: outPath('src', 'main.ejs'),
     base: skyPagesConfigUtil.getAppBase(skyPagesConfig)
   });

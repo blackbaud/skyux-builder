@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 
-require('style!blackbaud-skyux2/dist/css/sky.css');
+require('style!@blackbaud/skyux/dist/css/sky.css');
 require('style!./app.component.scss');
 
 @Component({

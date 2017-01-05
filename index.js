@@ -27,7 +27,7 @@ module.exports = {
         require('./cli/version')();
         break;
       default:
-        logger.info('sky-pages-out-skyux2: Unknown command %s', command);
+        logger.info('@blackbaud/skyux-builder: Unknown command %s', command);
         break;
     }
   }

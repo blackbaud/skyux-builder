@@ -1,0 +1,10 @@
+{
+  "mode": "advanced",
+  "host": {
+    "url": "https://sky.blackbaud-dev.com"
+  },
+  "app": {
+    "title": "Blackbaud - SKY UX Application"
+  },
+  "compileMode": "jit"
+}

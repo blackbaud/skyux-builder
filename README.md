@@ -1,6 +1,6 @@
-# sky-pages-out-skyux2
+# @blackbaud/skyux-builder
 
-SKY Pages output for SKY UX 2.
+Builds the output of a SKY UX application.
 
 ## Available commands
 

@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-describe('SKY Pages component generator', () => {
+describe('SKY UX Builder component generator', () => {
 
   let generator;
   beforeEach(() => {
