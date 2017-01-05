@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug SKY Pages",
+            "name": "Debug SKY UX Builder",
             "type": "node2",
             "request": "launch",
-            "program": "${workspaceRoot}/../sky-pages-cli/bin/sky-pages.js",
+            "program": "${workspaceRoot}/../skyux-cli/bin/skyux.js",
             "stopOnEntry": false,
             "args": ["build"],
             "cwd": "${workspaceRoot}",

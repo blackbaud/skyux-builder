@@ -13,12 +13,12 @@ describe('config sky-pages', () => {
     expect(typeof lib.getSkyPagesConfig).toEqual('function');
   });
 
-  it('getSkyPagesConfig should call the local sky-pages.json file', () => {
+  it('getSkyPagesConfig should call the local skyuxconfig.json file', () => {
 
     spyOn(fs, 'existsSync').and.returnValue(false);
     let stubs = {};
 
-    stubs[path.join(process.cwd(), 'sky-pages.json')] = {
+    stubs[path.join(process.cwd(), 'skyuxconfig.json')] = {
       '@noCallThru': true,
       CUSTOM_PROP1: true
     };
@@ -28,14 +28,12 @@ describe('config sky-pages', () => {
     expect(config.CUSTOM_PROP1).toEqual(true);
   });
 
-  it('should read name from sky-pages.json else package.json', () => {
+  it('should read name from skyuxconfig.json else package.json', () => {
     const name = 'sky-pages-name';
     const lib = require('../config/sky-pages/sky-pages.config');
     const appBase = lib.getAppBase({
       name: name,
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: 'advanced'
-      }
+      mode: 'advanced'
     });
     expect(appBase).toEqual('/' + name + '/');
   });

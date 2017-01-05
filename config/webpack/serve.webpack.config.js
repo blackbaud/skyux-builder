@@ -24,7 +24,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
    */
   function WebpackPluginDone() {
     let reported = false;
-    const base = skyPagesConfig['blackbaud-sky-pages-out-skyux2'].host.url;
+    const base = skyPagesConfig.host.url;
     const host = base + skyPagesConfigUtil.getAppBase(skyPagesConfig);
     const local = util.format(
       'https://localhost:%s%s',

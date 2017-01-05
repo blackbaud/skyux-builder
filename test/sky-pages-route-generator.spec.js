@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-describe('SKY Pages route generator', () => {
+describe('SKY UX Builder route generator', () => {
 
   const fs = require('fs');
   const glob = require('glob');

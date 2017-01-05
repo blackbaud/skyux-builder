@@ -10,9 +10,7 @@ describe('config webpack common', () => {
   it('should return a config object', () => {
     const lib = require('../config/webpack/test.webpack.config');
     const config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: 'advanced'
-      }
+      mode: 'advanced'
     });
     expect(config).toEqual(jasmine.any(Object));
   });

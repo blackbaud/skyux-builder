@@ -19,9 +19,7 @@ describe('config webpack common', () => {
     });
 
     let config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: 'advanced'
-      }
+      mode: 'advanced'
     });
 
     let alias = config.resolve.alias;
@@ -43,9 +41,7 @@ describe('config webpack common', () => {
   it('should handle an advanced mode', () => {
     const lib = require('../config/webpack/common.webpack.config');
     const config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: 'advanced'
-      }
+      mode: 'advanced'
     });
     expect(config.entry.app[0]).toContain(process.cwd());
   });
@@ -56,33 +52,29 @@ describe('config webpack common', () => {
     const cssPath = path.join(importPath, '/scss/sky.scss');
 
     let config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: 'advanced',
-        skyux: {
-          importPath: importPath,
-        }
+      mode: 'advanced',
+      skyux: {
+        importPath: importPath,
       }
     });
 
     let alias = config.resolve.alias;
 
     expect(
-      alias['blackbaud-skyux2/dist']
+      alias['@blackbaud/skyux/dist']
     ).toBe(path.join(process.cwd(), importPath));
 
     config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: 'advanced',
-        skyux: {
-          cssPath: cssPath
-        }
+      mode: 'advanced',
+      skyux: {
+        cssPath: cssPath
       }
     });
 
     alias = config.resolve.alias;
 
     expect(
-      alias['blackbaud-skyux2/dist/css/sky.css']
+      alias['@blackbaud/skyux/dist/css/sky.css']
     ).toBe(path.join(process.cwd(), cssPath));
   });
 

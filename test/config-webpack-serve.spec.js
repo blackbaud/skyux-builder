@@ -44,11 +44,9 @@ describe('config webpack serve', () => {
       argv,
       {
         CUSTOM_PROP3: true,
-        'blackbaud-sky-pages-out-skyux2': {
-          mode: '',
-          host: {
-            url: ''
-          }
+        mode: '',
+        host: {
+          url: ''
         }
       }
     );

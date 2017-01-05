@@ -75,9 +75,7 @@ describe('config webpack build-aot', () => {
 
     const lib = require('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: ''
-      }
+      mode: ''
     });
 
     config.plugins.forEach(plugin => {
@@ -130,9 +128,7 @@ describe('config webpack build-aot', () => {
   it('should add the SKY_PAGES_READY_X variable to each entry', () => {
     const lib = require('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
-      'blackbaud-sky-pages-out-skyux2': {
-        mode: ''
-      }
+      mode: ''
     });
 
     config.plugins.forEach(plugin => {

@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-describe('SKY Pages module generator', () => {
+describe('SKY UX Builder module generator', () => {
 
   let generator;
   beforeEach(() => {
@@ -31,7 +31,7 @@ describe('SKY Pages module generator', () => {
     expect(source).not.toContain("template: '404'");
   });
 
-  it('should allow the SKY Pages out alias to be overridden', () => {
+  it('should allow the SKY UX Builder out alias to be overridden', () => {
     const source = generator.getSource({
       skyPagesOutAlias: '..'
     });

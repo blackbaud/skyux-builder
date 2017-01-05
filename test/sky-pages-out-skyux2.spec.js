@@ -4,7 +4,7 @@
 const mock = require('mock-require');
 const logger = require('winston');
 
-describe('sky-pages-out-skyux2', () => {
+describe('@blackbaud/skyux-builder', () => {
 
   it('should expose a runCommand method', () => {
     const lib = require('../index');
@@ -55,7 +55,7 @@ describe('sky-pages-out-skyux2', () => {
     const lib = require('../index');
     lib.runCommand(cmd);
     expect(logger.info).toHaveBeenCalledWith(
-      'sky-pages-out-skyux2: Unknown command %s',
+      '@blackbaud/skyux-builder: Unknown command %s',
       cmd
     );
   });

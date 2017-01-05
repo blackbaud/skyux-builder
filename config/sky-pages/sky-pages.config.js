@@ -20,15 +20,15 @@ function resolve(root, args) {
 module.exports = {
 
   /**
-   * Builder's sky-pages is default.
-   * Add's routes, modules, and components next.
-   * Merges in SPA's sky-pages last.
+   * Builder's skyuxconfig is default.
+   * Adds routes, modules, and components next.
+   * Merges in SPA's skyuxconfig last.
    * @name getSkyPagesConfig
    * @returns [SkyPagesConfig] skyPagesConfig
    */
   getSkyPagesConfig: function () {
-    const skyPagesSpaPath = this.spaPath('sky-pages.json');
-    let config = require(this.outPath('sky-pages.json'));
+    const skyPagesSpaPath = this.spaPath('skyuxconfig.json');
+    let config = require(this.outPath('skyuxconfig.json'));
 
     if (fs.existsSync(skyPagesSpaPath)) {
       merge.recursive(config, require(skyPagesSpaPath));
@@ -39,7 +39,7 @@ module.exports = {
 
   /**
    * Reads the name field of package.json.
-   * Removes "blackbaud-sky-pages-spa-" and wraps in "/".
+   * Removes "blackbaud-skyux-spa-" and wraps in "/".
    * @name getAppName
    * @returns {String} appName
    */
@@ -51,12 +51,12 @@ module.exports = {
       name = require(this.spaPath('package.json')).name;
     }
 
-    return '/' + name.replace(/blackbaud-sky-pages-spa-/gi, '') + '/';
+    return '/' + name.replace(/blackbaud-skyux-spa-/gi, '') + '/';
   },
 
   /**
    * Takes one or more path parts and returns the fully-qualified path to the file
-   * contained in this project (sky-pages-out-skyux2).
+   * contained in this project (@blackbaud/skyux-builder).
    * @returns {String} The fully-qualified path.
    */
   outPath: function () {
