@@ -24,7 +24,7 @@ describe('SKY UX Builder route generator', () => {
   });
 
   it('should support route parameters', () => {
-    spyOn(glob, 'sync').and.returnValue(['{custom}/index.html']);
+    spyOn(glob, 'sync').and.returnValue(['(custom)/index.html']);
     spyOn(path, 'join').and.returnValue('');
     spyOn(fs, 'readFileSync').and.returnValue('');
 
@@ -37,6 +37,18 @@ describe('SKY UX Builder route generator', () => {
     expect(routes.definitions).toContain(
       'class SPR_0_IndexComponent implements OnInit, OnDestroy {'
     );
+  });
+
+  it('should not generate route params if parenthesis are first and last characters', () => {
+    spyOn(glob, 'sync').and.returnValue(['My(custom)Folder/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    spyOn(fs, 'readFileSync').and.returnValue('');
+
+    const routes = generator.getRoutes({
+      srcPath: ''
+    });
+
+    expect(routes.declarations).not.toContain("path: ':custom'");
   });
 
   it('should use the templateUrl property when useTemplateUrl is specified', () => {
