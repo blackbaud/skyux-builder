@@ -39,6 +39,18 @@ describe('SKY UX Builder route generator', () => {
     );
   });
 
+  it('should not generate route params if parenthesis are first and last characters', () => {
+    spyOn(glob, 'sync').and.returnValue(['My(custom)Folder/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    spyOn(fs, 'readFileSync').and.returnValue('');
+
+    const routes = generator.getRoutes({
+      srcPath: ''
+    });
+
+    expect(routes.declarations).not.toContain("path: ':custom'");
+  });
+
   it('should use the templateUrl property when useTemplateUrl is specified', () => {
     spyOn(glob, 'sync').and.returnValue(['custom/nested/index.html']);
     spyOn(path, 'join').and.returnValue('');
