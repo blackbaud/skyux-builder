@@ -24,7 +24,7 @@ describe('SKY UX Builder route generator', () => {
   });
 
   it('should support route parameters', () => {
-    spyOn(glob, 'sync').and.returnValue(['(custom)/index.html']);
+    spyOn(glob, 'sync').and.returnValue(['_custom/index.html']);
     spyOn(path, 'join').and.returnValue('');
     spyOn(fs, 'readFileSync').and.returnValue('');
 
@@ -39,8 +39,8 @@ describe('SKY UX Builder route generator', () => {
     );
   });
 
-  it('should not generate route params if parenthesis are first and last characters', () => {
-    spyOn(glob, 'sync').and.returnValue(['My(custom)Folder/index.html']);
+  it('should not generate route params if underscore is not first character', () => {
+    spyOn(glob, 'sync').and.returnValue(['my_custom_folder/index.html']);
     spyOn(path, 'join').and.returnValue('');
     spyOn(fs, 'readFileSync').and.returnValue('');
 
