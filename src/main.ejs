@@ -11,9 +11,48 @@ It is never actually called when using the host service.
   <meta http-equiv="x-ua-compatible" content="IE=edge">
   <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
   <title><%= htmlWebpackPlugin.options.title %></title>
+
+  <% if (htmlWebpackPlugin.options.externalCss) { %>
+    <% htmlWebpackPlugin.options.externalCss.forEach((css) => { %>
+      <link rel="stylesheet" href="<%= css.href %>"
+        <% if (css.integrity) { %>
+          integrity="<%= css.integrity %>"
+          crossorigin="anonymous"
+        <% } %>
+      >
+    <% }) %>
+  <% } %>
+
+  <% if (htmlWebpackPlugin.options.externalJs) { %>
+    <% htmlWebpackPlugin.options.externalJs.forEach((js) => { %>
+      <% if (js.position === 'head') { %>
+        <script src="<%= js.src %>"
+          <% if (js.integrity) { %>
+            integrity="<%= js.integrity %>"
+            crossorigin="anonymous"
+          <% } %>
+        ></script>
+      <% } %>
+    <% }) %>
+  <% } %>
+
 </head>
 <body>
   <sky-pages-app>Loading...</stache-app>
+
+  <% if (htmlWebpackPlugin.options.externalJs) { %>
+    <% htmlWebpackPlugin.options.externalJs.forEach((js) => { %>
+      <% if (js.position === 'body') { %>
+        <script src="<%= js.src %>"
+          <% if (js.integrity) { %>
+            integrity="<%= js.integrity %>"
+            crossorigin="anonymous"
+          <% } %>
+        ></script>
+      <% } %>
+    <% }) %>
+  <% } %>
+
   <script>
     __webpack_public_path__ = '<%= htmlWebpackPlugin.options.base %>';
   </script>

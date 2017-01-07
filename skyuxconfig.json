@@ -4,7 +4,24 @@
     "url": "https://sky.blackbaud-dev.com"
   },
   "app": {
-    "title": "Blackbaud - SKY UX Application"
+    "title": "Blackbaud - SKY UX Application",
+    "externalCss": [
+      {
+        "href": "dummy.css",
+        "integrity": "asdf"
+      }
+    ],
+    "externalJs": [
+      {
+        "src": "dummy.js",
+        "integrity": "asdf",
+        "position": "head"
+      },
+      {
+        "src": "dummy.js",
+        "position": "body"
+      }
+    ]
   },
   "compileMode": "jit"
 }
