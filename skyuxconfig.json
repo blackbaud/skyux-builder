@@ -4,40 +4,7 @@
     "url": "https://sky.blackbaud-dev.com"
   },
   "app": {
-    "title": "Blackbaud - SKY UX Application",
-    "externals": {
-      "css": {
-        "before": [
-          {
-            "url": "css-before-with-integrity.css",
-            "integrity": "asdf"
-          }
-        ],
-        "after": [
-          {
-            "url": "css-after-without-integrity.css"
-          }
-        ]
-      },
-      "js": {
-        "before": [
-          {
-            "url": "js-head-before-with-integrity.js",
-            "integrity": "js",
-            "head": true
-          },
-          {
-            "url": "js-body-before-with-integrity.js",
-            "integrity": "asdf"
-          }
-        ],
-        "after": [
-          {
-            "url": "js-body-after-without-integrity.js"
-          }
-        ]
-      }
-    }
+    "title": "Blackbaud - SKY UX Application"
   },
   "compileMode": "jit"
 }
