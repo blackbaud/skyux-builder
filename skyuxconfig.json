@@ -5,23 +5,39 @@
   },
   "app": {
     "title": "Blackbaud - SKY UX Application",
-    "externalCss": [
-      {
-        "href": "dummy.css",
-        "integrity": "asdf"
-      }
-    ],
-    "externalJs": [
-      {
-        "src": "dummy.js",
-        "integrity": "asdf",
-        "position": "head"
+    "externals": {
+      "css": {
+        "before": [
+          {
+            "url": "css-before-with-integrity.css",
+            "integrity": "asdf"
+          }
+        ],
+        "after": [
+          {
+            "url": "css-after-without-integrity.css"
+          }
+        ]
       },
-      {
-        "src": "dummy.js",
-        "position": "body"
+      "js": {
+        "before": [
+          {
+            "url": "js-head-before-with-integrity.js",
+            "integrity": "js",
+            "head": true
+          },
+          {
+            "url": "js-body-before-with-integrity.js",
+            "integrity": "asdf"
+          }
+        ],
+        "after": [
+          {
+            "url": "js-body-after-without-integrity.js"
+          }
+        ]
       }
-    ]
+    }
   },
   "compileMode": "jit"
 }

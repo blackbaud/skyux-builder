@@ -1,6 +1,5 @@
 <!--
-THIS PAGE IS FOR LOCAL DEVELOPMENT ONLY.
-It is never actually called when using the host service.
+SKYUX Builder - Local Development Only
 -->
 
 <!DOCTYPE html>
@@ -12,49 +11,51 @@ It is never actually called when using the host service.
   <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
   <title><%= htmlWebpackPlugin.options.title %></title>
 
-  <% if (htmlWebpackPlugin.options.externalCss) { %>
-    <% htmlWebpackPlugin.options.externalCss.forEach((css) => { %>
-      <link rel="stylesheet" href="<%= css.href %>"
-        <% if (css.integrity) { %>
-          integrity="<%= css.integrity %>"
-          crossorigin="anonymous"
-        <% } %>
-      >
-    <% }) %>
-  <% } %>
-
-  <% if (htmlWebpackPlugin.options.externalJs) { %>
-    <% htmlWebpackPlugin.options.externalJs.forEach((js) => { %>
-      <% if (js.position === 'head') { %>
-        <script src="<%= js.src %>"
-          <% if (js.integrity) { %>
-            integrity="<%= js.integrity %>"
-            crossorigin="anonymous"
-          <% } %>
-        ></script>
-      <% } %>
-    <% }) %>
-  <% } %>
+  <%= getExternal('css', 'before') %>
+  <%= getExternal('css', 'after') %>
+  <%= getExternal('js', 'before', true) %>
+  <%= getExternal('js', 'after', true) %>
 
 </head>
 <body>
   <sky-pages-app>Loading...</stache-app>
 
-  <% if (htmlWebpackPlugin.options.externalJs) { %>
-    <% htmlWebpackPlugin.options.externalJs.forEach((js) => { %>
-      <% if (js.position === 'body') { %>
-        <script src="<%= js.src %>"
-          <% if (js.integrity) { %>
-            integrity="<%= js.integrity %>"
-            crossorigin="anonymous"
-          <% } %>
-        ></script>
-      <% } %>
-    <% }) %>
-  <% } %>
+  <%= getExternal('js', 'before', false) %>
+  <script>__webpack_public_path__ = '<%= htmlWebpackPlugin.options.base %>';</script>
 
-  <script>
-    __webpack_public_path__ = '<%= htmlWebpackPlugin.options.base %>';
-  </script>
+  <% htmlWebpackPlugin.files.js.forEach(file => { %>
+    <script src="<%= file %>"></script>
+  <% }) %>
+
+  <%= getExternal('js', 'after', false) %>
+
 </body>
 </html>
+
+<%
+function getExternal(type, hook, isHead) {
+  if (htmlWebpackPlugin.options.externals
+    && htmlWebpackPlugin.options.externals[type]
+    && htmlWebpackPlugin.options.externals[type][hook]) {
+
+    function getIntegrity(entry) {
+      return entry.integrity ? `integrity="${entry.integrity}" crossorigin="anonymous"` : '';
+    }
+
+    var html = ``;
+    htmlWebpackPlugin.options.externals[type][hook].forEach(entry => {
+      switch (type) {
+        case 'css':
+          html += `<link href="${entry.url}" ${getIntegrity(entry)}>`;
+        break;
+        case 'js':
+          if ((isHead && entry.head) || (!isHead && !entry.head)) {
+            html += `<script src="${entry.url}" ${getIntegrity(entry)}></script>`;
+          }
+        break;
+      }
+    });
+    return html;
+  }
+}
+%>
