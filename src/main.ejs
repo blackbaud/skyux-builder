@@ -39,18 +39,18 @@ function getExternal(type, hook, isHead) {
     && htmlWebpackPlugin.options.externals[type][hook]) {
 
     function getIntegrity(entry) {
-      return entry.integrity ? `integrity="${entry.integrity}" crossorigin="anonymous"` : '';
+      return entry.integrity ? ` integrity="${entry.integrity}" crossorigin="anonymous"` : '';
     }
 
     var html = ``;
     htmlWebpackPlugin.options.externals[type][hook].forEach(entry => {
       switch (type) {
         case 'css':
-          html += `<link href="${entry.url}" ${getIntegrity(entry)}>`;
+          html += `<link href="${entry.url}"${getIntegrity(entry)}>`;
         break;
         case 'js':
           if ((isHead && entry.head) || (!isHead && !entry.head)) {
-            html += `<script src="${entry.url}" ${getIntegrity(entry)}></script>`;
+            html += `<script src="${entry.url}"${getIntegrity(entry)}></script>`;
           }
         break;
       }
