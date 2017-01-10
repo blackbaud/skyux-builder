@@ -1,3 +1,7 @@
+# 1.0.0-beta.2 (2017-01-10)
+
+- Upgraded various NPM packages including SKY UX and Angular.
+
 # 1.0.0-beta.1 (2017-01-09)
 
 - Using single underscore to prefix routes with parameters.
