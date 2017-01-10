@@ -1,6 +1,5 @@
 <!--
-THIS PAGE IS FOR LOCAL DEVELOPMENT ONLY.
-It is never actually called when using the host service.
+SKYUX Builder - Local Development Only
 -->
 
 <!DOCTYPE html>
@@ -11,11 +10,52 @@ It is never actually called when using the host service.
   <meta http-equiv="x-ua-compatible" content="IE=edge">
   <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
   <title><%= htmlWebpackPlugin.options.title %></title>
+
+  <%= getExternal('css', 'before') %>
+  <%= getExternal('css', 'after') %>
+  <%= getExternal('js', 'before', true) %>
+  <%= getExternal('js', 'after', true) %>
+
 </head>
 <body>
   <sky-pages-app>Loading...</stache-app>
-  <script>
-    __webpack_public_path__ = '<%= htmlWebpackPlugin.options.base %>';
-  </script>
+
+  <%= getExternal('js', 'before', false) %>
+  <script>__webpack_public_path__ = '<%= htmlWebpackPlugin.options.base %>';</script>
+
+  <% htmlWebpackPlugin.files.js.forEach(file => { %>
+    <script src="<%= file %>"></script>
+  <% }) %>
+
+  <%= getExternal('js', 'after', false) %>
+
 </body>
 </html>
+
+<%
+function getExternal(type, hook, isHead) {
+  if (htmlWebpackPlugin.options.externals
+    && htmlWebpackPlugin.options.externals[type]
+    && htmlWebpackPlugin.options.externals[type][hook]) {
+
+    function getIntegrity(entry) {
+      return entry.integrity ? ` integrity="${entry.integrity}" crossorigin="anonymous"` : '';
+    }
+
+    var html = ``;
+    htmlWebpackPlugin.options.externals[type][hook].forEach(entry => {
+      switch (type) {
+        case 'css':
+          html += `<link href="${entry.url}"${getIntegrity(entry)}>`;
+        break;
+        case 'js':
+          if ((isHead && entry.head) || (!isHead && !entry.head)) {
+            html += `<script src="${entry.url}"${getIntegrity(entry)}></script>`;
+          }
+        break;
+      }
+    });
+    return html;
+  }
+}
+%>
