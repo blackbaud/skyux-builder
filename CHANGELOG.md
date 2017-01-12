@@ -1,6 +1,6 @@
 # 1.0.0-beta.4 (2017-01-11)
 
-- Removed support for `--noOpen` flag.  Instead added `--open` flag with `none`, `local`, or `host` (default).  Ex: `--open=local`
+- Removed support for `--noOpen` flag.  Instead added `-launch` flag with `none`, `local`, or `host` (default).  Ex: `-launch local`
 
 # 1.0.0-beta.3 (2017-01-11)
 
