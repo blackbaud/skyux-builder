@@ -1,4 +1,8 @@
-# 1.0.0.beta.3 (2017-01-11)
+# 1.0.0-beta.4 (2017-01-11)
+
+- Removed support for `--noOpen` flag.  Instead added `-launch` flag with `none`, `local`, or `host` (default).  Ex: `-launch local`
+
+# 1.0.0-beta.3 (2017-01-11)
 
 - Added `externals` support in `skyuxconfig.json` for adding external CSS + JS.
 - Upgraded ssl certificates used.  Please follow [installation instructions](https://github.com/blackbaud/skyux-cli#installing-ssl-certificate).
