@@ -152,7 +152,7 @@ describe('cli e2e', () => {
     expect(logger.info).toHaveBeenCalledTimes(2);
   });
 
-  it('should listen for SIGINT and kill the servers', () => {
+  it('should listen for SIGINT and kill the servers, defaulting to exit code 0', () => {
     spyOn(process, 'on').and.callFake((evt, cb) => {
       if (evt === 'SIGINT') {
         cb();
@@ -160,6 +160,16 @@ describe('cli e2e', () => {
     });
     require('../cli/e2e')({ noServe: true });
     expect(process.exit).toHaveBeenCalledWith(0);
+  });
+
+  it('should pass through any exit code', () => {
+    spyOn(process, 'on').and.callFake((evt, cb) => {
+      if (evt === 'SIGINT') {
+        cb(1337);
+      }
+    });
+    require('../cli/e2e')({ noServe: true });
+    expect(process.exit).toHaveBeenCalledWith(1337);
   });
 
 });
