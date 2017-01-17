@@ -95,7 +95,7 @@ describe('config webpack serve', () => {
     expect(openCalledWith).toContain('https://my-host-server.url');
   });
 
-  it('should log the host url and launch it when -launch host', () => {
+  it('should log the host url and launch it when --launch host', () => {
     argv.launch = 'host';
     config.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
@@ -114,7 +114,7 @@ describe('config webpack serve', () => {
     expect(openCalledWith).toContain('https://my-host-server.url');
   });
 
-  it('should log the local url and launch it when -launch local', () => {
+  it('should log the local url and launch it when --launch local', () => {
     argv.launch = 'local';
     config.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
@@ -133,8 +133,27 @@ describe('config webpack serve', () => {
     expect(openCalledWith).toContain('https://localhost:1234');
   });
 
-  it('should log a done message and not launch it when -launch none', () => {
+  it('should log a done message and not launch it when --launch none', () => {
     argv.launch = 'none';
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'WebpackPluginDone') {
+        plugin.apply({
+          options: getPluginOptions(),
+          plugin: (evt, cb) => {
+            if (evt === 'done') {
+              cb();
+            }
+          }
+        });
+      }
+    });
+
+    expect(logger.info).toHaveBeenCalledTimes(1);
+    expect(called).toEqual(false);
+  });
+
+  it('should pass shorthand -l as --launch flag', () => {
+    argv.l = 'none';
     config.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
         plugin.apply({
