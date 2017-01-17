@@ -11,7 +11,7 @@ describe('cli version', () => {
     const version = 'this.should.match';
 
     let stubs = {};
-    stubs[path.join(process.cwd(), 'package.json')] = {
+    stubs[path.join(__dirname, '..', 'package.json')] = {
       '@noCallThru': true,
       version: version
     };
