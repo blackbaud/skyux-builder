@@ -21,21 +21,6 @@ const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
 function getWebpackConfig(argv, skyPagesConfig) {
 
   /**
-   * If the requested file exists, returns it.
-   * @name getLocalConfig
-   * @param {string} filename
-   * @returns {Object} config
-   */
-  function getLocalConfig(filename) {
-    const filepath = path.join(process.cwd(), filename);
-
-    if (fs.existsSync(filepath)) {
-      return JSON.parse(fs.readFileSync(filepath, 'utf8'));
-    } else {
-      return {};
-    }
-  }
-  /**
    * Opens the host service url.
    * @name WebpackPluginDone
    */
@@ -79,12 +64,14 @@ function getWebpackConfig(argv, skyPagesConfig) {
             open(localUrl);
             break;
           default:
-            const spConfig = {
+            let spConfig = {
               scripts: scripts,
-              skyuxConfig: skyPagesConfig,
-              packageConfig: getLocalConfig('package.json'),
               localUrl: localUrl
             };
+
+            if (skyPagesConfig.app && skyPagesConfig.app.externals) {
+              spConfig.externals = skyPagesConfig.app.externals;
+            }
 
             const encoded = new Buffer(JSON.stringify(spConfig)).toString('base64');
             const hostUrl = `${hostBaseUrl}?local=true&_cfg=${encoded}`;
