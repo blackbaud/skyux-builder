@@ -2,6 +2,7 @@
 
 - Bugfix where `skyux e2e` would fail if no spec files were found.
 - Bugfix where `skyux version` incorrectly read version from SPA's `package.json`.
+- Changed `skyux serve` to only pass externals, scripts, and localUrl in querystring.
 - Corrected documentation for `-l` or `--launch` flags.
 - Added badges to README
 
