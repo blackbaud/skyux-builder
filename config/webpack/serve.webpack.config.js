@@ -66,6 +66,11 @@ function getWebpackConfig(argv, skyPagesConfig) {
         logger.info('SKY UX builder is ready.');
         launched = true;
 
+        // Process shorthand flags
+        if (argv.l) {
+          argv.launch = argv.l;
+        }
+
         switch (argv.launch) {
           case 'none':
             break;
