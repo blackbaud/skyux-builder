@@ -45,7 +45,13 @@ function killServers(exitCode) {
     webpackServer.close();
   }
 
-  console.log(`Exiting process with ${exitCode}`);
+  // Catch protractor's "Kitchen Sink" error.
+  if (exitCode === 199) {
+    logger.warn('Supressing protractor\'s "kitchen sink" error 199');
+    exitCode = 0;
+  }
+
+  logger.info(`Exiting process with ${exitCode}`);
   process.exit(exitCode || 0);
 }
 
