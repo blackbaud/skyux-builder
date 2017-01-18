@@ -10,7 +10,7 @@
 
 - Removed support for `--noOpen` flag.  Instead added `-launch` flag with `none`, `local`, or `host` (default).  Ex: `-launch local`
 - Bugfix where `e2e` task would always return an exit code of 0.
-- Passing the local `skyuxconfig.json` and `package.json` files to host for better local development.
+- Passing any externals defined in `skyuxconfig.json` for local development.
 
 # 1.0.0-beta.3 (2017-01-11)
 

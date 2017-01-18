@@ -149,7 +149,7 @@ describe('cli e2e', () => {
     spyOn(logger, 'info');
     require('../cli/e2e')({ noServe: true });
     spawnExitCb();
-    expect(logger.info).toHaveBeenCalledTimes(2);
+    expect(logger.info).toHaveBeenCalledTimes(3);
   });
 
   it('should listen for SIGINT and kill the servers, defaulting to exit code 0', () => {
@@ -162,7 +162,7 @@ describe('cli e2e', () => {
     expect(process.exit).toHaveBeenCalledWith(0);
   });
 
-  it('should pass through any exit code', () => {
+  it('should pass through any exit code, except 199', () => {
     spyOn(process, 'on').and.callFake((evt, cb) => {
       if (evt === 'SIGINT') {
         cb(1337);
@@ -170,6 +170,18 @@ describe('cli e2e', () => {
     });
     require('../cli/e2e')({ noServe: true });
     expect(process.exit).toHaveBeenCalledWith(1337);
+  });
+
+  it('should catch exitCode 199', () => {
+    spyOn(logger, 'warn');
+    spyOn(process, 'on').and.callFake((evt, cb) => {
+      if (evt === 'SIGINT') {
+        cb(199);
+      }
+    });
+    require('../cli/e2e')({ noServe: true });
+    expect(process.exit).toHaveBeenCalledWith(0);
+    expect(logger.warn).toHaveBeenCalled();
   });
 
 });

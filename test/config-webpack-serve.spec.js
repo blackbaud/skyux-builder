@@ -13,6 +13,11 @@ describe('config webpack serve', () => {
     mode: '',
     host: {
       url: 'https://my-host-server.url'
+    },
+    app: {
+      externals: {
+        test: true
+      }
     }
   };
 
@@ -171,55 +176,42 @@ describe('config webpack serve', () => {
     expect(called).toEqual(false);
   });
 
-  it('should handle package.json not existing', () => {
-    const origExistsSync = fs.existsSync;
-
-    spyOn(fs, 'existsSync').and.callFake((name) => {
-      if (name.indexOf('package.json') > -1) {
-        return false;
-      }
-      return origExistsSync(name);
-    });
-
-    config.plugins.forEach(plugin => {
+  it('host querystring should not contain externals if they do not exist', () => {
+    const localConfig = lib.getWebpackConfig(argv, { host: { url: '' } });
+    localConfig.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
         plugin.apply({
           options: getPluginOptions(),
           plugin: (evt, cb) => {
+            if (evt === 'emit') {
+              const done = () => {};
+              const compilation = {
+                getStats: () => ({
+                  toJson: () => ({
+                    chunks: []
+                  })
+                })
+              };
+
+              cb(compilation, done);
+            }
+
             if (evt === 'done') {
               cb();
               const urlParsed = urlLibrary.parse(openCalledWith, true);
               const configString = new Buffer.from(urlParsed.query._cfg, 'base64').toString();
               const configObject = JSON.parse(configString);
-              expect(configObject.packageConfig).toEqual({});
+
+              expect(urlParsed.query._cfg).toBeDefined();
+              expect(configObject.externals).not.toBeDefined();
             }
           }
         });
       }
     });
-
   });
 
-  it('host querystring should contain skyuxConfig, packageConfig, scripts, and localUrl', () => {
-    const packageConfig = {
-      'custom-package-config': true
-    };
-
-    const origExistsSync = fs.existsSync;
-    const origReadFileSync = fs.readFileSync;
-
-    spyOn(fs, 'existsSync').and.callFake((name) => {
-      if (name.indexOf('package.json') > -1) {
-        return true;
-      }
-      return origExistsSync(name);
-    });
-    spyOn(fs, 'readFileSync').and.callFake((name) => {
-      if (name.indexOf('package.json') > -1) {
-        return JSON.stringify(packageConfig);
-      }
-      return origReadFileSync(name);
-    });
+  it('host querystring should contain externals (if they exist), scripts, and localUrl', () => {
 
     config.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
@@ -249,8 +241,7 @@ describe('config webpack serve', () => {
               const configObject = JSON.parse(configString);
 
               expect(urlParsed.query._cfg).toBeDefined();
-              expect(configObject.skyuxConfig).toEqual(skyuxConfig);
-              expect(configObject.packageConfig).toEqual(packageConfig);
+              expect(configObject.externals).toEqual(skyuxConfig.app.externals);
               expect(configObject.localUrl).toContain('https://localhost:1234');
               expect(configObject.scripts).toEqual([
                 { name: 'a.js' },
