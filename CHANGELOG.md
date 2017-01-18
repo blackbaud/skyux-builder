@@ -1,3 +1,11 @@
+# 1.0.0-beta.5 (2017-01-18)
+
+- Bugfix where `skyux e2e` would fail if no spec files were found.
+- Bugfix where `skyux version` incorrectly read version from SPA's `package.json`.
+- Changed `skyux serve` to only pass externals, scripts, and localUrl in querystring.
+- Corrected documentation for `-l` or `--launch` flags.
+- Added badges to README
+
 # 1.0.0-beta.4 (2017-01-11)
 
 - Removed support for `--noOpen` flag.  Instead added `-launch` flag with `none`, `local`, or `host` (default).  Ex: `-launch local`
