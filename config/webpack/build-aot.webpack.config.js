@@ -27,7 +27,7 @@ function getWebpackConfig(skyPagesConfig) {
       polyfills: [skyPagesConfigUtil.spaPathTempSrc('polyfills.ts')],
       vendor: [skyPagesConfigUtil.spaPathTempSrc('vendor.ts')],
       skyux: [skyPagesConfigUtil.spaPathTempSrc('skyux.ts')],
-      app: [skyPagesConfigUtil.spaPathTempSrc('main.aot.ts')]
+      app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
     devtool: 'source-map',
     module: {

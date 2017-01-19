@@ -22,16 +22,24 @@ function outPath() {
   return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
 }
 
-function setAppExtrasAlias(alias) {
-  let appExtrasPath = path.join('src', 'app', 'app-extras.module.ts');
-  let appExtrasResolvedPath = spaPath(appExtrasPath);
+/**
+ * Sets an alias to the specified module using the SPA path if the file exists in the SPA;
+ * otherwise it sets the alias to the file in SKY UX Builder.
+ * @name setSpaAlias
+ * @param {Object} alias
+ * @param {String} moduleName
+ * @param {String} path
+ */
+function setSpaAlias(alias, moduleName, path) {
+  let resolvedPath = spaPath(path);
 
-  if (!fs.existsSync(appExtrasResolvedPath)) {
-    appExtrasResolvedPath = outPath(appExtrasPath);
+  if (!fs.existsSync(resolvedPath)) {
+    resolvedPath = outPath(path);
   }
 
-  alias['sky-pages-internal/app-extras.module'] = appExtrasResolvedPath;
+  alias['sky-pages-internal/' + moduleName] = resolvedPath;
 }
+
 /**
  * Called when loaded via require.
  * @name getWebpackConfig
@@ -65,7 +73,8 @@ function getWebpackConfig(skyPagesConfig) {
     }
   }
 
-  setAppExtrasAlias(alias);
+  setSpaAlias(alias, 'app-extras.module', path.join('src', 'app', 'app-extras.module.ts'));
+  setSpaAlias(alias, 'main', path.join('src', 'main.ts'));
 
   const outConfigMode = skyPagesConfig && skyPagesConfig.mode;
   let appPath;
@@ -75,7 +84,7 @@ function getWebpackConfig(skyPagesConfig) {
       appPath = spaPath('src', 'main.ts');
       break;
     default:
-      appPath = outPath('src', 'main.ts');
+      appPath = outPath('src', 'main-internal.ts');
       break;
   }
 
