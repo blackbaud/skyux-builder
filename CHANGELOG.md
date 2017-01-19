@@ -1,3 +1,22 @@
+# 1.0.0-beta.5 (2017-01-18)
+
+- Bugfix where `skyux e2e` would fail if no spec files were found.
+- Bugfix where `skyux version` incorrectly read version from SPA's `package.json`.
+- Changed `skyux serve` to only pass externals, scripts, and localUrl in querystring.
+- Corrected documentation for `-l` or `--launch` flags.
+- Added badges to README
+
+# 1.0.0-beta.4 (2017-01-11)
+
+- Removed support for `--noOpen` flag.  Instead added `-launch` flag with `none`, `local`, or `host` (default).  Ex: `-launch local`
+- Bugfix where `e2e` task would always return an exit code of 0.
+- Passing any externals defined in `skyuxconfig.json` for local development.
+
+# 1.0.0-beta.3 (2017-01-11)
+
+- Added `externals` support in `skyuxconfig.json` for adding external CSS + JS.
+- Upgraded ssl certificates used.  Please follow [installation instructions](https://github.com/blackbaud/skyux-cli#installing-ssl-certificate).
+
 # 1.0.0-beta.2 (2017-01-10)
 
 - Upgraded various NPM packages including SKY UX and Angular.

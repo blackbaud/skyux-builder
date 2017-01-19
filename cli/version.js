@@ -9,7 +9,7 @@ const logger = require('winston');
  * @name version
  */
 function version() {
-  const packageJson = require(path.resolve(process.cwd(), 'package.json'));
+  const packageJson = require(path.resolve(__dirname, '..', 'package.json'));
   logger.info('@blackbaud/skyux-builder: %s', packageJson.version);
 }
 

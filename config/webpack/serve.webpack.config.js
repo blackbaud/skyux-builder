@@ -9,6 +9,7 @@ const webpackMerge = require('webpack-merge');
 const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+const sorter = require('html-webpack-plugin/lib/chunksorter');
 
 const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
 
@@ -18,45 +19,69 @@ const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
  * @returns {WebpackConfig} webpackConfig
  */
 function getWebpackConfig(argv, skyPagesConfig) {
+
   /**
    * Opens the host service url.
    * @name WebpackPluginDone
    */
   function WebpackPluginDone() {
-    let reported = false;
-    const base = skyPagesConfig.host.url;
-    const host = base + skyPagesConfigUtil.getAppBase(skyPagesConfig);
-    const local = util.format(
+    let launched = false;
+    const hostBaseUrl = skyPagesConfig.host.url + skyPagesConfigUtil.getAppBase(skyPagesConfig);
+    const localUrl = util.format(
       'https://localhost:%s%s',
       this.options.devServer.port,
       this.options.devServer.publicPath
     );
+    let scripts = [];
 
-    this.plugin('done', (stats) => {
-      if (reported) {
-        return;
+    this.plugin('emit', (compilation, done) => {
+      const chunks = sorter.dependency(compilation.getStats().toJson().chunks);
+      chunks.forEach((chunk) => {
+        scripts.push({
+          name: chunk.files[0]
+        });
+      });
+      done();
+    });
+
+    this.plugin('done', () => {
+      if (!launched) {
+
+        const open = require('open');
+        logger.info('SKY UX builder is ready.');
+        launched = true;
+
+        // Process shorthand flags
+        if (argv.l) {
+          argv.launch = argv.l;
+        }
+
+        switch (argv.launch) {
+          case 'none':
+            break;
+          case 'local':
+            logger.info(`Launching Local URL: ${localUrl}`);
+            open(localUrl);
+            break;
+          default:
+            let spConfig = {
+              scripts: scripts,
+              localUrl: localUrl
+            };
+
+            if (skyPagesConfig.app && skyPagesConfig.app.externals) {
+              spConfig.externals = skyPagesConfig.app.externals;
+            }
+
+            const encoded = new Buffer(JSON.stringify(spConfig)).toString('base64');
+            const hostUrl = `${hostBaseUrl}?local=true&_cfg=${encoded}`;
+
+            logger.info(`Launching Host URL: ${hostUrl}`);
+            open(hostUrl);
+            break;
+        }
       }
 
-      logger.info('Local files available at:\n%s\n', local);
-      reported = true;
-
-      if (!host || argv.noOpen) {
-        return;
-      }
-
-      const spConfig = {
-        assets: stats.toJson().assetsByChunkName,
-        local: local
-      };
-      const encoded = new Buffer(JSON.stringify(spConfig)).toString('base64');
-
-      logger.info('Automatically opening host url:\n%s\n', host);
-
-      // TODO: Pass config to host when it can process it.  For now host just assumes
-      // vendor/polyfills/app files.
-      // open(host + '?_sp.cfg=' + encodeURIComponent(encoded));
-      const open = require('open');
-      open(host + '?local=true&_cfg=' + encoded);
     });
   }
 

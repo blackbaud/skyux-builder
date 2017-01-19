@@ -32,7 +32,7 @@ function getProtractorConfigPath() {
  * Handles killing off the selenium and webpack servers.
  * @name killServers
  */
-function killServers() {
+function killServers(exitCode) {
 
   logger.info('Cleaning up running servers');
   if (seleniumServer) {
@@ -45,7 +45,14 @@ function killServers() {
     webpackServer.close();
   }
 
-  process.exit(0);
+  // Catch protractor's "Kitchen Sink" error.
+  if (exitCode === 199) {
+    logger.warn('Supressing protractor\'s "kitchen sink" error 199');
+    exitCode = 0;
+  }
+
+  logger.info(`Exiting process with ${exitCode}`);
+  process.exit(exitCode || 0);
 }
 
 /**
@@ -124,9 +131,7 @@ function e2e(argv) {
   seleniumServer = null;
 
   // Politely kill any of our servers
-  process.on('SIGINT', () => {
-    killServers();
-  });
+  process.on('SIGINT', killServers);
 
   // Allows serve to be run independently
   if (argv.noServe) {
