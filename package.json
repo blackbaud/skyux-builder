@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "coverage": "istanbul cover --report=html jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "e2e": "protractor ./e2e/_protractor.conf.js",
     "jscs": "jscs cli config lib loader plugin src utils",
     "jshint": "jshint cli config lib loader plugin src utils",
     "lint": "npm run jshint && npm run jscs",
-    "test": "npm run lint && npm run coverage"
+    "test": "npm run lint && npm run coverage && npm run e2e"
   },
   "repository": {
     "type": "git",
