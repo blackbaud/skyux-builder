@@ -1,3 +1,7 @@
+# 1.0.0-beta.6 (2017-01)
+
+- Correctly passing `--launch none` when running `skyux e2e`.
+
 # 1.0.0-beta.5 (2017-01-18)
 
 - Bugfix where `skyux e2e` would fail if no spec files were found.

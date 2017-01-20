@@ -144,7 +144,7 @@ function e2e(argv) {
   const config = webpackMerge(
     webpackConfig.getWebpackConfig(
       {
-        noOpen: true
+        launch: 'none'
       },
       skyPagesConfig.getSkyPagesConfig()
     ),
