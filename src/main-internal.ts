@@ -3,6 +3,6 @@ import { AppModule } from './app/app.module';
 
 import { SkyAppBootstrapper } from '../runtime/bootstrapper';
 
-SkyAppBootstrapper.beforeBootstrap().then(() => {
+SkyAppBootstrapper.processBootstrapConfig().then(() => {
   platformBrowserDynamic().bootstrapModule(AppModule);
 });

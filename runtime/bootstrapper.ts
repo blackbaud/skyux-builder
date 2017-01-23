@@ -1,27 +1,35 @@
-declare let BBAUTH: any;
+import { BBAuth, BBOmnibar } from '@blackbaud/auth-client';
 
 interface SkyAppBootstrapConfig {
   omnibar?: {
     serviceName?: string
   };
 
-  auth?: () => Promise<any>;
+  auth?: boolean;
 }
 
 export class SkyAppBootstrapper {
-  public static set beforeBootstrap(value: () => Promise<any>) {
-    SkyAppBootstrapper._beforeBootstrap = value;
+  public static bootstrapConfig: SkyAppBootstrapConfig;
+
+  public static processBootstrapConfig(): Promise<any> {
+    if (SkyAppBootstrapper.bootstrapConfig) {
+      let authPromise: Promise<any>;
+
+      if (SkyAppBootstrapper.bootstrapConfig.auth) {
+        authPromise = BBAuth.getToken();
+      } else {
+        authPromise = Promise.resolve();
+      }
+
+      if (SkyAppBootstrapper.bootstrapConfig.omnibar) {
+        return authPromise.then(() => {
+          BBOmnibar.load(SkyAppBootstrapper.bootstrapConfig.omnibar);
+        });
+      } else {
+        return authPromise;
+      }
+    }
+
+    return Promise.resolve();
   }
-
-  public static get beforeBootstrap(): () => Promise<any> {
-    return SkyAppBootstrapper._beforeBootstrap || SkyAppBootstrapper.defaultBeforeBootstrap;
-  }
-
-  private static _beforeBootstrap: Promise<any>;
-
-  private static defaultBeforeBootstrap = (): Promise<any> => {
-      return new Promise<any>((resolve) => {
-        resolve();
-      });
-    };
 }

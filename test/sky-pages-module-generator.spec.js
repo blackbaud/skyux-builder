@@ -51,4 +51,52 @@ describe('SKY UX Builder module generator', () => {
     );
   });
 
+  it('should set bootstrap config if the applicable SKY UX settings exist', () => {
+    let source = generator.getSource({
+      auth: true
+    });
+
+    expect(source).toContain(
+`SkyAppBootstrapper.bootstrapConfig = {
+  omnibar: undefined,
+  auth: true
+};`
+    );
+
+    source = generator.getSource({
+      omnibar: {
+        serviceName: 'Test'
+      }
+    });
+
+    expect(source).toContain(
+`SkyAppBootstrapper.bootstrapConfig = {
+  omnibar: {"serviceName":"Test"},
+  auth: undefined
+};`
+    );
+  });
+
+  it('should only provide the SkyAuthHttp service if the app is configured to use auth', () => {
+    const expectedImport = `import { SkyAuthHttp } from 'sky-pages-internal/runtime';`;
+
+    const expectedProvider = `
+    ,{
+      provide: SkyAuthHttp,
+      useClass: SkyAuthHttp,
+      deps: [XHRBackend, RequestOptions]
+    }`;
+
+    let source = generator.getSource({});
+
+    expect(source).not.toContain(expectedImport);
+    expect(source).not.toContain(expectedProvider);
+
+    source = generator.getSource({
+      auth: true
+    });
+
+    expect(source).toContain(expectedImport);
+    expect(source).toContain(expectedProvider);
+  });
 });

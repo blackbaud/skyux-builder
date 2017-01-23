@@ -58,7 +58,8 @@ function getWebpackConfig(skyPagesConfig) {
   ];
 
   let alias = {
-    'sky-pages-spa/src': spaPath('src')
+    'sky-pages-spa/src': spaPath('src'),
+    'sky-pages-internal/runtime': outPath('runtime')
   };
 
   if (skyPagesConfig && skyPagesConfig.skyux) {
