@@ -74,8 +74,8 @@ function getWebpackConfig(skyPagesConfig) {
     }
   }
 
-  setSpaAlias(alias, 'app-extras.module', path.join('src', 'app', 'app-extras.module.ts'));
-  setSpaAlias(alias, 'main', path.join('src', 'main.ts'));
+  setSpaAlias(alias, 'src/app/app-extras.module', path.join('src', 'app', 'app-extras.module.ts'));
+  setSpaAlias(alias, 'src/main', path.join('src', 'main.ts'));
 
   const outConfigMode = skyPagesConfig && skyPagesConfig.mode;
   let appPath;

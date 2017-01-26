@@ -1,12 +1,6 @@
 import { BBAuth, BBOmnibar } from '@blackbaud/auth-client';
 
-interface SkyAppBootstrapConfig {
-  omnibar?: {
-    serviceName?: string
-  };
-
-  auth?: boolean;
-}
+import { SkyAppBootstrapConfig } from './bootstrap-config';
 
 export class SkyAppBootstrapper {
   public static bootstrapConfig: SkyAppBootstrapConfig;

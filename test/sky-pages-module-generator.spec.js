@@ -37,7 +37,7 @@ describe('SKY UX Builder module generator', () => {
     });
 
     expect(source).toContain(
-      `import { AppExtrasModule } from '../app-extras.module';`
+      `import { AppExtrasModule } from '../src/app/app-extras.module';`
     );
   });
 
