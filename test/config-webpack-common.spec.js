@@ -29,7 +29,7 @@ describe('config webpack common', () => {
       path.join(__dirname, '..', 'src', 'app', 'app-extras.module.ts');
 
     expect(
-      alias['sky-pages-internal/app-extras.module']
+      alias['sky-pages-internal/src/app/app-extras.module']
     ).toBe(expectedAppExtrasAlias);
   }
 

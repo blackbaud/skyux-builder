@@ -52,7 +52,7 @@ function writeTSConfig() {
 function stageAot(skyPagesConfig) {
   let skyPagesConfigOverrides = {
     spaPathAlias: '../..',
-    skyPagesOutAlias: '.',
+    skyPagesOutAlias: '../..',
     useTemplateUrl: true
   };
 
@@ -67,6 +67,11 @@ function stageAot(skyPagesConfig) {
 
   merge(skyPagesConfig, skyPagesConfigOverrides);
   const skyPagesModuleSource = generator.getSource(skyPagesConfig);
+
+  fs.copySync(
+    skyPagesConfigUtil.outPath('runtime'),
+    skyPagesConfigUtil.spaPathTemp('runtime')
+  );
 
   fs.copySync(
     skyPagesConfigUtil.outPath('src'),

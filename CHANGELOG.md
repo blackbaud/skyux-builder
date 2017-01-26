@@ -1,3 +1,7 @@
+# 1.0.0-beta.7 (2017-01-26)
+
+- Fixed AoT compilation that broke when Blackbaud auth/omnibar support was added.
+
 # 1.0.0-beta.6 (2017-01-23)
 
 - Added Blackbaud auth/omnibar integration.
