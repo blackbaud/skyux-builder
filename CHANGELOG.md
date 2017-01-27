@@ -1,6 +1,19 @@
-# 1.0.0-beta.6 (2017-01)
+# 1.0.0-beta.9 (2017-01-27)
 
 - Correctly passing `--launch none` when running `skyux e2e`.
+
+# 1.0.0-beta.8 (2017-01-27)
+
+- Fixed 'No provider for SkyAuthHttp' error with AoT compilation.
+- Relaxed constraints on omnibar configuration to account for all possible omnibar options.
+
+# 1.0.0-beta.7 (2017-01-26)
+
+- Fixed AoT compilation that broke when Blackbaud auth/omnibar support was added.
+
+# 1.0.0-beta.6 (2017-01-23)
+
+- Added Blackbaud auth/omnibar integration.
 
 # 1.0.0-beta.5 (2017-01-18)
 
