@@ -1,6 +1,7 @@
 # 1.0.0-beta.9 (2017-01-27)
 
 - Correctly passing `--launch none` when running `skyux e2e`.
+- Fixed import path for bootstrapper in AoT mode.
 
 # 1.0.0-beta.8 (2017-01-27)
 
