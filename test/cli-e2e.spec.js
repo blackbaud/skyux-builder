@@ -89,6 +89,23 @@ describe('cli e2e', () => {
     });
   });
 
+  it('should pass launch none', () => {
+    const configPath = '../config/webpack/serve.webpack.config';
+    const config = require(configPath);
+    let webpackConfigArgs;
+
+    mock(configPath, {
+      getWebpackConfig: (args, skyPagesConfig) => {
+        webpackConfigArgs = args;
+        return config.getWebpackConfig(args, skyPagesConfig);
+      }
+    });
+
+    require('../cli/e2e')({ });
+    expect(webpackConfigArgs.launch).toEqual('none');
+    mock.stop(configPath);
+  });
+
   it('should not spawn webpack dev server if noServe is true', () => {
     require('../cli/e2e')({ noServe: true });
     expect(webpackDevServerCalled).toEqual(false);

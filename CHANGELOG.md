@@ -1,3 +1,7 @@
+# 1.0.0-beta.9 (2017-01-27)
+
+- Correctly passing `--launch none` when running `skyux e2e`.
+
 # 1.0.0-beta.8 (2017-01-27)
 
 - Fixed 'No provider for SkyAuthHttp' error with AoT compilation.
