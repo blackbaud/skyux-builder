@@ -1,7 +1,5 @@
 export interface SkyAppBootstrapConfig {
-  omnibar?: {
-    serviceName?: string
-  };
+  omnibar?: any;
 
   auth?: boolean;
 }
