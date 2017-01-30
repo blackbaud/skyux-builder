@@ -15,6 +15,6 @@ exports.config = merge(common.config, {
     )
   ],
   jasmineNodeOpts: {
-    defaultTimeoutInterval: 240000
+    defaultTimeoutInterval: 480000
   }
 });

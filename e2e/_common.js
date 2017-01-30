@@ -37,9 +37,9 @@ function exec(cmd, args, opts) {
 
 /**
  * Generic handler for rejected promises.
- * @name execErr
+ * @name catchReject
  */
-function execErr(err) {
+function catchReject(err) {
   throw new Error(err);
 }
 
@@ -57,28 +57,24 @@ function bufferToString(data) {
  * @name beforeAll
  */
 function beforeAll(done) {
-  // const url = 'https://github.com/blackbaud/skyux-template';
-  // exec(`rm`, [`-rf`, `${tmp}`])
-  //   .then(() => exec(`git`, [`clone`, `${url}`, `${tmp}`]), execErr)
-  //   .then(() => exec(`npm`, [`i`], opts), execErr)
-  //   .then(() => exec(`npm`, [`i`, `../`], opts), execErr)
-  //   .then(done, execErr);
-  done();
+  const url = 'https://github.com/blackbaud/skyux-template';
+  exec(`rm`, [`-rf`, `${tmp}`])
+    .then(() => exec(`git`, [`clone`, `${url}`, `${tmp}`]), catchReject)
+    .then(() => exec(`npm`, [`i`], opts), catchReject)
+    .then(() => exec(`npm`, [`i`, `../`], opts), catchReject)
+    .then(done, catchReject);
 }
 
 /**
  * Called on afterAll step.
  */
 function afterAll(done) {
-  // exec(`rm`, [`-rf`, `${tmp}`]).then(done, execErr);
-  done();
+  exec(`rm`, [`-rf`, `${tmp}`]).then(done, catchReject);
 }
 
-function spawnServe(done) {
-  const serve = spawn(`node`, [`../e2e/_cli`, `serve`, `-l`, `none`], opts);
-
+function serveIsReady(serve) {
+  serve = serve || spawn(`node`, [`../e2e/_cli`, `serve`, `-l`, `none`], opts);
   return new Promise((resolve, reject) => {
-    serve.on('exit', done);
     serve.stderr.on('data', reject);
     serve.stdout.on('data', (data) => {
       if (data.toString('utf8').indexOf('webpack: bundle is now VALID') > -1) {
@@ -93,9 +89,9 @@ module.exports = {
   beforeAll: beforeAll,
   bufferToString,
   exec: exec,
-  execErr: execErr,
+  catchReject: catchReject,
   opts: opts,
   spawn: spawn,
-  spawnServe: spawnServe,
+  serveIsReady: serveIsReady,
   tmp: tmp
 };
