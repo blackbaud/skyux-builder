@@ -3,4 +3,4 @@
 export let SkyPagesModule: any;
 
 // The following comment is used to track timestamps in `skyux serve`
-// TS (1485959120045 END
+// TS (DYNAMIC) END
