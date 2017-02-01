@@ -5,6 +5,8 @@
 const fs = require('fs');
 const path = require('path');
 const common = require('./_common');
+const tests = require('./_tests');
+
 const timestamp = new Date().getTime();
 
 describe('skyux serve', () => {
@@ -28,6 +30,10 @@ describe('skyux serve', () => {
     });
   });
 
+  it('should render home components', tests.renderHomeComponent);
+  it('should render shared nav component', tests.renderSharedNavComponent);
+  it('should follow routerLink and render about component', tests.followRouterLinkRenderAbout);
+
   it('should should include script tags', (done) => {
     browser.getPageSource().then(source => {
       let previousIndex = -1;
@@ -44,24 +50,6 @@ describe('skyux serve', () => {
 
       done();
     });
-  });
-
-  it('should render home components', () => {
-    expect(element(by.tagName('h1')).getText()).toBe('SKY UX Template');
-    expect(element(by.className('sky-alert')).getText()).toBe(
-      `You've just taken your first step into a larger world.`
-    );
-  });
-
-  it('should render shared nav component', () => {
-    const nav = $$('.sky-navbar-item');
-    expect(nav.count()).toBe(2);
-  });
-
-  it('should follow routerLink and render about component', () => {
-    const nav = $$('.sky-navbar-item a');
-    nav.get(1).click();
-    expect(element(by.tagName('h1')).getText()).toBe('About our Team');
   });
 
   it('should watch for existing file changes', (done) => {

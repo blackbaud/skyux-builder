@@ -91,6 +91,8 @@ function getWebpackConfig(argv, skyPagesConfig) {
   const common = require('./common.webpack.config')
     .getWebpackConfig(skyPagesConfigServe);
 
+    console.log(skyPagesConfigUtil.getAppBase(skyPagesConfig));
+
   return webpackMerge(common, {
     watch: true,
     module: {
