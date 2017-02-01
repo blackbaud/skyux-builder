@@ -62,7 +62,7 @@ describe('config webpack build-aot', () => {
 
     expect(
       config.entry.app[0]
-    ).toBe(skyPagesConfigUtil.spaPathTempSrc('main.aot.ts'));
+    ).toBe(skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts'));
 
     mock.stop(f);
   });

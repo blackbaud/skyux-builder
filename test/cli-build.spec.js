@@ -143,14 +143,14 @@ describe('cli build', () => {
     );
 
     // The default SKY UX Builder source files should be written first.
-    expect(copySpy.calls.argsFor(0)).toEqual([
+    expect(copySpy.calls.argsFor(1)).toEqual([
       skyPagesConfigUtil.outPath('src'),
       skyPagesConfigUtil.spaPathTempSrc()
     ]);
 
     // The SPA project's files should be written next, overwriting any
     // files from SKY UX Builder's default source.
-    expect(copySpy.calls.argsFor(0)).toEqual([
+    expect(copySpy.calls.argsFor(1)).toEqual([
       skyPagesConfigUtil.spaPath('src'),
       skyPagesConfigUtil.spaPathTempSrc()
     ]);

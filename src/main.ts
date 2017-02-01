@@ -1,4 +1,1 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from './app/app.module';
-
-platformBrowserDynamic().bootstrapModule(AppModule);
+// This can be overridden by the SPA to bootstrap things like the omnibar or auth.
