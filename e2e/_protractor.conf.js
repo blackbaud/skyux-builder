@@ -14,6 +14,9 @@ exports.config = merge(common.config, {
       '*.e2e-spec.js'
     )
   ],
+  capabilities: {
+    'browserName': 'firefox'
+  },
   jasmineNodeOpts: {
     defaultTimeoutInterval: 480000
   }
