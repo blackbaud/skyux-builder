@@ -12,7 +12,6 @@ const tmp = './.e2e-tmp/';
 const opts = { cwd: tmp };
 
 const skyuxConfigPath = path.resolve(process.cwd(), tmp, 'skyuxconfig.json');
-const skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
 const PORT = 31338;
 
 let server;
@@ -138,6 +137,7 @@ function serveBuild(config) {
   return new Promise((resolve, reject) => {
 
     // Prepare skyuxconfig.json
+    const skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
     writeConfig(config);
 
     exec(`node`, [`../e2e/_cli`, `build`], opts)
