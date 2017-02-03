@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const common = require('./_common');
+const common = require('./common');
 
 module.exports = {
 

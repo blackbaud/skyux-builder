@@ -12,6 +12,7 @@ const tmp = './.e2e-tmp/';
 const cwdOpts = { cwd: tmp };
 
 const skyuxConfigPath = path.resolve(process.cwd(), tmp, 'skyuxconfig.json');
+const cliPath = `../e2e/shared/cli`;
 const PORT = 31338;
 
 let webpackServer;
@@ -60,6 +61,7 @@ function catchReject(err) {
  * @name exec
  */
 function exec(cmd, args, opts) {
+  console.log(`Running command: ${cmd} ${args.join(' ')}`);
   const cp = childProcessSpawn(cmd, args, opts);
 
   cp.stdout.on('data', data => log(data));
@@ -119,7 +121,7 @@ function prepareBuild(config) {
 
   return new Promise((resolve, reject) => {
     exec(`rm`, [`-rf`, `${tmp}/dist`])
-      .then(() => exec(`node`, [`../e2e/_cli`, `build`], cwdOpts), reject)
+      .then(() => exec(`node`, [cliPath, `build`], cwdOpts), reject)
       .then(serve, reject)
       .then(resolve, reject);
   });
@@ -131,7 +133,7 @@ function prepareBuild(config) {
 function prepareServe() {
 
   if (!webpackServer) {
-    webpackServer = childProcessSpawn(`node`, [`../e2e/_cli`, `serve`, `-l`, `none`], cwdOpts);
+    webpackServer = childProcessSpawn(`node`, [cliPath, `serve`, `-l`, `none`], cwdOpts);
   }
 
   return bindServe();

@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
-const common = require('./_common');
-const tests = require('./_tests');
+const common = require('./shared/common');
+const tests = require('./shared/tests');
 
 describe('skyux build jit', () => {
 

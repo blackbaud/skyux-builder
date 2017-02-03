@@ -4,8 +4,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const common = require('./_common');
-const tests = require('./_tests');
+const common = require('./shared/common');
+const tests = require('./shared/tests');
 
 const timestamp = new Date().getTime();
 

@@ -5,15 +5,15 @@ const path = require('path');
 const merge = require('merge');
 const SpecReporter = require('jasmine-spec-reporter');
 
-const common = require('./_common');
-const commonConfig = require('../config/protractor/protractor.conf');
+const common = require('../../e2e/shared/common');
+const commonConfig = require('./protractor.conf');
 
 exports.config = merge(commonConfig.config, {
   specs: [
     path.join(process.cwd(), 'e2e', '**', '*.e2e-spec.js')
   ],
   jasmineNodeOpts: {
-    defaultTimeoutInterval: 480000 // git clone, skyux build can take a while
+    defaultTimeoutInterval: 480000 // git clone, npm install, and skyux build can be slow
   },
   capabilities: {
     'browserName': 'firefox'
