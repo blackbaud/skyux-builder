@@ -15,9 +15,9 @@ exports.config = merge(commonConfig.config, {
   jasmineNodeOpts: {
     defaultTimeoutInterval: 480000 // git clone, skyux build can take a while
   },
-  // capabilities: {
-  //   'browserName': 'firefox'
-  // },
+  capabilities: {
+    'browserName': 'firefox'
+  },
   onPrepare: () => {
 
     const url = 'https://github.com/blackbaud/skyux-template';
