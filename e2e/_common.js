@@ -9,37 +9,40 @@ const HttpServer = require('http-server');
 const childProcessSpawn = require('child_process').spawn;
 
 const tmp = './.e2e-tmp/';
-const opts = { cwd: tmp };
+const cwdOpts = { cwd: tmp };
 
 const skyuxConfigPath = path.resolve(process.cwd(), tmp, 'skyuxconfig.json');
 const PORT = 31338;
 
-let server;
+let webpackServer;
+let httpServer;
+let _exitCode;
 
 /**
- * Creates a child_process.
- * @name spawn
+ * Closes the http-server if it's running.
+ * Kills the serve process if it's running.
  */
-function spawn(cmd, args, opts) {
-  return childProcessSpawn(cmd, args, opts);
-}
+function afterAll() {
+  if (httpServer) {
+    httpServer.close();
+  }
+
+  if (webpackServer) {
+    webpackServer.kill();
+  }
+};
 
 /**
- * Spawns a child_process and returns a promise.
- * @name exec
+ * Adds event listeners to serve and resolves a promise.
  */
-function exec(cmd, args, opts) {
-  const cp = spawn(cmd, args, opts);
-
-  cp.stdout.on('data', bufferToString);
-  cp.stderr.on('data', bufferToString);
-
+function bindServe() {
   return new Promise((resolve, reject) => {
-    cp.on('error', (err) => {
-      reject(err);
-    });
-    cp.on('exit', (code) => {
-      resolve(code);
+    webpackServer.stderr.on('data', reject);
+    webpackServer.stdout.on('data', (data) => {
+      log(data);
+      if (data.toString('utf8').indexOf('webpack: Compiled successfully.') > -1) {
+        resolve(webpackServer);
+      }
     });
   });
 }
@@ -53,112 +56,95 @@ function catchReject(err) {
 }
 
 /**
- * Converts a buffer to utf8 string.
- * @name bufferToString
- * @param {Buffer} data
+ * Spawns a child_process and returns a promise.
+ * @name exec
  */
-function bufferToString(data) {
-  logger.info(data.toString('utf8'));
-}
+function exec(cmd, args, opts) {
+  const cp = childProcessSpawn(cmd, args, opts);
 
-/**
- * Called on beforeAll step.
- * @name beforeAll
- */
-function beforeAll(done) {
-  const url = 'https://github.com/blackbaud/skyux-template';
-  exec(`rm`, [`-rf`, `${tmp}`])
-    .then(() => exec(`git`, [`clone`, `${url}`, `${tmp}`]), catchReject)
-    .then(() => exec(`npm`, [`i`], opts), catchReject)
-    .then(() => exec(`npm`, [`i`, `../`], opts), catchReject)
-    .then(done, catchReject);
+  cp.stdout.on('data', data => log(data));
+  cp.stderr.on('data', data => log(data));
 
-  // Leaving this while contiuing to debug
-  // exec('echo', ['START']).then(done, catchReject);
-}
-
-/**
- * Called on beforeAll build step.
- */
-function beforeAllBuild(done) {
-  beforeAll(() => {
-    server = HttpServer.createServer({ root: tmp });
-    server.listen(PORT, 'localhost', done);
-  });
-}
-
-/**
- * Called on afterAll step.
- */
-function afterAll(done) {
-  exec(`rm`, [`-rf`, `${tmp}`]).then(done, catchReject);
-
-  // Leaving this while continuing to debug
-  // exec('echo', ['FINISH']).then(done, catchReject);
-}
-
-/**
- * Calls on afterAll build step.
- */
-function afterAllBuild(done) {
-  afterAll(() => {
-    server.close();
-    done();
-  });
-}
-
-/**
- * Spawns `skyux serve` and resolves once webpack is ready.
- */
-function serveIsReady(serve) {
-  serve = serve || spawn(`node`, [`../e2e/_cli`, `serve`, `-l`, `none`], opts);
   return new Promise((resolve, reject) => {
-    serve.stderr.on('data', reject);
-    serve.stdout.on('data', (data) => {
-      if (data.toString('utf8').indexOf('webpack: bundle is now VALID') > -1) {
-        resolve(serve);
-      }
-    });
+    cp.on('error', err => reject(err));
+    cp.on('exit', code => resolve(code));
   });
 }
 
 /**
- * Writes the given object to skyuxconfig.json
+ * Returns the last exit code.
  */
-function writeConfig(json) {
-  fs.writeFileSync(skyuxConfigPath, JSON.stringify(json), 'utf8');
+function getExitCode() {
+  return _exitCode;
+}
+
+/**
+ * Logs a buffer
+ */
+function log(buffer) {
+  console.log(buffer.toString('utf8'));
 }
 
 /**
  * Run build given the following skyuxconfig object.
  * Spawns http-server and resolves when ready.
  */
-function serveBuild(config) {
-  return new Promise((resolve, reject) => {
+function prepareBuild(config) {
 
-    // Prepare skyuxconfig.json
-    const skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
-    writeConfig(config);
+  // Prepare skyuxconfig.json, saving original
+  const skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
+  writeConfig(config);
 
-    exec(`node`, [`../e2e/_cli`, `build`], opts)
-      .then(() => {
-        writeConfig(skyuxConfigOriginal);
+  function writeConfig(json) {
+    fs.writeFileSync(skyuxConfigPath, JSON.stringify(json), 'utf8');
+  }
+
+  function serve(exitCode) {
+
+    // Save our exitCode for testing
+    _exitCode = exitCode;
+
+    // Reset skyuxconfig.json
+    writeConfig(skyuxConfigOriginal);
+
+    // Create our server
+    httpServer = HttpServer.createServer({ root: tmp });
+
+    return new Promise((resolve, reject) => {
+      httpServer.listen(PORT, 'localhost', () => {
         browser.get(`http://localhost:${PORT}/dist/`).then(resolve, reject);
-      }, reject);
+      });
+    });
+  }
+
+  return new Promise((resolve, reject) => {
+    exec(`rm`, [`-rf`, `${tmp}/dist`])
+      .then(() => exec(`node`, [`../e2e/_cli`, `build`], cwdOpts), reject)
+      .then(serve, reject)
+      .then(resolve, reject);
   });
+}
+
+/**
+ * Spawns `skyux serve` and resolves once webpack is ready.
+ */
+function prepareServe() {
+
+  if (!webpackServer) {
+    webpackServer = childProcessSpawn(`node`, [`../e2e/_cli`, `serve`, `-l`, `none`], cwdOpts);
+  }
+
+  return bindServe();
 }
 
 module.exports = {
   afterAll: afterAll,
-  afterAllBuild: afterAllBuild,
-  beforeAll: beforeAll,
-  beforeAllBuild: beforeAllBuild,
-  bufferToString,
-  exec: exec,
   catchReject: catchReject,
-  opts: opts,
-  spawn: spawn,
-  serveBuild: serveBuild,
-  serveIsReady: serveIsReady,
+  cwdOpts: cwdOpts,
+  exec: exec,
+  bindServe: bindServe,
+  getExitCode: getExitCode,
+  prepareBuild: prepareBuild,
+  prepareServe: prepareServe,
   tmp: tmp
 };

@@ -12,23 +12,14 @@ const timestamp = new Date().getTime();
 describe('skyux serve', () => {
 
   const url = `https://localhost:31337/rrrrr-app-name/`;
-  let serve;
 
   beforeAll((done) => {
-    common.beforeAll(() => {
-      common.serveIsReady().then((serveRef) => {
-        serve = serveRef;
-        browser.get(url).then(done);
-      }, common.catchReject);
-    });
+    common.prepareServe().then(() => {
+      browser.get(url).then(done);
+    }, common.catchReject);
   });
 
-  afterAll((done) => {
-    common.afterAll(() => {
-      serve.kill();
-      done();
-    });
-  });
+  afterAll(common.afterAll);
 
   it('should render home components', tests.renderHomeComponent);
   it('should render shared nav component', tests.renderSharedNavComponent);
@@ -56,7 +47,7 @@ describe('skyux serve', () => {
     const file = path.resolve(common.tmp, 'src', 'app', 'home.component.html');
     const content = fs.readFileSync(file, 'utf8');
 
-    common.serveIsReady(serve).then(() => {
+    common.bindServe().then(() => {
       browser.get(url).then(() => {
         expect($$('#ts').getText()).toEqual(timestamp);
         fs.writeFileSync(file, content, 'utf8');
@@ -73,7 +64,7 @@ describe('skyux serve', () => {
     const message = `Test Message`;
     const tag = `h1`;
 
-    common.serveIsReady(serve).then(() => {
+    common.bindServe().then(() => {
       browser.get(`${url}test-dir`).then(() => {
         expect(element(by.tagName(tag)).getText()).toBe(message);
         fs.unlinkSync(file);

@@ -5,30 +5,21 @@ const tests = require('./_tests');
 
 describe('skyux build jit', () => {
 
-  beforeAll(common.beforeAllBuild);
-  afterAll(common.afterAllBuild);
-
-  const opts = { mode: 'easy', name: 'dist', compileMode: 'jit' };
-
-  it('should render the home components', (done) => {
-    common.serveBuild(opts)
-    .then(() => {
-      tests.renderHomeComponent(done);
-    }, common.catchReject);
+  beforeAll((done) => {
+    const opts = { mode: 'easy', name: 'dist', compileMode: 'jit' };
+    common.prepareBuild(opts).then(done);
   });
 
-  it('should render shared nav component', (done) => {
-    common.serveBuild(opts)
-    .then(() => {
-      tests.renderSharedNavComponent(done);
-    }, common.catchReject);
-  });
+  afterAll(common.afterAll);
 
-  it('should follow routerLink and render about component', (done) => {
-    common.serveBuild(opts)
-    .then(() => {
-      tests.followRouterLinkRenderAbout(done);
-    }, common.catchReject);
-  });
+  it('should have exitCode 0', tests.verifyExitCode);
+
+  it('should generate expected static files', tests.verifyFiles);
+
+  it('should render the home components', tests.renderHomeComponent);
+
+  it('should render shared nav component', tests.renderSharedNavComponent);
+
+  it('should follow routerLink and render about component', tests.followRouterLinkRenderAbout);
 
 });

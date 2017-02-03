@@ -2,7 +2,31 @@
 /*global element, by, $$*/
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+const common = require('./_common');
+
 module.exports = {
+
+  verifyExitCode: (done) => {
+    expect(common.getExitCode()).toEqual(0);
+    done();
+  },
+
+  verifyFiles: (done) => {
+    [
+      'app.js',
+      'index.html',
+      'metadata.json',
+      'polyfills.js',
+      'skyux.js',
+      'vendor.js'
+    ].forEach(file => {
+      expect(fs.existsSync(path.resolve(common.tmp, 'dist', file))).toEqual(true);
+    });
+    done();
+  },
+
   renderHomeComponent: (done) => {
     expect(element(by.tagName('h1')).getText()).toBe('SKY UX Template');
     expect(element(by.className('sky-alert')).getText()).toBe(
