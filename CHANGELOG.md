@@ -1,3 +1,7 @@
+# 1.0.0-beta.10 (2017-02-06)
+
+- Updated URI used when accessing HOST.
+
 # 1.0.0-beta.9 (2017-01-27)
 
 - Correctly passing `--launch none` when running `skyux e2e`.
