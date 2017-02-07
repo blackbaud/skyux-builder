@@ -1,29 +1,36 @@
 import { BBAuth, BBOmnibar } from '@blackbaud/auth-client';
+import { BBHelp } from '@blackbaud/help';
 
-import { SkyAppBootstrapConfig } from './bootstrap-config';
+interface SkyAppBootstrapConfig {
+  auth?: boolean;
+  help?: any;
+  omnibar?: any;
+}
 
 export class SkyAppBootstrapper {
   public static bootstrapConfig: SkyAppBootstrapConfig;
 
   public static processBootstrapConfig(): Promise<any> {
-    if (SkyAppBootstrapper.bootstrapConfig) {
-      let authPromise: Promise<any>;
+    let promises: Promise<any>[] = [];
 
+    if (SkyAppBootstrapper.bootstrapConfig) {
+
+      // BBAuth init
       if (SkyAppBootstrapper.bootstrapConfig.auth) {
-        authPromise = BBAuth.getToken();
-      } else {
-        authPromise = Promise.resolve();
+        promises.push(BBAuth.getToken());
       }
 
+      // BBOmnibar init
       if (SkyAppBootstrapper.bootstrapConfig.omnibar) {
-        return authPromise.then(() => {
-          BBOmnibar.load(SkyAppBootstrapper.bootstrapConfig.omnibar);
-        });
-      } else {
-        return authPromise;
+        promises.push(BBOmnibar.load(SkyAppBootstrapper.bootstrapConfig.omnibar));
+      }
+
+      // BBHelp init
+      if (SkyAppBootstrapper.bootstrapConfig.help) {
+        promises.push(BBHelp.load(SkyAppBootstrapper.bootstrapConfig.help));
       }
     }
 
-    return Promise.resolve();
+    return Promise.all(promises);
   }
 }
