@@ -1,11 +1,7 @@
 import { BBAuth, BBOmnibar } from '@blackbaud/auth-client';
-import { BBHelp } from '@blackbaud/help';
+import { BBHelp } from '@blackbaud/help-client';
 
-interface SkyAppBootstrapConfig {
-  auth?: boolean;
-  help?: any;
-  omnibar?: any;
-}
+import { SkyAppBootstrapConfig } from './bootstrap-config';
 
 export class SkyAppBootstrapper {
   public static bootstrapConfig: SkyAppBootstrapConfig;
