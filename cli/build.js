@@ -118,30 +118,35 @@ function build(argv, skyPagesConfig, webpack) {
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
   const compiler = webpack(config);
 
-  compiler.run((err, stats) => {
-    if (err) {
-      logger.error(err);
-      return;
-    }
+  return new Promise((resolve, reject) => {
+    compiler.run((err, stats) => {
+      if (err) {
+        logger.error(err);
+        reject(err);
+        return;
+      }
 
-    const jsonStats = stats.toJson();
+      const jsonStats = stats.toJson();
 
-    if (jsonStats.errors.length) {
-      logger.error(jsonStats.errors);
-    }
+      if (jsonStats.errors.length) {
+        logger.error(jsonStats.errors);
+      }
 
-    if (jsonStats.warnings.length) {
-      logger.warn(jsonStats.warnings);
-    }
+      if (jsonStats.warnings.length) {
+        logger.warn(jsonStats.warnings);
+      }
 
-    logger.info(stats.toString({
-      chunks: false,
-      colors: false
-    }));
+      logger.info(stats.toString({
+        chunks: false,
+        colors: false
+      }));
 
-    if (compileModeIsAoT) {
-      cleanupAot();
-    }
+      if (compileModeIsAoT) {
+        cleanupAot();
+      }
+
+      // resolve();
+    });
   });
 }
 
