@@ -59,7 +59,8 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(
 `SkyAppBootstrapper.bootstrapConfig = {
   omnibar: undefined,
-  auth: true
+  auth: true,
+  help: undefined
 };`
     );
 
@@ -72,7 +73,8 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(
 `SkyAppBootstrapper.bootstrapConfig = {
   omnibar: {"serviceName":"Test"},
-  auth: undefined
+  auth: undefined,
+  help: undefined
 };`
     );
   });
