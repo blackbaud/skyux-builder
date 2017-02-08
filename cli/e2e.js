@@ -9,7 +9,7 @@ const HttpServer = require('http-server');
 const selenium = require('selenium-standalone');
 const build = require('./build');
 
-const spawnOptions = { /* stdio: 'inherit' */ };
+const spawnOptions = { stdio: 'inherit' };
 
 let CONFIG;
 let PORT;

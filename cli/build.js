@@ -145,7 +145,7 @@ function build(argv, skyPagesConfig, webpack) {
         cleanupAot();
       }
 
-      // resolve();
+      resolve();
     });
   });
 }

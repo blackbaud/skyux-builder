@@ -30,10 +30,12 @@ exports.config = {
   },
   useAllAngular2AppRoots: true,
   beforeLaunch: function () {
-    require('ts-node').register();
+    // require('ts-node').register();
+    console.log('BEFORELAUNCH');
   },
 
   onPrepare: function () {
+    console.log("ONPREPARE");
     jasmine.getEnv().addReporter(new SpecReporter());
   }
 };
