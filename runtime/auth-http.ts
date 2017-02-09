@@ -9,7 +9,7 @@ import {
   Response
 } from '@angular/http';
 
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Observable';
 
 import { BBAuth } from '@blackbaud/auth-client';
 
