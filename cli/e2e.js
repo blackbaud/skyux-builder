@@ -11,8 +11,8 @@ const build = require('./build');
 
 const spawnOptions = { stdio: 'inherit' };
 
-let CONFIG;
-let PORT;
+let SCRIPTS;
+let SERVE_PORT;
 let httpServer;
 let seleniumServer;
 
@@ -63,7 +63,7 @@ function killServers(exitCode) {
  * Perhaps this should be API driven?
  * @name spawnProtractor
  */
-function spawnProtractor() {
+function spawnProtractor(skyPagesConfig) {
 
   logger.info('Running Protractor');
   const protractorPath = path.resolve(
@@ -76,8 +76,9 @@ function spawnProtractor() {
     protractorPath,
     [
       getProtractorConfigPath(),
-      `--params.port ${PORT}`,
-      `--params.config ${JSON.stringify(CONFIG)}`
+      `--params.port=${SERVE_PORT}`,
+      `--params.scripts=${JSON.stringify(SCRIPTS)}`,
+      `--params.skyPagesConfig=${JSON.stringify(skyPagesConfig)}`
     ],
     spawnOptions
   );
@@ -125,8 +126,16 @@ function spawnSelenium() {
 function spawnServer() {
   return new Promise(resolve => {
     logger.info('Requesting Open Port');
-    httpServer = HttpServer.createServer({ root: 'dist/' });
+    httpServer = HttpServer.createServer({
+      root: 'dist/',
+      cors: true,
+      https: {
+        cert: path.resolve(__dirname, '../', 'ssl', 'server.crt'),
+        key: path.resolve(__dirname, '../', 'ssl', 'server.key')
+      }
+    });
     portfinder.getPortPromise().then(port => {
+      SERVE_PORT = port;
       logger.info(`Open Port Found: ${port}`);
       logger.info('Starting Web Server');
       httpServer.listen(port, 'localhost', () => {
@@ -143,9 +152,9 @@ function spawnServer() {
 function spawnBuild(argv, skyPagesConfig, webpack) {
   return new Promise(resolve => {
     logger.info('Starting Build');
-    build(argv, skyPagesConfig, webpack).then(config => {
+    build(argv, skyPagesConfig, webpack).then(scripts => {
       logger.info('Completed Build');
-      CONFIG = config;
+      SCRIPTS = scripts;
       resolve();
     });
   });
@@ -167,7 +176,9 @@ function e2e(argv, skyPagesConfig, webpack) {
     buildPromise,
     serverPromise,
     seleniumPromise
-  ]).then(spawnProtractor);
+  ]).then(() => {
+    spawnProtractor(skyPagesConfig);
+  });
 }
 
 module.exports = e2e;

@@ -4,6 +4,7 @@
 const logger = require('winston');
 const fs = require('fs-extra');
 const merge = require('merge');
+const sorter = require('html-webpack-plugin/lib/chunksorter');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 
@@ -116,8 +117,23 @@ function build(argv, skyPagesConfig, webpack) {
   }
 
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
-  const compiler = webpack(config);
 
+  // Save our scripts in case we need them for e2e
+  // TODO, FACTOR THIS OUT
+  let scripts = [];
+  config.plugins.push(function () {
+    this.plugin('emit', (compilation, done) => {
+      const chunks = sorter.dependency(compilation.getStats().toJson().chunks);
+      chunks.forEach((chunk) => {
+        scripts.push({
+          name: chunk.files[0]
+        });
+      });
+      done();
+    });
+  });
+
+  const compiler = webpack(config);
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
@@ -145,7 +161,7 @@ function build(argv, skyPagesConfig, webpack) {
         cleanupAot();
       }
 
-      resolve();
+      resolve(scripts);
     });
   });
 }

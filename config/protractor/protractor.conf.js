@@ -22,7 +22,6 @@ exports.config = {
   },
   directConnect: true,
   // seleniumAddress: 'http://localhost:4444/wd/hub',
-  baseUrl: 'https://sky.blackbaud-dev.com',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,
@@ -30,12 +29,10 @@ exports.config = {
   },
   useAllAngular2AppRoots: true,
   beforeLaunch: function () {
-    // require('ts-node').register();
-    console.log('BEFORELAUNCH');
+    require('ts-node').register();
   },
 
   onPrepare: function () {
-    console.log("ONPREPARE");
     jasmine.getEnv().addReporter(new SpecReporter());
   }
 };
