@@ -78,7 +78,7 @@ function spawnProtractor(skyPagesConfig) {
     protractorPath,
     [
       getProtractorConfigPath(),
-      `--baseUrl ${skyPagesConfig.host.url}`
+      `--baseUrl ${skyPagesConfig.host.url}`,
       `--params.port=${SERVE_PORT}`,
       `--params.scripts=${JSON.stringify(SCRIPTS)}`,
       `--params.skyPagesConfig=${JSON.stringify(skyPagesConfig)}`
