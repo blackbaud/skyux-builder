@@ -11,7 +11,7 @@ const build = require('./build');
 
 const spawnOptions = { stdio: 'inherit' };
 
-let SCRIPTS;
+let WEBPACK_CHUNKS;
 let SERVE_PORT;
 let httpServer;
 let seleniumServer;
@@ -73,14 +73,13 @@ function spawnProtractor(skyPagesConfig) {
     '.bin',
     'protractor'
   );
-
   const protractor = spawn.spawn(
     protractorPath,
     [
       getProtractorConfigPath(),
       `--baseUrl ${skyPagesConfig.host.url}`,
-      `--params.port=${SERVE_PORT}`,
-      `--params.scripts=${JSON.stringify(SCRIPTS)}`,
+      `--params.localUrl=https://localhost:${SERVE_PORT}`,
+      `--params.webpackChunks=${JSON.stringify(WEBPACK_CHUNKS)}`,
       `--params.skyPagesConfig=${JSON.stringify(skyPagesConfig)}`
     ],
     spawnOptions
@@ -155,9 +154,9 @@ function spawnServer() {
 function spawnBuild(argv, skyPagesConfig, webpack) {
   return new Promise(resolve => {
     logger.info('Starting Build');
-    build(argv, skyPagesConfig, webpack).then(scripts => {
+    build(argv, skyPagesConfig, webpack).then(stats => {
       logger.info('Completed Build');
-      SCRIPTS = scripts;
+      WEBPACK_CHUNKS = stats.toJson().chunks;
       resolve();
     });
   });

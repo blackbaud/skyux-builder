@@ -4,12 +4,14 @@
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
+const open = require('open');
 const logger = require('winston');
 const webpackMerge = require('webpack-merge');
 const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
-const sorter = require('html-webpack-plugin/lib/chunksorter');
+const hostUtils = require('../../utils/host-utils');
 
 const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
 
@@ -26,28 +28,22 @@ function getWebpackConfig(argv, skyPagesConfig) {
    */
   function WebpackPluginDone() {
     let launched = false;
-    const hostBaseUrl = skyPagesConfig.host.url + skyPagesConfigUtil.getAppBase(skyPagesConfig);
-    const localUrl = util.format(
-      'https://localhost:%s%s',
-      this.options.devServer.port,
-      this.options.devServer.publicPath
-    );
-    let scripts = [];
-
-    this.plugin('emit', (compilation, done) => {
-      const chunks = sorter.dependency(compilation.getStats().toJson().chunks);
-      chunks.forEach((chunk) => {
-        scripts.push({
-          name: chunk.files[0]
-        });
-      });
-      done();
-    });
-
-    this.plugin('done', () => {
+    this.plugin('done', (stats) => {
       if (!launched) {
 
-        const open = require('open');
+        const localUrl = util.format(
+          'https://localhost:%s%s',
+          this.options.devServer.port,
+          this.options.devServer.publicPath
+        );
+
+        const hostUrl = hostUtils.resolve(
+          skyPagesConfigUtil.getAppBase(skyPagesConfig),
+          localUrl,
+          stats.toJson().chunks,
+          skyPagesConfig
+        );
+
         logger.info('SKY UX builder is ready.');
         launched = true;
 
@@ -64,18 +60,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
             open(localUrl);
             break;
           default:
-            let spConfig = {
-              scripts: scripts,
-              localUrl: localUrl
-            };
-
-            if (skyPagesConfig.app && skyPagesConfig.app.externals) {
-              spConfig.externals = skyPagesConfig.app.externals;
-            }
-
-            const encoded = new Buffer(JSON.stringify(spConfig)).toString('base64');
-            const hostUrl = `${hostBaseUrl}?local=true&_cfg=${encoded}`;
-
             logger.info(`Launching Host URL: ${hostUrl}`);
             open(hostUrl);
             break;
