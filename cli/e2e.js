@@ -15,6 +15,7 @@ let SCRIPTS;
 let SERVE_PORT;
 let httpServer;
 let seleniumServer;
+let start;
 
 /**
  * Function to get the protractorConfigPath
@@ -54,6 +55,7 @@ function killServers(exitCode) {
     exitCode = 0;
   }
 
+  logger.info(`Execution Time: ${(new Date().getTime() - start)/1000} seconds`);
   logger.info(`Exiting process with ${exitCode}`);
   process.exit(exitCode || 0);
 }
@@ -166,6 +168,7 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
  * @name e2e
  */
 function e2e(argv, skyPagesConfig, webpack) {
+  start = new Date().getTime();
   process.on('SIGINT', killServers);
 
   const buildPromise = spawnBuild(argv, skyPagesConfig, webpack);
