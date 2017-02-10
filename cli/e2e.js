@@ -9,10 +9,9 @@ const HttpServer = require('http-server');
 const selenium = require('selenium-standalone');
 const build = require('./build');
 
+// Disable this to quiet the output
 const spawnOptions = { stdio: 'inherit' };
 
-let WEBPACK_CHUNKS;
-let SERVE_PORT;
 let httpServer;
 let seleniumServer;
 let start;
@@ -42,11 +41,13 @@ function killServers(exitCode) {
   if (seleniumServer) {
     logger.info('Closing selenium server');
     seleniumServer.kill();
+    seleniumServer = null;
   }
 
   if (httpServer) {
     logger.info('Closing http server');
     httpServer.close();
+    httpServer = null;
   }
 
   // Catch protractor's "Kitchen Sink" error.
@@ -55,7 +56,7 @@ function killServers(exitCode) {
     exitCode = 0;
   }
 
-  logger.info(`Execution Time: ${(new Date().getTime() - start)/1000} seconds`);
+  logger.info(`Execution Time: ${(new Date().getTime() - start) / 1000} seconds`);
   logger.info(`Exiting process with ${exitCode}`);
   process.exit(exitCode || 0);
 }
@@ -65,7 +66,7 @@ function killServers(exitCode) {
  * Perhaps this should be API driven?
  * @name spawnProtractor
  */
-function spawnProtractor(skyPagesConfig) {
+function spawnProtractor(chunks, port, skyPagesConfig) {
 
   logger.info('Running Protractor');
   const protractorPath = path.resolve(
@@ -78,8 +79,8 @@ function spawnProtractor(skyPagesConfig) {
     [
       getProtractorConfigPath(),
       `--baseUrl ${skyPagesConfig.host.url}`,
-      `--params.localUrl=https://localhost:${SERVE_PORT}`,
-      `--params.webpackChunks=${JSON.stringify(WEBPACK_CHUNKS)}`,
+      `--params.localUrl=https://localhost:${port}`,
+      `--params.chunks=${JSON.stringify(chunks)}`,
       `--params.skyPagesConfig=${JSON.stringify(skyPagesConfig)}`
     ],
     spawnOptions
@@ -137,12 +138,11 @@ function spawnServer() {
       }
     });
     portfinder.getPortPromise().then(port => {
-      SERVE_PORT = port;
       logger.info(`Open Port Found: ${port}`);
       logger.info('Starting Web Server');
       httpServer.listen(port, 'localhost', () => {
         logger.info('Web Server Running');
-        resolve();
+        resolve(port);
       });
     });
   });
@@ -153,11 +153,10 @@ function spawnServer() {
  */
 function spawnBuild(argv, skyPagesConfig, webpack) {
   return new Promise(resolve => {
-    logger.info('Starting Build');
+    logger.info('Running build');
     build(argv, skyPagesConfig, webpack).then(stats => {
-      logger.info('Completed Build');
-      WEBPACK_CHUNKS = stats.toJson().chunks;
-      resolve();
+      logger.info('Completed build');
+      resolve(stats.toJson().chunks);
     });
   });
 }
@@ -171,16 +170,16 @@ function e2e(argv, skyPagesConfig, webpack) {
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  const buildPromise = spawnBuild(argv, skyPagesConfig, webpack);
-  const serverPromise = spawnServer();
-  const seleniumPromise = spawnSelenium();
-
   Promise.all([
-    buildPromise,
-    serverPromise,
-    seleniumPromise
-  ]).then(() => {
-    spawnProtractor(skyPagesConfig);
+    spawnBuild(argv, skyPagesConfig, webpack),
+    spawnServer(),
+    spawnSelenium()
+  ]).then(values => {
+    spawnProtractor(
+      values[0],
+      values[1],
+      skyPagesConfig
+    );
   });
 }
 

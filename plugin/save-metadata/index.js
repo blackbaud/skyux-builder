@@ -7,7 +7,6 @@ const util = require('util');
 const hostUtils = require('../../utils/host-utils');
 
 module.exports = function SaveMetadata() {
-  const metadata = [];
 
   function getFallbackName(name) {
     return util.format('SKY_PAGES_READY_%s', name.toUpperCase());
@@ -37,7 +36,7 @@ module.exports = function SaveMetadata() {
     let metadata = [];
     hostUtils.getScripts(stats.toJson().chunks).forEach(script => {
       metadata.push({
-        name: script,
+        name: script.name,
         fallback: getFallbackName(path.parse(script.name).name)
       });
     });

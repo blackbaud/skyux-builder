@@ -10,7 +10,7 @@ export class SkyHostBrowser {
     const destination = hostUtils.resolve(
       url,
       browser.params.localUrl,
-      JSON.parse(browser.params.webpackChunks),
+      JSON.parse(browser.params.chunks),
       JSON.parse(browser.params.skyPagesConfig)
     );
 
