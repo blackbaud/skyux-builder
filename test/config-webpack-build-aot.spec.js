@@ -98,20 +98,36 @@ describe('config webpack build-aot', () => {
                     'test3.js': {
                       source: () => {}
                     }
-                  },
-                  getStats: () => ({
-                    toJson: () => ({
-                      chunks: [
-                        { id: 1, entry: false, names: ['test1'], parents: ['3'], files: ['test1.js'] },
-                        { id: 2, entry: false, names: ['test2'], parents: ['3'], files: ['test2.js'] },
-                        { id: 3, entry: true, names: ['test3'], files: ['test3.js'] }
-                      ]
-                    })
-                  })
+                  }
                 }, () => {});
               break;
               case 'done':
-                cb();
+                cb({
+                  toJson: () => ({
+                    chunks: [
+                      {
+                        id: 1,
+                        entry: false,
+                        names: ['test1'],
+                        parents: ['3'],
+                        files: ['test1.js']
+                      },
+                      {
+                        id: 2,
+                        entry: false,
+                        names: ['test2'],
+                        parents: ['3'],
+                        files: ['test2.js']
+                      },
+                      {
+                        id: 3,
+                        entry: true,
+                        names: ['test3'],
+                        files: ['test3.js']
+                      }
+                    ]
+                  })
+                });
               break;
             }
           }

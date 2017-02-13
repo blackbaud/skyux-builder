@@ -22,7 +22,6 @@ exports.config = {
   },
   directConnect: true,
   // seleniumAddress: 'http://localhost:4444/wd/hub',
-  baseUrl: 'https://sky.blackbaud-dev.com',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,

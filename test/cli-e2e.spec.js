@@ -8,137 +8,124 @@ const selenium = require('selenium-standalone');
 
 describe('cli e2e', () => {
 
-  let returnSeleniumServer;
-  let webpackDevServerCalled;
-  let webpackDevServerClosed;
-  let webpackCompiler;
-  let spawnCmd;
-  let spawnConfig;
-  let spawnSyncCmd;
-  let spawnSyncFlags;
-  let spawnSyncConfig;
-  let spawnExitCb;
+  const PORT = 1234;
+  const CHUNKS = [{ name: 'asdf' }];
+  const SKY_PAGES_CONFIG = {
+    app: {},
+    host: {
+      url: 'asdf'
+    }
+  };
+
+  const ARGV = { a: true };
+  const WEBPACK = { c: true };
+  const configPath = path.resolve(
+    __dirname,
+    '..',
+    'config',
+    'protractor',
+    'protractor.conf.js'
+  );
+
+  function infoCalledWith(msg) {
+    let r = false;
+    logger.info.calls.all().forEach(call => {
+      if (call.args[0] === msg) {
+        r = true;
+      }
+    });
+    return r;
+  }
+
+  let EXIT_CODE;
+  let PROTRACTOR_CB;
 
   beforeEach(() => {
-    returnSeleniumServer = true;
-    webpackDevServerCalled = false;
-    webpackDevServerClosed = false;
-    webpackCompiler = null;
-    spawnCmd = null;
-    spawnConfig = null;
-    spawnSyncCmd = null;
-    spawnSyncFlags = null;
-    spawnSyncConfig = null;
-    spawnExitCb = null;
 
-    spyOn(process, 'exit');
+    EXIT_CODE = 0;
 
-    mock('webpack-dev-server', function (compiler) {
-      webpackDevServerCalled = true;
-      webpackCompiler = compiler;
-      return {
-        listen: () => {},
-
-        close: () => {
-          webpackDevServerClosed = true;
-        }
-      };
+    mock('../cli/build', () => {
+      return new Promise(resolve => {
+        resolve({
+          toJson: () => ({
+            chunks: CHUNKS
+          })
+        });
+      });
     });
 
     mock('cross-spawn', {
       spawn: (cmd, config) => {
-        spawnCmd = cmd;
-        spawnConfig = config;
         return {
           on: (evt, cb) => {
             if (evt === 'exit') {
-              spawnExitCb = cb;
+              PROTRACTOR_CB = cb;
+              cb(EXIT_CODE);
             }
           }
         };
       },
 
-      sync: (syncCmd, syncFlags, syncConfig) => {
-        spawnSyncCmd = syncCmd;
-        spawnSyncFlags = syncFlags;
-        spawnSyncConfig = syncConfig;
-      }
+      sync: () => {}
     });
+
+    mock('portfinder', {
+      getPortPromise: () => new Promise(resolve => resolve(PORT))
+    });
+
+    mock('http-server', {
+      createServer: () => ({
+        close: () => {},
+        listen: (port, host, cb) => {
+          cb();
+        }
+      })
+    });
+
+    spyOn(logger, 'info');
+    spyOn(Promise, 'all').and.callFake(() => {
+      return Promise.resolve([CHUNKS, PORT]);
+    });
+
   });
 
   afterEach(() => {
-    mock.stop('webpack-dev-server');
-    mock.stop('cross-spawn');
-  });
-
-  it('should spawn and close webpack dev server', () => {
-    spyOn(logger, 'info');
-    require('../cli/e2e')({});
-    webpackCompiler.options.plugins.forEach((plugin) => {
-      if (plugin.name === 'WebpackPluginDoneE2E') {
-        plugin.apply({
-          plugin: (evt, cb) => {
-            cb();
-            spawnExitCb();
-            expect(logger.info).toHaveBeenCalledWith('Webpack server is ready.');
-            expect(webpackDevServerCalled).toEqual(true);
-            expect(webpackDevServerClosed).toEqual(true);
-          }
-        });
-      }
-    });
-  });
-
-  it('should pass launch none', () => {
-    const configPath = '../config/webpack/serve.webpack.config';
-    const config = require(configPath);
-    let webpackConfigArgs;
-
-    mock(configPath, {
-      getWebpackConfig: (args, skyPagesConfig) => {
-        webpackConfigArgs = args;
-        return config.getWebpackConfig(args, skyPagesConfig);
-      }
-    });
-
-    require('../cli/e2e')({ });
-    expect(webpackConfigArgs.launch).toEqual('none');
+    EXIT_CODE = null;
     mock.stop(configPath);
+    mock.stop('../cli/build');
+    mock.stop('cross-spawn');
+    mock.stop('portfinder');
+    mock.stop('http-server');
   });
 
-  it('should not spawn webpack dev server if noServe is true', () => {
-    require('../cli/e2e')({ noServe: true });
-    expect(webpackDevServerCalled).toEqual(false);
-  });
+  it('should spawn protractor after build, server, and selenium, then kill servers', (done) => {
 
-  it('should spawn protractor', () => {
-    spyOn(logger, 'info');
-    require('../cli/e2e')({ noServe: true });
-
-    expect(spawnCmd).toContain('protractor');
-    expect(spawnConfig[0]).toContain('protractor.conf.js');
-  });
-
-  it('should install, start, and close selenium if seleniumAddress is given', () => {
-    const configPath = path.resolve(
-      __dirname,
-      '..',
-      'config',
-      'protractor',
-      'protractor.conf.js'
-    );
-
-    let cbInstall;
-    let cbStart;
-    let killed = false;
-
-    spyOn(selenium, 'install').and.callFake((config, cb) => {
-      cbInstall = cb;
+    spyOn(logger, 'warn');
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(EXIT_CODE);
+      done();
     });
-    spyOn(selenium, 'start').and.callFake((cb) => {
-      cbStart = cb;
+
+    EXIT_CODE = 1;
+    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should catch protractor kitchen sink error', (done) => {
+
+    spyOn(logger, 'warn');
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(logger.warn).toHaveBeenCalledWith('Supressing protractor\'s "kitchen sink" error 199');
+      expect(exitCode).toEqual(0);
+      done();
     });
-    spyOn(logger, 'info');
+
+    EXIT_CODE = 199;
+    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('selenium should install and start only if a seleniumAddress is specified', (done) => {
+
+    let killCalled = false;
 
     mock(configPath, {
       config: {
@@ -146,59 +133,46 @@ describe('cli e2e', () => {
       }
     });
 
-    require('../cli/e2e')({ noServe: true });
-    cbInstall();
-    cbStart(null, {
-      kill: () => {
-        killed = true;
-      }
-    });
-    spawnExitCb();
-    expect(selenium.install).toHaveBeenCalled();
-    expect(selenium.start).toHaveBeenCalled();
-    expect(logger.info).toHaveBeenCalledWith('Selenium server is ready.');
-    expect(logger.info).toHaveBeenCalledWith('Cleaning up running servers');
-    expect(killed).toEqual(true);
-    mock.stop(configPath);
-  });
-
-  it('should only kill the seleniumServer and webpackServer if they exist', () => {
-    spyOn(logger, 'info');
-    require('../cli/e2e')({ noServe: true });
-    spawnExitCb();
-    expect(logger.info).toHaveBeenCalledTimes(3);
-  });
-
-  it('should listen for SIGINT and kill the servers, defaulting to exit code 0', () => {
-    spyOn(process, 'on').and.callFake((evt, cb) => {
-      if (evt === 'SIGINT') {
-        cb();
-      }
-    });
-    require('../cli/e2e')({ noServe: true });
-    expect(process.exit).toHaveBeenCalledWith(0);
-  });
-
-  it('should pass through any exit code, except 199', () => {
-    spyOn(process, 'on').and.callFake((evt, cb) => {
-      if (evt === 'SIGINT') {
-        cb(1337);
-      }
-    });
-    require('../cli/e2e')({ noServe: true });
-    expect(process.exit).toHaveBeenCalledWith(1337);
-  });
-
-  it('should catch exitCode 199', () => {
     spyOn(logger, 'warn');
-    spyOn(process, 'on').and.callFake((evt, cb) => {
-      if (evt === 'SIGINT') {
-        cb(199);
+    spyOn(selenium, 'install').and.callFake((config, cb) => {
+      cb();
+    });
+
+    spyOn(selenium, 'start').and.callFake((cb) => {
+      cb(null, {
+        kill: () => killCalled = true
+      });
+    });
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+
+      expect(infoCalledWith('Selenium server is ready.')).toEqual(true);
+      expect(killCalled).toEqual(true);
+      expect(exitCode).toEqual(0);
+
+      mock.stop(configPath);
+      done();
+    });
+
+    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('only kill servers that exist', (done) => {
+    let called = false;
+    spyOn(logger, 'warn');
+    spyOn(process, 'exit').and.callFake(() => {
+      // Stop the infinite loop
+      if (!called) {
+        called = true;
+        expect(infoCalledWith('Closing http server')).toEqual(true);
+        logger.info.calls.reset();
+        PROTRACTOR_CB();
+        expect(infoCalledWith('Closing http server')).toEqual(false);
+        done();
       }
     });
-    require('../cli/e2e')({ noServe: true });
-    expect(process.exit).toHaveBeenCalledWith(0);
-    expect(logger.warn).toHaveBeenCalled();
+
+    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
 });
