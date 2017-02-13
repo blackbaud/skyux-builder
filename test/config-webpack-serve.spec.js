@@ -70,8 +70,16 @@ describe('config webpack serve', () => {
           options: getPluginOptions(),
           plugin: (evt, cb) => {
             if (evt === 'done') {
-              cb();
-              cb();
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
             }
           }
         });
@@ -89,7 +97,11 @@ describe('config webpack serve', () => {
           options: getPluginOptions(),
           plugin: (evt, cb) => {
             if (evt === 'done') {
-              cb();
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
             }
           }
         });
@@ -108,7 +120,11 @@ describe('config webpack serve', () => {
           options: getPluginOptions(),
           plugin: (evt, cb) => {
             if (evt === 'done') {
-              cb();
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
             }
           }
         });
@@ -127,7 +143,11 @@ describe('config webpack serve', () => {
           options: getPluginOptions(),
           plugin: (evt, cb) => {
             if (evt === 'done') {
-              cb();
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
             }
           }
         });
@@ -146,7 +166,11 @@ describe('config webpack serve', () => {
           options: getPluginOptions(),
           plugin: (evt, cb) => {
             if (evt === 'done') {
-              cb();
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
             }
           }
         });
@@ -165,7 +189,11 @@ describe('config webpack serve', () => {
           options: getPluginOptions(),
           plugin: (evt, cb) => {
             if (evt === 'done') {
-              cb();
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
             }
           }
         });
@@ -185,19 +213,17 @@ describe('config webpack serve', () => {
           plugin: (evt, cb) => {
             if (evt === 'emit') {
               const done = () => {};
-              const compilation = {
-                getStats: () => ({
-                  toJson: () => ({
-                    chunks: []
-                  })
-                })
-              };
+              const compilation = {};
 
               cb(compilation, done);
             }
 
             if (evt === 'done') {
-              cb();
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
               const urlParsed = urlLibrary.parse(openCalledWith, true);
               const configString = new Buffer.from(urlParsed.query._cfg, 'base64').toString();
               const configObject = JSON.parse(configString);
@@ -220,22 +246,20 @@ describe('config webpack serve', () => {
           plugin: (evt, cb) => {
             if (evt === 'emit') {
               const done = () => {};
-              const compilation = {
-                getStats: () => ({
-                  toJson: () => ({
-                    chunks: [
-                      { files: ['a.js'] },
-                      { files: ['b.js'] }
-                    ]
-                  })
-                })
-              };
+              const compilation = {};
 
               cb(compilation, done);
             }
 
             if (evt === 'done') {
-              cb();
+              cb({
+                toJson: () => ({
+                  chunks: [
+                    { files: ['a.js'] },
+                    { files: ['b.js'] }
+                  ]
+                })
+              });
               const urlParsed = urlLibrary.parse(openCalledWith, true);
               const configString = new Buffer.from(urlParsed.query._cfg, 'base64').toString();
               const configObject = JSON.parse(configString);

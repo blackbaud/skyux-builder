@@ -4,14 +4,17 @@
 const path = require('path');
 const spawn = require('cross-spawn');
 const logger = require('winston');
+const portfinder = require('portfinder');
+const HttpServer = require('http-server');
 const selenium = require('selenium-standalone');
-const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
-const webpackMerge = require('webpack-merge');
+const build = require('./build');
 
+// Disable this to quiet the output
 const spawnOptions = { stdio: 'inherit' };
-let webpackServer;
+
+let httpServer;
 let seleniumServer;
+let start;
 
 /**
  * Function to get the protractorConfigPath
@@ -38,11 +41,13 @@ function killServers(exitCode) {
   if (seleniumServer) {
     logger.info('Closing selenium server');
     seleniumServer.kill();
+    seleniumServer = null;
   }
 
-  if (webpackServer) {
-    logger.info('Closing webpack server');
-    webpackServer.close();
+  if (httpServer) {
+    logger.info('Closing http server');
+    httpServer.close();
+    httpServer = null;
   }
 
   // Catch protractor's "Kitchen Sink" error.
@@ -51,6 +56,7 @@ function killServers(exitCode) {
     exitCode = 0;
   }
 
+  logger.info(`Execution Time: ${(new Date().getTime() - start) / 1000} seconds`);
   logger.info(`Exiting process with ${exitCode}`);
   process.exit(exitCode || 0);
 }
@@ -60,18 +66,23 @@ function killServers(exitCode) {
  * Perhaps this should be API driven?
  * @name spawnProtractor
  */
-function spawnProtractor() {
+function spawnProtractor(chunks, port, skyPagesConfig) {
 
-  logger.info('Beginning e2e tests.');
+  logger.info('Running Protractor');
   const protractorPath = path.resolve(
     'node_modules',
     '.bin',
     'protractor'
   );
-
   const protractor = spawn.spawn(
     protractorPath,
-    [getProtractorConfigPath()],
+    [
+      getProtractorConfigPath(),
+      `--baseUrl ${skyPagesConfig.host.url}`,
+      `--params.localUrl=https://localhost:${port}`,
+      `--params.chunks=${JSON.stringify(chunks)}`,
+      `--params.skyPagesConfig=${JSON.stringify(skyPagesConfig)}`
+    ],
     spawnOptions
   );
 
@@ -85,80 +96,91 @@ function spawnProtractor() {
 function spawnSelenium() {
 
   const config = require(getProtractorConfigPath()).config;
+  return new Promise(resolve => {
+    logger.info('Spawning Selenium');
 
-  // Assumes we're running selenium oursevles, so we should prep it
-  if (config.seleniumAddress) {
-    selenium.install({ logger: logger.info }, () => {
-      selenium.start((err, child) => {
-        seleniumServer = child;
-        logger.info('Selenium server is ready.');
-        spawnProtractor();
+    // Assumes we're running selenium oursevles, so we should prep it
+    if (config.seleniumAddress) {
+      selenium.install({ logger: logger.info }, () => {
+        selenium.start((err, child) => {
+          seleniumServer = child;
+          logger.info('Selenium server is ready.');
+          resolve();
+        });
       });
-    });
 
-  // Otherwise we need to prep protractor's selenium
-  } else {
-    const webdriverManagerPath = path.resolve(
-      'node_modules',
-      '.bin',
-      'webdriver-manager'
-    );
-    spawn.sync(webdriverManagerPath, ['update'], spawnOptions);
-    spawnProtractor();
-  }
-
-}
-
-/**
- * Webpack plugin which binds to the done event.
- * @name WebpackPluginDoneE2E
- */
-function WebpackPluginDoneE2E() {
-  this.plugin('done', () => {
-    logger.info('Webpack server is ready.');
-    spawnSelenium();
+    // Otherwise we need to prep protractor's selenium
+    } else {
+      const webdriverManagerPath = path.resolve(
+        'node_modules',
+        '.bin',
+        'webdriver-manager'
+      );
+      spawn.sync(webdriverManagerPath, ['update'], spawnOptions);
+      logger.info('Selenium server is ready.');
+      resolve();
+    }
   });
 }
 
 /**
- * Spawns the protractor command.
+ * Spawns the httpServer
+ */
+function spawnServer() {
+  return new Promise(resolve => {
+    logger.info('Requesting Open Port');
+    httpServer = HttpServer.createServer({
+      root: 'dist/',
+      cors: true,
+      https: {
+        cert: path.resolve(__dirname, '../', 'ssl', 'server.crt'),
+        key: path.resolve(__dirname, '../', 'ssl', 'server.key')
+      }
+    });
+    portfinder.getPortPromise().then(port => {
+      logger.info(`Open Port Found: ${port}`);
+      logger.info('Starting Web Server');
+      httpServer.listen(port, 'localhost', () => {
+        logger.info('Web Server Running');
+        resolve(port);
+      });
+    });
+  });
+}
+
+/**
+ * Spawns the build process.  Captures the config used.
+ */
+function spawnBuild(argv, skyPagesConfig, webpack) {
+  return new Promise(resolve => {
+    logger.info('Running build');
+    build(argv, skyPagesConfig, webpack).then(stats => {
+      logger.info('Completed build');
+      resolve(stats.toJson().chunks);
+    });
+  });
+}
+
+/**
+ * Spawns the necessary commands for e2e.
+ * Assumes build was ran.
  * @name e2e
  */
-function e2e(argv) {
-
-  // Multiple runs could cause conflicts
-  webpackServer = null;
-  seleniumServer = null;
-
-  // Politely kill any of our servers
+function e2e(argv, skyPagesConfig, webpack) {
+  start = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  // Allows serve to be run independently
-  if (argv.noServe) {
-    spawnSelenium();
-    return;
-  }
-
-  const webpackConfig = require('../config/webpack/serve.webpack.config');
-  const skyPagesConfig = require('../config/sky-pages/sky-pages.config');
-  const config = webpackMerge(
-    webpackConfig.getWebpackConfig(
-      {
-        launch: 'none'
-      },
-      skyPagesConfig.getSkyPagesConfig()
-    ),
-    {
-      devServer: {
-        colors: false
-      },
-      plugins: [WebpackPluginDoneE2E]
-    }
-  );
-
-  const compiler = webpack(config);
-  webpackServer = new WebpackDevServer(compiler, config.devServer);
-  webpackServer.listen(config.devServer.port);
+  Promise.all([
+    spawnBuild(argv, skyPagesConfig, webpack),
+    spawnServer(),
+    spawnSelenium()
+  ]).then(values => {
+    spawnProtractor(
+      values[0],
+      values[1],
+      skyPagesConfig
+    );
+  });
 }
 
 module.exports = e2e;
