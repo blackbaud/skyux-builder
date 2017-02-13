@@ -18,11 +18,11 @@ export class SkyAppBootstrapper {
 
       return authPromise.then(() => {
         if (SkyAppBootstrapper.bootstrapConfig.omnibar) {
-            BBOmnibar.load(SkyAppBootstrapper.bootstrapConfig.omnibar)
+          BBOmnibar.load(SkyAppBootstrapper.bootstrapConfig.omnibar);
         }
 
         if (SkyAppBootstrapper.bootstrapConfig.help) {
-            BBHelp.load(SkyAppBootstrapper.bootstrapConfig.help);
+          BBHelp.load(SkyAppBootstrapper.bootstrapConfig.help);
         }
       });
     }
