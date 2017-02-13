@@ -6,7 +6,7 @@ const logger = require('winston');
 
 describe('cli build', () => {
 
-  afterAll(() => {
+  afterEach(() => {
     mock.stop('../config/webpack/build.webpack.config');
   });
 
@@ -31,13 +31,16 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
+    const customError = 'custom-error1';
     require('../cli/build')({}, {}, () => ({
       run: (cb) => {
-        cb('custom-error1');
-        expect(logger.error).toHaveBeenCalledWith('custom-error1');
-        done();
+        cb(customError);
+        expect(logger.error).toHaveBeenCalledWith(customError);
       }
-    }));
+    })).then(() => {}, (err) => {
+      expect(err).toEqual(customError);
+      done();
+    });
   });
 
   it('should call webpack and handle stats errors and warnings', (done) => {
