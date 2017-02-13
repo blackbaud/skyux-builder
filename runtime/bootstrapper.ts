@@ -26,6 +26,7 @@ export class SkyAppBootstrapper {
         }
       });
     }
+
     return Promise.resolve();
   }
 }
