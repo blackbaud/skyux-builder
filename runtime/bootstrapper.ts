@@ -7,26 +7,26 @@ export class SkyAppBootstrapper {
   public static bootstrapConfig: SkyAppBootstrapConfig;
 
   public static processBootstrapConfig(): Promise<any> {
-    let promises: Promise<any>[] = [];
-
     if (SkyAppBootstrapper.bootstrapConfig) {
+      let authPromise: Promise<any>;
 
-      // BBAuth init
       if (SkyAppBootstrapper.bootstrapConfig.auth) {
-        promises.push(BBAuth.getToken());
+        authPromise = BBAuth.getToken();
+      } else {
+        authPromise = Promise.resolve();
       }
 
-      // BBOmnibar init
-      if (SkyAppBootstrapper.bootstrapConfig.omnibar) {
-        promises.push(BBOmnibar.load(SkyAppBootstrapper.bootstrapConfig.omnibar));
-      }
+      return authPromise.then(() => {
+        if (SkyAppBootstrapper.bootstrapConfig.omnibar) {
+          BBOmnibar.load(SkyAppBootstrapper.bootstrapConfig.omnibar);
+        }
 
-      // BBHelp init
-      if (SkyAppBootstrapper.bootstrapConfig.help) {
-        promises.push(BBHelp.load(SkyAppBootstrapper.bootstrapConfig.help));
-      }
+        if (SkyAppBootstrapper.bootstrapConfig.help) {
+          BBHelp.load(SkyAppBootstrapper.bootstrapConfig.help);
+        }
+      });
     }
 
-    return Promise.all(promises);
+    return Promise.resolve();
   }
 }
