@@ -4,27 +4,15 @@
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
-
-// HTML Webpack Plugin has already solved sorting the entries
-const sorter = require('html-webpack-plugin/lib/chunksorter');
+const hostUtils = require('../../utils/host-utils');
 
 module.exports = function SaveMetadata() {
-  const metadata = [];
 
   function getFallbackName(name) {
     return util.format('SKY_PAGES_READY_%s', name.toUpperCase());
   }
 
   this.plugin('emit', (compilation, done) => {
-
-    // Sort chunks by dependency and use them to create metadata array
-    const chunks = sorter.dependency(compilation.getStats().toJson().chunks);
-    chunks.forEach((chunk) => {
-      metadata.push({
-        name: chunk.files[0],
-        fallback: getFallbackName(chunk.names[0])
-      });
-    });
 
     // Add our fallback variable to the bottom of the JS source files
     Object.keys(compilation.assets).forEach((key) => {
@@ -43,7 +31,16 @@ module.exports = function SaveMetadata() {
     done();
   });
 
-  this.plugin('done', () => {
+  this.plugin('done', (stats) => {
+
+    let metadata = [];
+    hostUtils.getScripts(stats.toJson().chunks).forEach(script => {
+      metadata.push({
+        name: script.name,
+        fallback: getFallbackName(path.parse(script.name).name)
+      });
+    });
+
     fs.writeFileSync(
       path.join(process.cwd(), 'dist', 'metadata.json'),
       JSON.stringify(metadata, null, '\t')
