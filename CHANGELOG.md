@@ -1,6 +1,13 @@
-# 1.0.0-beta.10 (2017-02-06)
+# 1.0.0-beta.11 (2017-02-??)
 
 - Updated URI used when accessing HOST.
+
+# 1.0.0-beta.10 (2017-02-13)
+
+- Allowing `help-client` to be automatically included by adding `"help": { "productId": "applicable-productId" }` to `skyuxconfig.json`. Thanks [@blackbaud-stevebrush](https://github.com/blackbaud-stevebrush)!
+- Refactored `e2e` command to run `build`, then lightly serve files to host.
+- Created `SkyHostBrowser` for easily communicating with SKY UX Host when running `skyux e2e`.
+- Deprecated `--noServe` option on `skyux e2e`
 
 # 1.0.0-beta.9 (2017-01-27)
 
