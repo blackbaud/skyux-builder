@@ -6,6 +6,7 @@ const mock = require('mock-require');
 describe('host-utils', () => {
 
   const skyPagesConfig = {
+    name: 'my-spa-name',
     host: {
       url: 'base.com'
     }
@@ -28,14 +29,14 @@ describe('host-utils', () => {
     mock.stop('html-webpack-plugin/lib/chunksorter');
   });
 
-  it('should resolve a url with a querystring', () => {
+  it('should resolve a url with a querystring and trim leading slash', () => {
     const resolved = utils.resolve('/url?q=1', '', [], skyPagesConfig);
-    expect(resolved).toContain(`base.com/url?q=1&local=true&_cfg=`);
+    expect(resolved).toContain(`base.com/my-spa-name/url?q=1&local=true&_cfg=`);
   });
 
-  it('should resolve a url with a querystring', () => {
-    const resolved = utils.resolve('/url', '', [], skyPagesConfig);
-    expect(resolved).toContain(`base.com/url?local=true&_cfg=`);
+  it('should resolve a url with a querystring and not trim leading slash', () => {
+    const resolved = utils.resolve('url', '', [], skyPagesConfig);
+    expect(resolved).toContain(`base.com/my-spa-name/url?local=true&_cfg=`);
   });
 
   it('should add scripts / chunks', () => {
@@ -43,11 +44,15 @@ describe('host-utils', () => {
     const resolved = utils.resolve('/url', '', [{ files: ['test.js'] }], skyPagesConfig);
     const decoded = decode(resolved);
 
-    expect(resolved).toContain(`base.com/url?local=true&_cfg=`);
+    expect(resolved).toContain(`base.com/my-spa-name/url?local=true&_cfg=`);
     expect(decoded.scripts).toEqual([{ name: 'test.js' }]);
   });
 
-  it('should add externals', () => {
+  it('should add externals, trim slash from host, and read name from package.json', () => {
+    mock('../package.json', {
+      name: 'my-name'
+    });
+
     const externals = {
       js: [{
         head: true,
@@ -59,13 +64,14 @@ describe('host-utils', () => {
         externals: externals
       },
       host: {
-        url: 'base.com'
+        url: 'base.com/' // Testing this goes away
       }
     });
     const decoded = decode(resolved);
 
-    expect(resolved).toContain(`base.com/url?local=true&_cfg=`);
+    expect(resolved).toContain(`base.com/my-name/url?local=true&_cfg=`);
     expect(decoded.externals).toEqual(externals);
+    mock.stop('../package.json');
   });
 
 });
