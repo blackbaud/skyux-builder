@@ -29,14 +29,24 @@ describe('host-utils', () => {
     mock.stop('html-webpack-plugin/lib/chunksorter');
   });
 
-  it('should resolve a url with a querystring and trim leading slash', () => {
-    const resolved = utils.resolve('/url?q=1', '', [], skyPagesConfig);
-    expect(resolved).toContain(`base.com/my-spa-name/url?q=1&local=true&_cfg=`);
+  it('should resolve a url, trim trailing slash from host and leading slash from url', () => {
+    const resolved = utils.resolve('/url?q=1', '', [], {
+      name: 'cool-spa',
+      host: {
+        url: 'my-base.com/'
+      }
+    });
+    expect(resolved).toContain(`my-base.com/cool-spa/url?q=1&local=true&_cfg=`);
   });
 
-  it('should resolve a url with a querystring and not trim leading slash', () => {
+  it('should resolve a url without a querystring', () => {
     const resolved = utils.resolve('url', '', [], skyPagesConfig);
     expect(resolved).toContain(`base.com/my-spa-name/url?local=true&_cfg=`);
+  });
+
+  it('should resolve a url with a querystring', () => {
+    const resolved = utils.resolve('/url?q=1', '', [], skyPagesConfig);
+    expect(resolved).toContain(`base.com/my-spa-name/url?q=1&local=true&_cfg=`);
   });
 
   it('should add scripts / chunks', () => {

@@ -22,13 +22,12 @@ function resolve(url, localUrl, chunks, skyPagesConfig) {
     config.externals = skyPagesConfig.app.externals;
   }
 
-  // Remove trailing and leading slashes from host and url.
-  // Since getAppBase always adds them.
-
+  // Trim leading slash since getAppBase adds it
   if (url && url.charAt(0) === '/') {
     url = url.substring(1);
   }
 
+  // Trim trailing slash since geAppBase adds it
   if (host && host.charAt(host.length - 1) === '/') {
     host = host.slice(0, -1);
   }
