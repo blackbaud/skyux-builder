@@ -1,9 +1,29 @@
 /*jshint node: true*/
 'use strict';
 
-// const open = require('open');
-const util = require('util');
 const logger = require('winston');
+const portfinder = require('portfinder');
+
+/**
+ * Let users configure port via skyuxconfig.json first.
+ * Else another plugin has specified devServer.port, use it.
+ * Else, find us an available port.
+ * @name getPort
+ * @returns {Number} port
+ */
+function getPort(config, skyPagesConfig) {
+  return new Promise((resolve, reject) => {
+    if (skyPagesConfig.app && skyPagesConfig.app.port) {
+      resolve(skyPagesConfig.app.port);
+    } else if (config.devServer && config.devServer.port) {
+      resolve(config.devServer.port);
+    } else {
+      portfinder.getPortPromise()
+        .then(port => resolve(port))
+        .catch(err => reject(err));
+    }
+  });
+}
 
 /**
  * Executes the serve command.
@@ -19,24 +39,27 @@ function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
   const webpackConfig = require('../config/webpack/serve.webpack.config');
   let config = webpackConfig.getWebpackConfig(argv, skyPagesConfig);
 
-  /* istanbul ignore else */
-  if (config.devServer.inline) {
-    const url = util.format(
-      'webpack-dev-server/client?https://localhost:%s',
-      config.devServer.port
-    );
-    Object.keys(config.entry).forEach((entry) => {
-      config.entry[entry].unshift(url);
-    });
-  }
+  getPort(config, skyPagesConfig).then(port => {
 
-  const compiler = webpack(config);
-  const server = new WebpackDevServer(compiler, config.devServer);
-  server.listen(config.devServer.port, (err) => {
-    if (err) {
-      logger.error(err);
+    // Save our found or defined port
+    config.devServer.port = port;
+
+    /* istanbul ignore else */
+    if (config.devServer.inline) {
+      const hot = `webpack-dev-server/client?https://localhost:${port}`;
+      Object.keys(config.entry).forEach((entry) => {
+        config.entry[entry].unshift(hot);
+      });
     }
-  });
+
+    const compiler = webpack(config);
+    const server = new WebpackDevServer(compiler, config.devServer);
+    server.listen(config.devServer.port, (err) => {
+      if (err) {
+        logger.error(err);
+      }
+    });
+  }).catch(err => logger.error(err));
 
 }
 

@@ -4,7 +4,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const logger = require('winston');
+const merge = require('merge');
+const portfinder = require('portfinder');
 const HttpServer = require('http-server');
 const childProcessSpawn = require('child_process').spawn;
 
@@ -13,11 +14,12 @@ const cwdOpts = { cwd: tmp };
 
 const skyuxConfigPath = path.resolve(process.cwd(), tmp, 'skyuxconfig.json');
 const cliPath = `../e2e/shared/cli`;
-const PORT = 31338;
 
+let skyuxConfigOriginal;
 let webpackServer;
 let httpServer;
 let _exitCode;
+let _port;
 
 /**
  * Closes the http-server if it's running.
@@ -31,6 +33,8 @@ function afterAll() {
   if (webpackServer) {
     webpackServer.kill();
   }
+
+  writeConfig(skyuxConfigOriginal);
 };
 
 /**
@@ -42,7 +46,7 @@ function bindServe() {
     webpackServer.stdout.on('data', (data) => {
       log(data);
       if (data.toString('utf8').indexOf('webpack: Compiled successfully.') > -1) {
-        resolve(webpackServer);
+        resolve(_port);
       }
     });
   });
@@ -93,14 +97,6 @@ function log(buffer) {
  */
 function prepareBuild(config) {
 
-  // Prepare skyuxconfig.json, saving original
-  const skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
-  writeConfig(config);
-
-  function writeConfig(json) {
-    fs.writeFileSync(skyuxConfigPath, JSON.stringify(json), 'utf8');
-  }
-
   function serve(exitCode) {
 
     // Save our exitCode for testing
@@ -113,11 +109,16 @@ function prepareBuild(config) {
     httpServer = HttpServer.createServer({ root: tmp });
 
     return new Promise((resolve, reject) => {
-      httpServer.listen(PORT, 'localhost', () => {
-        browser.get(`http://localhost:${PORT}/dist/`).then(resolve, reject);
+      portfinder.getPortPromise().then(port => {
+        httpServer.listen(port, 'localhost', () => {
+          browser.get(`http://localhost:${port}/dist/`).then(resolve, reject);
+        });
       });
     });
   }
+
+  skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
+  writeConfig(config);
 
   return new Promise((resolve, reject) => {
     exec(`rm`, [`-rf`, `${tmp}/dist`])
@@ -132,11 +133,37 @@ function prepareBuild(config) {
  */
 function prepareServe() {
 
-  if (!webpackServer) {
-    webpackServer = childProcessSpawn(`node`, [cliPath, `serve`, `-l`, `none`], cwdOpts);
+  if (webpackServer) {
+    return bindServe();
+  } else {
+    return portfinder.getPortPromise().then(port => {
+      _port = port;
+      const skyuxConfigWithPort = merge(true, skyuxConfigOriginal, {
+        app: {
+          port: port
+        }
+      });
+      writeConfig(skyuxConfigWithPort);
+      webpackServer = childProcessSpawn(`node`, [cliPath, `serve`, `-l`, `none`], cwdOpts);
+    }).then(bindServe);
   }
+}
 
-  return bindServe();
+/**
+ * Saves the default skyuxconfig.json
+ */
+function preserveConfig() {
+  return new Promise(resolve => {
+    skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
+    resolve();
+  });
+}
+
+/**
+ * Writes the specified json to the skyuxconfig.json file
+ */
+function writeConfig(json) {
+  fs.writeFileSync(skyuxConfigPath, JSON.stringify(json), 'utf8');
 }
 
 module.exports = {
@@ -148,5 +175,6 @@ module.exports = {
   getExitCode: getExitCode,
   prepareBuild: prepareBuild,
   prepareServe: prepareServe,
+  preserveConfig: preserveConfig,
   tmp: tmp
 };
