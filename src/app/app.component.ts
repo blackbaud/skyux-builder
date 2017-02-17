@@ -1,7 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
 
-import { BBOmnibar } from '@blackbaud/auth-client';
+import {
+  NavigationEnd,
+  Router
+} from '@angular/router';
+
+import {
+  BBOmnibar,
+  BBOmnibarConfig,
+  BBOmnibarNavigation,
+  BBOmnibarNavigationItem
+} from '@blackbaud/auth-client';
+
 import { BBHelp } from '@blackbaud/help-client';
 
 import { SKY_PAGES } from './sky-pages.module';
@@ -11,8 +24,6 @@ import { SkyAppBootstrapper } from '../../runtime/bootstrapper';
 require('style!@blackbaud/skyux/dist/css/sky.css');
 require('style!./app.component.scss');
 
-// declare var SKY_PAGES: any;
-
 @Component({
   selector: 'sky-pages-app',
   templateUrl: './app.component.html'
@@ -21,7 +32,6 @@ export class AppComponent implements OnInit {
   constructor(private router: Router) { }
 
   public ngOnInit() {
-    console.log(SKY_PAGES);
     // Without this code, navigating to a new route doesn't cause the window to be
     // scrolled to the top like the browser does automatically with non-SPA navigation.
     this.router.events.subscribe((event: any) => {
@@ -30,26 +40,34 @@ export class AppComponent implements OnInit {
       }
     });
 
-    let omnibarConfig = SkyAppBootstrapper.bootstrapConfig.omnibar;
+    this.initShellComponents();
+  }
+
+  private initShellComponents() {
+    let omnibarConfig = <BBOmnibarConfig>SkyAppBootstrapper.bootstrapConfig.omnibar;
 
     if (omnibarConfig) {
       const baseUrl =
-        SKY_PAGES.host.url +
-        SKY_PAGES.app.base.substr(0, SKY_PAGES.app.base.length - 1);
+        (
+          SKY_PAGES.host.url +
+          SKY_PAGES.app.base.substr(0, SKY_PAGES.app.base.length - 1)
+        ).toLowerCase();
 
       const navItems = omnibarConfig.navItems;
-      const nav = {
-        localNavItems: undefined,
-        beforeNavCallback: (item: any) => {
-          if (item.url.indexOf(baseUrl) === 0) {
-            let routePath = item.url.substring(baseUrl.length, item.url.length);
-            this.router.navigateByUrl(routePath);
-            return false;
-          }
+
+      const nav = new BBOmnibarNavigation();
+
+      nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
+        const url = item.url.toLowerCase();
+
+        if (url.indexOf(baseUrl) === 0) {
+          let routePath = url.substring(baseUrl.length, url.length);
+          this.router.navigateByUrl(routePath);
+          return false;
         }
       };
 
-      if (SKY_PAGES.command !== 'serve') {
+      if (SKY_PAGES.command === 'serve') {
         if (navItems) {
           const localNavItems = [];
 
@@ -65,7 +83,9 @@ export class AppComponent implements OnInit {
         }
       }
 
-      BBOmnibar.load(omnibarConfig, nav);
+      omnibarConfig.nav = nav;
+
+      BBOmnibar.load(omnibarConfig);
     }
 
     if (SkyAppBootstrapper.bootstrapConfig.help) {
