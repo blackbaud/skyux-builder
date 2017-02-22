@@ -53,8 +53,6 @@ export class AppComponent implements OnInit {
           SKY_PAGES.app.base.substr(0, SKY_PAGES.app.base.length - 1)
         ).toLowerCase();
 
-      const navItems = omnibarConfig.navItems;
-
       const nav = new BBOmnibarNavigation();
 
       nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
@@ -68,14 +66,21 @@ export class AppComponent implements OnInit {
       };
 
       if (SKY_PAGES.command === 'serve') {
-        if (navItems) {
+        // Add any global routes to the omnibar as a convenience to the developer.
+        const globalRoutes =
+          SKY_PAGES.publicRoutes &&
+          SKY_PAGES.publicRoutes.filter((value: any) => {
+            return value.global;
+          });
+
+        if (globalRoutes) {
           const localNavItems = [];
 
-          for (let navItem of navItems) {
+          for (let route of globalRoutes) {
             localNavItems.push({
-              title: navItem.name,
-              url: baseUrl + navItem.route,
-              data: navItem
+              title: route.name,
+              url: baseUrl + route.route,
+              data: route
             });
           }
 
