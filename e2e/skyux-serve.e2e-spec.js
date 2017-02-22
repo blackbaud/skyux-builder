@@ -11,10 +11,11 @@ const timestamp = new Date().getTime();
 
 describe('skyux serve', () => {
 
-  const url = `https://localhost:31337/rrrrr-app-name/`;
+  let url;
 
   beforeAll((done) => {
-    common.prepareServe().then(() => {
+    common.prepareServe().then((port) => {
+      url = `https://localhost:${port}/rrrrr-app-name/`;
       browser.get(url).then(done);
     }, common.catchReject);
   });
