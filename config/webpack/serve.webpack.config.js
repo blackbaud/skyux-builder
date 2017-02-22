@@ -102,7 +102,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
       ],
     },
     devServer: {
-      port: 31337,
       secure: false,
       colors: true,
       compress: true,
