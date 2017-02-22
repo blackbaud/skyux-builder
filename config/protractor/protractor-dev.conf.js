@@ -9,7 +9,7 @@ const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
 let config = {
   specs: [
-    path.join(process.cwd(), 'e2e', '**', '*.e2e-spec.js')
+    path.join(process.cwd(), 'e2e', '**', 'skyux-serve.e2e-spec.js')
   ],
   jasmineNodeOpts: {
     defaultTimeoutInterval: 480000 // git clone, npm install, and skyux build can be slow
@@ -24,9 +24,8 @@ let config = {
         .then(() => common.exec(`git`, [`clone`, `${url}`, `${common.tmp}`]))
         .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
         .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
-        .then(() => common.preserveConfig())
-        .then(resolve, reject)
-        .catch(common.catchReject);
+        .then(resolve)
+        .catch(reject);
     });
   },
 
@@ -36,7 +35,9 @@ let config = {
     common.afterAll();
 
     return new Promise((resolve, reject) => {
-      common.exec(`rm`, [`-rf`, `${common.tmp}`]).then(resolve, reject);
+      common.exec(`rm`, [`-rf`, `${common.tmp}`])
+        .then(resolve)
+        .catch(reject);
     });
   }
 };
