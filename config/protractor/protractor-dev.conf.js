@@ -9,7 +9,7 @@ const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
 let config = {
   specs: [
-    path.join(process.cwd(), 'e2e', '**', 'skyux-serve.e2e-spec.js')
+    path.join(process.cwd(), 'e2e', '**', '*.e2e-spec.js')
   ],
   jasmineNodeOpts: {
     defaultTimeoutInterval: 480000 // git clone, npm install, and skyux build can be slow
