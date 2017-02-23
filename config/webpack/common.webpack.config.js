@@ -48,9 +48,6 @@ function setSpaAlias(alias, moduleName, path) {
  */
 function getWebpackConfig(skyPagesConfig) {
 
-  const assetLoader = outPath('loader', 'sky-pages-asset');
-  const moduleLoader = outPath('loader', 'sky-pages-module');
-
   const resolves = [
     process.cwd(),
     spaPath('node_modules'),
@@ -124,23 +121,7 @@ function getWebpackConfig(skyPagesConfig) {
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
-          loader: moduleLoader
-        },
-        {
-          enforce: 'pre',
-          test: /app\.component\.html$/,
-          loader: assetLoader,
-          query: {
-            key: 'appComponentTemplate'
-          }
-        },
-        {
-          enforce: 'pre',
-          test: /app\.component\.scss$/,
-          loader: assetLoader,
-          query: {
-            key: 'appComponentStyles'
-          }
+          loader: outPath('loader', 'sky-pages-module')
         },
         {
           test: /\.s?css$/,
