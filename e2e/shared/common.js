@@ -77,7 +77,7 @@ function exec(cmd, args, opts) {
   cp.stderr.on('data', data => log(data));
 
   return new Promise((resolve, reject) => {
-    cp.on('error', err => reject(err));
+    cp.on('error', err => reject(log(err)));
     cp.on('exit', code => resolve(code));
   });
 }

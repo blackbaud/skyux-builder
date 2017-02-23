@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 
-require('style!@blackbaud/skyux/dist/css/sky.css');
-require('style!./app.component.scss');
+require('style-loader!@blackbaud/skyux/dist/css/sky.css');
+require('style-loader!./app.component.scss');
 
 @Component({
   selector: 'sky-pages-app',

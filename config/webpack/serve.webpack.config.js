@@ -102,8 +102,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
       ],
     },
     devServer: {
-      secure: false,
-      colors: true,
       compress: true,
       inline: true,
       contentBase: path.join(process.cwd(), 'src', 'app'),
