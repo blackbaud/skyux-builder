@@ -38,7 +38,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
         );
 
         const hostUrl = hostUtils.resolve(
-          skyPagesConfigUtil.getAppBase(skyPagesConfig),
+          '',
           localUrl,
           stats.toJson().chunks,
           skyPagesConfig
