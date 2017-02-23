@@ -7,11 +7,9 @@ const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const failPlugin = require('webpack-fail-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
 function spaPath() {
@@ -138,7 +136,6 @@ function getWebpackConfig(skyPagesConfig) {
       ]
     },
     plugins: [
-      new ForkCheckerPlugin(),
       new HtmlWebpackPlugin(appConfig),
       new CommonsChunkPlugin({
         name: ['skyux', 'vendor', 'polyfills']
@@ -147,7 +144,6 @@ function getWebpackConfig(skyPagesConfig) {
         'SKY_PAGES': JSON.stringify(skyPagesConfig)
       }),
       new ProgressBarPlugin(),
-      failPlugin,
       new LoaderOptionsPlugin({
         options: {
           SKY_PAGES: skyPagesConfig
