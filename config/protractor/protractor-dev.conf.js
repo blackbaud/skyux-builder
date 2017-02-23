@@ -21,10 +21,11 @@ let config = {
 
     return new Promise((resolve, reject) => {
       common.exec(`rm`, [`-rf`, `${common.tmp}`])
-        .then(() => common.exec(`git`, [`clone`, `${url}`, `${common.tmp}`]), common.catchReject)
-        .then(() => common.exec(`npm`, [`i`], common.cwdOpts), common.catchReject)
-        .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts), common.catchReject)
-        .then(resolve, reject);
+        .then(() => common.exec(`git`, [`clone`, `${url}`, `${common.tmp}`]))
+        .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
+        .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
+        .then(resolve)
+        .catch(reject);
     });
   },
 
@@ -34,7 +35,9 @@ let config = {
     common.afterAll();
 
     return new Promise((resolve, reject) => {
-      common.exec(`rm`, [`-rf`, `${common.tmp}`]).then(resolve, reject);
+      common.exec(`rm`, [`-rf`, `${common.tmp}`])
+        .then(resolve)
+        .catch(reject);
     });
   }
 };
