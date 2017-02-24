@@ -90,7 +90,7 @@ describe('config webpack serve', () => {
     expect(logger.info).toHaveBeenCalledTimes(2);
   });
 
-  it('should log the host url and launch it when open flag is not present', () => {
+  it('should log the host url and launch it when launch flag is not present', () => {
     config.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
         plugin.apply({
@@ -109,7 +109,9 @@ describe('config webpack serve', () => {
     });
 
     expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openCalledWith).toContain('https://my-host-server.url');
+    expect(openCalledWith).toContain(
+      'https://my-host-server.url/@blackbaud/skyux-builder/?local=true&_cfg='
+    );
   });
 
   it('should log the host url and launch it when --launch host', () => {
