@@ -19,8 +19,6 @@ import { BBHelp } from '@blackbaud/help-client';
 
 import { SKY_PAGES } from './sky-pages.module';
 
-import { SkyAppBootstrapper } from '../../runtime/bootstrapper';
-
 require('style!@blackbaud/skyux/dist/css/sky.css');
 require('style!./app.component.scss');
 
@@ -44,57 +42,66 @@ export class AppComponent implements OnInit {
   }
 
   private initShellComponents() {
-    let omnibarConfig = <BBOmnibarConfig>SkyAppBootstrapper.bootstrapConfig.omnibar;
+    const bootstrapConfig = SKY_PAGES.bootstrapConfig;
 
-    if (omnibarConfig) {
-      const baseUrl =
-        (
-          SKY_PAGES.host.url +
-          SKY_PAGES.app.base.substr(0, SKY_PAGES.app.base.length - 1)
-        ).toLowerCase();
+    if (bootstrapConfig) {
+      const omnibarBootstrapConfig = bootstrapConfig.omnibar;
 
-      const nav = new BBOmnibarNavigation();
+      if (omnibarBootstrapConfig) {
+        const omnibarConfig: BBOmnibarConfig = {
+          serviceName: omnibarBootstrapConfig.serviceName,
+          experimental: omnibarBootstrapConfig.experimental
+        };
 
-      nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
-        const url = item.url.toLowerCase();
+        const baseUrl =
+          (
+            SKY_PAGES.host.url +
+            SKY_PAGES.app.base.substr(0, SKY_PAGES.app.base.length - 1)
+          ).toLowerCase();
 
-        if (url.indexOf(baseUrl) === 0) {
-          let routePath = url.substring(baseUrl.length, url.length);
-          this.router.navigateByUrl(routePath);
-          return false;
-        }
-      };
+        const nav = new BBOmnibarNavigation();
 
-      if (SKY_PAGES.command === 'serve') {
-        // Add any global routes to the omnibar as a convenience to the developer.
-        const globalRoutes =
-          SKY_PAGES.publicRoutes &&
-          SKY_PAGES.publicRoutes.filter((value: any) => {
-            return value.global;
-          });
+        nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
+          const url = item.url.toLowerCase();
 
-        if (globalRoutes) {
-          const localNavItems = [];
-
-          for (let route of globalRoutes) {
-            localNavItems.push({
-              title: route.name,
-              url: baseUrl + route.route,
-              data: route
-            });
+          if (url.indexOf(baseUrl) === 0) {
+            const routePath = url.substring(baseUrl.length, url.length);
+            this.router.navigateByUrl(routePath);
+            return false;
           }
+        };
 
-          nav.localNavItems = localNavItems;
+        if (SKY_PAGES.command === 'serve') {
+          // Add any global routes to the omnibar as a convenience to the developer.
+          const globalRoutes =
+            SKY_PAGES.publicRoutes &&
+            SKY_PAGES.publicRoutes.filter((value: any) => {
+              return value.global;
+            });
+
+          if (globalRoutes) {
+            const localNavItems: BBOmnibarNavigationItem[] = [];
+
+            for (let route of globalRoutes) {
+              localNavItems.push({
+                title: route.name,
+                url: baseUrl + route.route,
+                data: route
+              });
+            }
+
+            nav.localNavItems = localNavItems;
+          }
         }
+
+        omnibarConfig.nav = nav;
+
+        BBOmnibar.load(omnibarConfig);
       }
 
-      omnibarConfig.nav = nav;
-
-      BBOmnibar.load(omnibarConfig);
-    }
-
-    if (SkyAppBootstrapper.bootstrapConfig.help) {
-      BBHelp.load(SkyAppBootstrapper.bootstrapConfig.help);
+      if (bootstrapConfig.help) {
+        BBHelp.load(bootstrapConfig.help);
+      }
     }
   }
 }
