@@ -2,27 +2,38 @@
 'use strict';
 
 function getWebpackConfig(skyPagesConfig) {
+  function spaPath() {
+    return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
+  }
+
+  function outPath() {
+    return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+  }
+
   const path = require('path');
 
   const DefinePlugin = require('webpack/lib/DefinePlugin');
   const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
   const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+  const aliasBuilder = require('./alias-builder');
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
   const srcPath = path.resolve(process.cwd(), 'src', 'app');
-  const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
+  const moduleLoader = outPath('loader', 'sky-pages-module');
+
   const resolves = [
     process.cwd(),
-    path.join(process.cwd(), 'node_modules'),
-    path.join(__dirname, '..', '..'),
-    path.join(__dirname, '..', '..', 'node_modules')
+    spaPath('node_modules'),
+    outPath('node_modules')
   ];
 
   const excludes = [
-    path.join(process.cwd(), 'node_modules'),
-    path.resolve(__dirname, '..', '..', 'node_modules')
+    spaPath('node_modules'),
+    outPath('node_modules')
   ];
+
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   return {
     devtool: 'inline-source-map',
@@ -31,6 +42,7 @@ function getWebpackConfig(skyPagesConfig) {
       modules: resolves
     },
     resolve: {
+      alias: alias,
       modules: resolves,
       extensions: [
         '.js',
@@ -40,13 +52,11 @@ function getWebpackConfig(skyPagesConfig) {
 
     module: {
 
-      loaders: [
+      rules: [
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
-          loaders: [
-            moduleLoader
-          ]
+          loader: moduleLoader
         },
 
         {
@@ -66,7 +76,15 @@ function getWebpackConfig(skyPagesConfig) {
         {
           test: /\.ts$/,
           loaders: [
-            'awesome-typescript-loader',
+            {
+              loader: 'awesome-typescript-loader',
+              options: {
+                // Ignore the "Cannot find module" error that occurs when referencing
+                // an aliased file.  Webpack will still throw an error when a module
+                // cannot be resolved via a file path or alias.
+                ignoreDiagnostics: [2307]
+              }
+            },
             'angular2-template-loader'
           ],
           exclude: [/\.e2e\.ts$/]
