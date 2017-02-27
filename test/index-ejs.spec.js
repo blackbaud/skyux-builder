@@ -56,8 +56,8 @@ describe('index.ejs template', () => {
             this.plugin('emit', (compilation) => {
               const source = compilation.assets['index.html'].source();
 
-              const css1 = `<link href="f1.css" integrity="ic1" crossorigin="anonymous">`;
-              const css2 = `<link href="f2.css">`;
+              const css1 = `<link rel="stylesheet" href="f1.css" integrity="ic1" crossorigin="anonymous">`;
+              const css2 = `<link rel="stylesheet" href="f2.css">`;
               const js1 = `<script src="f1.js" integrity="ic2" crossorigin="anonymous"></script>`;
               const js2 = `<script src="f2.js" integrity="ic3" crossorigin="anonymous"></script>`;
               const js3 = `<script src="f3.js"></script>`;

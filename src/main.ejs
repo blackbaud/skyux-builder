@@ -8,7 +8,7 @@ SKYUX Builder - Local Development Only
   <base href="<%= htmlWebpackPlugin.options.base %>">
   <meta charset="UTF-8">
   <meta http-equiv="x-ua-compatible" content="IE=edge">
-  <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title><%= htmlWebpackPlugin.options.title %></title>
 
   <%= getExternal('css', 'before') %>
@@ -46,7 +46,7 @@ function getExternal(type, hook, isHead) {
     htmlWebpackPlugin.options.externals[type][hook].forEach(entry => {
       switch (type) {
         case 'css':
-          html += `<link href="${entry.url}"${getIntegrity(entry)}>`;
+          html += `<link rel="stylesheet" href="${entry.url}"${getIntegrity(entry)}>`;
         break;
         case 'js':
           if ((isHead && entry.head) || (!isHead && !entry.head)) {
