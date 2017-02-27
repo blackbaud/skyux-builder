@@ -10,7 +10,6 @@ function getWebpackConfig(skyPagesConfig) {
     return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
   }
 
-  const fs = require('fs');
   const path = require('path');
 
   const DefinePlugin = require('webpack/lib/DefinePlugin');
@@ -34,7 +33,7 @@ function getWebpackConfig(skyPagesConfig) {
     outPath('node_modules')
   ];
 
-  let alias = aliasBuilder.buildAliasList(skyPagesConfig)
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   return {
     devtool: 'inline-source-map',

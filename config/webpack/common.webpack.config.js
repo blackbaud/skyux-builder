@@ -1,8 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
