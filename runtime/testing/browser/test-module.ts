@@ -4,7 +4,7 @@ import { APP_BASE_HREF } from '@angular/common';
 
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { SkyPagesModule } from '../../src/app/sky-pages.module';
+import { SkyPagesModule } from '../../../src/app/sky-pages.module';
 
 @NgModule({
   imports: [
