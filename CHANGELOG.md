@@ -1,6 +1,6 @@
 # 1.0.0-beta.11 (2017-03-01)
 
-- Updated URI used when accessing HOST to  https://host.nxt.blackbaud.com.
+- Updated URI used when accessing HOST to https://host.nxt.blackbaud.com.
 - Removed hard-coded port used in `skyux serve` in favor of dynamically finding an available one. Port is configurable in `skyuxconfig.json` with the `app: { port: <port> }` setting.
 - Automatically passing SPA name when using host-utils.
 - Created `SkyAppTestModule` to support better SPA unit testing.
