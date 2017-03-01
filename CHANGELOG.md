@@ -1,19 +1,19 @@
-# 1.0.0-beta.11 (2017-02-??)
+# 1.0.0-beta.11 (2017-03-01)
 
-- Updated URI used when accessing HOST.  https://host.nxt.blackbaud.com
-- Removed hard-coded port used in `skyux serve` in favor of dynamically finding one available.  Port is configurable in `skyuxconfig.json` via the `app: { port: <port> }` setting.
+- Updated URI used when accessing HOST to  https://host.nxt.blackbaud.com.
+- Removed hard-coded port used in `skyux serve` in favor of dynamically finding an available one. Port is configurable in `skyuxconfig.json` with the `app: { port: <port> }` setting.
 - Automatically passing SPA name when using host-utils.
-- Created `SkyAppTestModule` to support better SPA unit testting
-- Bugfix: Added json-loader as dependency
-- Bugfix: Calling `webdriver-manager update` before running `npm run test` (Testing the skyux builder).
-- Bugfix: Incorrectly passed spa name twice in url opened via `skyux serve`.
+- Created `SkyAppTestModule` to support better SPA unit testing.
+- Bugfix: Added json-loader as dependency.
+- Bugfix: Calling `webdriver-manager update` before running `npm run test`. (Testing SKY UX Builder).
+- Bugfix: Incorrectly passed SPA name twice in URL opened by `skyux serve`.
 
 # 1.0.0-beta.10 (2017-02-13)
 
 - Allowing `help-client` to be automatically included by adding `"help": { "productId": "applicable-productId" }` to `skyuxconfig.json`. Thanks [@blackbaud-stevebrush](https://github.com/blackbaud-stevebrush)!
 - Refactored `e2e` command to run `build`, then lightly serve files to host.
 - Created `SkyHostBrowser` for easily communicating with SKY UX Host when running `skyux e2e`.
-- Deprecated `--noServe` option on `skyux e2e`
+- Deprecated `--noServe` option on `skyux e2e`.
 
 # 1.0.0-beta.9 (2017-01-27)
 
@@ -39,18 +39,18 @@
 - Bugfix where `skyux version` incorrectly read version from SPA's `package.json`.
 - Changed `skyux serve` to only pass externals, scripts, and localUrl in querystring.
 - Corrected documentation for `-l` or `--launch` flags.
-- Added badges to README
+- Added badges to README.
 
 # 1.0.0-beta.4 (2017-01-11)
 
-- Removed support for `--noOpen` flag.  Instead added `-launch` flag with `none`, `local`, or `host` (default).  Ex: `-launch local`
+- Removed support for `--noOpen` flag.  Instead added `-launch` flag with `none`, `local`, or `host` (default). Ex: `-launch local`.
 - Bugfix where `e2e` task would always return an exit code of 0.
 - Passing any externals defined in `skyuxconfig.json` for local development.
 
 # 1.0.0-beta.3 (2017-01-11)
 
-- Added `externals` support in `skyuxconfig.json` for adding external CSS + JS.
-- Upgraded ssl certificates used.  Please follow [installation instructions](https://github.com/blackbaud/skyux-cli#installing-ssl-certificate).
+- Added `externals` support in `skyuxconfig.json` for adding external CSS and JS.
+- Upgraded SSL certificates used. Please follow [installation instructions](https://developer.blackbaud.com/skyux2/learn/tutorials/install).
 
 # 1.0.0-beta.2 (2017-01-10)
 
