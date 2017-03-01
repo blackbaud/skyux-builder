@@ -1,5 +1,4 @@
-import { BBAuth, BBOmnibar } from '@blackbaud/auth-client';
-import { BBHelp } from '@blackbaud/help-client';
+import { BBAuth } from '@blackbaud/auth-client';
 
 import { SkyAppBootstrapConfig } from './bootstrap-config';
 
@@ -16,15 +15,7 @@ export class SkyAppBootstrapper {
         authPromise = Promise.resolve();
       }
 
-      return authPromise.then(() => {
-        if (SkyAppBootstrapper.bootstrapConfig.omnibar) {
-          BBOmnibar.load(SkyAppBootstrapper.bootstrapConfig.omnibar);
-        }
-
-        if (SkyAppBootstrapper.bootstrapConfig.help) {
-          BBHelp.load(SkyAppBootstrapper.bootstrapConfig.help);
-        }
-      });
+      return authPromise;
     }
 
     return Promise.resolve();

@@ -60,7 +60,8 @@ describe('SKY UX Builder module generator', () => {
 `SkyAppBootstrapper.bootstrapConfig = {
   omnibar: undefined,
   auth: true,
-  help: undefined
+  help: undefined,
+  publicRoutes: undefined
 };`
     );
 
@@ -74,7 +75,30 @@ describe('SKY UX Builder module generator', () => {
 `SkyAppBootstrapper.bootstrapConfig = {
   omnibar: {"serviceName":"Test"},
   auth: undefined,
-  help: undefined
+  help: undefined,
+  publicRoutes: undefined
+};`
+    );
+
+    source = generator.getSource({
+      omnibar: {
+        serviceName: 'Test'
+      },
+      publicRoutes: [
+        {
+          name: 'Home',
+          route: '/',
+          global: true
+        }
+      ]
+    });
+
+    expect(source).toContain(
+`SkyAppBootstrapper.bootstrapConfig = {
+  omnibar: {"serviceName":"Test"},
+  auth: undefined,
+  help: undefined,
+  publicRoutes: [{"name":"Home","route":"/","global":true}]
 };`
     );
   });
