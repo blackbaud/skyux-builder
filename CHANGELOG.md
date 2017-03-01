@@ -1,3 +1,7 @@
+# 1.0.0-beta.12 (2017-03-01)
+
+- Bugfix: Reorganized runtime exports into `browser` and `e2e`.
+
 # 1.0.0-beta.11 (2017-03-01)
 
 - Updated URI used when accessing HOST to https://host.nxt.blackbaud.com.
