@@ -1,5 +1,5 @@
 import { browser } from 'protractor';
-const hostUtils = require('../../utils/host-utils');
+const hostUtils = require('../../../utils/host-utils');
 
 // May be nice to expose all browser's methods through SkyHostBrowser
 // Using "extend browser" didn't work for me.
