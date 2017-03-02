@@ -108,22 +108,21 @@ function getWebpackConfig(skyPagesConfig) {
         {
           test: /\.scss$/,
           loader: 'raw-loader!sass-loader'
+        },
+
+        {
+          enforce: 'post',
+          test: /\.(js|ts)$/,
+          loader: 'istanbul-instrumenter-loader!source-map-inline-loader',
+          include: srcPath,
+          exclude: [
+            /\.(e2e|spec)\.ts$/,
+            /node_modules/,
+            /index\.ts/,
+            /fixtures/,
+            /testing/
+          ]
         }
-
-        // {
-        //   enforce: 'post',
-        //   test: /\.(js|ts)$/,
-        //   loader: 'istanbul-instrumenter-loader!source-map-inline-loader',
-        //   include: srcPath,
-        //   exclude: [
-        //     /\.(e2e|spec)\.ts$/,
-        //     /node_modules/,
-        //     /index\.ts/,
-        //     /fixtures/,
-        //     /testing/
-        //   ]
-        // }
-
       ]
 
     },
