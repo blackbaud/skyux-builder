@@ -1,3 +1,4 @@
+
 /*jshint node: true*/
 /*global browser, element, by*/
 'use strict';
@@ -35,7 +36,11 @@ function afterAll() {
   }
 
   resetConfig();
-};
+}
+
+function beforeAll() {
+  skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
+}
 
 /**
  * Adds event listeners to serve and resolves a promise.
@@ -105,13 +110,7 @@ function log(buffer) {
  */
 function prepareBuild(config) {
 
-  function serve(exitCode) {
-
-    // Save our exitCode for testing
-    _exitCode = exitCode;
-
-    // Reset skyuxconfig.json
-    resetConfig();
+  function serve() {
 
     // Create our server
     httpServer = HttpServer.createServer({ root: tmp });
@@ -125,11 +124,8 @@ function prepareBuild(config) {
     });
   }
 
-  writeConfig(config);
-
   return new Promise((resolve, reject) => {
-    exec(`rm`, [`-rf`, `${tmp}/dist`])
-      .then(() => exec(`node`, [cliPath, `build`], cwdOpts))
+    runBuild(config)
       .then(serve)
       .then(resolve)
       .catch(err => reject(err));
@@ -162,13 +158,25 @@ function resetConfig() {
 }
 
 /**
+ * Execute's the build step
+ */
+function runBuild(config) {
+  writeConfig(config);
+  return exec(`rm`, [`-rf`, `${tmp}/dist`])
+    .then(() => exec(`node`, [cliPath, `build`], cwdOpts))
+    .then((exitCode) => {
+      return new Promise(resolve => {
+        _exitCode = exitCode;
+        resetConfig();
+        resolve();
+      });
+    });
+}
+
+/**
  * Writes the specified json to the skyuxconfig.json file
  */
 function writeConfig(json) {
-  if (!skyuxConfigOriginal) {
-    skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
-  }
-
   fs.writeFileSync(skyuxConfigPath, JSON.stringify(json), 'utf8');
 }
 
@@ -193,6 +201,7 @@ function writeConfigServe(port) {
 
 module.exports = {
   afterAll: afterAll,
+  beforeAll: beforeAll,
   catchReject: catchReject,
   cwdOpts: cwdOpts,
   exec: exec,
@@ -200,5 +209,6 @@ module.exports = {
   getExitCode: getExitCode,
   prepareBuild: prepareBuild,
   prepareServe: prepareServe,
+  runBuild: runBuild,
   tmp: tmp
 };
