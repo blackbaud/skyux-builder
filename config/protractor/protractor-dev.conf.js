@@ -10,6 +10,7 @@ const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
 
 function localInstall() {
+  common.beforeAll();
   return common.exec(`npm`, [`i`, `../`], common.cwdOpts);
 }
 
@@ -27,7 +28,6 @@ let config = {
 
     const url = 'https://github.com/blackbaud/skyux-template';
     jasmine.getEnv().addReporter(new SpecReporter());
-    common.beforeAll();
 
     return new Promise((resolve, reject) => {
 
