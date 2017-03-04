@@ -20,17 +20,16 @@ describe('skyux build aot with auth', () => {
       auth: true
     };
 
-    // https://github.com/angular/protractor/blob/master/spec/withLoginConf.js#L28
-    function waitForUrl() {
-
-    }
-
     /**
      * This is a strange test for several reasons.
      * - Using browser.driver in order to bypass angular requirement (not on signin page)
      * - not using function + returns for webdriver's weird analysis
+     * https://github.com/angular/protractor/blob/master/spec/withLoginConf.js#L28
      */
-    common.prepareBuild(opts, true)
+    return common.prepareBuild(opts, true)
+      .then(() => new Promise(resolve => {
+        tests.verifyExitCode(resolve);
+      }))
       .then(function () {
         return browser.driver.wait(function () {
           return browser.driver.getCurrentUrl().then(function (url) {
@@ -39,8 +38,6 @@ describe('skyux build aot with auth', () => {
           });
         }, 10000);
       })
-      .then(() => {
-        tests.verifyExitCode(done);
-      });
+      .then(done);
   });
 });
