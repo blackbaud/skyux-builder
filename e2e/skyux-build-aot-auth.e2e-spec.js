@@ -20,15 +20,25 @@ describe('skyux build aot with auth', () => {
       auth: true
     };
 
+    // https://github.com/angular/protractor/blob/master/spec/withLoginConf.js#L28
+    function waitForUrl() {
+
+    }
+
     /**
      * This is a strange test for several reasons.
      * - Using browser.driver in order to bypass angular requirement (not on signin page)
-     * - wait method must return (if I wasnt using short arrow) in order to unsubscribe from event.
+     * - not using function + returns for webdriver's weird analysis
      */
     common.prepareBuild(opts, true)
-      .then(() => browser.wait(() =>
-        browser.driver.getCurrentUrl().then(url => url.indexOf(SIGNIN_URL) > -1)
-      ))
+      .then(function () {
+        return browser.driver.wait(function () {
+          return browser.driver.getCurrentUrl().then(function (url) {
+            console.log(url);
+            return url.indexOf(SIGNIN_URL) > -1;
+          });
+        }, 10000);
+      })
       .then(() => {
         tests.verifyExitCode(done);
       });
