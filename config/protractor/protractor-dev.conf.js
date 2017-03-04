@@ -16,7 +16,7 @@ function localInstall() {
 
 let config = {
   specs: [
-    path.join(process.cwd(), 'e2e', '**', 'skyux-build-aot.e2e-spec.js')
+    path.join(process.cwd(), 'e2e', '**', 'skyux-serve.e2e-spec.js')
   ],
   jasmineNodeOpts: {
     // git clone, npm install, and skyux build can be slow
