@@ -20,15 +20,17 @@ describe('skyux build aot with auth', () => {
       auth: true
     };
 
-    // Only reliable way I found to "force reload" the page (causing auth redirect)
-    // was to use the executScript below.  Also, using browser.driver.getCurrentUrl
-    // in order to bypass Angular dependency on page.
+    /**
+     * This is a strange test for several reasons.
+     * - Using browser.driver in order to bypass angular requirement (not on signin page)
+     * - wait method must return (if I wasnt using short arrow) in order to unsubscribe from event.
+     */
     common.prepareBuild(opts, true)
+      .then(() => browser.wait(() =>
+        browser.driver.getCurrentUrl().then(url => url.indexOf(SIGNIN_URL) > -1)
+      ))
       .then(() => {
-        browser.wait(() => {
-          browser.driver.getCurrentUrl().then(url => url.indexOf(SIGNIN_URL) > -1);
-        });
-      })
-      .then(() => tests.verifyExitCode(done));
+        tests.verifyExitCode(done);
+      });
   });
 });

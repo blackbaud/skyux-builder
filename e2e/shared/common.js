@@ -110,7 +110,7 @@ function log(buffer) {
 /**
  * Run build given the following skyuxconfig object.
  * Spawns http-server and resolves when ready.
- * Using executScript was the only way I found to do a "hard refresh".
+ * Using executeScript was the only way I found to do a "hard refresh".
  */
 function prepareBuild(config) {
   function serve(exitCode) {
