@@ -39,5 +39,6 @@ describe('skyux build aot with auth', () => {
     //     }, 10000);
     //   })
     //   .then(done);
+    done();
   });
 });
