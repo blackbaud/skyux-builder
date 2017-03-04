@@ -17,7 +17,11 @@ exports.config = {
   capabilities: {
     'browserName': 'chrome',
     'chromeOptions': {
-      'args': ['--disable-extensions --ignore-certificate-errors']
+      'args': [
+        '--disable-extensions',
+        '--ignore-certificate-errors',
+        '--incognito'
+      ]
     }
   },
   directConnect: true,

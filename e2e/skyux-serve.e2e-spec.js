@@ -14,9 +14,10 @@ describe('skyux serve', () => {
   let url;
 
   beforeAll((done) => {
+    common.beforeAll();
     common.prepareServe().then((port) => {
       url = `https://localhost:${port}/rrrrr-app-name/`;
-      browser.get(url).then(done);
+      browser.driver.get(url).then(done);
     }, common.catchReject);
   });
 
@@ -49,7 +50,7 @@ describe('skyux serve', () => {
     const content = fs.readFileSync(file, 'utf8');
 
     common.bindServe().then(() => {
-      browser.get(url).then(() => {
+      browser.driver.get(url).then(() => {
         expect($$('#ts').getText()).toEqual(timestamp);
         fs.writeFileSync(file, content, 'utf8');
         done();
@@ -66,7 +67,7 @@ describe('skyux serve', () => {
     const tag = `h1`;
 
     common.bindServe().then(() => {
-      browser.get(`${url}test-dir`).then(() => {
+      browser.driver.get(`${url}test-dir`).then(() => {
         expect(element(by.tagName(tag)).getText()).toBe(message);
         fs.unlinkSync(file);
         fs.rmdirSync(folder);

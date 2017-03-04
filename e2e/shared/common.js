@@ -35,9 +35,12 @@ function afterAll() {
     webpackServer.kill();
   }
 
-  resetConfig();
+  writeConfig(skyuxConfigOriginal);
 }
 
+/**
+ * Saves a reference to the original config
+ */
 function beforeAll() {
   skyuxConfigOriginal = JSON.parse(fs.readFileSync(skyuxConfigPath));
 }
@@ -107,25 +110,30 @@ function log(buffer) {
 /**
  * Run build given the following skyuxconfig object.
  * Spawns http-server and resolves when ready.
+ * Using executScript was the only way I found to do a "hard refresh".
  */
 function prepareBuild(config) {
+  function serve(exitCode) {
 
-  function serve() {
-
-    // Create our server
+    _exitCode = exitCode;
     httpServer = HttpServer.createServer({ root: tmp });
 
     return new Promise((resolve, reject) => {
       portfinder.getPortPromise().then(port => {
         httpServer.listen(port, 'localhost', () => {
-          browser.get(`http://localhost:${port}/dist/`).then(resolve, reject);
+          browser.driver.get(`http://localhost:${port}/dist/`, 1000)
+            .then(() => browser.executeScript('document.location.reload();'))
+            .then(resolve)
+            .catch(err => reject(err));
         });
       });
     });
   }
 
   return new Promise((resolve, reject) => {
-    runBuild(config)
+    writeConfig(config);
+    exec(`rm`, [`-rf`, `${tmp}/dist`])
+      .then(() => exec(`node`, [cliPath, `build`], cwdOpts))
       .then(serve)
       .then(resolve)
       .catch(err => reject(err));
@@ -151,30 +159,8 @@ function prepareServe() {
 }
 
 /**
- * Resets to the default config.
- */
-function resetConfig() {
-  writeConfig(skyuxConfigOriginal);
-}
-
-/**
- * Execute's the build step
- */
-function runBuild(config) {
-  writeConfig(config);
-  return exec(`rm`, [`-rf`, `${tmp}/dist`])
-    .then(() => exec(`node`, [cliPath, `build`], cwdOpts))
-    .then((exitCode) => {
-      return new Promise(resolve => {
-        _exitCode = exitCode;
-        resetConfig();
-        resolve();
-      });
-    });
-}
-
-/**
  * Writes the specified json to the skyuxconfig.json file
+ * Saves the original if it's the first time we're overwriting the config.
  */
 function writeConfig(json) {
   fs.writeFileSync(skyuxConfigPath, JSON.stringify(json), 'utf8');
@@ -194,7 +180,6 @@ function writeConfigServe(port) {
 
     writeConfig(skyuxConfigWithPort);
     webpackServer = childProcessSpawn(`node`, [cliPath, `serve`, `-l`, `none`], cwdOpts);
-    resetConfig();
     resolve();
   });
 }
@@ -209,6 +194,5 @@ module.exports = {
   getExitCode: getExitCode,
   prepareBuild: prepareBuild,
   prepareServe: prepareServe,
-  runBuild: runBuild,
   tmp: tmp
 };

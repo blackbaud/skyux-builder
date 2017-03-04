@@ -10,7 +10,6 @@ const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
 
 function localInstall() {
-  common.beforeAll();
   return common.exec(`npm`, [`i`, `../`], common.cwdOpts);
 }
 
@@ -28,19 +27,31 @@ let config = {
 
     const url = 'https://github.com/blackbaud/skyux-template';
     jasmine.getEnv().addReporter(new SpecReporter());
+    common.beforeAll();
 
     return new Promise((resolve, reject) => {
-      if (fs.existsSync(common.tmp)) {
+
+      if (process.argv.indexOf('--noInstall') > -1) {
+
+        console.log('');
+        console.log('Skipping all installation/cloning before running tests.');
+        console.log('');
+        resolve();
+
+      } else if (fs.existsSync(common.tmp)) {
 
         console.log('');
         console.log(`Hey! Just a heads up I ran the "quick" version of these tests.`);
-        console.log(`Delete the ${common.tmp} folder to run a full clone/install`);
+        console.log(`Delete the ${common.tmp} folder to run a full clone/install.`);
+        console.log(`You can also use --noInstall to bypass all installation.`);
         console.log('');
 
         localInstall()
           .then(resolve)
           .catch(reject);
+
       } else {
+
         common.exec(`git`, [`clone`, `${url}`, `${common.tmp}`])
           .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
           .then(localInstall)

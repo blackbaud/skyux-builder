@@ -6,7 +6,12 @@ const tests = require('./shared/tests');
 describe('skyux build aot', () => {
 
   beforeAll((done) => {
-    const opts = { mode: 'easy', name: 'dist', compileMode: 'aot' };
+    const opts = {
+      mode: 'easy',
+      name: 'dist',
+      compileMode: 'aot'
+    };
+    common.beforeAll();
     common.prepareBuild(opts).then(done);
   });
 
