@@ -1,3 +1,7 @@
+# 1.0.0-beta.13 (2017-03-06)
+
+- Bugfix: Fixes AOT + Auth build.
+
 # 1.0.0-beta.12 (2017-03-01)
 
 - Bugfix: Reorganized runtime exports into `browser` and `e2e`.
