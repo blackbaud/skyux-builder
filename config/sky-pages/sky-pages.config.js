@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const merge = require('merge');
+const logger = require('winston');
 
 /**
  * Resolves a path given a root path and an array-like arguments object.
@@ -24,13 +25,34 @@ module.exports = {
    * Adds routes, modules, and components next.
    * Merges in SPA's skyuxconfig last.
    * @name getSkyPagesConfig
+   * @param {argv} Optional arguments from command line
    * @returns [SkyPagesConfig] skyPagesConfig
    */
-  getSkyPagesConfig: function () {
+  getSkyPagesConfig: function (argv) {
     const skyPagesSpaPath = this.spaPath('skyuxconfig.json');
     let config = require(this.outPath('skyuxconfig.json'));
 
-    if (fs.existsSync(skyPagesSpaPath)) {
+    // Allow for shorthand -c
+    if (argv && argv.c) {
+      argv.config = argv.c;
+    }
+
+    // Allow config override
+    if (argv && argv.config) {
+
+      // Can be a single file or array of files
+      const requestedConfigs = argv.config.split(',');
+      requestedConfigs.forEach(requestedConfig => {
+        const requestedConfigPath = this.spaPath(requestedConfig);
+        if (!fs.existsSync(requestedConfigPath)) {
+          logger.error(`Unable to locate requested config file ${requestedConfig}`);
+        } else {
+          logger.info(`Successfully located requested config file ${requestedConfig}`);
+          merge.recursive(config, require(requestedConfigPath));
+        }
+      });
+
+    } else if (fs.existsSync(skyPagesSpaPath)) {
       merge.recursive(config, require(skyPagesSpaPath));
     }
 

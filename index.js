@@ -8,7 +8,7 @@ const config = require('./config/sky-pages/sky-pages.config');
 
 module.exports = {
   runCommand: (command, argv) => {
-    const skyPagesConfig = config.getSkyPagesConfig();
+    const skyPagesConfig = config.getSkyPagesConfig(argv);
     switch (command) {
       case 'build':
         require('./cli/build')(argv, skyPagesConfig, webpack);
