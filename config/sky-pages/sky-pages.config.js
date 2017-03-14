@@ -20,11 +20,10 @@ function resolve(root, args) {
 
 function readConfig(file) {
   if (!fs.existsSync(file)) {
-    logger.error(`Unable to locate requested config file ${file}`);
+    logger.error(`Unable to locate config file ${file}`);
     return {};
   }
 
-  logger.info(`Successfully located requested config file ${file}`);
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
@@ -43,10 +42,9 @@ module.exports = {
     const localEnvConfig = this.spaPath(`skyuxconfig.${process.env.SKYUX_ENV}.json`);
     const localBaseConfig = this.spaPath(`skyuxconfig.json`);
     let configs = [];
-    let config = {};
 
-    // Builder's base config always gets pushed in
-    configs.push(readConfig(this.outPath(`skyuxconfig.json`)));
+    // Builder's base config always is the baseline
+    let config = readConfig(this.outPath(`skyuxconfig.json`));
 
     // Allow for shorthand -c
     if (argv && argv.c) {
@@ -58,23 +56,31 @@ module.exports = {
     // 2. SKYUX_ENV set and matching config file found
     // 3. Local skyuxconfig.json file found
     if (argv && argv.config) {
+      logger.info(`Processing config file ${argv.config}`);
       configs.push(readConfig(argv.config));
     } else if (process.env.SKYUX_ENV && fs.existsSync(localEnvConfig)) {
+      logger.info(`Processing config file ${localEnvConfig}`);
       configs.push(readConfig(localEnvConfig));
     } else if (fs.existsSync(localBaseConfig)) {
+      logger.info(`Processing config file ${localBaseConfig}`);
       configs.push(readConfig(localBaseConfig));
     } else {
       logger.info('Using default skyuxconfig.json configuration.');
     }
 
-    // Recursively process any "extends", reading from last config
-    while (configs[configs.length - 1].extends) {
-      const extendsFrom = path.resolve(configs[configs.length - 1].extends);
-      configs.push(readConfig(extendsFrom));
+    if (configs.length) {
+
+      // Recursively process any "extends", reading from last config
+      while (configs[configs.length - 1].extends) {
+        const extendsFrom = path.resolve(configs[configs.length - 1].extends);
+        logger.info(`Processing config file ${extendsFrom}`);
+        configs.push(readConfig(extendsFrom));
+      }
+
+      // Finally, merge our configs in, in reverse
+      configs.reverse().forEach(c => merge.recursive(config, c));
     }
 
-    // Finally, merge our configs in, in reverse
-    configs.reverse().forEach(c => merge.recursive(config, c));
     return config;
   },
 

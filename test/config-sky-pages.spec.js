@@ -22,11 +22,26 @@ describe('config sky-pages', () => {
   });
 
   it('should handle no local configuration files', () => {
+    let hasBaseline = false;
     spyOn(logger, 'info');
-    spyOn(fs, 'existsSync').and.returnValue(false);
+    spyOn(fs, 'existsSync').and.callFake(file => {
+      if (!hasBaseline) {
+        hasBaseline = true;
+        return true;
+      }
+
+      return false;
+    });
+    spyOn(fs, 'readFileSync').and.returnValue(JSON.stringify({
+      baseline: true
+    }));
 
     const lib = require('../config/sky-pages/sky-pages.config');
-    lib.getSkyPagesConfig();
+    const config = lib.getSkyPagesConfig();
+
+    console.log(config);
+
+    expect(config.baseline).toEqual(true);
     expect(logger.info).toHaveBeenCalledWith(
       `Using default skyuxconfig.json configuration.`
     );
@@ -43,7 +58,7 @@ describe('config sky-pages', () => {
     const config = lib.getSkyPagesConfig();
     expect(config.custom).toEqual(true);
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file ${lib.spaPath('skyuxconfig.json')}`
+      `Processing config file ${lib.spaPath('skyuxconfig.json')}`
     );
   });
 
@@ -60,7 +75,7 @@ describe('config sky-pages', () => {
     });
     expect(config.custom).toEqual(true);
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file test.json`
+      `Processing config file test.json`
     );
   });
 
@@ -77,7 +92,7 @@ describe('config sky-pages', () => {
     });
     expect(config.custom).toEqual(true);
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file test.json`
+      `Processing config file test.json`
     );
   });
 
@@ -93,7 +108,7 @@ describe('config sky-pages', () => {
     const config = lib.getSkyPagesConfig();
     expect(config.custom).toEqual(true);
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file ${lib.spaPath('skyuxconfig.env.json')}`
+      `Processing config file ${lib.spaPath('skyuxconfig.env.json')}`
     );
   });
 
@@ -145,19 +160,19 @@ describe('config sky-pages', () => {
     expect(config.test4).toEqual('jkl');
     expect(config.test5).toEqual('1234');
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file ${lib.spaPath('skyuxconfig.json')}`
+      `Processing config file ${lib.spaPath('skyuxconfig.json')}`
     );
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file ${lib.spaPath('A.json')}`
+      `Processing config file ${lib.spaPath('A.json')}`
     );
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file ${lib.spaPath('B.json')}`
+      `Processing config file ${lib.spaPath('B.json')}`
     );
   });
 
   it('should handle files that do not exist', () => {
     spyOn(logger, 'error');
-    spyOn(fs, 'existsSync').and.returnValue(false);
+    spyOn(fs, 'existsSync').and.callFake(f => f.indexOf('test.json') === -1);
 
     const lib = require('../config/sky-pages/sky-pages.config');
     const config = lib.getSkyPagesConfig({
@@ -165,7 +180,7 @@ describe('config sky-pages', () => {
     });
     expect(config.custom).not.toEqual(true);
     expect(logger.error).toHaveBeenCalledWith(
-      `Unable to locate requested config file test.json`
+      `Unable to locate config file test.json`
     );
   });
 
