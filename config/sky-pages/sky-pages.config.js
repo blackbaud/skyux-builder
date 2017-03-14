@@ -18,6 +18,16 @@ function resolve(root, args) {
   return path.resolve.apply(path, args);
 }
 
+function readConfig(file) {
+  if (!fs.existsSync(file)) {
+    logger.error(`Unable to locate requested config file ${file}`);
+    return {};
+  }
+
+  logger.info(`Successfully located requested config file ${file}`);
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
 module.exports = {
 
   /**
@@ -29,33 +39,42 @@ module.exports = {
    * @returns [SkyPagesConfig] skyPagesConfig
    */
   getSkyPagesConfig: function (argv) {
-    const skyPagesSpaPath = this.spaPath('skyuxconfig.json');
-    let config = require(this.outPath('skyuxconfig.json'));
+
+    const localEnvConfig = this.spaPath(`skyuxconfig.${process.env.SKYUX_ENV}.json`);
+    const localBaseConfig = this.spaPath(`skyuxconfig.json`);
+    let configs = [];
+    let config = {};
+
+    // Builder's base config always gets pushed in
+    configs.push(readConfig(this.outPath(`skyuxconfig.json`)));
 
     // Allow for shorthand -c
     if (argv && argv.c) {
       argv.config = argv.c;
     }
 
-    // Allow config override
+    // Order of precedence...
+    // 1. Config flag passed in.
+    // 2. SKYUX_ENV set and matching config file found
+    // 3. Local skyuxconfig.json file found
     if (argv && argv.config) {
-
-      // Can be a single file or array of files
-      const requestedConfigs = argv.config.split(',');
-      requestedConfigs.forEach(requestedConfig => {
-        const requestedConfigPath = this.spaPath(requestedConfig);
-        if (!fs.existsSync(requestedConfigPath)) {
-          logger.error(`Unable to locate requested config file ${requestedConfig}`);
-        } else {
-          logger.info(`Successfully located requested config file ${requestedConfig}`);
-          merge.recursive(config, require(requestedConfigPath));
-        }
-      });
-
-    } else if (fs.existsSync(skyPagesSpaPath)) {
-      merge.recursive(config, require(skyPagesSpaPath));
+      configs.push(readConfig(argv.config));
+    } else if (process.env.SKYUX_ENV && fs.existsSync(localEnvConfig)) {
+      configs.push(readConfig(localEnvConfig));
+    } else if (fs.existsSync(localBaseConfig)) {
+      configs.push(readConfig(localBaseConfig));
+    } else {
+      logger.info('Using default skyuxconfig.json configuration.');
     }
 
+    // Recursively process any "extends", reading from last config
+    while (configs[configs.length - 1].extends) {
+      const extendsFrom = path.resolve(configs[configs.length - 1].extends);
+      configs.push(readConfig(extendsFrom));
+    }
+
+    // Finally, merge our configs in, in reverse
+    configs.reverse().forEach(c => merge.recursive(config, c));
     return config;
   },
 

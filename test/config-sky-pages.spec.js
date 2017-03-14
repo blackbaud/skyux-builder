@@ -2,8 +2,6 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
-const proxyquire = require('proxyquire');
 const logger = require('winston');
 
 describe('config sky-pages', () => {
@@ -11,21 +9,6 @@ describe('config sky-pages', () => {
   it('should expose a getSkyPagesConfig method', () => {
     const lib = require('../config/sky-pages/sky-pages.config');
     expect(typeof lib.getSkyPagesConfig).toEqual('function');
-  });
-
-  it('getSkyPagesConfig should call the local skyuxconfig.json file', () => {
-
-    spyOn(fs, 'existsSync').and.returnValue(false);
-    let stubs = {};
-
-    stubs[path.join(process.cwd(), 'skyuxconfig.json')] = {
-      '@noCallThru': true,
-      CUSTOM_PROP1: true
-    };
-
-    const lib = proxyquire('../config/sky-pages/sky-pages.config', stubs);
-    const config = lib.getSkyPagesConfig();
-    expect(config.CUSTOM_PROP1).toEqual(true);
   });
 
   it('should read name from skyuxconfig.json else package.json', () => {
@@ -38,127 +21,151 @@ describe('config sky-pages', () => {
     expect(appBase).toEqual('/' + name + '/');
   });
 
-  it('should accept the shorthand flag c for the config flag', () => {
-    spyOn(fs, 'existsSync').and.returnValue(true);
+  it('should handle no local configuration files', () => {
     spyOn(logger, 'info');
-    let stubs = {};
-
-    const argv = {
-      c: 'my-valid-file.json'
-    };
-
-    stubs[path.join(process.cwd(), 'my-valid-file.json')] = {
-      '@noCallThru': true,
-      CUSTOM_PROP1: true
-    };
-
-    const lib = proxyquire('../config/sky-pages/sky-pages.config', stubs);
-    const config = lib.getSkyPagesConfig(argv);
-
-    expect(config.CUSTOM_PROP1).toEqual(true);
-    expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file ${argv.config}`
-    );
-  });
-
-  it('should accept the config flag with a single valid file', () => {
-    spyOn(fs, 'existsSync').and.returnValue(true);
-    spyOn(logger, 'info');
-    let stubs = {};
-
-    const argv = {
-      config: 'my-valid-file.json'
-    };
-
-    stubs[path.join(process.cwd(), 'my-valid-file.json')] = {
-      '@noCallThru': true,
-      CUSTOM_PROP1: true
-    };
-
-    const lib = proxyquire('../config/sky-pages/sky-pages.config', stubs);
-    const config = lib.getSkyPagesConfig(argv);
-
-    expect(config.CUSTOM_PROP1).toEqual(true);
-    expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file ${argv.config}`
-    );
-  });
-
-  it('should accept the config flag with a single invalid file', () => {
     spyOn(fs, 'existsSync').and.returnValue(false);
-    spyOn(logger, 'error');
 
-    const argv = {
-      config: 'my-invalid-file.json'
-    };
     const lib = require('../config/sky-pages/sky-pages.config');
-    lib.getSkyPagesConfig(argv);
-
-    expect(logger.error).toHaveBeenCalledWith(
-      `Unable to locate requested config file ${argv.config}`
+    lib.getSkyPagesConfig();
+    expect(logger.info).toHaveBeenCalledWith(
+      `Using default skyuxconfig.json configuration.`
     );
   });
 
-  it('should accept the config flag with an array of valid files', () => {
+  it('should use the local skyuxconfig.json as the default, if it exists', () => {
+    spyOn(logger, 'info');
+    spyOn(fs, 'existsSync').and.callFake(f => f.indexOf('skyuxconfig.json') > -1);
+    spyOn(fs, 'readFileSync').and.returnValue(JSON.stringify({
+      custom: true
+    }));
+
+    const lib = require('../config/sky-pages/sky-pages.config');
+    const config = lib.getSkyPagesConfig();
+    expect(config.custom).toEqual(true);
+    expect(logger.info).toHaveBeenCalledWith(
+      `Successfully located requested config file ${lib.spaPath('skyuxconfig.json')}`
+    );
+  });
+
+  it('should read the shorthand -c flag', () => {
+    spyOn(logger, 'info');
+    spyOn(fs, 'existsSync').and.callFake(f => f.indexOf('test.json') > -1);
+    spyOn(fs, 'readFileSync').and.returnValue(JSON.stringify({
+      custom: true
+    }));
+
+    const lib = require('../config/sky-pages/sky-pages.config');
+    const config = lib.getSkyPagesConfig({
+      c: 'test.json'
+    });
+    expect(config.custom).toEqual(true);
+    expect(logger.info).toHaveBeenCalledWith(
+      `Successfully located requested config file test.json`
+    );
+  });
+
+  it('should read the --config flag', () => {
+    spyOn(logger, 'info');
+    spyOn(fs, 'existsSync').and.callFake(f => f.indexOf('test.json') > -1);
+    spyOn(fs, 'readFileSync').and.returnValue(JSON.stringify({
+      custom: true
+    }));
+
+    const lib = require('../config/sky-pages/sky-pages.config');
+    const config = lib.getSkyPagesConfig({
+      config: 'test.json'
+    });
+    expect(config.custom).toEqual(true);
+    expect(logger.info).toHaveBeenCalledWith(
+      `Successfully located requested config file test.json`
+    );
+  });
+
+  it('should handle the SKYUX_ENV environment variable and a matching file', () => {
+    spyOn(logger, 'info');
+    spyOn(fs, 'existsSync').and.callFake(f => f.indexOf('skyuxconfig.env.json') > -1);
+    spyOn(fs, 'readFileSync').and.returnValue(JSON.stringify({
+      custom: true
+    }));
+
+    process.env.SKYUX_ENV = 'env';
+    const lib = require('../config/sky-pages/sky-pages.config');
+    const config = lib.getSkyPagesConfig();
+    expect(config.custom).toEqual(true);
+    expect(logger.info).toHaveBeenCalledWith(
+      `Successfully located requested config file ${lib.spaPath('skyuxconfig.env.json')}`
+    );
+  });
+
+  it('should handle the SKYUX_ENV environment variable without a matching file', () => {
+    spyOn(fs, 'existsSync').and.returnValue(false);
+    process.env.SKYUX_ENV = 'env';
+    const lib = require('../config/sky-pages/sky-pages.config');
+    const config = lib.getSkyPagesConfig();
+    expect(config.custom).not.toEqual(true);
+    delete process.env.SKYUX_ENV;
+  });
+
+  it('should recursively follow the extends property of a config file', () => {
+    spyOn(logger, 'info');
     spyOn(fs, 'existsSync').and.returnValue(true);
-    spyOn(logger, 'info');
-    let stubs = {};
+    spyOn(fs, 'readFileSync').and.callFake(file => {
+      let config = '';
+      if (file.indexOf('skyuxconfig.json') > -1) {
+        config = {
+          extends: 'A.json',
+          test: 'asdf',
+          test4: 'jkl',
+          test5: '1234',
+          test1: true
+        };
+      } else if (file.indexOf('A.json') > -1) {
+        config = {
+          extends: 'B.json',
+          test: '1234',
+          test4: 'asdf',
+          test2: false
+        };
+      } else if (file.indexOf('B.json') > -1) {
+        config = {
+          test: 'jkl',
+          test3: true
+        };
+      }
 
-    const argv = {
-      config: 'my-valid-file1.json,my-valid-file2.json'
-    };
+      return JSON.stringify(config);
+    });
 
-    stubs[path.join(process.cwd(), 'my-valid-file1.json')] = {
-      '@noCallThru': true,
-      CUSTOM_PROP1: true,
-      CUSTOM_PROP2: 'asdf'
-    };
-
-    stubs[path.join(process.cwd(), 'my-valid-file2.json')] = {
-      '@noCallThru': true,
-      CUSTOM_PROP2: 'jkl',
-      CUSTOM_PROP3: true
-    };
-
-    const lib = proxyquire('../config/sky-pages/sky-pages.config', stubs);
-    const config = lib.getSkyPagesConfig(argv);
-
-    expect(config.CUSTOM_PROP1).toEqual(true);
-    expect(config.CUSTOM_PROP2).toEqual('jkl');
-    expect(config.CUSTOM_PROP3).toEqual(true);
+    const lib = require('../config/sky-pages/sky-pages.config');
+    const config = lib.getSkyPagesConfig();
+    expect(config.test).toEqual('asdf');
+    expect(config.test1).toEqual(true);
+    expect(config.test2).toEqual(false);
+    expect(config.test3).toEqual(true);
+    expect(config.test4).toEqual('jkl');
+    expect(config.test5).toEqual('1234');
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file my-valid-file1.json`
+      `Successfully located requested config file ${lib.spaPath('skyuxconfig.json')}`
     );
     expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file my-valid-file2.json`
+      `Successfully located requested config file ${lib.spaPath('A.json')}`
+    );
+    expect(logger.info).toHaveBeenCalledWith(
+      `Successfully located requested config file ${lib.spaPath('B.json')}`
     );
   });
 
-  it('should accept the config flag with an array of valid and invalid files', () => {
-
-    spyOn(fs, 'existsSync').and.callFake(f => f.indexOf('my-valid-file.json') > -1);
-    spyOn(logger, 'info');
+  it('should handle files that do not exist', () => {
     spyOn(logger, 'error');
-    let stubs = {};
+    spyOn(fs, 'existsSync').and.returnValue(false);
 
-    const argv = {
-      config: 'my-valid-file.json,my-invalid-file.json'
-    };
-
-    stubs[path.join(process.cwd(), 'my-valid-file.json')] = {
-      '@noCallThru': true,
-      CUSTOM_PROP1: true
-    };
-
-    const lib = proxyquire('../config/sky-pages/sky-pages.config', stubs);
-    const config = lib.getSkyPagesConfig(argv);
-
-    expect(config.CUSTOM_PROP1).toEqual(true);
-    expect(logger.info).toHaveBeenCalledWith(
-      `Successfully located requested config file my-valid-file.json`
-    );
+    const lib = require('../config/sky-pages/sky-pages.config');
+    const config = lib.getSkyPagesConfig({
+      config: 'test.json'
+    });
+    expect(config.custom).not.toEqual(true);
     expect(logger.error).toHaveBeenCalledWith(
-      `Unable to locate requested config file my-invalid-file.json`
+      `Unable to locate requested config file test.json`
     );
   });
 
