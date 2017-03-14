@@ -14,7 +14,7 @@ function getConfig(config) {
   const path = require('path');
   let testWebpackConfig = require('../webpack/test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
-  let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv);
+  let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv.command);
 
   config.set({
     basePath: '',
