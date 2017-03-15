@@ -20,7 +20,9 @@ function test(command) {
     '--max-old-space-size=4096',
     'node_modules/karma/bin/karma',
     'start',
-    karmaConfigPath
+    karmaConfigPath,
+    '--command',
+    command
   ];
 
   const options = {

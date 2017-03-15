@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const merge = require('merge');
+const logger = require('winston');
 
 /**
  * Resolves a path given a root path and an array-like arguments object.
@@ -17,6 +18,10 @@ function resolve(root, args) {
   return path.resolve.apply(path, args);
 }
 
+function readConfig(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
 module.exports = {
 
   /**
@@ -24,17 +29,26 @@ module.exports = {
    * Adds routes, modules, and components next.
    * Merges in SPA's skyuxconfig last.
    * @name getSkyPagesConfig
+   * @param {argv} Optional arguments from command line
    * @returns [SkyPagesConfig] skyPagesConfig
    */
-  getSkyPagesConfig: function () {
-    const skyPagesSpaPath = this.spaPath('skyuxconfig.json');
-    let config = require(this.outPath('skyuxconfig.json'));
+  getSkyPagesConfig: function (command) {
 
-    if (fs.existsSync(skyPagesSpaPath)) {
-      merge.recursive(config, require(skyPagesSpaPath));
+    const base = readConfig(this.outPath(`skyuxconfig.json`));
+    const local = this.spaPath(`skyuxconfig.json`);
+    const cmd = this.spaPath(`skyuxconfig.${command}.json`);
+
+    if (fs.existsSync(local)) {
+      logger.info(`Merging local config skyuxconfig.json`);
+      merge.recursive(base, readConfig(local));
     }
 
-    return config;
+    if (fs.existsSync(cmd)) {
+      logger.info(`Merging command config skyuxconfig.${command}.json`);
+      merge.recursive(base, readConfig(cmd));
+    }
+
+    return base;
   },
 
   /**

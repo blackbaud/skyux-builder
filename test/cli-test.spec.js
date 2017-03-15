@@ -43,4 +43,20 @@ describe('cli test', () => {
 
   });
 
+  it('should pass the current command to karma', () => {
+
+    const cmd = 'CUSTOM_CMD';
+    let argv;
+
+    const minimist = require('minimist');
+    mock('cross-spawn', (node, flags) => {
+      argv = minimist(flags);
+    });
+
+    require('../cli/test')(cmd);
+    expect(argv.command).toEqual(cmd);
+    mock.stop('cross-spawn');
+
+  });
+
 });
