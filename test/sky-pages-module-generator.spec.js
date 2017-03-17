@@ -104,10 +104,9 @@ describe('SKY UX Builder module generator', () => {
   });
 
   it('should only provide the SkyAuthHttp service if the app is configured to use auth', () => {
-    const expectedImport = `import { SkyAuthHttp } from 'sky-pages-internal/runtime';`;
+    const expectedImport = `import { (.*)SkyAuthHttp(.*) } from 'sky-pages-internal/runtime';`;
 
-    const expectedProvider = `
-    ,{
+    const expectedProvider = `{
       provide: SkyAuthHttp,
       useClass: SkyAuthHttp,
       deps: [XHRBackend, RequestOptions]
@@ -115,14 +114,14 @@ describe('SKY UX Builder module generator', () => {
 
     let source = generator.getSource({});
 
-    expect(source).not.toContain(expectedImport);
+    expect(source).not.toMatch(expectedImport);
     expect(source).not.toContain(expectedProvider);
 
     source = generator.getSource({
       auth: true
     });
 
-    expect(source).toContain(expectedImport);
+    expect(source).toMatch(expectedImport);
     expect(source).toContain(expectedProvider);
   });
 });

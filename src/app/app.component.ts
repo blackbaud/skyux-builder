@@ -1,5 +1,6 @@
 import {
   Component,
+  Inject,
   OnInit
 } from '@angular/core';
 
@@ -17,7 +18,7 @@ import {
 
 import { BBHelp } from '@blackbaud/help-client';
 
-import { SKY_PAGES } from './sky-pages.module';
+import { SkyuxConfigProvider, SkyuxConfig } from '@blackbaud/skyux-builder/runtime';
 
 require('style!@blackbaud/skyux/dist/css/sky.css');
 require('style!./app.component.scss');
@@ -27,7 +28,10 @@ require('style!./app.component.scss');
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    @Inject(SkyuxConfigProvider) private skyuxConfig: SkyuxConfig
+  ) { }
 
   public ngOnInit() {
     // Without this code, navigating to a new route doesn't cause the window to be
@@ -42,7 +46,7 @@ export class AppComponent implements OnInit {
   }
 
   private initShellComponents() {
-    const bootstrapConfig = SKY_PAGES.bootstrapConfig;
+    const bootstrapConfig = this.skyuxConfig.bootstrapConfig;
 
     if (bootstrapConfig) {
       const omnibarBootstrapConfig = bootstrapConfig.omnibar;
@@ -55,8 +59,8 @@ export class AppComponent implements OnInit {
 
         const baseUrl =
           (
-            SKY_PAGES.host.url +
-            SKY_PAGES.app.base.substr(0, SKY_PAGES.app.base.length - 1)
+            this.skyuxConfig.host.url +
+            this.skyuxConfig.app.base.substr(0, this.skyuxConfig.app.base.length - 1)
           ).toLowerCase();
 
         const nav = new BBOmnibarNavigation();
@@ -71,11 +75,11 @@ export class AppComponent implements OnInit {
           }
         };
 
-        if (SKY_PAGES.command === 'serve') {
+        if (this.skyuxConfig.command === 'serve') {
           // Add any global routes to the omnibar as a convenience to the developer.
           const globalRoutes =
-            SKY_PAGES.publicRoutes &&
-            SKY_PAGES.publicRoutes.filter((value: any) => {
+            this.skyuxConfig.publicRoutes &&
+            this.skyuxConfig.publicRoutes.filter((value: any) => {
               return value.global;
             });
 
