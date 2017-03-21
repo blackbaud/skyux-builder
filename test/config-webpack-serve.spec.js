@@ -59,6 +59,25 @@ describe('config webpack serve', () => {
     config = null;
   });
 
+  function bindToDone() {
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'WebpackPluginDone') {
+        plugin.apply({
+          options: getPluginOptions(),
+          plugin: (evt, cb) => {
+            if (evt === 'done') {
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+
   it('should expose a getWebpackConfig method', () => {
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
@@ -278,6 +297,31 @@ describe('config webpack serve', () => {
         });
       }
     });
+  });
+
+  it('should pass through envid from the command line', () => {
+    argv.envid = 'asdf';
+
+    bindToDone();
+    expect(openCalledWith).toContain(`?envid=asdf`);
+  });
+
+  it('should pass through svcid from the command line', () => {
+    argv.svcid = 'asdf';
+
+    bindToDone();
+    expect(openCalledWith).toContain(`?svcid=asdf`);
+  });
+
+  it('should pass through envid and svcid, but not junk from the command line', () => {
+    argv.envid = 'asdf1';
+    argv.svcid = 'asdf2';
+    argv.myid = 'asdf3';
+
+    bindToDone();
+    expect(openCalledWith).toContain(`envid=asdf1`);
+    expect(openCalledWith).toContain(`svcid=asdf2`);
+    expect(openCalledWith).not.toContain(`myid=asdf3`);
   });
 
 });

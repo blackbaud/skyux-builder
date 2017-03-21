@@ -16,6 +16,32 @@ const hostUtils = require('../../utils/host-utils');
 const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
 
 /**
+ * Returns the querystring base for parameters allowed to be passed through.
+ * @name getQueryStringFromArgv
+ * @param {Object} argv
+ * @returns {string}
+ */
+function getQueryStringFromArgv(argv) {
+  const allowed = [
+    'envid',
+    'svcid'
+  ];
+
+  let found = [];
+  allowed.forEach(param => {
+    if (argv[param]) {
+      found.push(`${param}=${argv[param]}`);
+    }
+  });
+
+  if (found.length) {
+    return `?${found.join('&')}`;
+  }
+
+  return '';
+}
+
+/**
  * Returns the default webpackConfig.
  * @name getDefaultWebpackConfig
  * @returns {WebpackConfig} webpackConfig
@@ -31,14 +57,15 @@ function getWebpackConfig(argv, skyPagesConfig) {
     this.plugin('done', (stats) => {
       if (!launched) {
 
-        const localUrl = util.format(
+        const queryStringBase = getQueryStringFromArgv(argv);
+        let localUrl = util.format(
           'https://localhost:%s%s',
           this.options.devServer.port,
           this.options.devServer.publicPath
         );
 
         const hostUrl = hostUtils.resolve(
-          '',
+          queryStringBase,
           localUrl,
           stats.toJson().chunks,
           skyPagesConfig
@@ -56,6 +83,11 @@ function getWebpackConfig(argv, skyPagesConfig) {
           case 'none':
             break;
           case 'local':
+
+            // Only adding queryStringBase to the message + local url opened,
+            // Meaning doesn't need those to communicate back to localhost
+            localUrl += queryStringBase;
+
             logger.info(`Launching Local URL: ${localUrl}`);
             open(localUrl);
             break;
