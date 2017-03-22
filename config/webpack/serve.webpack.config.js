@@ -30,7 +30,7 @@ function getQueryStringFromArgv(argv) {
   let found = [];
   allowed.forEach(param => {
     if (argv[param]) {
-      found.push(`${param}=${argv[param]}`);
+      found.push(`${param}=${encodeURIComponent(argv[param])}`);
     }
   });
 

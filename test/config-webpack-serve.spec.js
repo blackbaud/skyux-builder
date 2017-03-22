@@ -313,14 +313,23 @@ describe('config webpack serve', () => {
     expect(openCalledWith).toContain(`?svcid=asdf`);
   });
 
-  it('should pass through envid and svcid, but not junk from the command line', () => {
+  it('should run envid and svcid through encodeURIComponent', () => {
+    argv.envid = '&=$';
+    argv.svcid = '^%';
+
+    bindToDone();
+    expect(openCalledWith).toContain(
+      `?envid=${encodeURIComponent(argv.envid)}&svcid=${encodeURIComponent(argv.svcid)}`
+    );
+  });
+
+  it('should pass through envid and svcid, but not other flags from the command line', () => {
     argv.envid = 'asdf1';
     argv.svcid = 'asdf2';
     argv.myid = 'asdf3';
 
     bindToDone();
-    expect(openCalledWith).toContain(`envid=asdf1`);
-    expect(openCalledWith).toContain(`svcid=asdf2`);
+    expect(openCalledWith).toContain(`?envid=asdf1&svcid=asdf2`);
     expect(openCalledWith).not.toContain(`myid=asdf3`);
   });
 
