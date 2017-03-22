@@ -1,7 +1,7 @@
 # 1.0.0-beta.14 (2017-03-22)
 
 - Merging `skyuxconfig.{current-skyux-command}.json`, if it exists, into the `skyuxconfig.json` file.  For example, `skyuxconfig.serve.json`.
-- Adding `--envid` and `--svcid` to be specificed via the CLI and added to the HOST url opened when running `skyux serve`.  For example, `skyux serve --envid 1234`
+- Adding `--envid` and `--svcid` to be specificed via the CLI and added to the Host URL opened when running `skyux serve`.  For example, `skyux serve --envid 1234`
 
 # 1.0.0-beta.13 (2017-03-06)
 
