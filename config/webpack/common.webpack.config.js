@@ -83,6 +83,11 @@ function getWebpackConfig(skyPagesConfig) {
       rules: [
         {
           enforce: 'pre',
+          test: /skyux-config\.ts$/,
+          loader: outPath('loader', 'skyux-config-module')
+        },
+        {
+          enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
           loader: outPath('loader', 'sky-pages-module')
         },
@@ -107,13 +112,13 @@ function getWebpackConfig(skyPagesConfig) {
         name: ['skyux', 'vendor', 'polyfills']
       }),
       new webpack.DefinePlugin({
-        'SKY_PAGES': JSON.stringify(skyPagesConfig)
+        'SKYUX_CONFIG': JSON.stringify(skyPagesConfig)
       }),
       new ProgressBarPlugin(),
       failPlugin,
       new LoaderOptionsPlugin({
         options: {
-          SKY_PAGES: skyPagesConfig
+          SKYUX_CONFIG: skyPagesConfig
         }
       }),
       new ContextReplacementPlugin(
