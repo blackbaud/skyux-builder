@@ -7,6 +7,26 @@ const merge = require('merge');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 
+function setSkyAssetsLoaderUrl(config, skyPagesConfig, localUrl) {
+  let i;
+  let n;
+
+  const rules = config && config.module && config.module.rules;
+
+  if (rules) {
+    for (i = 0, n = rules.length; i < n; i++) {
+      let rule = rules[i];
+
+      if (rule.loader.match(/sky-assets$/)) {
+        rule.options = rule.options || {};
+        rule.options.baseUrl = localUrl + skyPagesConfig.app.base;
+
+        return;
+      }
+    }
+  }
+}
+
 function writeTSConfig() {
   var config = {
     'compilerOptions': {
@@ -116,6 +136,11 @@ function build(argv, skyPagesConfig, webpack) {
   }
 
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
+
+  const assetsBaseUrl = argv.assetsurl || '';
+
+  setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl);
+
   const compiler = webpack(config);
 
   return new Promise((resolve, reject) => {
