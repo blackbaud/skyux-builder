@@ -1,3 +1,6 @@
+/*jslint node: true */
+'use strict';
+
 const webpackMerge = require('webpack-merge');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
