@@ -11,6 +11,7 @@ const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+const spaConfigUtil = require('./spa.webpack.config');
 const hostUtils = require('../../utils/host-utils');
 
 const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
@@ -104,6 +105,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
   const skyPagesConfigServe = webpackMerge(skyPagesConfig, {
     command: 'serve'
   });
+  const spaWebpackConfig = spaConfigUtil.getWebpackConfig(skyPagesConfig);
   const common = require('./common.webpack.config')
     .getWebpackConfig(skyPagesConfigServe);
 
@@ -157,7 +159,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
         debug: true
       })
     ]
-  });
+  }, spaWebpackConfig);
 }
 
 module.exports = {
