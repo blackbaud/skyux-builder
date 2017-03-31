@@ -6,6 +6,7 @@ const fs = require('fs-extra');
 const merge = require('merge');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
+const assetsConfig = require('../lib/assets-configuration');
 
 function writeTSConfig() {
   var config = {
@@ -116,6 +117,11 @@ function build(argv, skyPagesConfig, webpack) {
   }
 
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
+
+  const assetsBaseUrl = argv.assets || '';
+
+  assetsConfig.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl);
+
   const compiler = webpack(config);
 
   return new Promise((resolve, reject) => {
