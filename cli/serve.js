@@ -4,6 +4,8 @@
 const logger = require('winston');
 const portfinder = require('portfinder');
 
+const assetsConfig = require('../lib/assets-configuration');
+
 /**
  * Let users configure port via skyuxconfig.json first.
  * Else another plugin has specified devServer.port, use it.
@@ -40,13 +42,16 @@ function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
   let config = webpackConfig.getWebpackConfig(argv, skyPagesConfig);
 
   getPort(config, skyPagesConfig).then(port => {
+    const localUrl = `https://localhost:${port}`;
+
+    assetsConfig.setSkyAssetsLoaderUrl(config, skyPagesConfig, localUrl);
 
     // Save our found or defined port
     config.devServer.port = port;
 
     /* istanbul ignore else */
     if (config.devServer.inline) {
-      const hot = `webpack-dev-server/client?https://localhost:${port}`;
+      const hot = `webpack-dev-server/client?${localUrl}`;
       Object.keys(config.entry).forEach((entry) => {
         config.entry[entry].unshift(hot);
       });
