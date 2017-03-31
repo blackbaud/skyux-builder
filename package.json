@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.0.0-beta.13",
+  "version": "1.0.0-beta.14",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
@@ -53,6 +53,7 @@
     "fontfaceobserver": "2.0.9",
     "fs-extra": "1.0.0",
     "glob": "7.1.1",
+    "hash-file": "3.0.0",
     "html-webpack-plugin": "2.24.0",
     "http-server": "0.9.0",
     "istanbul-instrumenter-loader": "0.2.0",
@@ -66,6 +67,7 @@
     "karma-mocha-reporter": "2.1.0",
     "karma-sourcemap-loader": "0.3.7",
     "karma-webpack": "1.8.0",
+    "loader-utils": "1.1.0",
     "merge": "1.2.0",
     "node-sass": "3.8.0",
     "open": "0.0.5",
