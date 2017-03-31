@@ -1,7 +1,6 @@
 /*jshint node: true*/
 'use strict';
 
-const path = require('path');
 const fs = require('fs');
 const hashFile = require('hash-file');
 
@@ -11,44 +10,38 @@ const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 const ASSETS_REGEX = /~\/assets\/.*\.[\.\w]*/gi;
 
 function getFilePathWithHash(filePath) {
-  let filePathParts = filePath.split('.');
+  let indexOfLastDot = filePath.lastIndexOf('.');
 
-  return filePathParts[0] +
+  return filePath.substr(0, indexOfLastDot) +
     '.' +
     hashFile.sync(skyPagesConfigUtil.spaPath('src', filePath)) +
     '.' +
-    filePathParts[1];
+    filePath.substr(indexOfLastDot + 1);
 }
 
 module.exports = function (content) {
-  let i;
-  let n;
+  const options = loaderUtils.getOptions(this);
+  let match = ASSETS_REGEX.exec(content);
 
-  let matches = content.match(ASSETS_REGEX);
+  while (match) {
+    const matchString = match[0];
+    const filePath = matchString.substring(2, matchString.length);
+    const filePathWithHash = getFilePathWithHash(filePath);
 
-  if (matches) {
-    const options = loaderUtils.getOptions(this);
+    this.emitFile(
+      filePathWithHash,
+      fs.readFileSync(skyPagesConfigUtil.spaPath('src', filePath))
+    );
 
-    for (i = 0, n = matches.length; i < n; i++) {
-      const match = matches[0];
+    const url = `${options && options.baseUrl}${filePathWithHash.replace(/\\/gi, '/')}`;
 
-      const filePath = match.substring(2, match.length);
-      const filePathWithHash = getFilePathWithHash(filePath);
+    content = content.replace(
+      new RegExp(matchString, 'gi'),
+      url
+    );
 
-      this.emitFile(
-        path.join(filePathWithHash),
-        fs.readFileSync(skyPagesConfigUtil.spaPath('src', filePath))
-      );
-
-      const url = `${options && options.baseUrl}${filePathWithHash}`;
-
-      content = content.replace(
-        new RegExp(match, 'gi'),
-        url
-      );
-    }
+    match = ASSETS_REGEX.exec(content);
   }
 
   return content;
-
 };

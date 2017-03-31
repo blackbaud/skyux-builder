@@ -81,11 +81,11 @@ function getWebpackConfig(skyPagesConfig) {
     },
     module: {
       rules: [
-        // {
-        //   enforce: 'pre',
-        //   test: /\.(html|s?css)$/,
-        //   loader: outPath('loader', 'sky-assets')
-        // },
+        {
+          enforce: 'pre',
+          test: /\.(html|s?css)$/,
+          loader: outPath('loader', 'sky-assets')
+        },
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
