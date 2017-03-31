@@ -1,20 +1,36 @@
-import { Injectable } from '@angular/core';
+import {
+  Inject,
+  Injectable
+} from '@angular/core';
 
 import {
+  ConnectionBackend,
   Headers,
   Http,
   Request,
   RequestOptions,
   RequestOptionsArgs,
-  Response
+  Response,
+  URLSearchParams
 } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/operator/mergeMap';
 
 import { BBAuth } from '@blackbaud/auth-client';
 
 @Injectable()
 export class SkyAuthHttp extends Http {
+
+  constructor(
+    backend: ConnectionBackend,
+    defaultOptions: RequestOptions,
+    @Inject('Window') private window: Window
+  ) {
+    super(backend, defaultOptions);
+  }
+
   public request(
     url: string | Request,
     options?: RequestOptionsArgs
@@ -47,8 +63,7 @@ export class SkyAuthHttp extends Http {
   }
 
   private addAllowedQueryString (url) {
-
-    const urlSearchParams = new URLSearchParams(window.location.search.substr(1));
+    const urlSearchParams = new URLSearchParams(this.window.location.search.substr(1));
     const allowed = [
       'envid',
       'svcid'
@@ -64,7 +79,7 @@ export class SkyAuthHttp extends Http {
 
     if (found.length) {
       const delimeter = url.indexOf('?') === -1 ? '?' : '&';
-      url = `${url}${delimeter}envid=${envid}`;
+      url = `${url}${delimeter}${found.join('&')}`;
     }
 
     return url;
