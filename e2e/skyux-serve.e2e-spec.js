@@ -14,6 +14,7 @@ describe('skyux serve', () => {
   let url;
 
   beforeAll((done) => {
+    common.beforeAll();
     common.prepareServe().then((port) => {
       url = `https://localhost:${port}/rrrrr-app-name/`;
       browser.get(url).then(done);
