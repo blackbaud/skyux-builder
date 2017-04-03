@@ -98,7 +98,7 @@ describe('SkyAuthHttp', () => {
     });
   });
 
-  it('should handle a requested url with a querystring', () => {
+  it('should handle a requested url with a querystring', (done) => {
     const url = 'example.com?custom=true';
     const search = 'envid=asdf';
     spyOn(BBAuth, 'getToken').and.returnValue(Promise.resolve());
