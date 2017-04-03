@@ -30,11 +30,11 @@ const processContent = (content, hook) => {
 };
 
 const preprocessHtml = (content) => {
-  return processContent(content, 'preHtml');
+  return processContent(content, 'htmlPre');
 };
 
 const postprocessHtml = (content) => {
-  return processContent(content, 'postHtml');
+  return processContent(content, 'htmlPost');
 };
 
 const plugins = getPluginContents();
