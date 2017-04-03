@@ -1,3 +1,6 @@
+/*jshint node: true*/
+'use strict';
+
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 const config = skyPagesConfigUtil.getSkyPagesConfig();
 
@@ -5,9 +8,7 @@ const getPluginContents = () => {
   let plugins = [];
 
   if (Array.isArray(config.plugins)) {
-    plugins = config.plugins.map(path => {
-      return require(skyPagesConfigUtil.spaPath(path));
-    })
+    plugins = config.plugins.map(path => require(skyPagesConfigUtil.spaPath(path)));
   }
 
   return plugins;
@@ -29,13 +30,9 @@ const processContent = (content, hook) => {
   return content;
 };
 
-const preprocessHtml = (content) => {
-  return processContent(content, 'preHtml');
-};
+const preprocessHtml = (content) => processContent(content, 'htmlPre');
 
-const postprocessHtml = (content) => {
-  return processContent(content, 'postHtml');
-};
+const postprocessHtml = (content) => processContent(content, 'htmlPost');
 
 const plugins = getPluginContents();
 
