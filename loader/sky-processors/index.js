@@ -30,9 +30,9 @@ const processContent = (content, hook) => {
   return content;
 };
 
-const preprocessHtml = (content) => processContent(content, 'htmlPre');
+const preprocessHtml = (content) => processContent(content, 'preHtml');
 
-const postprocessHtml = (content) => processContent(content, 'htmlPost');
+const postprocessHtml = (content) => processContent(content, 'postHtml');
 
 const plugins = getPluginContents();
 
