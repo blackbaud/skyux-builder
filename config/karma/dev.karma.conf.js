@@ -26,9 +26,11 @@ function getConfig(config) {
     })
   );
 
+  // Adjust the loader src path.
+  webpackConfig.module.rules[webpackConfig.module.rules.length - 1].include = runtimePath;
+
   testKarmaConf(config);
   config.set({
-    logLevel: config.LOG_INFO,
     webpack: webpackConfig,
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage-runtime')

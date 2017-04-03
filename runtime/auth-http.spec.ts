@@ -98,4 +98,27 @@ describe('SkyAuthHttp', () => {
     });
   });
 
+  it('should handle a requested url with a querystring', () => {
+    const url = 'example.com?custom=true';
+    const search = 'envid=asdf';
+    spyOn(BBAuth, 'getToken').and.returnValue(Promise.resolve());
+
+    setupInjector('?' + search);
+    skyAuthHttp.get(url).subscribe(() => {
+      expect(lastConnection.request.url).toEqual(url + '&' + search);
+      done();
+    });
+  });
+
+  it('should handle being passed a url string (instead of Request)', (done) => {
+    const url = 'url-as-string.com';
+    spyOn(BBAuth, 'getToken').and.returnValue(Promise.resolve());
+
+    setupInjector('');
+    skyAuthHttp.request(url).subscribe(() => {
+      expect(lastConnection.request.url).toEqual(url);
+      done();
+    });
+  });
+
 });
