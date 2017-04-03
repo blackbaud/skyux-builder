@@ -94,12 +94,12 @@ function getWebpackConfig(skyPagesConfig) {
         {
           enforce: 'pre',
           test: /\.html$/,
-          loader: outPath('loader', 'sky-processors', 'html-pre')
+          loader: outPath('loader', 'sky-processors', 'before-html')
         },
         {
           enforce: 'post',
           test: /\.html$/,
-          loader: outPath('loader', 'sky-processors', 'html-post')
+          loader: outPath('loader', 'sky-processors', 'after-html')
         },
         {
           test: /\.s?css$/,

@@ -30,13 +30,13 @@ const processContent = (content, hook) => {
   return content;
 };
 
-const preprocessHtml = (content) => processContent(content, 'preHtml');
+const processHtmlBefore = (content) => processContent(content, 'beforeHtml');
 
-const postprocessHtml = (content) => processContent(content, 'postHtml');
+const processHtmlAfter = (content) => processContent(content, 'afterHtml');
 
 const plugins = getPluginContents();
 
 module.exports = {
-  preprocessHtml,
-  postprocessHtml
+  processHtmlBefore,
+  processHtmlAfter
 };
