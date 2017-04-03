@@ -2,7 +2,7 @@
 
 'use strict';
 
-require('style!@blackbaud/skyux/dist/css/sky.css');
+require('style-loader!@blackbaud/skyux/dist/css/sky.css');
 
 var FontFaceObserver = require('fontfaceobserver');
 
