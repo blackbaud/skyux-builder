@@ -5,21 +5,23 @@ const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 const config = skyPagesConfigUtil.getSkyPagesConfig();
 
 const getPluginContents = () => {
-  let plugins = [];
+  let contents = [];
 
   if (Array.isArray(config.plugins)) {
-    plugins = config.plugins.map(path => require(skyPagesConfigUtil.spaPath(path)));
+    contents = config.plugins.map(path => require(path));
   }
 
-  return plugins;
+  return contents;
 };
 
-const processContent = (content, hook) => {
+const processContent = (content, resourcePath, hook) => {
+  let args = [content, resourcePath];
+
   plugins.forEach(plugin => {
     let processedContent;
 
     if (typeof plugin[hook] === 'function') {
-      processedContent = plugin[hook].call(this, content);
+      processedContent = plugin[hook].apply({}, args);
     }
 
     if (processedContent) {
@@ -30,13 +32,17 @@ const processContent = (content, hook) => {
   return content;
 };
 
-const processHtmlBefore = (content) => processContent(content, 'beforeHtml');
+function preload(content) {
+  return processContent(content, this.resourcePath, 'preload');
+}
 
-const processHtmlAfter = (content) => processContent(content, 'afterHtml');
+function postload(content) {
+  return processContent(content, this.resourcePath, 'postload');
+}
 
 const plugins = getPluginContents();
 
 module.exports = {
-  processHtmlBefore,
-  processHtmlAfter
+  preload,
+  postload
 };

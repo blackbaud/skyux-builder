@@ -3,4 +3,4 @@
 
 const processor = require('./index');
 
-module.exports = processor.processHtmlBefore;
+module.exports = processor.postload;

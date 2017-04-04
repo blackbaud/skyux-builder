@@ -72,7 +72,16 @@ function getWebpackConfig(skyPagesConfig) {
           loader: 'source-map-loader',
           exclude: excludes
         },
-
+        {
+          enforce: 'pre',
+          loader: outPath('loader', 'sky-processor', 'preload'),
+          exclude: /node_modules/
+        },
+        {
+          enforce: 'post',
+          loader: outPath('loader', 'sky-processor', 'postload'),
+          exclude: /node_modules/
+        },
         {
           test: /\.ts$/,
           loaders: [
