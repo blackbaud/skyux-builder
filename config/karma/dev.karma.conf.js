@@ -19,6 +19,9 @@ function getConfig(config) {
   const skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig('test');
   let webpackConfig = testWebpackConfig.getWebpackConfig(skyPagesConfig);
 
+  // Import shared karma config
+  testKarmaConf(config);
+
   // First DefinePlugin wins so we want to override the normal src/app/ value in ROOT_DIR
   webpackConfig.plugins.unshift(
     new DefinePlugin({
@@ -29,7 +32,10 @@ function getConfig(config) {
   // Adjust the loader src path.
   webpackConfig.module.rules[webpackConfig.module.rules.length - 1].include = runtimePath;
 
-  testKarmaConf(config);
+  // Remove sky-style-loader
+  delete config.preprocessors['../../utils/spec-styles.js'];
+  config.files.pop();
+
   config.set({
     webpack: webpackConfig,
     coverageReporter: {
