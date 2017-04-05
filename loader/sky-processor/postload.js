@@ -3,4 +3,7 @@
 
 const processor = require('./index');
 
-module.exports = processor.postload;
+module.exports = function (content) {
+  let _this = this;
+  return processor.postload(content, _this.resourcePath);
+};

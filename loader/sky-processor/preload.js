@@ -3,4 +3,7 @@
 
 const processor = require('./index');
 
-module.exports = processor.preload;
+module.exports = function (content) {
+  let _this = this;
+  return processor.preload(content, _this.resourcePath);
+};
