@@ -20,7 +20,7 @@ function getWebpackConfig(skyPagesConfig) {
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
   const srcPath = path.resolve(process.cwd(), 'src');
-  const moduleLoader = outPath('loader', 'sky-pages-module');
+  const moduleLoader = outPath('loader', 'sky-pages-module-test');
 
   const resolves = [
     process.cwd(),
