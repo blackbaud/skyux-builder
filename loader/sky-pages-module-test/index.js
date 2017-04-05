@@ -3,7 +3,7 @@
 
 const path = require('path');
 const fs = require('fs');
-const generator = require('../../lib/sky-pages-test-module-generator');
+const generator = require('../../lib/sky-pages-module-generator');
 
 module.exports = function () {
 
