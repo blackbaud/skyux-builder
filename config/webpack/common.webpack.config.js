@@ -49,13 +49,6 @@ function getWebpackConfig(skyPagesConfig) {
       break;
   }
 
-  // Merge in our defaults
-  const appConfig = merge((skyPagesConfig && skyPagesConfig.app) || {}, {
-    template: outPath('src', 'main.ejs'),
-    base: skyPagesConfigUtil.getAppBase(skyPagesConfig),
-    inject: false
-  });
-
   return {
     entry: {
       polyfills: [outPath('src', 'polyfills.ts')],
@@ -107,7 +100,7 @@ function getWebpackConfig(skyPagesConfig) {
     },
     plugins: [
       new ForkCheckerPlugin(),
-      new HtmlWebpackPlugin(appConfig),
+      new HtmlWebpackPlugin(skyPagesConfig.app),
       new CommonsChunkPlugin({
         name: ['skyux', 'vendor', 'polyfills']
       }),

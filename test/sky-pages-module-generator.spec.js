@@ -125,4 +125,37 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(expectedImport);
     expect(source).toContain(expectedProvider);
   });
+
+  it('should export SKY_PAGES and merge with skyPagesConfig', () => {
+    const skyuxConfig = {
+      name: 'my-app',
+      srcPath: 'srcPath',
+      routesPattern: 'routesPattern',
+      componentsPattern: 'componentsPattern',
+      spaPathAlias: 'spaPathAlias',
+      skyPagesOutAlias: 'skyPagesOutAlias',
+      skyuxPathAlias: 'skyuxPathAlias',
+      runtimeAlias: 'runtimeAlias',
+      useTemplateUrl: true
+    };
+    const source = generator.getSource(skyuxConfig);
+    const matches = source.match(/export const SKY_PAGES: any = (.*);/);
+    const SKY_PAGES = JSON.parse(matches[1]);
+
+    // Test the overrides first
+    expect(SKY_PAGES.srcPath).toEqual(skyuxConfig.srcPath);
+    expect(SKY_PAGES.routesPattern).toEqual(skyuxConfig.routesPattern);
+    expect(SKY_PAGES.componentsPattern).toEqual(skyuxConfig.componentsPattern);
+    expect(SKY_PAGES.spaPathAlias).toEqual(skyuxConfig.spaPathAlias);
+    expect(SKY_PAGES.skyPagesOutAlias).toEqual(skyuxConfig.skyPagesOutAlias);
+    expect(SKY_PAGES.skyuxPathAlias).toEqual(skyuxConfig.skyuxPathAlias);
+    expect(SKY_PAGES.runtimeAlias).toEqual(skyuxConfig.runtimeAlias);
+    expect(SKY_PAGES.useTemplateUrl).toEqual(skyuxConfig.useTemplateUrl);
+
+    // Tet the required defaults
+    expect(SKY_PAGES.app).toBeDefined();
+    expect(SKY_PAGES.app.base).toEqual('/my-app/');
+    expect(SKY_PAGES.app.inject).toEqual(false);
+    expect(SKY_PAGES.app.template).toContain('main.ejs');
+  });
 });

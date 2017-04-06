@@ -5,4 +5,5 @@
 - `npm run jshint` Runs this code against the jshint linter.
 - `npm run lint` Runs the `jscs` and `jshint` commands.
 - `npm run runtime` Runs the "runtime" unit tests, saving coverage to the `coverage-runtime/` directory.
+- `npm run e2e` Runs our protractor end-to-end tests.
 - `npm run test` Runs ALL test commands combined.
