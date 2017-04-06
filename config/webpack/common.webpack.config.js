@@ -1,7 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
