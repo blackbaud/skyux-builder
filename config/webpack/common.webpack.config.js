@@ -1,7 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
@@ -48,13 +47,6 @@ function getWebpackConfig(skyPagesConfig) {
       appPath = outPath('src', 'main-internal.ts');
       break;
   }
-
-  // Merge in our defaults
-  const appConfig = merge((skyPagesConfig && skyPagesConfig.app) || {}, {
-    template: outPath('src', 'main.ejs'),
-    base: skyPagesConfigUtil.getAppBase(skyPagesConfig),
-    inject: false
-  });
 
   return {
     entry: {
@@ -107,7 +99,7 @@ function getWebpackConfig(skyPagesConfig) {
     },
     plugins: [
       new ForkCheckerPlugin(),
-      new HtmlWebpackPlugin(appConfig),
+      new HtmlWebpackPlugin(skyPagesConfig.app),
       new CommonsChunkPlugin({
         name: ['skyux', 'vendor', 'polyfills']
       }),

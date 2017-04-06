@@ -1,5 +1,4 @@
 import {
-  Inject,
   Injectable
 } from '@angular/core';
 
@@ -14,6 +13,8 @@ import {
   URLSearchParams
 } from '@angular/http';
 
+import { WindowService } from './window-service';
+
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/mergeMap';
@@ -23,12 +24,15 @@ import { BBAuth } from '@blackbaud/auth-client';
 @Injectable()
 export class SkyAuthHttp extends Http {
 
+  private window: Window;
+
   constructor(
     backend: ConnectionBackend,
     defaultOptions: RequestOptions,
-    @Inject('Window') private window: Window
+    private windowService: WindowService
   ) {
     super(backend, defaultOptions);
+    this.window = windowService.window;
   }
 
   public request(
@@ -62,14 +66,14 @@ export class SkyAuthHttp extends Http {
       });
   }
 
-  private addAllowedQueryString (url) {
+  private addAllowedQueryString (url: string) {
     const urlSearchParams = new URLSearchParams(this.window.location.search.substr(1));
-    const allowed = [
+    const allowed: string[] = [
       'envid',
       'svcid'
     ];
 
-    let found = [];
+    let found: string[] = [];
     allowed.forEach(key => {
       const param = urlSearchParams.get(key);
       if (param) {

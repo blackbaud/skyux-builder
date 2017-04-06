@@ -5,6 +5,7 @@ import { MockBackend, MockConnection } from '@angular/http/testing';
 
 import { BBAuth } from '@blackbaud/auth-client';
 import { SkyAuthHttp } from './auth-http';
+import { WindowService } from './window-service';
 
 describe('SkyAuthHttp', () => {
 
@@ -23,10 +24,12 @@ describe('SkyAuthHttp', () => {
         useClass: BaseRequestOptions
       },
       {
-        provide: 'Window',
+        provide: WindowService,
         useFactory: () => ({
-          location: {
-            search: windowLocationSearch
+          window: {
+            location: {
+              search: windowLocationSearch
+            }
           }
         })
       },
