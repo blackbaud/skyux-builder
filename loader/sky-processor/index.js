@@ -35,12 +35,12 @@ const processContent = (content, callbackName, ...additionalArgs) => {
 
 function preload(content, loaderConfig) {
   plugins = getPluginContents(loaderConfig.options.SKY_PAGES);
-  return processContent.apply({}, [content, 'preload', loaderConfig.resourcePath]);
+  return processContent(content, 'preload', loaderConfig.resourcePath);
 }
 
 function postload(content, loaderConfig) {
   plugins = getPluginContents(loaderConfig.options.SKY_PAGES);
-  return processContent.apply({}, [content, 'postload', loaderConfig.resourcePath]);
+  return processContent(content, 'postload', loaderConfig.resourcePath);
 }
 
 module.exports = {
