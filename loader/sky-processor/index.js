@@ -2,14 +2,13 @@
 'use strict';
 
 const logger = require('winston');
-const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
-const config = skyPagesConfigUtil.getSkyPagesConfig();
+let plugins;
 
-const getPluginContents = () => {
+const getPluginContents = (skyPagesConfig) => {
   let contents = [];
 
-  if (config.plugins && config.plugins.length) {
-    config.plugins.forEach(path => {
+  if (skyPagesConfig && skyPagesConfig.plugins && skyPagesConfig.plugins.length) {
+    skyPagesConfig.plugins.forEach(path => {
       try {
         contents.push(require(path));
       } catch (error) {
@@ -34,15 +33,15 @@ const processContent = (content, callbackName, ...additionalArgs) => {
   return content;
 };
 
-function preload(content, ...args) {
-  return processContent.apply({}, [content, 'preload'].concat(args));
+function preload(content, loaderConfig) {
+  plugins = getPluginContents(loaderConfig.options.SKY_PAGES);
+  return processContent.apply({}, [content, 'preload', loaderConfig.resourcePath]);
 }
 
-function postload(content, ...args) {
-  return processContent.apply({}, [content, 'postload'].concat(args));
+function postload(content, loaderConfig) {
+  plugins = getPluginContents(loaderConfig.options.SKY_PAGES);
+  return processContent.apply({}, [content, 'postload', loaderConfig.resourcePath]);
 }
-
-const plugins = getPluginContents();
 
 module.exports = {
   preload,

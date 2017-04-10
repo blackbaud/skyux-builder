@@ -5,7 +5,6 @@ const mock = require('mock-require');
 const logger = require('winston');
 
 describe('SKY UX processor Webpack loader', () => {
-  const skyPagesConfigUtil = '../config/sky-pages/sky-pages.config.js';
   const preloaderPath = '../loader/sky-processor/preload';
   const postloaderPath = '../loader/sky-processor/postload';
   const content = '<p>Hello, World!</p>';
@@ -20,34 +19,33 @@ describe('SKY UX processor Webpack loader', () => {
   });
 
   afterEach(() => {
-    mock.stop(skyPagesConfigUtil);
     mock.stop('my-plugin');
   });
   
   it('should not alter the file contents if plugins not present', () => {
-    mock(skyPagesConfigUtil, {
-      getSkyPagesConfig: () => {
-        return {
-          foo: 'bar'
-        };
+    const config = {
+      resourcePath: '',
+      options: {
+        SKY_PAGES: {}
       }
-    });
+    };
     const loader = mock.reRequire(preloaderPath);
-    const result = loader.apply({}, [content]);
+    const result = loader.apply(config, [content]);
     expect(result).toBe(content);
   });
 
   it('should handle invalid plugins', () => {
     spyOn(logger, 'info');
-    mock(skyPagesConfigUtil, {
-      getSkyPagesConfig: () => {
-        return {
+    const config = {
+      resourcePath: '',
+      options: {
+        SKY_PAGES: {
           plugins: ['nonexistent-plugin']
-        };
+        }
       }
-    });
+    };
     const loader = mock.reRequire(preloaderPath);
-    loader.apply({}, ['']);
+    loader.apply(config, ['']);
     expect(logger.info).toHaveBeenCalledWith(`Plugin not found: nonexistent-plugin`);
   });
 
@@ -55,15 +53,16 @@ describe('SKY UX processor Webpack loader', () => {
     mock('my-plugin', {
       preload: (content) => '<p></p>'
     });
-    mock(skyPagesConfigUtil, {
-      getSkyPagesConfig: () => {
-        return {
+    const config = {
+      resourcePath: '',
+      options: {
+        SKY_PAGES: {
           plugins: ['my-plugin']
-        };
+        }
       }
-    });
+    };
     const loader = mock.reRequire(preloaderPath);
-    const result = loader.apply({}, [content]);
+    const result = loader.apply(config, [content]);
     expect(result).toBe('<p></p>');
   });
 
@@ -71,15 +70,16 @@ describe('SKY UX processor Webpack loader', () => {
     mock('my-plugin', {
       preload: () => {}
     });
-    mock(skyPagesConfigUtil, {
-      getSkyPagesConfig: () => {
-        return {
+    const config = {
+      resourcePath: '',
+      options: {
+        SKY_PAGES: {
           plugins: ['my-plugin']
-        };
+        }
       }
-    });
+    };
     const loader = mock.reRequire(preloaderPath);
-    const result = loader.apply({}, [content]);
+    const result = loader.apply(config, [content]);
     expect(result).toBe(content);
   });
 
@@ -87,15 +87,16 @@ describe('SKY UX processor Webpack loader', () => {
     mock('my-plugin', {
       preload: 'foo'
     });
-    mock(skyPagesConfigUtil, {
-      getSkyPagesConfig: () => {
-        return {
+    const config = {
+      resourcePath: '',
+      options: {
+        SKY_PAGES: {
           plugins: ['my-plugin']
-        };
+        }
       }
-    });
+    };
     const loader = mock.reRequire(preloaderPath);
-    const result = loader.apply({}, [content]);
+    const result = loader.apply(config, [content]);
     expect(result).toBe(content);
   });
 
@@ -104,17 +105,18 @@ describe('SKY UX processor Webpack loader', () => {
       preload: (content) => '<p></p>',
       postload: (content) => content + '<br>'
     });
-    mock(skyPagesConfigUtil, {
-      getSkyPagesConfig: () => {
-        return {
+    const config = {
+      resourcePath: '',
+      options: {
+        SKY_PAGES: {
           plugins: ['my-plugin']
-        };
+        }
       }
-    });
+    };
     const preloader = mock.reRequire(preloaderPath);
     const postloader = mock.reRequire(postloaderPath);
-    let result = preloader.apply({}, [content]);
-    result = postloader.apply({}, [result]);
+    let result = preloader.apply(config, [content]);
+    result = postloader.apply(config, [result]);
     expect(result).toBe('<p></p><br>');
   });
 
@@ -122,17 +124,15 @@ describe('SKY UX processor Webpack loader', () => {
     mock('my-plugin', {
       postload: (content, resourcePath) => `<p>${resourcePath}</p>`
     });
-    mock(skyPagesConfigUtil, {
-      getSkyPagesConfig: () => {
-        return {
-          plugins: ['my-plugin']
-        };
-      }
-    });
-    const loader = mock.reRequire(postloaderPath);
     const config = {
-      resourcePath: 'index.html'
+      resourcePath: 'index.html',
+      options: {
+        SKY_PAGES: {
+          plugins: ['my-plugin']
+        }
+      }
     };
+    const loader = mock.reRequire(postloaderPath);
     const result = loader.apply(config, [content]);
     expect(result).toBe(`<p>${config.resourcePath}</p>`);
   });

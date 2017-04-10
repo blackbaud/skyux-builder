@@ -4,6 +4,5 @@
 const processor = require('./index');
 
 module.exports = function (content) {
-  let _this = this;
-  return processor.preload(content, _this.resourcePath);
+  return processor.preload.call(this, content, this);
 };
