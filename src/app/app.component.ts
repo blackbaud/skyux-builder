@@ -4,6 +4,10 @@ import {
 } from '@angular/core';
 
 import {
+  URLSearchParams
+} from '@angular/http';
+
+import {
   NavigationEnd,
   Router
 } from '@angular/router';
@@ -17,6 +21,8 @@ import {
 
 import { BBHelp } from '@blackbaud/help-client';
 
+import { SkyAppWindowRef } from '@blackbaud/skyux-builder/runtime/window-ref';
+
 import { SKY_PAGES } from './sky-pages.module';
 
 require('style!@blackbaud/skyux/dist/css/sky.css');
@@ -27,7 +33,10 @@ require('style!./app.component.scss');
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private windowRef: SkyAppWindowRef
+  ) { }
 
   public ngOnInit() {
     // Without this code, navigating to a new route doesn't cause the window to be
@@ -39,6 +48,60 @@ export class AppComponent implements OnInit {
     });
 
     this.initShellComponents();
+  }
+
+  private setParamsFromQS(omnibarConfig: BBOmnibarConfig) {
+    const urlSearchParams = new URLSearchParams(
+      this.windowRef.nativeWindow.location.search.substr(1)
+    );
+
+    omnibarConfig.envId = urlSearchParams.get('envid');
+    omnibarConfig.svcId = urlSearchParams.get('svcid');
+  }
+
+  private setNav(omnibarConfig: BBOmnibarConfig) {
+    const baseUrl =
+      (
+        SKY_PAGES.host.url +
+        SKY_PAGES.app.base.substr(0, SKY_PAGES.app.base.length - 1)
+      ).toLowerCase();
+
+    const nav = new BBOmnibarNavigation();
+
+    nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
+      const url = item.url.toLowerCase();
+
+      if (url.indexOf(baseUrl) === 0) {
+        const routePath = url.substring(baseUrl.length, url.length);
+        this.router.navigateByUrl(routePath);
+        return false;
+      }
+    };
+
+    if (SKY_PAGES.command === 'serve') {
+      // Add any global routes to the omnibar as a convenience to the developer.
+      const globalRoutes =
+        SKY_PAGES.publicRoutes &&
+        SKY_PAGES.publicRoutes.filter((value: any) => {
+          return value.global;
+        });
+
+      if (globalRoutes) {
+        const localNavItems: BBOmnibarNavigationItem[] = [];
+
+        for (let route of globalRoutes) {
+          localNavItems.push({
+            title: route.name,
+            url: baseUrl + route.route,
+            data: route
+          });
+        }
+
+        nav.localNavItems = localNavItems;
+      }
+    }
+
+    omnibarConfig.nav = nav;
   }
 
   private initShellComponents() {
@@ -53,48 +116,8 @@ export class AppComponent implements OnInit {
           experimental: omnibarBootstrapConfig.experimental
         };
 
-        const baseUrl =
-          (
-            SKY_PAGES.host.url +
-            SKY_PAGES.app.base.substr(0, SKY_PAGES.app.base.length - 1)
-          ).toLowerCase();
-
-        const nav = new BBOmnibarNavigation();
-
-        nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
-          const url = item.url.toLowerCase();
-
-          if (url.indexOf(baseUrl) === 0) {
-            const routePath = url.substring(baseUrl.length, url.length);
-            this.router.navigateByUrl(routePath);
-            return false;
-          }
-        };
-
-        if (SKY_PAGES.command === 'serve') {
-          // Add any global routes to the omnibar as a convenience to the developer.
-          const globalRoutes =
-            SKY_PAGES.publicRoutes &&
-            SKY_PAGES.publicRoutes.filter((value: any) => {
-              return value.global;
-            });
-
-          if (globalRoutes) {
-            const localNavItems: BBOmnibarNavigationItem[] = [];
-
-            for (let route of globalRoutes) {
-              localNavItems.push({
-                title: route.name,
-                url: baseUrl + route.route,
-                data: route
-              });
-            }
-
-            nav.localNavItems = localNavItems;
-          }
-        }
-
-        omnibarConfig.nav = nav;
+        this.setParamsFromQS(omnibarConfig);
+        this.setNav(omnibarConfig);
 
         BBOmnibar.load(omnibarConfig);
       }
