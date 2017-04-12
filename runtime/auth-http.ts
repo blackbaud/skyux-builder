@@ -63,7 +63,7 @@ export class SkyAuthHttp extends Http {
       });
   }
 
-  private addAllowedQueryString (url) {
+  private addAllowedQueryString (url: string) {
     const urlSearchParams = new URLSearchParams(
       this.windowRef.nativeWindow.location.search.substr(1)
     );
@@ -73,7 +73,7 @@ export class SkyAuthHttp extends Http {
       'svcid'
     ];
 
-    let found = [];
+    let found: string[] = [];
     allowed.forEach(key => {
       const param = urlSearchParams.get(key);
       if (param) {
