@@ -1,14 +1,17 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const fs = require('fs');
 const mock = require('mock-require');
 
 describe('host-utils', () => {
 
   const skyPagesConfig = {
-    name: 'my-spa-name',
-    host: {
-      url: 'base.com'
+    skyux: {
+      name: 'my-spa-name',
+      host: {
+        url: 'base.com'
+      }
     }
   };
 
@@ -31,9 +34,11 @@ describe('host-utils', () => {
 
   it('should resolve a url, trim trailing slash from host and leading slash from url', () => {
     const resolved = utils.resolve('/url?q=1', '', [], {
-      name: 'cool-spa',
-      host: {
-        url: 'my-base.com/'
+      skyux: {
+        name: 'cool-spa',
+        host: {
+          url: 'my-base.com/'
+        }
       }
     });
     expect(resolved).toContain(`my-base.com/cool-spa/url?q=1&local=true&_cfg=`);
@@ -59,8 +64,16 @@ describe('host-utils', () => {
   });
 
   it('should add externals, trim slash from host, and read name from package.json', () => {
-    mock('../package.json', {
-      name: 'my-name'
+
+    const readFileSync = fs.readFileSync;
+    spyOn(fs, 'readFileSync').and.callFake((filename, encoding) => {
+      if (filename.indexOf('package.json') > -1) {
+        return JSON.stringify({
+          name: 'my-name'
+        });
+      }
+
+      return readFileSync(filename, encoding);
     });
 
     const externals = {
@@ -70,11 +83,13 @@ describe('host-utils', () => {
       }]
     };
     const resolved = utils.resolve('/url', '', [], {
-      app: {
-        externals: externals
-      },
-      host: {
-        url: 'base.com/' // Testing this goes away
+      skyux: {
+        app: {
+          externals: externals
+        },
+        host: {
+          url: 'base.com/' // Testing this goes away
+        }
       }
     });
     const decoded = decode(resolved);

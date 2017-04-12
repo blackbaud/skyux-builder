@@ -18,7 +18,9 @@ describe('SKY UX Builder route generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('');
 
     const routes = generator.getRoutes({
-      srcPath: ''
+      runtime: {
+        srcPath: ''
+      }
     });
     expect(routes.names).toContain('SPR_0_IndexComponent');
   });
@@ -29,7 +31,9 @@ describe('SKY UX Builder route generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('');
 
     const routes = generator.getRoutes({
-      srcPath: ''
+      runtime: {
+        srcPath: ''
+      }
     });
 
     expect(routes.declarations).toContain("path: ':custom'");
@@ -45,7 +49,9 @@ describe('SKY UX Builder route generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('');
 
     const routes = generator.getRoutes({
-      srcPath: ''
+      runtime: {
+        srcPath: ''
+      }
     });
 
     expect(routes.declarations).not.toContain("path: ':custom'");
@@ -57,9 +63,11 @@ describe('SKY UX Builder route generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('');
 
     const routes = generator.getRoutes({
-      srcPath: '',
-      spaPathAlias: 'custom-spa-path',
-      useTemplateUrl: true
+      runtime: {
+        srcPath: '',
+        spaPathAlias: 'custom-spa-path',
+        useTemplateUrl: true
+      }
     });
     expect(routes.definitions).toContain(
       `templateUrl: 'custom-spa-path/custom/nested/index.html'`
@@ -72,7 +80,9 @@ describe('SKY UX Builder route generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('');
 
     const routes = generator.getRoutes({
-      srcPath: 'my-src/'
+      runtime: {
+        srcPath: 'my-src/'
+      }
     });
     expect(routes.declarations).not.toContain('my-src/');
   });
@@ -85,8 +95,10 @@ describe('SKY UX Builder route generator', () => {
     });
 
     generator.getRoutes({
-      srcPath: 'my-custom-src/',
-      routesPattern: 'my-custom-pattern',
+      runtime: {
+        srcPath: 'my-custom-src/',
+        routesPattern: 'my-custom-pattern',
+      }
     });
 
     expect(suppliedPattern).toEqual('my-custom-src/my-custom-pattern');

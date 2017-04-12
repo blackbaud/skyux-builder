@@ -23,8 +23,10 @@ describe('SKY assets configuration module', () => {
     };
 
     const skyPagesConfig = {
-      app: {
-        base: '/base/'
+      runtime: {
+        app: {
+          base: '/base/'
+        }
       }
     };
 

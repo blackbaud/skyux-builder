@@ -4,6 +4,7 @@
 const fs = require('fs');
 const mock = require('mock-require');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack build-aot', () => {
   const ngtoolsWebpackPath = '@ngtools/webpack';
@@ -34,16 +35,18 @@ describe('config webpack build-aot', () => {
     const lib = require('../config/webpack/build-aot.webpack.config');
 
     const skyPagesConfig = {
-      CUSTOM_PROP2: true
+      runtime: runtimeUtils.getDefaultRuntime({
+        command: 'CUSTOM_COMMAND'
+      }),
+      skyux: {}
     };
 
-    const config = lib.getWebpackConfig({
-      CUSTOM_PROP2: true
-    });
+    const config = lib.getWebpackConfig(skyPagesConfig);
 
     config.plugins.forEach(plugin => {
       if (plugin.name === 'DefinePlugin') {
-        expect(JSON.parse(plugin.options.SKY_PAGES)).toBe(skyPagesConfig.CUSTOM_PROP2);
+        const command = JSON.parse(plugin.options.skyPagesConfig.runtime.command);
+        expect(command).toBe(skyPagesConfig.runtime.command);
       }
     });
 
@@ -58,7 +61,10 @@ describe('config webpack build-aot', () => {
 
     const lib = require('../config/webpack/build-aot.webpack.config');
 
-    const config = lib.getWebpackConfig({});
+    const config = lib.getWebpackConfig({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
 
     expect(
       config.entry.app[0]
@@ -75,7 +81,10 @@ describe('config webpack build-aot', () => {
 
     const lib = require('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
-      mode: ''
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        mode: ''
+      }
     });
 
     config.plugins.forEach(plugin => {
@@ -144,7 +153,10 @@ describe('config webpack build-aot', () => {
   it('should add the SKY_PAGES_READY_X variable to each entry', () => {
     const lib = require('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
-      mode: ''
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        mode: ''
+      }
     });
 
     config.plugins.forEach(plugin => {

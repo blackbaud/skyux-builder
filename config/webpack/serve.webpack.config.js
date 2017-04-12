@@ -101,11 +101,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
     });
   }
 
-  const skyPagesConfigServe = webpackMerge(skyPagesConfig, {
-    command: 'serve'
-  });
-  const common = require('./common.webpack.config')
-    .getWebpackConfig(skyPagesConfigServe);
+  const common = require('./common.webpack.config').getWebpackConfig(skyPagesConfig);
 
   return webpackMerge(common, {
     watch: true,
