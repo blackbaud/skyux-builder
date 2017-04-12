@@ -4,6 +4,10 @@ import {
 } from '@angular/core';
 
 import {
+  URLSearchParams
+} from '@angular/http';
+
+import {
   NavigationEnd,
   Router
 } from '@angular/router';
@@ -17,7 +21,7 @@ import {
 
 import { BBHelp } from '@blackbaud/help-client';
 
-import { SkyAppConfig } from '../../runtime';
+import { SkyAppConfig, SkyAppWindowRef } from '@blackbaud/skyux-builder/runtime';
 
 require('style!@blackbaud/skyux/dist/css/sky.css');
 require('style!./app.component.scss');
@@ -28,7 +32,8 @@ require('style!./app.component.scss');
 })
 export class AppComponent implements OnInit {
   constructor(
-    private router: Router
+    private router: Router,
+    private windowRef: SkyAppWindowRef
   ) { }
 
   public ngOnInit() {
@@ -43,69 +48,77 @@ export class AppComponent implements OnInit {
     this.initShellComponents();
   }
 
-  private initShellComponents() {
+  private setParamsFromQS(omnibarConfig: BBOmnibarConfig) {
+    const urlSearchParams = new URLSearchParams(
+      this.windowRef.nativeWindow.location.search.substr(1)
+    );
 
-    const runtimeConfig = SkyAppConfig.runtime;
-    const skyuxConfig = SkyAppConfig.skyux;
+    omnibarConfig.envId = urlSearchParams.get('envid');
+    omnibarConfig.svcId = urlSearchParams.get('svcid');
+  }
 
-    if (skyuxConfig) {
-      const omnibarBootstrapConfig = skyuxConfig.omnibar;
+  private setNav(omnibarConfig: BBOmnibarConfig) {
+    const baseUrl =
+      (
+        SkyAppConfig.skyux.host.url +
+        SkyAppConfig.runtime.app.base.substr(0, SkyAppConfig.runtime.app.base.length - 1)
+      ).toLowerCase();
 
-      if (omnibarBootstrapConfig) {
-        const omnibarConfig: BBOmnibarConfig = {
-          serviceName: omnibarBootstrapConfig.serviceName,
-          experimental: omnibarBootstrapConfig.experimental
-        };
+    const nav = new BBOmnibarNavigation();
 
-        const baseUrl =
-          (
-            skyuxConfig.host.url +
-            runtimeConfig.app.base.substr(0, runtimeConfig.app.base.length - 1)
-          ).toLowerCase();
+    nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
+      const url = item.url.toLowerCase();
 
-        const nav = new BBOmnibarNavigation();
+      if (url.indexOf(baseUrl) === 0) {
+        const routePath = url.substring(baseUrl.length, url.length);
+        this.router.navigateByUrl(routePath);
+        return false;
+      }
+    };
 
-        nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
-          const url = item.url.toLowerCase();
+    if (SkyAppConfig.runtime.command === 'serve') {
+      // Add any global routes to the omnibar as a convenience to the developer.
+      const globalRoutes =
+        SkyAppConfig.skyux.publicRoutes &&
+        SkyAppConfig.skyux.publicRoutes.filter((value: any) => {
+          return value.global;
+        });
 
-          if (url.indexOf(baseUrl) === 0) {
-            const routePath = url.substring(baseUrl.length, url.length);
-            this.router.navigateByUrl(routePath);
-            return false;
-          }
-        };
+      if (globalRoutes) {
+        const localNavItems: BBOmnibarNavigationItem[] = [];
 
-        if (runtimeConfig.command === 'serve') {
-          // Add any global routes to the omnibar as a convenience to the developer.
-          const globalRoutes =
-            skyuxConfig.publicRoutes &&
-            skyuxConfig.publicRoutes.filter((value: any) => {
-              return value.global;
-            });
-
-          if (globalRoutes) {
-            const localNavItems: BBOmnibarNavigationItem[] = [];
-
-            for (let route of globalRoutes) {
-              localNavItems.push({
-                title: route.name,
-                url: baseUrl + route.route,
-                data: route
-              });
-            }
-
-            nav.localNavItems = localNavItems;
-          }
+        for (let route of globalRoutes) {
+          localNavItems.push({
+            title: route.name,
+            url: baseUrl + route.route,
+            data: route
+          });
         }
 
-        omnibarConfig.nav = nav;
-
-        BBOmnibar.load(omnibarConfig);
+        nav.localNavItems = localNavItems;
       }
+    }
 
-      if (skyuxConfig.help) {
-        BBHelp.load(skyuxConfig.help);
-      }
+    omnibarConfig.nav = nav;
+  }
+
+  private initShellComponents() {
+    const omnibarBootstrapConfig = SkyAppConfig.skyux.omnibar;
+
+    if (omnibarBootstrapConfig) {
+      const omnibarConfig: BBOmnibarConfig = {
+        serviceName: omnibarBootstrapConfig.serviceName,
+        experimental: omnibarBootstrapConfig.experimental
+      };
+
+      this.setParamsFromQS(omnibarConfig);
+      this.setNav(omnibarConfig);
+
+      BBOmnibar.load(omnibarConfig);
+    }
+
+    if (SkyAppConfig.skyux.help) {
+      BBHelp.load(SkyAppConfig.skyux.help);
     }
   }
 }

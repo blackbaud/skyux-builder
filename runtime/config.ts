@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 
-interface RuntimeConfigApp {
+export interface RuntimeConfigApp {
   base: string;
   inject: boolean;
   template: string;
 }
 
-interface RuntimeConfig {
+export interface RuntimeConfig {
   app: RuntimeConfigApp;
   command?: string;  // Dynamically added in "higher up" webpacks
   componentsPattern: string;
@@ -21,21 +21,21 @@ interface RuntimeConfig {
   useTemplateUrl: boolean;
 }
 
-interface SkyuxConfigApp {
+export interface SkyuxConfigApp {
   externals?: Object;
   port?: string;
   title?: string;
 }
 
-interface SkyuxConfigHelp {
+export interface SkyuxConfigHelp {
   serviceName?: string;
 }
 
-interface SkyuxConfigHost {
+export interface SkyuxConfigHost {
   url?: string;
 }
 
-interface SkyuxConfig {
+export interface SkyuxConfig {
   app?: SkyuxConfigApp;
   auth?: boolean;
   cssPath?: string;
