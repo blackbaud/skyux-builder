@@ -103,13 +103,19 @@ describe('SKY UX Builder module generator', () => {
   it('should not include routing in the module if includeRouteModule is false', () => {
 
     let expectedRouting = 'AppExtrasModule,routing';
-    let sourceWithRouting = generator.getSource({});
+    let sourceWithRouting = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
 
     expect(sourceWithRouting).toContain(expectedRouting);
 
     let sourceWithoutRouting = generator.getSource(
       {
-        includeRouteModule: false
+        runtime: runtimeUtils.getDefaultRuntime({
+          includeRouteModule: false
+        }),
+        skyux: {}
       });
 
     expect(sourceWithoutRouting).not.toContain(expectedRouting);
