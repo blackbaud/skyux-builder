@@ -1,21 +1,17 @@
-import { SkyAppConfig } from './config';
 import { SkyAppBootstrapper } from './bootstrapper';
 import { BBAuth } from '@blackbaud/auth-client';
 
 describe('bootstrapper', () => {
 
-  beforeEach(() => {
-    SkyAppConfig.skyux = {};
-  });
-
-  it('should immediately resolve if SkyAppConfig.skyux.auth is not set', (done) => {
+  it('should immediately resolve if SkyAppConfig.config.skyux.auth is not set', (done) => {
+    SkyAppBootstrapper.config = {};
     SkyAppBootstrapper.processBootstrapConfig().then(done);
   });
 
-  it('should call if BBAuth.getToken if SkyAppConfig.skyux.auth is set', (done) => {
+  it('should call if BBAuth.getToken if SkyAppConfig.config.skyux.auth is set', (done) => {
     const getTokenSpy = spyOn(BBAuth, 'getToken').and.returnValue(Promise.resolve());
 
-    SkyAppConfig.skyux = {
+    SkyAppBootstrapper.config = {
       auth: true
     };
 

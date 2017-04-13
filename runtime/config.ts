@@ -54,9 +54,9 @@ export interface SkyuxConfig {
 export class SkyAppConfig {
 
   // Any properties dynamically added via code
-  public static runtime: RuntimeConfig;
+  public runtime: RuntimeConfig;
 
   // Any properties defined in or inherited from skyuxconfig.json / skyuxconfig.command.json
-  public static skyux: SkyuxConfig;
+  public skyux: SkyuxConfig;
 
 }

@@ -1,9 +1,16 @@
 import { BBAuth } from '@blackbaud/auth-client';
 
-import { SkyAppConfig } from './config';
+import { SkyuxConfig } from './config';
 
 export class SkyAppBootstrapper {
+
+  public static config: SkyuxConfig;
+
   public static processBootstrapConfig(): Promise<any> {
-    return SkyAppConfig.skyux.auth ? BBAuth.getToken() : Promise.resolve();
+    if (SkyAppBootstrapper.config && SkyAppBootstrapper.config.auth) {
+      return BBAuth.getToken();
+    } else {
+      return Promise.resolve();
+    }
   }
 }

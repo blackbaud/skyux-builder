@@ -33,7 +33,8 @@ require('style!./app.component.scss');
 export class AppComponent implements OnInit {
   constructor(
     private router: Router,
-    private windowRef: SkyAppWindowRef
+    private windowRef: SkyAppWindowRef,
+    private config: SkyAppConfig
   ) { }
 
   public ngOnInit() {
@@ -60,8 +61,8 @@ export class AppComponent implements OnInit {
   private setNav(omnibarConfig: BBOmnibarConfig) {
     const baseUrl =
       (
-        SkyAppConfig.skyux.host.url +
-        SkyAppConfig.runtime.app.base.substr(0, SkyAppConfig.runtime.app.base.length - 1)
+        this.config.skyux.host.url +
+        this.config.runtime.app.base.substr(0, this.config.runtime.app.base.length - 1)
       ).toLowerCase();
 
     const nav = new BBOmnibarNavigation();
@@ -76,11 +77,11 @@ export class AppComponent implements OnInit {
       }
     };
 
-    if (SkyAppConfig.runtime.command === 'serve') {
+    if (this.config.runtime.command === 'serve') {
       // Add any global routes to the omnibar as a convenience to the developer.
       const globalRoutes =
-        SkyAppConfig.skyux.publicRoutes &&
-        SkyAppConfig.skyux.publicRoutes.filter((value: any) => {
+        this.config.skyux.publicRoutes &&
+        this.config.skyux.publicRoutes.filter((value: any) => {
           return value.global;
         });
 
@@ -103,7 +104,7 @@ export class AppComponent implements OnInit {
   }
 
   private initShellComponents() {
-    const omnibarBootstrapConfig = SkyAppConfig.skyux.omnibar;
+    const omnibarBootstrapConfig = this.config.skyux.omnibar;
 
     if (omnibarBootstrapConfig) {
       const omnibarConfig: BBOmnibarConfig = {
@@ -117,8 +118,8 @@ export class AppComponent implements OnInit {
       BBOmnibar.load(omnibarConfig);
     }
 
-    if (SkyAppConfig.skyux.help) {
-      BBHelp.load(SkyAppConfig.skyux.help);
+    if (this.config.skyux.help) {
+      BBHelp.load(this.config.skyux.help);
     }
   }
 }
