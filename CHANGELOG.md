@@ -1,8 +1,8 @@
 # 1.0.0-beta.15 (2017-03-22)
 
-- Images! Images stored in `src/assets` and referenced via `~/assets/` in all HTML/SCSS files are now bundled.
-- Added `preload` and `postload` plugin hooks.  Beginning initial work for a lifecycle hooks. (Thanks @Blackbaud-SteveBrush!)
+- Bundling images stored in `src/assets` and referenced via `~/assets/` in all HTML/SCSS files.
 - Automatically including `envid` and `svcid` in `SkyAuthHttp` requests.
+- Added `preload` and `postload` plugin hooks.  Started initial work for lifecycle hooks. (Thanks @Blackbaud-SteveBrush!)
 - Created a consistent `SkyAppConfig` interface for passing around configuration.
 
 # 1.0.0-beta.14 (2017-03-22)
