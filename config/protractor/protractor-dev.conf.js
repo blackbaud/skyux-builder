@@ -34,11 +34,11 @@ let config = {
     // Catch any rogue servers
     common.afterAll();
 
-    // return new Promise((resolve, reject) => {
-    //   common.exec(`rm`, [`-rf`, `${common.tmp}`])
-    //     .then(resolve)
-    //     .catch(reject);
-    // });
+    return new Promise((resolve, reject) => {
+      common.exec(`rm`, [`-rf`, `${common.tmp}`])
+        .then(resolve)
+        .catch(reject);
+    });
   }
 };
 
