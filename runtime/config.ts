@@ -11,6 +11,7 @@ export interface RuntimeConfig {
   command?: string;  // Dynamically added in "higher up" webpacks
   componentsPattern: string;
   handle404?: boolean;  // Dynamically added in sky-pages-module-generator.js
+  includeRouteModule: boolean;
   routes?: Object[]; // Dynamically added in sky-pages-module-generator.js
   routesPattern: string;
   runtimeAlias: string;

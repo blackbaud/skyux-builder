@@ -100,6 +100,27 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(expectedProvider);
   });
 
+  it('should not include routing in the module if includeRouteModule is false', () => {
+
+    let expectedRouting = 'AppExtrasModule,routing';
+    let sourceWithRouting = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    expect(sourceWithRouting).toContain(expectedRouting);
+
+    let sourceWithoutRouting = generator.getSource(
+      {
+        runtime: runtimeUtils.getDefaultRuntime({
+          includeRouteModule: false
+        }),
+        skyux: {}
+      });
+
+    expect(sourceWithoutRouting).not.toContain(expectedRouting);
+  });
+
   it('should call `enableProdMode` if the command is build', () => {
     let source = generator.getSource({
       runtime:  runtimeUtils.getDefaultRuntime({
