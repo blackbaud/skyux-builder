@@ -71,4 +71,25 @@ describe('cli test', () => {
 
   });
 
+  it('should pass the exitCode', (done) => {
+    const EXIT_CODE = 1337;
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(EXIT_CODE);
+      done();
+    });
+
+    mock('cross-spawn', () => ({
+      on: (cmd, callback) => {
+        if (cmd === 'exit') {
+          callback(EXIT_CODE);
+        }
+      }
+    }));
+
+    require('../cli/test')('test');
+    mock.stop('cross-spawn');
+
+  });
+
 });
