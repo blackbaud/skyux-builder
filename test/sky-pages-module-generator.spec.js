@@ -110,7 +110,7 @@ describe('SKY UX Builder module generator', () => {
     ,{
       provide: SkyAuthHttp,
       useClass: SkyAuthHttp,
-      deps: [XHRBackend, RequestOptions]
+      deps: [XHRBackend, RequestOptions, SkyAppWindowRef]
     }`;
 
     let source = generator.getSource({});
