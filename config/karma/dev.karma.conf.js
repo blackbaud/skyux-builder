@@ -32,6 +32,10 @@ function getConfig(config) {
   // Adjust the loader src path.
   webpackConfig.module.rules[webpackConfig.module.rules.length - 1].include = runtimePath;
 
+  // This is needed exclusively for internal runtime unit tests,
+  // which is why it's here instead of alias-builder or the shared test.webpack.config.js
+  webpackConfig.resolve.alias['@blackbaud/skyux-builder/runtime'] = '.';
+
   // Remove sky-style-loader
   delete config.preprocessors['../../utils/spec-styles.js'];
   config.files.pop();

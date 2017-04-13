@@ -16,6 +16,10 @@ describe('cli test', () => {
           found = true;
         }
       });
+
+      return {
+        on: () => {}
+      };
     });
 
     require('../cli/test')(cmd);
@@ -35,6 +39,10 @@ describe('cli test', () => {
           found = true;
         }
       });
+
+      return {
+        on: () => {}
+      };
     });
 
     require('../cli/test')(cmd);
@@ -51,6 +59,10 @@ describe('cli test', () => {
     const minimist = require('minimist');
     mock('cross-spawn', (node, flags) => {
       argv = minimist(flags);
+
+      return {
+        on: () => {}
+      };
     });
 
     require('../cli/test')(cmd);
