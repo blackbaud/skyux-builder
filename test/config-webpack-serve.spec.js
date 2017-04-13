@@ -1,22 +1,24 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const fs = require('fs');
 const mock = require('mock-require');
 const logger = require('winston');
 const urlLibrary = require('url');
+const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack serve', () => {
 
   const skyuxConfig = {
-    CUSTOM_PROP3: true,
-    mode: '',
-    host: {
-      url: 'https://my-host-server.url'
-    },
-    app: {
-      externals: {
-        test: true
+    runtime: runtimeUtils.getDefaultRuntime(),
+    skyux: {
+      mode: '',
+      host: {
+        url: 'https://my-host-server.url'
+      },
+      app: {
+        externals: {
+          test: true
+        }
       }
     }
   };
@@ -226,7 +228,15 @@ describe('config webpack serve', () => {
   });
 
   it('host querystring should not contain externals if they do not exist', () => {
-    const localConfig = lib.getWebpackConfig(argv, { host: { url: '' } });
+    const localConfig = lib.getWebpackConfig(argv, {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        host: {
+          url: ''
+        }
+      }
+    });
+
     localConfig.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
         plugin.apply({
@@ -286,7 +296,7 @@ describe('config webpack serve', () => {
               const configObject = JSON.parse(configString);
 
               expect(urlParsed.query._cfg).toBeDefined();
-              expect(configObject.externals).toEqual(skyuxConfig.app.externals);
+              expect(configObject.externals).toEqual(skyuxConfig.skyux.app.externals);
               expect(configObject.localUrl).toContain('https://localhost:1234');
               expect(configObject.scripts).toEqual([
                 { name: 'a.js' },

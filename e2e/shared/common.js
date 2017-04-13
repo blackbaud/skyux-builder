@@ -194,6 +194,7 @@ function writeConfigServe(port) {
 module.exports = {
   afterAll: afterAll,
   catchReject: catchReject,
+  cliPath: cliPath,
   cwdOpts: cwdOpts,
   exec: exec,
   bindServe: bindServe,

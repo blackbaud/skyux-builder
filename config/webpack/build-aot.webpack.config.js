@@ -14,12 +14,9 @@ const SaveMetadata = require('../../plugin/save-metadata');
  */
 function getWebpackConfig(skyPagesConfig) {
   const common = require('./common.webpack.config');
-  const skyPagesConfigServe = webpackMerge(skyPagesConfig, {
-    command: 'build'
-  });
 
-  let commonConfig = common.getWebpackConfig(skyPagesConfigServe);
-
+  // Webpackmege will attempt to merge each entries array, so we need to delete it
+  let commonConfig = common.getWebpackConfig(skyPagesConfig);
   commonConfig.entry = null;
 
   return webpackMerge(commonConfig, {

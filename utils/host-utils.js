@@ -12,14 +12,14 @@ const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
  * @param {Object} skyPagesConfig
  */
 function resolve(url, localUrl, chunks, skyPagesConfig) {
-  let host = skyPagesConfig.host.url;
+  let host = skyPagesConfig.skyux.host.url;
   let config = {
     scripts: getScripts(chunks),
     localUrl: localUrl
   };
 
-  if (skyPagesConfig.app && skyPagesConfig.app.externals) {
-    config.externals = skyPagesConfig.app.externals;
+  if (skyPagesConfig.skyux.app && skyPagesConfig.skyux.app.externals) {
+    config.externals = skyPagesConfig.skyux.app.externals;
   }
 
   // Trim leading slash since getAppBase adds it

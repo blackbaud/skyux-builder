@@ -37,10 +37,6 @@ function getWebpackConfig(skyPagesConfig) {
 
   let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
-  // This alias needs to be added specifically for unit tests (i.e. not in the
-  // alias builder used by the SKY UX app builder module).
-  //alias['@blackbaud/skyux-builder/runtime'] = '.';
-
   return {
     devtool: 'inline-source-map',
 
@@ -61,6 +57,12 @@ function getWebpackConfig(skyPagesConfig) {
       rules: [
         {
           enforce: 'pre',
+          test: /runtime\/config\.ts$/,
+          loader: outPath('loader', 'sky-app-config')
+        },
+
+        {
+          enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
           loader: moduleLoader
         },
@@ -78,7 +80,16 @@ function getWebpackConfig(skyPagesConfig) {
           loader: 'source-map-loader',
           exclude: excludes
         },
-
+        {
+          enforce: 'pre',
+          loader: outPath('loader', 'sky-processor', 'preload'),
+          exclude: /node_modules/
+        },
+        {
+          enforce: 'post',
+          loader: outPath('loader', 'sky-processor', 'postload'),
+          exclude: /node_modules/
+        },
         {
           test: /\.ts$/,
           loaders: [
@@ -146,6 +157,7 @@ function getWebpackConfig(skyPagesConfig) {
       new LoaderOptionsPlugin({
         debug: true,
         options: {
+          skyPagesConfig: skyPagesConfig,
           tslint: {
             emitErrors: false,
             failOnHint: false,
@@ -163,7 +175,7 @@ function getWebpackConfig(skyPagesConfig) {
           'HMR': false
         },
         'ROOT_DIR': JSON.stringify(srcPath),
-        'SKY_PAGES': JSON.stringify(skyPagesConfig)
+        'skyPagesConfig': JSON.stringify(skyPagesConfig),
       }),
 
       new ContextReplacementPlugin(

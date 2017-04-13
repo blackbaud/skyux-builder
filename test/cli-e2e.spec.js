@@ -11,9 +11,11 @@ describe('cli e2e', () => {
   const PORT = 1234;
   const CHUNKS = [{ name: 'asdf' }];
   const SKY_PAGES_CONFIG = {
-    app: {},
-    host: {
-      url: 'asdf'
+    skyux: {
+      app: {},
+      host: {
+        url: 'asdf'
+      }
     }
   };
 

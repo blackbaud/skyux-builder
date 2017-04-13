@@ -29,7 +29,9 @@ function test(command) {
     stdio: 'inherit'
   };
 
-  spawn('node', flags, options);
+  // Pass our exitCode up
+  const test = spawn('node', flags, options);
+  test.on('exit', exitCode => process.exit(exitCode));
 }
 
 module.exports = test;
