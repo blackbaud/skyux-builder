@@ -18,7 +18,7 @@ function getWebpackConfig(skyPagesConfig) {
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
   const aliasBuilder = require('./alias-builder');
 
-  skyPagesConfig.includeRouteModule = false;
+  skyPagesConfig.runtime.includeRouteModule = false;
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
   const srcPath = path.resolve(process.cwd(), 'src');
