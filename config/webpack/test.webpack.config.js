@@ -39,7 +39,7 @@ function getWebpackConfig(skyPagesConfig) {
 
   // This alias needs to be added specifically for unit tests (i.e. not in the
   // alias builder used by the SKY UX app builder module).
-  alias['@blackbaud/skyux-builder/runtime'] = '.';
+  //alias['@blackbaud/skyux-builder/runtime'] = '.';
 
   return {
     devtool: 'inline-source-map',
