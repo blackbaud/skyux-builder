@@ -4,7 +4,7 @@
 
 const common = require('./shared/common');
 
-fdescribe('skyux test', () => {
+describe('skyux test', () => {
   it('should successfully run unit tests', (done) => {
     common.exec(`node`, [common.cliPath, `test`], common.cwdOpts)
       .then(exit => {
