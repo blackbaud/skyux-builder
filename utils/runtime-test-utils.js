@@ -13,6 +13,7 @@ module.exports = {
       },
       command: '',
       componentsPattern: '**/*.component.ts',
+      includeRouteModule: true,
       routes: [],
       routesPattern: '**/index.html',
       runtimeAlias: 'sky-pages-internal/runtime',
