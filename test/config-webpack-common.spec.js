@@ -3,6 +3,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack common', () => {
   function validateAppExtras(spaVersionExists) {
@@ -19,7 +20,10 @@ describe('config webpack common', () => {
     });
 
     let config = lib.getWebpackConfig({
-      mode: 'advanced'
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        mode: 'advanced'
+      }
     });
 
     let alias = config.resolve.alias;
@@ -41,7 +45,10 @@ describe('config webpack common', () => {
   it('should handle an advanced mode', () => {
     const lib = require('../config/webpack/common.webpack.config');
     const config = lib.getWebpackConfig({
-      mode: 'advanced'
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        mode: 'advanced'
+      }
     });
     expect(config.entry.app[0]).toContain(process.cwd());
   });
@@ -52,9 +59,10 @@ describe('config webpack common', () => {
     const cssPath = path.join(importPath, '/scss/sky.scss');
 
     let config = lib.getWebpackConfig({
-      mode: 'advanced',
+      runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {
         importPath: importPath,
+        mode: 'advanced'
       }
     });
 
@@ -65,8 +73,9 @@ describe('config webpack common', () => {
     ).toBe(path.join(process.cwd(), importPath));
 
     config = lib.getWebpackConfig({
-      mode: 'advanced',
+      runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {
+        mode: 'advanced',
         cssPath: cssPath
       }
     });

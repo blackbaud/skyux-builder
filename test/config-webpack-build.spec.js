@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const mock = require('mock-require');
+const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack build', () => {
   it('should expose a getWebpackConfig method', () => {
@@ -19,16 +20,18 @@ describe('config webpack build', () => {
     const lib = require('../config/webpack/build.webpack.config');
 
     const skyPagesConfig = {
-      CUSTOM_PROP2: true
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        command: 'CUSTOM_COMMAND'
+      }
     };
 
-    const config = lib.getWebpackConfig({
-      CUSTOM_PROP2: true
-    });
+    const config = lib.getWebpackConfig(skyPagesConfig);
 
     config.plugins.forEach(plugin => {
       if (plugin.name === 'DefinePlugin') {
-        expect(JSON.parse(plugin.options.SKY_PAGES)).toBe(skyPagesConfig.CUSTOM_PROP2);
+        const command = JSON.parse(plugin.options.skyPagesConfig).skyux.command;
+        expect(command).toBe(skyPagesConfig.skyux.command);
       }
     });
 
@@ -43,7 +46,8 @@ describe('config webpack build', () => {
 
     const lib = require('../config/webpack/build.webpack.config');
     const config = lib.getWebpackConfig({
-      mode: ''
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
     });
 
     config.plugins.forEach(plugin => {
@@ -113,7 +117,8 @@ describe('config webpack build', () => {
 
     const lib = require('../config/webpack/build.webpack.config');
     const config = lib.getWebpackConfig({
-      mode: ''
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
     });
 
     config.plugins.forEach(plugin => {

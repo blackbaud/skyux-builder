@@ -4,13 +4,14 @@
 const mock = require('mock-require');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config.js');
 
 describe('index.ejs template', () => {
 
   it('should support external css & js in the correct locations', (done) => {
 
     mock('../config/webpack/build.webpack.config', {
-      getWebpackConfig: () => ({
+      getWebpackConfig: (skyPagesConfig) => ({
         entry: {
           test: ['test.js']
         },
@@ -18,39 +19,8 @@ describe('index.ejs template', () => {
           new HtmlWebpackPlugin({
             template: 'src/main.ejs',
             inject: false,
-            externals: {
-              css: {
-                before: [
-                  {
-                    url: 'f1.css',
-                    integrity: 'ic1'
-                  }
-                ],
-                after: [
-                  {
-                    url: 'f2.css'
-                  }
-                ]
-              },
-              js: {
-                before: [
-                  {
-                    url: 'f1.js',
-                    integrity: 'ic2',
-                    head: true
-                  },
-                  {
-                    url: 'f2.js',
-                    integrity: 'ic3'
-                  }
-                ],
-                after: [
-                  {
-                    url: 'f3.js'
-                  }
-                ]
-              }
-            }
+            runtime: skyPagesConfig.runtime,
+            skyux: skyPagesConfig.skyux
           }),
           function () {
             this.plugin('emit', (compilation) => {
@@ -94,7 +64,45 @@ describe('index.ejs template', () => {
       })
     });
 
-    require('../cli/build')({}, {}, webpack);
+    let config = skyPagesConfigUtil.getSkyPagesConfig('build');
+    config.skyux = {
+      app: {
+        externals: {
+          css: {
+            before: [
+              {
+                url: 'f1.css',
+                integrity: 'ic1'
+              }
+            ],
+            after: [
+              {
+                url: 'f2.css'
+              }
+            ]
+          },
+          js: {
+            before: [
+              {
+                url: 'f1.js',
+                integrity: 'ic2',
+                head: true
+              },
+              {
+                url: 'f2.js',
+                integrity: 'ic3'
+              }
+            ],
+            after: [
+              {
+                url: 'f3.js'
+              }
+            ]
+          }
+        }
+      }
+    };
+    require('../cli/build')({}, config, webpack);
 
   });
 
