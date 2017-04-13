@@ -14,7 +14,9 @@ describe('SKY UX processor Webpack loader', () => {
     config = {
       resourcePath: '',
       options: {
-        SKY_PAGES: {}
+        skyAppConfig: {
+          skyux: {}
+        }
       }
     };
   });
@@ -22,7 +24,7 @@ describe('SKY UX processor Webpack loader', () => {
   afterEach(() => {
     mock.stop('my-plugin');
   });
-  
+
   it('should not alter the file contents if plugins not present', () => {
     const loader = require(preloaderPath);
     const result = loader.call(config, content);
@@ -32,7 +34,7 @@ describe('SKY UX processor Webpack loader', () => {
   it('should handle invalid plugins', () => {
     spyOn(logger, 'info');
 
-    config.options.SKY_PAGES.plugins = ['nonexistent-plugin'];
+    config.options.skyAppConfig.skyux.plugins = ['nonexistent-plugin'];
     const loader = require(preloaderPath);
     loader.apply(config, ['']);
 
@@ -44,7 +46,7 @@ describe('SKY UX processor Webpack loader', () => {
       preload: (content) => '<p></p>'
     });
 
-    config.options.SKY_PAGES.plugins = ['my-plugin'];
+    config.options.skyAppConfig.skyux.plugins = ['my-plugin'];
     const loader = require(preloaderPath);
     const result = loader.call(config, content);
 
@@ -56,7 +58,7 @@ describe('SKY UX processor Webpack loader', () => {
       preload: () => {}
     });
 
-    config.options.SKY_PAGES.plugins = ['my-plugin'];
+    config.options.skyAppConfig.skyux.plugins = ['my-plugin'];
     const loader = require(preloaderPath);
     const result = loader.call(config, content);
 
@@ -68,7 +70,7 @@ describe('SKY UX processor Webpack loader', () => {
       preload: 'foo'
     });
 
-    config.options.SKY_PAGES.plugins = ['my-plugin'];
+    config.options.skyAppConfig.skyux.plugins = ['my-plugin'];
     const loader = require(preloaderPath);
     const result = loader.call(config, content);
 
@@ -81,7 +83,7 @@ describe('SKY UX processor Webpack loader', () => {
       postload: (content) => content + '<br>'
     });
 
-    config.options.SKY_PAGES.plugins = ['my-plugin'];
+    config.options.skyAppConfig.skyux.plugins = ['my-plugin'];
     const preloader = require(preloaderPath);
     const postloader = require(postloaderPath);
 
@@ -96,7 +98,7 @@ describe('SKY UX processor Webpack loader', () => {
       postload: (content, resourcePath) => `<p>${resourcePath}</p>`
     });
 
-    config.options.SKY_PAGES.plugins = ['my-plugin'];
+    config.options.skyAppConfig.skyux.plugins = ['my-plugin'];
     const loader = require(postloaderPath);
     const result = loader.call(config, content);
 

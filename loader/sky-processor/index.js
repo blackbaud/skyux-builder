@@ -4,11 +4,15 @@
 const logger = require('winston');
 let plugins;
 
-const getPluginContents = (skyPagesConfig) => {
+const getPluginContents = (skyAppConfig) => {
   let contents = [];
 
-  if (skyPagesConfig && skyPagesConfig.plugins && skyPagesConfig.plugins.length) {
-    skyPagesConfig.plugins.forEach(path => {
+  if (skyAppConfig &&
+    skyAppConfig.skyux &&
+    skyAppConfig.skyux.plugins &&
+    skyAppConfig.skyux.plugins.length
+  ) {
+    skyAppConfig.skyux.plugins.forEach(path => {
       try {
         contents.push(require(path));
       } catch (error) {
@@ -34,12 +38,12 @@ const processContent = (content, callbackName, ...additionalArgs) => {
 };
 
 function preload(content, loaderConfig) {
-  plugins = getPluginContents(loaderConfig.options.SKY_PAGES);
+  plugins = getPluginContents(loaderConfig.options.skyAppConfig);
   return processContent(content, 'preload', loaderConfig.resourcePath);
 }
 
 function postload(content, loaderConfig) {
-  plugins = getPluginContents(loaderConfig.options.SKY_PAGES);
+  plugins = getPluginContents(loaderConfig.options.skyAppConfig);
   return processContent(content, 'postload', loaderConfig.resourcePath);
 }
 
