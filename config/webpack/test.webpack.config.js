@@ -59,6 +59,12 @@ function getWebpackConfig(skyPagesConfig) {
       rules: [
         {
           enforce: 'pre',
+          test: /runtime\/config\.ts$/,
+          loader: outPath('loader', 'sky-app-config')
+        },
+
+        {
+          enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
           loader: moduleLoader
         },
@@ -153,6 +159,7 @@ function getWebpackConfig(skyPagesConfig) {
       new LoaderOptionsPlugin({
         debug: true,
         options: {
+          skyPagesConfig: skyPagesConfig,
           tslint: {
             emitErrors: false,
             failOnHint: false,
@@ -170,7 +177,7 @@ function getWebpackConfig(skyPagesConfig) {
           'HMR': false
         },
         'ROOT_DIR': JSON.stringify(srcPath),
-        'SKY_PAGES': JSON.stringify(skyPagesConfig)
+        'skyPagesConfig': JSON.stringify(skyPagesConfig),
       }),
 
       new ContextReplacementPlugin(

@@ -35,5 +35,5 @@ module.exports = function () {
     }
   });
 
-  return generator.getSource(this.options.SKY_PAGES);
+  return generator.getSource(this.options.skyPagesConfig);
 };

@@ -1,7 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
@@ -37,7 +36,7 @@ function getWebpackConfig(skyPagesConfig) {
 
   let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
-  const outConfigMode = skyPagesConfig && skyPagesConfig.mode;
+  const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
   let appPath;
 
   switch (outConfigMode) {
@@ -48,13 +47,6 @@ function getWebpackConfig(skyPagesConfig) {
       appPath = outPath('src', 'main-internal.ts');
       break;
   }
-
-  // Merge in our defaults
-  const appConfig = merge((skyPagesConfig && skyPagesConfig.app) || {}, {
-    template: outPath('src', 'main.ejs'),
-    base: skyPagesConfigUtil.getAppBase(skyPagesConfig),
-    inject: false
-  });
 
   return {
     entry: {
@@ -81,6 +73,11 @@ function getWebpackConfig(skyPagesConfig) {
     },
     module: {
       rules: [
+        {
+          enforce: 'pre',
+          test: /runtime\/config\.ts$/,
+          loader: outPath('loader', 'sky-app-config')
+        },
         {
           enforce: 'pre',
           test: /\.(html|s?css)$/,
@@ -117,18 +114,25 @@ function getWebpackConfig(skyPagesConfig) {
     },
     plugins: [
       new ForkCheckerPlugin(),
-      new HtmlWebpackPlugin(appConfig),
+
+      // Some properties are required on the root object passed to HtmlWebpackPlugin
+      new HtmlWebpackPlugin({
+        template: skyPagesConfig.runtime.app.template,
+        inject: skyPagesConfig.runtime.app.inject,
+        runtime: skyPagesConfig.runtime,
+        skyux: skyPagesConfig.skyux
+      }),
       new CommonsChunkPlugin({
         name: ['skyux', 'vendor', 'polyfills']
       }),
       new webpack.DefinePlugin({
-        'SKY_PAGES': JSON.stringify(skyPagesConfig)
+        'skyPagesConfig': JSON.stringify(skyPagesConfig)
       }),
       new ProgressBarPlugin(),
       failPlugin,
       new LoaderOptionsPlugin({
         options: {
-          SKY_PAGES: skyPagesConfig
+          skyPagesConfig: skyPagesConfig
         }
       }),
       new ContextReplacementPlugin(

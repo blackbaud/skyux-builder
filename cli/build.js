@@ -52,15 +52,17 @@ function writeTSConfig() {
 
 function stageAot(skyPagesConfig) {
   let skyPagesConfigOverrides = {
-    spaPathAlias: '../..',
-    skyPagesOutAlias: '../..',
-    // These files won't be copied to the temp folder because the consuming project will
-    // be referencing it by its Node package name.  Make sure this code also references its
-    // Node package name rather than a local path; otherwise TypeScript will treat them as
-    // different types and Angular will throw an error when trying to inject an instance
-    // of a class (such as SkyAuthHttp) by its type.
-    runtimeAlias: '@blackbaud/skyux-builder/runtime',
-    useTemplateUrl: true
+    runtime: {
+      spaPathAlias: '../..',
+      skyPagesOutAlias: '../..',
+      // These files won't be copied to the temp folder because the consuming project will
+      // be referencing it by its Node package name.  Make sure this code also references its
+      // Node package name rather than a local path; otherwise TypeScript will treat them as
+      // different types and Angular will throw an error when trying to inject an instance
+      // of a class (such as SkyAuthHttp) by its type.
+      runtimeAlias: '@blackbaud/skyux-builder/runtime',
+      useTemplateUrl: true
+    }
   };
 
   if (skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.importPath) {
@@ -72,7 +74,7 @@ function stageAot(skyPagesConfig) {
   fs.ensureDirSync(spaPathTempSrc);
   fs.emptyDirSync(spaPathTempSrc);
 
-  merge(skyPagesConfig, skyPagesConfigOverrides);
+  merge.recursive(skyPagesConfig, skyPagesConfigOverrides);
   const skyPagesModuleSource = generator.getSource(skyPagesConfig);
 
   fs.copySync(
@@ -105,7 +107,9 @@ function cleanupAot() {
  * @name build
  */
 function build(argv, skyPagesConfig, webpack) {
-  const compileModeIsAoT = skyPagesConfig && skyPagesConfig.compileMode === 'aot';
+  const compileModeIsAoT = skyPagesConfig &&
+    skyPagesConfig.skyux &&
+    skyPagesConfig.skyux.compileMode === 'aot';
 
   let buildConfig;
 

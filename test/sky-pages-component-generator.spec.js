@@ -3,6 +3,8 @@
 
 describe('SKY UX Builder component generator', () => {
 
+  const runtimeUtils = require('../utils/runtime-test-utils');
+
   let generator;
   beforeEach(() => {
     generator = require('../lib/sky-pages-component-generator');
@@ -17,8 +19,7 @@ describe('SKY UX Builder component generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('@Component({}) export class MyCustomComponent {}');
 
     const components = generator.getComponents({
-      srcPath: '',
-      componentsPattern: ''
+      runtime: runtimeUtils.getDefaultRuntime()
     });
     expect(components.names).toContain('MyCustomComponent');
   });
@@ -38,8 +39,7 @@ describe('SKY UX Builder component generator', () => {
       }  `);
 
     const components = generator.getComponents({
-      srcPath: '',
-      componentsPattern: ''
+      runtime: runtimeUtils.getDefaultRuntime()
     });
     expect(components.names).toContain('MyCustomComponent4');
   });
@@ -55,8 +55,7 @@ describe('SKY UX Builder component generator', () => {
     const err = new Error(`Unable to locate an exported class in ${file}`);
     const wrapper = function () {
       generator.getComponents({
-        srcPath: '',
-        componentsPattern: ''
+        runtime: runtimeUtils.getDefaultRuntime()
       });
     };
 
@@ -74,8 +73,7 @@ describe('SKY UX Builder component generator', () => {
     const err = new Error(`Unable to locate an exported class in ${file}`);
     const wrapper = function () {
       generator.getComponents({
-        srcPath: '',
-        componentsPattern: ''
+        runtime: runtimeUtils.getDefaultRuntime()
       });
     };
 
@@ -98,8 +96,7 @@ describe('SKY UX Builder component generator', () => {
     const err = new Error(`As a best practice, please export one component per file in ${file}`);
     const wrapper = function () {
       generator.getComponents({
-        srcPath: '',
-        componentsPattern: ''
+        runtime: runtimeUtils.getDefaultRuntime()
       });
     };
 
@@ -108,12 +105,14 @@ describe('SKY UX Builder component generator', () => {
 
   it('should import components', () => {
     const components = generator.getComponents({
-      components: [
-        {
-          importPath: 'me.component',
-          componentName: 'MeComponent'
-        }
-      ]
+      runtime: runtimeUtils.getDefaultRuntime({
+        components: [
+          {
+            importPath: 'me.component',
+            componentName: 'MeComponent'
+          }
+        ]
+      })
     });
 
     expect(components.names).toContain('MeComponent');
@@ -131,9 +130,9 @@ describe('SKY UX Builder component generator', () => {
     spyOn(fs, 'readFileSync').and.returnValue('@Component({}) export class MyComponent {}');
 
     const components = generator.getComponents({
-      srcPath: '',
-      componentsPattern: '',
-      spaPathAlias: '../..',
+      runtime: runtimeUtils.getDefaultRuntime({
+        spaPathAlias: '../..'
+      })
     });
 
     expect(components.imports).toContain(
