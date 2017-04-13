@@ -176,5 +176,4 @@ describe('cli e2e', () => {
 
     require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
-
 });
