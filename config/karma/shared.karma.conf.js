@@ -48,8 +48,7 @@ function getConfig(config) {
       }
     },
     webpackServer: {
-      noInfo: true,
-      stats: 'minimal'
+      noInfo: true
     },
     reporters: ['mocha', 'coverage'],
     port: 9876,
