@@ -133,4 +133,17 @@ describe('SKY UX Builder module generator', () => {
 `import { enableProdMode } from '@angular/core';
 enableProdMode();`);
   });
+
+  it('should tell put auth-client in mock mode if the command is e2e', () => {
+    let source = generator.getSource({
+      runtime:  runtimeUtils.getDefaultRuntime({
+        command: 'e2e'
+      }),
+      skyux: {}
+    });
+
+    expect(source).toContain(
+`import { BBAuth } from '@blackbaud/auth-client';
+BBAuth.mock = true;`);
+  });
 });
