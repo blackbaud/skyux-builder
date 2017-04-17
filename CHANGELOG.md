@@ -1,3 +1,7 @@
+# 1.0.0-beta.16 (2017-04-17)
+
+- Bugfix to correctly read `importPath` from `skyuxconfig.json`.
+
 # 1.0.0-beta.15 (2017-04-13)
 
 - Bundling images stored in `src/assets` and referenced via `~/assets/` in all HTML/SCSS files.
