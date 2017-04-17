@@ -16,7 +16,7 @@ module.exports = {
     var openSans = new FontFaceObserver('Open Sans');
     var oswald = new FontFaceObserver('Oswald');
     var promise;
-
+    console.log('in loader');
     promise = Promise.all(
       [
         // Specify a character for FontAwesome since some browsers will fail to detect
@@ -29,6 +29,7 @@ module.exports = {
     );
 
     promise.then(function () {
+      console.log('in promise then');
       stylesAreLoaded = true;
     });
 
