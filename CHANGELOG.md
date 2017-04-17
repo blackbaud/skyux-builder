@@ -1,6 +1,6 @@
 # 1.0.0-beta.16 (2017-04-17)
 
-- Bugfix to correctly read `importPath` from `skyuxconfig.json`
+- Bugfix to correctly read `importPath` from `skyuxconfig.json`.
 
 # 1.0.0-beta.15 (2017-04-13)
 
