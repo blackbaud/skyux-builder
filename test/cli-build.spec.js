@@ -223,7 +223,7 @@ describe('cli build', () => {
           );
 
           // The default SKY UX Builder source files should be written first.
-          expect(calledConfig.skyuxPathAlias).toEqual('../../asdf');
+          expect(calledConfig.runtime.skyuxPathAlias).toEqual('../../asdf');
 
           mock.stop(f);
           done();
