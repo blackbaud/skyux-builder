@@ -13,6 +13,12 @@ var styleLoader = require('./sky-style-loader');
       console.log('before done');
       done();
       console.log('after done');
+    }).
+    catch(function () {
+
+      console.log('in catch');
+      done();
+      console.log('after catch');
     });
   });
 }());
