@@ -9,16 +9,10 @@ var styleLoader = require('./sky-style-loader');
 // for the HTML hidden property defined in sky.scss has been applied.
 (function () {
   beforeAll(function (done) {
-    styleLoader.loadStyles().then(function () {
-      console.log('before done');
-      done();
-      console.log('after done');
-    }).
-    catch(function () {
-
-      console.log('in catch');
-      done();
-      console.log('after catch');
+    return styleLoader.loadStyles().then(function () {
+      // console.log('before done');
+      return done();
+      // console.log('after done');
     });
   });
 }());
