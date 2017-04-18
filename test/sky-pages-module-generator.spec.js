@@ -133,4 +133,16 @@ describe('SKY UX Builder module generator', () => {
 `import { enableProdMode } from '@angular/core';
 enableProdMode();`);
   });
+
+  it('should add routes to skyPagesConfig.runtime', () => {
+    const routeGenerator = require('../lib/sky-pages-route-generator');
+    const config = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    };
+    const routes = routeGenerator.getRoutes(config);
+    const source = generator.getSource(config);
+
+    expect(source).toContain(JSON.stringify(routes.routes));
+  });
 });
