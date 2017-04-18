@@ -1,5 +1,4 @@
 /*jshint jasmine: true, node: true */
-/*global browser, element, by, $$*/
 'use strict';
 
 const common = require('./shared/common');
@@ -13,4 +12,4 @@ describe('skyux test', () => {
       })
       .catch(err => console.log(err));
   });
-})
+});
