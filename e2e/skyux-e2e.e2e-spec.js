@@ -9,7 +9,10 @@ function validateTestRun(done) {
       expect(exit).toEqual(0);
       done();
     })
-    .catch(err => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      done();
+    });
 }
 
 describe('skyux e2e', () => {
@@ -25,7 +28,7 @@ describe('skyux e2e', () => {
 
     afterAll(common.afterAll);
 
-    fit('should successfully run e2e tests', (done) => {
+    it('should successfully run e2e tests', (done) => {
       validateTestRun(done);
     });
   });
