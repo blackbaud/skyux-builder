@@ -21,7 +21,7 @@ function getWebpackConfig(skyPagesConfig) {
   skyPagesConfig.runtime.includeRouteModule = false;
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
-  const srcPath = path.resolve(process.cwd(), 'src');
+  const srcPath = path.resolve(process.cwd(), 'src', 'app');
   const moduleLoader = outPath('loader', 'sky-pages-module');
 
   const resolves = [
