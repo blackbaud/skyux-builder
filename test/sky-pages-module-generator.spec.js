@@ -134,7 +134,7 @@ describe('SKY UX Builder module generator', () => {
 enableProdMode();`);
   });
 
-  xit('should put auth-client in mock mode if the command is e2e', () => {
+  it('should put auth-client in mock mode if the command is e2e', () => {
     let source = generator.getSource({
       runtime:  runtimeUtils.getDefaultRuntime({
         command: 'e2e'
