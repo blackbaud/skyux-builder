@@ -134,6 +134,19 @@ describe('SKY UX Builder module generator', () => {
 enableProdMode();`);
   });
 
+  it('should put auth-client in mock mode if the command is e2e', () => {
+    let source = generator.getSource({
+      runtime:  runtimeUtils.getDefaultRuntime({
+        command: 'e2e'
+      }),
+      skyux: {}
+    });
+
+    expect(source).toContain(
+`import { BBAuth } from '@blackbaud/auth-client';
+BBAuth.mock = true;`);
+  });
+
   it('should add routes to skyPagesConfig.runtime', () => {
     const routeGenerator = require('../lib/sky-pages-route-generator');
     const config = {

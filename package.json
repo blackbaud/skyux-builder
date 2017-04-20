@@ -39,7 +39,7 @@
     "@angular/platform-browser": "2.4.8",
     "@angular/platform-browser-dynamic": "2.4.8",
     "@angular/router": "3.4.8",
-    "@blackbaud/auth-client": "1.0.0",
+    "@blackbaud/auth-client": "1.1.0",
     "@blackbaud/help-client": "blackbaud/help-client",
     "@ngtools/webpack": "1.2.1",
     "@types/jasmine": "2.5.40",
