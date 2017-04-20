@@ -1,7 +1,7 @@
 # 1.0.0-beta.17 (2017-04-20)
 
-- Bugfix: Reverted to src/app for tests/imports
-- Mock auth during e2e tests
+- Bugfix: Reverted to src/app for tests/imports https://github.com/blackbaud/skyux-builder/pull/117
+- Mock auth during e2e tests https://github.com/blackbaud/skyux-builder/pull/117
 
 # 1.0.0-beta.16 (2017-04-17)
 
