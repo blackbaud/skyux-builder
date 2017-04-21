@@ -56,7 +56,8 @@ function getConfig(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    singleRun: true
+    singleRun: true,
+    failOnEmptyTestSuite: false
   });
 }
 
