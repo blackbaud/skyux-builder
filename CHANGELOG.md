@@ -1,6 +1,6 @@
 # 1.0.0-beta.18 (2017-04-21)
 
-- Allowing `skyux test` to not fail if no `*.spec.ts` files are specified.
+- Preventing `skyux test` from failing if no `*.spec.ts` files are specified.
 
 # 1.0.0-beta.17 (2017-04-20)
 
