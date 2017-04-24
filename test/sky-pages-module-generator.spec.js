@@ -156,6 +156,6 @@ BBAuth.mock = true;`);
     const routes = routeGenerator.getRoutes(config);
     const source = generator.getSource(config);
 
-    expect(source).toContain(JSON.stringify(routes.routes));
+    expect(source).toContain(JSON.stringify(routes.routesForConfig));
   });
 });
