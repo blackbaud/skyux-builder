@@ -1,6 +1,6 @@
 # 1.0.0-beta.20 (2017-04-24)
 
-- Explicility adding `Access-Control-Allow-Origin` header when running `skyux serve`.
+- Explicitly adding `Access-Control-Allow-Origin` header when running `skyux serve`.
 
 # 1.0.0-beta.19 (2017-04-24)
 
