@@ -1,5 +1,6 @@
 import {
-  Injectable
+  Injectable,
+  Optional
 } from '@angular/core';
 
 import {
@@ -19,7 +20,7 @@ import 'rxjs/add/operator/mergeMap';
 
 import { SkyAppWindowRef } from '@blackbaud/skyux-builder/runtime/window-ref';
 
-import { BBAuth } from '@blackbaud/auth-client';
+import { SkyAuthTokenProvider } from '@blackbaud/skyux-builder/runtime/auth-token-provider';
 
 @Injectable()
 export class SkyAuthHttp extends Http {
@@ -27,7 +28,8 @@ export class SkyAuthHttp extends Http {
   constructor(
     backend: ConnectionBackend,
     defaultOptions: RequestOptions,
-    private windowRef: SkyAppWindowRef
+    private windowRef: SkyAppWindowRef,
+    private authTokenProvider: SkyAuthTokenProvider
   ) {
     super(backend, defaultOptions);
   }
@@ -36,7 +38,7 @@ export class SkyAuthHttp extends Http {
     url: string | Request,
     options?: RequestOptionsArgs
   ): Observable<Response> {
-    return Observable.fromPromise(BBAuth.getToken())
+    return Observable.fromPromise(this.authTokenProvider.getToken())
       .flatMap((token: string) => {
         let authOptions: Request | RequestOptionsArgs;
 
