@@ -104,4 +104,20 @@ describe('SKY UX processor Webpack loader', () => {
 
     expect(result).toBe(`<p>${config.resourcePath}</p>`);
   });
+
+  it('should pass file contents to many plugins', () => {
+    mock('my-plugin', {
+      preload: (content) => '<p></p>'
+    });
+    mock('my-other-plugin', {
+      preload: (content) => `${content}<br>`
+    });
+
+    config.options.skyPagesConfig.skyux.plugins = ['my-plugin', 'my-other-plugin'];
+    const loader = require(preloaderPath);
+    const result = loader.call(config, content);
+
+    expect(result).toBe('<p></p><br>');
+    mock.stop('my-other-plugin');
+  });
 });

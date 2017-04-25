@@ -47,6 +47,7 @@ export interface SkyuxConfig {
   importPath?: string;
   mode?: string;
   name?: string;
+  plugins?: string[];
   publicRoutes?: any[];
   omnibar?: any;
 }
