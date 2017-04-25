@@ -1,3 +1,8 @@
+# 1.0.0-beta.21 (2017-04-25)
+
+- Using `subjectAltName` in SSL certificate in order to support Chrome 58+. [#127](https://github.com/blackbaud/skyux-builder/pull/127)
+- Bugfix to allow content to pass through multiple plugins.  [#124](https://github.com/blackbaud/skyux-builder/pull/124)
+
 # 1.0.0-beta.20 (2017-04-24)
 
 - Explicitly adding `Access-Control-Allow-Origin` header when running `skyux serve`.
