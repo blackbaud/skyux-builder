@@ -1,3 +1,15 @@
+# 1.0.0-beta.20 (2017-04-24)
+
+- Explicitly adding `Access-Control-Allow-Origin` header when running `skyux serve`.
+
+# 1.0.0-beta.19 (2017-04-24)
+
+- Bugfix: Removed unnecessary route information in order to fix `skyux e2e` on Windows. [#122](https://github.com/blackbaud/skyux-builder/pull/122)
+
+# 1.0.0-beta.18 (2017-04-21)
+
+- Preventing `skyux test` from failing if no `*.spec.ts` files are specified.
+
 # 1.0.0-beta.17 (2017-04-20)
 
 - Bugfix: Reverted to src/app for tests/imports. [#118](https://github.com/blackbaud/skyux-builder/pull/118)

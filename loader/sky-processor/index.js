@@ -25,12 +25,10 @@ const getPluginContents = (skyPagesConfig) => {
 };
 
 const processContent = (content, callbackName, ...additionalArgs) => {
-  let args = [content].concat(additionalArgs);
-
   plugins.forEach(plugin => {
     let callback = plugin[callbackName];
     if (typeof callback === 'function') {
-      content = callback.apply({}, args) || content;
+      content = callback.call({}, content, ...additionalArgs) || content;
     }
   });
 

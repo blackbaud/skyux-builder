@@ -135,6 +135,9 @@ function getWebpackConfig(argv, skyPagesConfig) {
       compress: true,
       inline: true,
       contentBase: path.join(process.cwd(), 'src', 'app'),
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
       historyApiFallback: {
         index: skyPagesConfigUtil.getAppBase(skyPagesConfig)
       },
