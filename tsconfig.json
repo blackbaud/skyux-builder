@@ -6,12 +6,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "noEmitOnError": true,
     "compileOnSave": false,
     "lib": [
       "es2015",
       "dom"
     ]
-  },
-  "awesomeTypescriptLoaderOptions": {}
+  }
 }
