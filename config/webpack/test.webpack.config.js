@@ -180,11 +180,11 @@ function getWebpackConfig(skyPagesConfig) {
 
       new ContextReplacementPlugin(
         // The (\\|\/) piece accounts for path separators in *nix and Windows
-        /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
-        skyPagesConfigUtil.spaPath('src') // location of your src
+        /angular(\\|\/)core(\\|\/)@angular/,
+        skyPagesConfigUtil.spaPath('src'), // location of your src
+        {}
       )
     ]
-
   };
 }
 

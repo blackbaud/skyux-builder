@@ -11,7 +11,7 @@
       "variables-before-functions"
     ],
     "no-any": false,
-    "no-inferrable-types": false,
+    "no-inferrable-types": [false],
     "no-internal-module": true,
     "no-reference": true,
     "no-var-requires": false,
@@ -38,7 +38,6 @@
     "curly": true,
     "forin": true,
     "label-position": true,
-    "label-undefined": true,
     "no-arg": true,
     "no-bitwise": true,
     "no-conditional-assignment": true,
@@ -52,7 +51,6 @@
     ],
     "no-construct": true,
     "no-debugger": true,
-    "no-duplicate-key": true,
     "no-duplicate-variable": true,
     "no-empty": false,
     "no-eval": true,
@@ -60,9 +58,8 @@
     "no-shadowed-variable": true,
     "no-string-literal": false,
     "no-switch-case-fall-through": true,
-    "no-unreachable": true,
     "no-unused-expression": true,
-    "no-unused-variable": true,
+    "no-unused-variable": [true],
     "no-use-before-declare": true,
     "no-var-keyword": true,
     "radix": true,
@@ -71,11 +68,6 @@
       true,
       "allow-null-check"
     ],
-    "use-strict": [
-      true,
-      "check-module"
-    ],
-
     "eofline": true,
     "indent": [
       true,
@@ -106,8 +98,8 @@
       true, "never-prefix"
     ],
     "jsdoc-format": true,
-    "no-consecutive-blank-lines": true,
-    "no-constructor-vars": false,
+    "no-consecutive-blank-lines": [true],
+    "no-parameter-properties": false,
     "one-line": [
       true,
       "check-open-brace",
@@ -137,10 +129,8 @@
       "check-type"
     ],
 
-    "directive-selector-name": [true, "camelCase"],
-    "component-selector-name": [true, "kebab-case"],
-    "directive-selector-type": [true, "attribute"],
-    "component-selector-type": [true, "element"],
+    "directive-selector": [true, ["attribute"], "sg", "camelCase"],
+    "component-selector": [true, ["element"], "sg", "kebab-case"],
     "use-input-property-decorator": true,
     "use-output-property-decorator": true,
     "use-host-property-decorator": true,

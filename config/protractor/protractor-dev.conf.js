@@ -3,7 +3,7 @@
 
 const path = require('path');
 const merge = require('merge');
-const SpecReporter = require('jasmine-spec-reporter');
+const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
 const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
