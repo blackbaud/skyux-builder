@@ -7,6 +7,7 @@ import { BBAuth } from '@blackbaud/auth-client';
 import { SkyAuthHttp } from './auth-http';
 
 import { SkyAppWindowRef } from './window-ref';
+import { SkyAuthTokenProvider } from './auth-token-provider';
 
 describe('SkyAuthHttp', () => {
 
@@ -16,6 +17,7 @@ describe('SkyAuthHttp', () => {
   function setupInjector(windowLocationSearch: string) {
 
     const injector = ReflectiveInjector.resolveAndCreate([
+      SkyAuthTokenProvider,
       {
         provide: ConnectionBackend,
         useClass: MockBackend

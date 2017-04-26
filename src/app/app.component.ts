@@ -17,7 +17,8 @@ import {
   BBOmnibar,
   BBOmnibarConfig,
   BBOmnibarNavigation,
-  BBOmnibarNavigationItem
+  BBOmnibarNavigationItem,
+  BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
 
 import { BBHelp } from '@blackbaud/help-client';
@@ -66,8 +67,8 @@ export class AppComponent implements OnInit {
 
   private setOnSearch(omnibarConfig: BBOmnibarConfig) {
     if (this.searchProvider) {
-      omnibarConfig.onSearch = (searchText: string) => {
-        return this.searchProvider.getSearchResults(searchText);
+      omnibarConfig.onSearch = (searchArgs: BBOmnibarSearchArgs) => {
+        return this.searchProvider.getSearchResults(searchArgs);
       };
     }
   }
