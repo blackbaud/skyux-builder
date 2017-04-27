@@ -2,7 +2,7 @@
 
 - Added ability for tokens to be provided via a token provider rather than always using `BBAuth` to obtain a token. [#129](https://github.com/blackbaud/skyux-builder/pull/129)
 - Fixed issue where not all possible properties for help config were specified in the help config interface. [#130](https://github.com/blackbaud/skyux-builder/pull/130)
-- Upgraded `@blackbaud/auth-client` to 1.3.0. [#131](https://github.com/blackbaud/skyux-builder/pull/131)
+- Upgraded `@blackbaud/auth-client` to 1.3.1. [#131](https://github.com/blackbaud/skyux-builder/pull/131)
 
 # 1.0.0-beta.21 (2017-04-25)
 
