@@ -106,7 +106,7 @@ function getWebpackConfig(skyPagesConfig) {
         },
         {
           test: /\.json$/,
-          loader: 'json'
+          loader: 'json-loader'
         }
       ]
     },
