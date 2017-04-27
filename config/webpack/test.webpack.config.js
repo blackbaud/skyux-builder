@@ -161,7 +161,8 @@ function getWebpackConfig(skyPagesConfig) {
           tslint: {
             emitErrors: false,
             failOnHint: false,
-            resourcePath: 'src'
+            resourcePath: 'src',
+            typeCheck: true
           }
         }
       }),
