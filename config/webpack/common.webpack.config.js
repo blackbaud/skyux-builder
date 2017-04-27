@@ -1,9 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const merge = require('merge');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
@@ -11,6 +8,7 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+const aliasBuilder = require('./alias-builder');
 
 function spaPath() {
   return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
@@ -18,24 +16,6 @@ function spaPath() {
 
 function outPath() {
   return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
-}
-
-/**
- * Sets an alias to the specified module using the SPA path if the file exists in the SPA;
- * otherwise it sets the alias to the file in SKY UX Builder.
- * @name setSpaAlias
- * @param {Object} alias
- * @param {String} moduleName
- * @param {String} path
- */
-function setSpaAlias(alias, moduleName, path) {
-  let resolvedPath = spaPath(path);
-
-  if (!fs.existsSync(resolvedPath)) {
-    resolvedPath = outPath(path);
-  }
-
-  alias['sky-pages-internal/' + moduleName] = resolvedPath;
 }
 
 /**
@@ -52,27 +32,9 @@ function getWebpackConfig(skyPagesConfig) {
     outPath('node_modules')
   ];
 
-  let alias = {
-    'sky-pages-spa/src': spaPath('src'),
-    'sky-pages-internal/runtime': outPath('runtime')
-  };
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
-  if (skyPagesConfig && skyPagesConfig.skyux) {
-    // Order here is very important; the more specific CSS alias must go before
-    // the more generic dist one.
-    if (skyPagesConfig.skyux.cssPath) {
-      alias['@blackbaud/skyux/dist/css/sky.css'] = spaPath(skyPagesConfig.skyux.cssPath);
-    }
-
-    if (skyPagesConfig.skyux.importPath) {
-      alias['@blackbaud/skyux/dist'] = spaPath(skyPagesConfig.skyux.importPath);
-    }
-  }
-
-  setSpaAlias(alias, 'src/app/app-extras.module', path.join('src', 'app', 'app-extras.module.ts'));
-  setSpaAlias(alias, 'src/main', path.join('src', 'main.ts'));
-
-  const outConfigMode = skyPagesConfig && skyPagesConfig.mode;
+  const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
   let appPath;
 
   switch (outConfigMode) {
@@ -83,13 +45,6 @@ function getWebpackConfig(skyPagesConfig) {
       appPath = outPath('src', 'main-internal.ts');
       break;
   }
-
-  // Merge in our defaults
-  const appConfig = merge((skyPagesConfig && skyPagesConfig.app) || {}, {
-    template: outPath('src', 'main.ejs'),
-    base: skyPagesConfigUtil.getAppBase(skyPagesConfig),
-    inject: false
-  });
 
   return {
     entry: {
@@ -118,8 +73,28 @@ function getWebpackConfig(skyPagesConfig) {
       rules: [
         {
           enforce: 'pre',
+          test: /runtime\/config\.ts$/,
+          loader: outPath('loader', 'sky-app-config')
+        },
+        {
+          enforce: 'pre',
+          test: /\.(html|s?css)$/,
+          loader: outPath('loader', 'sky-assets')
+        },
+        {
+          enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
           loader: outPath('loader', 'sky-pages-module')
+        },
+        {
+          enforce: 'pre',
+          loader: outPath('loader', 'sky-processor', 'preload'),
+          exclude: /node_modules/
+        },
+        {
+          enforce: 'post',
+          loader: outPath('loader', 'sky-processor', 'postload'),
+          exclude: /node_modules/
         },
         {
           test: /\.s?css$/,
@@ -136,17 +111,23 @@ function getWebpackConfig(skyPagesConfig) {
       ]
     },
     plugins: [
-      new HtmlWebpackPlugin(appConfig),
+      // Some properties are required on the root object passed to HtmlWebpackPlugin
+      new HtmlWebpackPlugin({
+        template: skyPagesConfig.runtime.app.template,
+        inject: skyPagesConfig.runtime.app.inject,
+        runtime: skyPagesConfig.runtime,
+        skyux: skyPagesConfig.skyux
+      }),
       new CommonsChunkPlugin({
         name: ['skyux', 'vendor', 'polyfills']
       }),
       new webpack.DefinePlugin({
-        'SKY_PAGES': JSON.stringify(skyPagesConfig)
+        'skyPagesConfig': JSON.stringify(skyPagesConfig)
       }),
       new ProgressBarPlugin(),
       new LoaderOptionsPlugin({
         options: {
-          SKY_PAGES: skyPagesConfig
+          skyPagesConfig: skyPagesConfig
         }
       }),
       new ContextReplacementPlugin(

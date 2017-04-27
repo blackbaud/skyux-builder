@@ -4,6 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 const merge = require('merge');
+const logger = require('winston');
 
 /**
  * Resolves a path given a root path and an array-like arguments object.
@@ -17,23 +18,72 @@ function resolve(root, args) {
   return path.resolve.apply(path, args);
 }
 
+function readConfig(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
 module.exports = {
 
   /**
-   * Builder's skyuxconfig is default.
-   * Adds routes, modules, and components next.
-   * Merges in SPA's skyuxconfig last.
+   * Merge's configs in the following order:
+   *   1. Builder's skyuxconfig.json
+   *   2. Builder's skyuxconfig.{command}.json
+   *   3. App's skyuxconfig.json
+   *   4. App's skyuxconfig.{command}.json
    * @name getSkyPagesConfig
+   * @param {argv} Optional arguments from command line
    * @returns [SkyPagesConfig] skyPagesConfig
    */
-  getSkyPagesConfig: function () {
-    const skyPagesSpaPath = this.spaPath('skyuxconfig.json');
-    let config = require(this.outPath('skyuxconfig.json'));
+  getSkyPagesConfig: function (command) {
 
-    if (fs.existsSync(skyPagesSpaPath)) {
-      merge.recursive(config, require(skyPagesSpaPath));
-    }
+    let skyuxConfig = {};
+    const hierarchy = [
+      {
+        fileName: `App Builder skyuxconfig.json`,
+        filePath: this.outPath(`skyuxconfig.json`)
+      },
+      {
+        fileName: `App Builder skyuxconfig.${command}.json`,
+        filePath: this.outPath(`skyuxconfig.${command}.json`)
+      },
+      {
+        fileName: `SPA skyuxconfig.json`,
+        filePath: this.spaPath(`skyuxconfig.json`)
+      },
+      {
+        fileName: 'SPA skyuxconfig.${command}.json',
+        filePath: this.spaPath(`skyuxconfig.${command}.json`)
+      }
+    ];
 
+    hierarchy.forEach(file => {
+      if (fs.existsSync(file.filePath)) {
+        logger.info(`Merging ${file.fileName}`);
+        merge.recursive(skyuxConfig, readConfig(file.filePath));
+      }
+    });
+
+    let config = {
+      runtime: {
+        app: {
+          inject: false,
+          template: this.outPath('src', 'main.ejs')
+        },
+        command: command,
+        componentsPattern: '**/*.component.ts',
+        includeRouteModule: true,
+        routesPattern: '**/index.html',
+        runtimeAlias: 'sky-pages-internal/runtime',
+        srcPath: 'src/app/',
+        spaPathAlias: 'sky-pages-spa',
+        skyPagesOutAlias: 'sky-pages-internal',
+        skyuxPathAlias: '@blackbaud/skyux/dist',
+        useTemplateUrl: false
+      },
+      skyux: skyuxConfig
+    };
+
+    config.runtime.app.base = this.getAppBase(config);
     return config;
   },
 
@@ -44,11 +94,20 @@ module.exports = {
    * @returns {String} appName
    */
   getAppBase: function (skyPagesConfig) {
-    let name;
-    if (skyPagesConfig.name) {
-      name = skyPagesConfig.name;
+    let name = '';
+
+    if (skyPagesConfig.skyux.name) {
+      name = skyPagesConfig.skyux.name;
     } else {
-      name = require(this.spaPath('package.json')).name;
+
+      const packagePath = this.spaPath('package.json');
+      const packageJson = fs.existsSync(packagePath) ? readConfig(packagePath) : {};
+
+      if (packageJson.name) {
+        name = packageJson.name;
+      } else {
+        logger.error('The `name` property should exist in package.json or skyuxconfig.json');
+      }
     }
 
     return '/' + name.replace(/blackbaud-skyux-spa-/gi, '') + '/';

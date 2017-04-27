@@ -18,7 +18,7 @@ describe('SKY UX Builder Webpack module loader', () => {
         plugin: function () {}
       },
       options: {
-        SKY_PAGES: {
+        skyPagesConfig: {
           entries: []
         }
       }
@@ -26,7 +26,7 @@ describe('SKY UX Builder Webpack module loader', () => {
 
     loader.apply(config);
 
-    expect(getSourceSpy).toHaveBeenCalledWith(config.options.SKY_PAGES);
+    expect(getSourceSpy).toHaveBeenCalledWith(config.options.skyPagesConfig);
   });
 
   it('should timestamp sky-pages.module.ts for HTML and TS updates', () => {

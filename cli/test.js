@@ -20,14 +20,18 @@ function test(command) {
     '--max-old-space-size=4096',
     'node_modules/karma/bin/karma',
     'start',
-    karmaConfigPath
+    karmaConfigPath,
+    '--command',
+    command
   ];
 
   const options = {
     stdio: 'inherit'
   };
 
-  spawn('node', flags, options);
+  // Pass our exitCode up
+  const test = spawn('node', flags, options);
+  test.on('exit', exitCode => process.exit(exitCode));
 }
 
 module.exports = test;

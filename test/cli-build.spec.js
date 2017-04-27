@@ -3,6 +3,8 @@
 
 const mock = require('mock-require');
 const logger = require('winston');
+const assetsConfig = require('../lib/assets-configuration');
+const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('cli build', () => {
 
@@ -120,7 +122,10 @@ describe('cli build', () => {
     require('../cli/build')(
       {},
       {
-        compileMode: 'aot'
+        runtime: runtimeUtils.getDefaultRuntime(),
+        skyux: {
+          compileMode: 'aot'
+        }
       },
       () => ({
         run: (cb) => {
@@ -190,7 +195,8 @@ describe('cli build', () => {
     });
 
     let calledConfig;
-    const getSourceSpy = spyOn(generator, 'getSource').and.callFake(function (c) {
+
+    spyOn(generator, 'getSource').and.callFake(function (c) {
       calledConfig = c;
       return 'TESTSOURCE';
     });
@@ -198,8 +204,9 @@ describe('cli build', () => {
     require('../cli/build')(
       {},
       {
-        compileMode: 'aot',
+        runtime: runtimeUtils.getDefaultRuntime(),
         skyux: {
+          compileMode: 'aot',
           importPath: 'asdf'
         }
       },
@@ -216,10 +223,58 @@ describe('cli build', () => {
           );
 
           // The default SKY UX Builder source files should be written first.
-          expect(calledConfig.skyuxPathAlias).toEqual('../../asdf');
+          expect(calledConfig.runtime.skyuxPathAlias).toEqual('../../asdf');
 
           mock.stop(f);
           done();
+        }
+      })
+    );
+
+  });
+
+  it('should allow the assets base URL to be specified', (done) => {
+    const f = '../config/webpack/build-aot.webpack.config';
+
+    mock(f, {
+      getWebpackConfig: () => ({})
+    });
+
+    const setSkyAssetsLoaderUrlSpy = spyOn(assetsConfig, 'setSkyAssetsLoaderUrl');
+
+    require('../cli/build')(
+      {
+        assets: 'https://example.com/'
+      },
+      {
+        runtime: runtimeUtils.getDefaultRuntime(),
+        skyux: {
+          compileMode: 'aot',
+          importPath: 'asdf'
+        }
+      },
+      () => ({
+        run: (cb) => {
+          try {
+            cb(
+              null,
+              {
+                toJson: () => ({
+                  errors: [],
+                  warnings: []
+                })
+              }
+            );
+
+            expect(setSkyAssetsLoaderUrlSpy).toHaveBeenCalledWith(
+              jasmine.any(Object),
+              jasmine.any(Object),
+              'https://example.com/'
+            );
+          } finally {
+            mock.stop(f);
+            done();
+          }
         }
       })
     );

@@ -7,10 +7,14 @@
  */
 function getConfig(config) {
 
+  // This file is spawned so we'll need to read the args again
+  const minimist = require('minimist');
+  const argv = minimist(process.argv.slice(2));
+
   const path = require('path');
   let testWebpackConfig = require('../webpack/test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
-  let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig();
+  let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv.command);
 
   config.set({
     basePath: '',
@@ -20,15 +24,22 @@ function getConfig(config) {
       {
         pattern: '../../utils/spec-bundle.js',
         watched: false
+      },
+      {
+        pattern: '../../utils/spec-styles.js',
+        watched: false
       }
     ],
     preprocessors: {
+      '../../utils/spec-styles.js': ['webpack'],
       '../../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
     },
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
       reporters: [
+        // these reporters are incompatible with `istanbul-instrumenter-loader v1.0.0`
+        // use `v0.2.0` instead if you need to use these reporters
         { type: 'json' },
         { type: 'html' }
       ],
@@ -45,7 +56,8 @@ function getConfig(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    singleRun: true
+    singleRun: true,
+    failOnEmptyTestSuite: false
   });
 }
 

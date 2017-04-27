@@ -2,27 +2,40 @@
 'use strict';
 
 function getWebpackConfig(skyPagesConfig) {
+  function spaPath() {
+    return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
+  }
+
+  function outPath() {
+    return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+  }
+
   const path = require('path');
 
   const DefinePlugin = require('webpack/lib/DefinePlugin');
   const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
   const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+  const aliasBuilder = require('./alias-builder');
+
+  skyPagesConfig.runtime.includeRouteModule = false;
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
   const srcPath = path.resolve(process.cwd(), 'src', 'app');
-  const moduleLoader = path.resolve(__dirname, '..', '..', 'loader', 'sky-pages-module');
+  const moduleLoader = outPath('loader', 'sky-pages-module');
+
   const resolves = [
     process.cwd(),
-    path.join(process.cwd(), 'node_modules'),
-    path.join(__dirname, '..', '..'),
-    path.join(__dirname, '..', '..', 'node_modules')
+    spaPath('node_modules'),
+    outPath('node_modules')
   ];
 
   const excludes = [
-    path.join(process.cwd(), 'node_modules'),
-    path.resolve(__dirname, '..', '..', 'node_modules')
+    spaPath('node_modules'),
+    outPath('node_modules')
   ];
+
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   return {
     devtool: 'inline-source-map',
@@ -31,6 +44,7 @@ function getWebpackConfig(skyPagesConfig) {
       modules: resolves
     },
     resolve: {
+      alias: alias,
       modules: resolves,
       extensions: [
         '.js',
@@ -40,13 +54,17 @@ function getWebpackConfig(skyPagesConfig) {
 
     module: {
 
-      loaders: [
+      rules: [
+        {
+          enforce: 'pre',
+          test: /runtime\/config\.ts$/,
+          loader: outPath('loader', 'sky-app-config')
+        },
+
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
-          loaders: [
-            moduleLoader
-          ]
+          loader: moduleLoader
         },
 
         {
@@ -62,11 +80,28 @@ function getWebpackConfig(skyPagesConfig) {
           loader: 'source-map-loader',
           exclude: excludes
         },
-
+        {
+          enforce: 'pre',
+          loader: outPath('loader', 'sky-processor', 'preload'),
+          exclude: /node_modules/
+        },
+        {
+          enforce: 'post',
+          loader: outPath('loader', 'sky-processor', 'postload'),
+          exclude: /node_modules/
+        },
         {
           test: /\.ts$/,
           loaders: [
-            'awesome-typescript-loader',
+            {
+              loader: 'awesome-typescript-loader',
+              options: {
+                // Ignore the "Cannot find module" error that occurs when referencing
+                // an aliased file.  Webpack will still throw an error when a module
+                // cannot be resolved via a file path or alias.
+                ignoreDiagnostics: [2307]
+              }
+            },
             'angular2-template-loader'
           ],
           exclude: [/\.e2e\.ts$/]
@@ -90,22 +125,29 @@ function getWebpackConfig(skyPagesConfig) {
         {
           test: /\.scss$/,
           loader: 'raw-loader!sass-loader'
+        },
+
+        {
+          enforce: 'post',
+          test: /\.(js|ts)$/,
+          loaders: [
+            {
+              loader: 'istanbul-instrumenter-loader',
+              options: {
+                esModules: true
+              }
+            },
+            'source-map-inline-loader'
+          ],
+          include: srcPath,
+          exclude: [
+            /\.(e2e|spec)\.ts$/,
+            /node_modules/,
+            /index\.ts/,
+            /fixtures/,
+            /testing/
+          ]
         }
-
-        // {
-        //   enforce: 'post',
-        //   test: /\.(js|ts)$/,
-        //   loader: 'istanbul-instrumenter-loader!source-map-inline-loader',
-        //   include: srcPath,
-        //   exclude: [
-        //     /\.(e2e|spec)\.ts$/,
-        //     /node_modules/,
-        //     /index\.ts/,
-        //     /fixtures/,
-        //     /testing/
-        //   ]
-        // }
-
       ]
 
     },
@@ -115,6 +157,7 @@ function getWebpackConfig(skyPagesConfig) {
       new LoaderOptionsPlugin({
         debug: true,
         options: {
+          skyPagesConfig: skyPagesConfig,
           tslint: {
             emitErrors: false,
             failOnHint: false,
@@ -132,7 +175,7 @@ function getWebpackConfig(skyPagesConfig) {
           'HMR': false
         },
         'ROOT_DIR': JSON.stringify(srcPath),
-        'SKY_PAGES': JSON.stringify(skyPagesConfig)
+        'skyPagesConfig': JSON.stringify(skyPagesConfig),
       }),
 
       new ContextReplacementPlugin(

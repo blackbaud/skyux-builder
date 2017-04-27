@@ -1,22 +1,24 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const fs = require('fs');
 const mock = require('mock-require');
 const logger = require('winston');
 const urlLibrary = require('url');
+const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack serve', () => {
 
   const skyuxConfig = {
-    CUSTOM_PROP3: true,
-    mode: '',
-    host: {
-      url: 'https://my-host-server.url'
-    },
-    app: {
-      externals: {
-        test: true
+    runtime: runtimeUtils.getDefaultRuntime(),
+    skyux: {
+      mode: '',
+      host: {
+        url: 'https://my-host-server.url'
+      },
+      app: {
+        externals: {
+          test: true
+        }
       }
     }
   };
@@ -59,6 +61,25 @@ describe('config webpack serve', () => {
     config = null;
   });
 
+  function bindToDone() {
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'WebpackPluginDone') {
+        plugin.apply({
+          options: getPluginOptions(),
+          plugin: (evt, cb) => {
+            if (evt === 'done') {
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
+            }
+          }
+        });
+      }
+    });
+  }
+
   it('should expose a getWebpackConfig method', () => {
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
@@ -90,7 +111,7 @@ describe('config webpack serve', () => {
     expect(logger.info).toHaveBeenCalledTimes(2);
   });
 
-  it('should log the host url and launch it when open flag is not present', () => {
+  it('should log the host url and launch it when launch flag is not present', () => {
     config.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
         plugin.apply({
@@ -109,7 +130,9 @@ describe('config webpack serve', () => {
     });
 
     expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openCalledWith).toContain('https://my-host-server.url');
+    expect(openCalledWith).toContain(
+      'https://my-host-server.url/@blackbaud/skyux-builder/?local=true&_cfg='
+    );
   });
 
   it('should log the host url and launch it when --launch host', () => {
@@ -205,7 +228,15 @@ describe('config webpack serve', () => {
   });
 
   it('host querystring should not contain externals if they do not exist', () => {
-    const localConfig = lib.getWebpackConfig(argv, { host: { url: '' } });
+    const localConfig = lib.getWebpackConfig(argv, {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        host: {
+          url: ''
+        }
+      }
+    });
+
     localConfig.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
         plugin.apply({
@@ -265,7 +296,7 @@ describe('config webpack serve', () => {
               const configObject = JSON.parse(configString);
 
               expect(urlParsed.query._cfg).toBeDefined();
-              expect(configObject.externals).toEqual(skyuxConfig.app.externals);
+              expect(configObject.externals).toEqual(skyuxConfig.skyux.app.externals);
               expect(configObject.localUrl).toContain('https://localhost:1234');
               expect(configObject.scripts).toEqual([
                 { name: 'a.js' },
@@ -276,6 +307,40 @@ describe('config webpack serve', () => {
         });
       }
     });
+  });
+
+  it('should pass through envid from the command line', () => {
+    argv.envid = 'asdf';
+
+    bindToDone();
+    expect(openCalledWith).toContain(`?envid=asdf`);
+  });
+
+  it('should pass through svcid from the command line', () => {
+    argv.svcid = 'asdf';
+
+    bindToDone();
+    expect(openCalledWith).toContain(`?svcid=asdf`);
+  });
+
+  it('should run envid and svcid through encodeURIComponent', () => {
+    argv.envid = '&=$';
+    argv.svcid = '^%';
+
+    bindToDone();
+    expect(openCalledWith).toContain(
+      `?envid=${encodeURIComponent(argv.envid)}&svcid=${encodeURIComponent(argv.svcid)}`
+    );
+  });
+
+  it('should pass through envid and svcid, but not other flags from the command line', () => {
+    argv.envid = 'asdf1';
+    argv.svcid = 'asdf2';
+    argv.myid = 'asdf3';
+
+    bindToDone();
+    expect(openCalledWith).toContain(`?envid=asdf1&svcid=asdf2`);
+    expect(openCalledWith).not.toContain(`myid=asdf3`);
   });
 
 });

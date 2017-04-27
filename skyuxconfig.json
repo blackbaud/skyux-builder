@@ -1,7 +1,7 @@
 {
   "mode": "advanced",
   "host": {
-    "url": "https://sky.blackbaud-dev.com"
+    "url": "https://host.nxt.blackbaud.com"
   },
   "app": {
     "title": "Blackbaud - SKY UX Application"

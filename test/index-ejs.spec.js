@@ -4,13 +4,14 @@
 const mock = require('mock-require');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config.js');
 
 describe('index.ejs template', () => {
 
   it('should support external css & js in the correct locations', (done) => {
 
     mock('../config/webpack/build.webpack.config', {
-      getWebpackConfig: () => ({
+      getWebpackConfig: (skyPagesConfig) => ({
         entry: {
           test: ['test.js']
         },
@@ -18,46 +19,15 @@ describe('index.ejs template', () => {
           new HtmlWebpackPlugin({
             template: 'src/main.ejs',
             inject: false,
-            externals: {
-              css: {
-                before: [
-                  {
-                    url: 'f1.css',
-                    integrity: 'ic1'
-                  }
-                ],
-                after: [
-                  {
-                    url: 'f2.css'
-                  }
-                ]
-              },
-              js: {
-                before: [
-                  {
-                    url: 'f1.js',
-                    integrity: 'ic2',
-                    head: true
-                  },
-                  {
-                    url: 'f2.js',
-                    integrity: 'ic3'
-                  }
-                ],
-                after: [
-                  {
-                    url: 'f3.js'
-                  }
-                ]
-              }
-            }
+            runtime: skyPagesConfig.runtime,
+            skyux: skyPagesConfig.skyux
           }),
           function () {
             this.plugin('emit', (compilation) => {
               const source = compilation.assets['index.html'].source();
 
-              const css1 = `<link href="f1.css" integrity="ic1" crossorigin="anonymous">`;
-              const css2 = `<link href="f2.css">`;
+              const css1 = `<link rel="stylesheet" href="f1.css" integrity="ic1" crossorigin="anonymous">`;
+              const css2 = `<link rel="stylesheet" href="f2.css">`;
               const js1 = `<script src="f1.js" integrity="ic2" crossorigin="anonymous"></script>`;
               const js2 = `<script src="f2.js" integrity="ic3" crossorigin="anonymous"></script>`;
               const js3 = `<script src="f3.js"></script>`;
@@ -94,7 +64,45 @@ describe('index.ejs template', () => {
       })
     });
 
-    require('../cli/build')({}, {}, webpack);
+    let config = skyPagesConfigUtil.getSkyPagesConfig('build');
+    config.skyux = {
+      app: {
+        externals: {
+          css: {
+            before: [
+              {
+                url: 'f1.css',
+                integrity: 'ic1'
+              }
+            ],
+            after: [
+              {
+                url: 'f2.css'
+              }
+            ]
+          },
+          js: {
+            before: [
+              {
+                url: 'f1.js',
+                integrity: 'ic2',
+                head: true
+              },
+              {
+                url: 'f2.js',
+                integrity: 'ic3'
+              }
+            ],
+            after: [
+              {
+                url: 'f3.js'
+              }
+            ]
+          }
+        }
+      }
+    };
+    require('../cli/build')({}, config, webpack);
 
   });
 
