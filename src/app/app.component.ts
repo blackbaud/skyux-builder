@@ -1,6 +1,7 @@
 import {
   Component,
-  OnInit
+  OnInit,
+  Optional
 } from '@angular/core';
 
 import {
@@ -16,12 +17,17 @@ import {
   BBOmnibar,
   BBOmnibarConfig,
   BBOmnibarNavigation,
-  BBOmnibarNavigationItem
+  BBOmnibarNavigationItem,
+  BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
 
 import { BBHelp } from '@blackbaud/help-client';
 
-import { SkyAppConfig, SkyAppWindowRef } from '@blackbaud/skyux-builder/runtime';
+import {
+  SkyAppConfig,
+  SkyAppSearchResultsProvider,
+  SkyAppWindowRef
+} from '@blackbaud/skyux-builder/runtime';
 
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
 require('style-loader!./app.component.scss');
@@ -34,7 +40,8 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     private windowRef: SkyAppWindowRef,
-    private config: SkyAppConfig
+    private config: SkyAppConfig,
+    @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) { }
 
   public ngOnInit() {
@@ -56,6 +63,14 @@ export class AppComponent implements OnInit {
 
     omnibarConfig.envId = urlSearchParams.get('envid');
     omnibarConfig.svcId = urlSearchParams.get('svcid');
+  }
+
+  private setOnSearch(omnibarConfig: BBOmnibarConfig) {
+    if (this.searchProvider) {
+      omnibarConfig.onSearch = (searchArgs: BBOmnibarSearchArgs) => {
+        return this.searchProvider.getSearchResults(searchArgs);
+      };
+    }
   }
 
   private setNav(omnibarConfig: BBOmnibarConfig) {
@@ -114,6 +129,7 @@ export class AppComponent implements OnInit {
 
       this.setParamsFromQS(omnibarConfig);
       this.setNav(omnibarConfig);
+      this.setOnSearch(omnibarConfig);
 
       BBOmnibar.load(omnibarConfig);
     }

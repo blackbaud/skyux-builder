@@ -78,7 +78,7 @@ describe('SKY UX Builder module generator', () => {
     const expectedProvider = `{
       provide: SkyAuthHttp,
       useClass: SkyAuthHttp,
-      deps: [XHRBackend, RequestOptions, SkyAppWindowRef]
+      deps: [XHRBackend, RequestOptions, SkyAppWindowRef, SkyAuthTokenProvider]
     }`;
 
     let source = generator.getSource({
