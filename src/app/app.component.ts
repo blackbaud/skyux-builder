@@ -29,8 +29,8 @@ import {
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
 
-require('style!@blackbaud/skyux/dist/css/sky.css');
-require('style!./app.component.scss');
+require('style-loader!@blackbaud/skyux/dist/css/sky.css');
+require('style-loader!./app.component.scss');
 
 @Component({
   selector: 'sky-pages-app',

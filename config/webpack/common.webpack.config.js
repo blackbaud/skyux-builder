@@ -4,11 +4,9 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const failPlugin = require('webpack-fail-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
 
@@ -113,8 +111,6 @@ function getWebpackConfig(skyPagesConfig) {
       ]
     },
     plugins: [
-      new ForkCheckerPlugin(),
-
       // Some properties are required on the root object passed to HtmlWebpackPlugin
       new HtmlWebpackPlugin({
         template: skyPagesConfig.runtime.app.template,
@@ -129,7 +125,6 @@ function getWebpackConfig(skyPagesConfig) {
         'skyPagesConfig': JSON.stringify(skyPagesConfig)
       }),
       new ProgressBarPlugin(),
-      failPlugin,
       new LoaderOptionsPlugin({
         options: {
           skyPagesConfig: skyPagesConfig
