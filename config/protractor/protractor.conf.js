@@ -2,7 +2,7 @@
 'use strict';
 
 const path = require('path');
-const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
+const SpecReporter = require('jasmine-spec-reporter');
 
 exports.config = {
   allScriptsTimeout: 11000,

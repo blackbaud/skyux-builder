@@ -1,14 +1,23 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "es2015",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
+    "noEmitHelpers": true,
+    "noEmitOnError": true,
+    "noResolve": true,
     "lib": [
-      "es2015",
-      "dom"
+      "dom",
+      "es6"
+    ],
+    "types": [
+      "jasmine",
+      "node"
     ]
-  }
+  },
+  "compileOnSave": false,
+  "buildOnSave": false
 }

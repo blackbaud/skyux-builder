@@ -114,9 +114,9 @@ function getWebpackConfig(argv, skyPagesConfig) {
         },
         {
           test: /\.ts$/,
-          loaders: [
+          use: [
             {
-              loader: 'ts-loader',
+              loader: 'awesome-typescript-loader',
               options: {
                 // Ignore the "Cannot find module" error that occurs when referencing
                 // an aliased file.  Webpack will still throw an error when a module
@@ -124,7 +124,9 @@ function getWebpackConfig(argv, skyPagesConfig) {
                 ignoreDiagnostics: [2307]
               }
             },
-            'angular2-template-loader'
+            {
+              loader: 'angular2-template-loader'
+            }
           ]
         }
       ],
@@ -151,6 +153,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
       new NamedModulesPlugin(),
       WebpackPluginDone,
       new LoaderOptionsPlugin({
+        context: __dirname,
         debug: true
       })
     ]

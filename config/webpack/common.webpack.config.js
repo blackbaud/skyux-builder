@@ -4,6 +4,7 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
@@ -98,19 +99,20 @@ function getWebpackConfig(skyPagesConfig) {
         },
         {
           test: /\.s?css$/,
-          loader: 'raw-loader!sass-loader'
+          use: [
+            'raw-loader',
+            'sass-loader'
+          ]
         },
         {
           test: /\.html$/,
           loader: 'raw-loader'
-        },
-        {
-          test: /\.json$/,
-          loader: 'json-loader'
         }
       ]
     },
     plugins: [
+      new ForkCheckerPlugin(),
+
       // Some properties are required on the root object passed to HtmlWebpackPlugin
       new HtmlWebpackPlugin({
         template: skyPagesConfig.runtime.app.template,
@@ -118,21 +120,27 @@ function getWebpackConfig(skyPagesConfig) {
         runtime: skyPagesConfig.runtime,
         skyux: skyPagesConfig.skyux
       }),
+
       new CommonsChunkPlugin({
         name: ['skyux', 'vendor', 'polyfills']
       }),
+
       new webpack.DefinePlugin({
         'skyPagesConfig': JSON.stringify(skyPagesConfig)
       }),
+
       new ProgressBarPlugin(),
+
       new LoaderOptionsPlugin({
         options: {
+          context: __dirname,
           skyPagesConfig: skyPagesConfig
         }
       }),
+
       new ContextReplacementPlugin(
         // The (\\|\/) piece accounts for path separators in *nix and Windows
-        /angular(\\|\/)core(\\|\/)@angular/,
+        /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
         spaPath('src'), // location of your src
         {}
       )
