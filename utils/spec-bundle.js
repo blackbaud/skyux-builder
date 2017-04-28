@@ -19,7 +19,7 @@ Error.stackTraceLimit = Infinity;
 
 require('core-js');
 
-// Typescript emit helpers polyfill		
+// Typescript emit helpers polyfill
 require('ts-helpers');
 
 require('zone.js/dist/zone');
