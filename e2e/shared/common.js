@@ -117,11 +117,13 @@ function prepareBuild(config) {
     httpServer = HttpServer.createServer({ root: tmp });
 
     return new Promise((resolve, reject) => {
-      portfinder.getPortPromise().then(port => {
-        httpServer.listen(port, 'localhost', () => {
-          browser.get(`http://localhost:${port}/dist/`).then(resolve, reject);
-        });
-      });
+      portfinder.getPortPromise()
+        .then(port => {
+          httpServer.listen(port, 'localhost', () => {
+            browser.get(`http://localhost:${port}/dist/`).then(resolve, reject);
+          });
+        })
+        .catch(err => reject(err));
     });
   }
 
