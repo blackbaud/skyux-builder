@@ -43,6 +43,7 @@ function getWebpackConfig(skyPagesConfig) {
     resolveLoader: {
       modules: resolves
     },
+
     resolve: {
       alias: alias,
       modules: resolves,
@@ -53,27 +54,23 @@ function getWebpackConfig(skyPagesConfig) {
     },
 
     module: {
-
       rules: [
         {
           enforce: 'pre',
           test: /runtime\/config\.ts$/,
           loader: outPath('loader', 'sky-app-config')
         },
-
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
           loader: moduleLoader
         },
-
         {
           enforce: 'pre',
           test: /\.ts$/,
           loader: 'tslint-loader',
           exclude: excludes
         },
-
         {
           enforce: 'pre',
           test: /\.js$/,
@@ -92,7 +89,7 @@ function getWebpackConfig(skyPagesConfig) {
         },
         {
           test: /\.ts$/,
-          loaders: [
+          use: [
             {
               loader: 'awesome-typescript-loader',
               options: {
@@ -102,42 +99,40 @@ function getWebpackConfig(skyPagesConfig) {
                 ignoreDiagnostics: [2307]
               }
             },
-            'angular2-template-loader'
+            {
+              loader: 'angular2-template-loader'
+            }
           ],
           exclude: [/\.e2e\.ts$/]
         },
-
-        {
-          test: /\.json$/,
-          loader: 'json-loader'
-        },
-
         {
           test: /\.css$/,
           loader: 'raw-loader'
         },
-
         {
           test: /\.html$/,
           loader: 'raw-loader'
         },
-
         {
           test: /\.scss$/,
-          loader: 'raw-loader!sass-loader'
+          use: [
+            'raw-loader',
+            'sass-loader'
+          ]
         },
-
         {
           enforce: 'post',
           test: /\.(js|ts)$/,
-          loaders: [
+          use: [
             {
               loader: 'istanbul-instrumenter-loader',
               options: {
                 esModules: true
               }
             },
-            'source-map-inline-loader'
+            {
+              loader: 'source-map-inline-loader'
+            }
           ],
           include: srcPath,
           exclude: [
@@ -149,19 +144,19 @@ function getWebpackConfig(skyPagesConfig) {
           ]
         }
       ]
-
     },
 
     plugins: [
-
       new LoaderOptionsPlugin({
         debug: true,
         options: {
+          context: __dirname,
           skyPagesConfig: skyPagesConfig,
           tslint: {
             emitErrors: false,
             failOnHint: false,
-            resourcePath: 'src'
+            resourcePath: 'src',
+            typeCheck: true
           }
         }
       }),
@@ -181,10 +176,10 @@ function getWebpackConfig(skyPagesConfig) {
       new ContextReplacementPlugin(
         // The (\\|\/) piece accounts for path separators in *nix and Windows
         /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
-        skyPagesConfigUtil.spaPath('src') // location of your src
+        skyPagesConfigUtil.spaPath('src'), // location of your src
+        {}
       )
     ]
-
   };
 }
 

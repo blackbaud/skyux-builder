@@ -10,6 +10,9 @@ describe('skyux test', () => {
         expect(exit).toEqual(0);
         done();
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err);
+        done();
+      });
   });
 });

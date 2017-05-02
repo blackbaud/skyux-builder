@@ -4,7 +4,6 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const failPlugin = require('webpack-fail-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
@@ -100,15 +99,14 @@ function getWebpackConfig(skyPagesConfig) {
         },
         {
           test: /\.s?css$/,
-          loader: 'raw-loader!sass-loader'
+          use: [
+            'raw-loader',
+            'sass-loader'
+          ]
         },
         {
           test: /\.html$/,
           loader: 'raw-loader'
-        },
-        {
-          test: /\.json$/,
-          loader: 'json'
         }
       ]
     },
@@ -122,23 +120,29 @@ function getWebpackConfig(skyPagesConfig) {
         runtime: skyPagesConfig.runtime,
         skyux: skyPagesConfig.skyux
       }),
+
       new CommonsChunkPlugin({
         name: ['skyux', 'vendor', 'polyfills']
       }),
+
       new webpack.DefinePlugin({
         'skyPagesConfig': JSON.stringify(skyPagesConfig)
       }),
+
       new ProgressBarPlugin(),
-      failPlugin,
+
       new LoaderOptionsPlugin({
         options: {
+          context: __dirname,
           skyPagesConfig: skyPagesConfig
         }
       }),
+
       new ContextReplacementPlugin(
         // The (\\|\/) piece accounts for path separators in *nix and Windows
         /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
-        spaPath('src') // location of your src
+        spaPath('src'), // location of your src
+        {}
       )
     ]
   };

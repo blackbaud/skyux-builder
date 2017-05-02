@@ -16,7 +16,12 @@ describe('skyux serve', () => {
   beforeAll((done) => {
     common.prepareServe().then((port) => {
       url = `https://localhost:${port}/rrrrr-app-name/`;
-      browser.get(url).then(done);
+      browser.get(url)
+        .then(done)
+        .catch(err => {
+          console.log(err);
+          done();
+        });
     }, common.catchReject);
   });
 
@@ -27,21 +32,26 @@ describe('skyux serve', () => {
   it('should follow routerLink and render about component', tests.followRouterLinkRenderAbout);
 
   it('should should include script tags', (done) => {
-    browser.getPageSource().then(source => {
-      let previousIndex = -1;
-      [
-        'polyfills.js',
-        'vendor.js',
-        'skyux.js',
-        'app.js'
-      ].forEach(file => {
-        const currentIndex = source.indexOf(`<script src="${file}"></script>`);
-        expect(currentIndex).toBeGreaterThan(previousIndex);
-        previousIndex = currentIndex;
-      });
+    browser.getPageSource()
+      .then(source => {
+        let previousIndex = -1;
+        [
+          'polyfills.js',
+          'vendor.js',
+          'skyux.js',
+          'app.js'
+        ].forEach(file => {
+          const currentIndex = source.indexOf(`<script src="${file}"></script>`);
+          expect(currentIndex).toBeGreaterThan(previousIndex);
+          previousIndex = currentIndex;
+        });
 
-      done();
-    });
+        done();
+      })
+      .catch(err => {
+        console.log(err);
+        done();
+      });
   });
 
   it('should watch for existing file changes', (done) => {
@@ -49,11 +59,16 @@ describe('skyux serve', () => {
     const content = fs.readFileSync(file, 'utf8');
 
     common.bindServe().then(() => {
-      browser.get(url).then(() => {
-        expect($$('#ts').getText()).toEqual(timestamp);
-        fs.writeFileSync(file, content, 'utf8');
-        done();
-      });
+      browser.get(url)
+        .then(() => {
+          expect($$('#ts').getText()).toEqual(timestamp);
+          fs.writeFileSync(file, content, 'utf8');
+          done();
+        })
+        .catch(err => {
+          console.log(err);
+          done();
+        });
     }, common.catchReject);
 
     fs.writeFileSync(file, `${content}\n<p id="ts">${timestamp}</p>`, 'utf8');
@@ -66,12 +81,17 @@ describe('skyux serve', () => {
     const tag = `h1`;
 
     common.bindServe().then(() => {
-      browser.get(`${url}test-dir`).then(() => {
-        expect(element(by.tagName(tag)).getText()).toBe(message);
-        fs.unlinkSync(file);
-        fs.rmdirSync(folder);
-        done();
-      });
+      browser.get(`${url}test-dir`)
+        .then(() => {
+          expect(element(by.tagName(tag)).getText()).toBe(message);
+          fs.unlinkSync(file);
+          fs.rmdirSync(folder);
+          done();
+        })
+        .catch(err => {
+          console.log(err);
+          done();
+        });
     }, common.catchReject);
 
     if (!fs.existsSync(folder)) {

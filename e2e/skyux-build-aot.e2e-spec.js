@@ -7,7 +7,12 @@ describe('skyux build aot', () => {
 
   beforeAll((done) => {
     const opts = { mode: 'easy', name: 'dist', compileMode: 'aot' };
-    common.prepareBuild(opts).then(done);
+    common.prepareBuild(opts)
+      .then(done)
+      .catch(err => {
+        console.log(err);
+        done();
+      });
   });
 
   afterAll(common.afterAll);

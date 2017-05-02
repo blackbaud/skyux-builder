@@ -114,7 +114,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
         },
         {
           test: /\.ts$/,
-          loaders: [
+          use: [
             {
               loader: 'awesome-typescript-loader',
               options: {
@@ -124,14 +124,14 @@ function getWebpackConfig(argv, skyPagesConfig) {
                 ignoreDiagnostics: [2307]
               }
             },
-            'angular2-template-loader'
+            {
+              loader: 'angular2-template-loader'
+            }
           ]
         }
       ],
     },
     devServer: {
-      secure: false,
-      colors: true,
       compress: true,
       inline: true,
       contentBase: path.join(process.cwd(), 'src', 'app'),
@@ -153,6 +153,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
       new NamedModulesPlugin(),
       WebpackPluginDone,
       new LoaderOptionsPlugin({
+        context: __dirname,
         debug: true
       })
     ]
