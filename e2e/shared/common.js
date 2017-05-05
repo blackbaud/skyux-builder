@@ -77,7 +77,7 @@ function exec(cmd, args, opts) {
   cp.stderr.on('data', data => log(data));
 
   return new Promise((resolve, reject) => {
-    cp.on('error', err => reject(err));
+    cp.on('error', err => reject(log(err)));
     cp.on('exit', code => resolve(code));
   });
 }
@@ -117,11 +117,13 @@ function prepareBuild(config) {
     httpServer = HttpServer.createServer({ root: tmp });
 
     return new Promise((resolve, reject) => {
-      portfinder.getPortPromise().then(port => {
-        httpServer.listen(port, 'localhost', () => {
-          browser.get(`http://localhost:${port}/dist/`).then(resolve, reject);
-        });
-      });
+      portfinder.getPortPromise()
+        .then(port => {
+          httpServer.listen(port, 'localhost', () => {
+            browser.get(`http://localhost:${port}/dist/`).then(resolve, reject);
+          });
+        })
+        .catch(err => reject(err));
     });
   }
 

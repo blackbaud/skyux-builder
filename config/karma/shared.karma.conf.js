@@ -38,8 +38,6 @@ function getConfig(config) {
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
       reporters: [
-        // these reporters are incompatible with `istanbul-instrumenter-loader v1.0.0`
-        // use `v0.2.0` instead if you need to use these reporters
         { type: 'json' },
         { type: 'html' }
       ],

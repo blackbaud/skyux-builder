@@ -23,7 +23,12 @@ xdescribe('skyux e2e', () => {
   describe('with auth', () => {
     beforeAll((done) => {
       const opts = { mode: 'easy', name: 'dist', auth: true };
-      common.prepareBuild(opts).then(done);
+      common.prepareBuild(opts)
+        .then(done)
+        .catch(err => {
+          console.log(err);
+          done();
+        });
     });
 
     afterAll(common.afterAll);

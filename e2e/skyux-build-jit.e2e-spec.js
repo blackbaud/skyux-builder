@@ -7,7 +7,12 @@ describe('skyux build jit', () => {
 
   beforeAll((done) => {
     const opts = { mode: 'easy', name: 'dist', compileMode: 'jit' };
-    common.prepareBuild(opts).then(done);
+    common.prepareBuild(opts)
+      .then(done)
+      .catch(err => {
+        console.log(err);
+        done();
+      });
   });
 
   afterAll(common.afterAll);

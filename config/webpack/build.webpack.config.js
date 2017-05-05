@@ -19,7 +19,7 @@ function getWebpackConfig(skyPagesConfig) {
       rules: [
         {
           test: /\.ts$/,
-          loaders: [
+          use: [
             {
               loader: 'awesome-typescript-loader',
               options: {
@@ -29,7 +29,9 @@ function getWebpackConfig(skyPagesConfig) {
                 ignoreDiagnostics: [2307]
               }
             },
-            'angular2-template-loader'
+            {
+              loader: 'angular2-template-loader'
+            }
           ]
         }
       ]
@@ -39,8 +41,8 @@ function getWebpackConfig(skyPagesConfig) {
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,
         comments: false,
-        compress: { warnings: false },
-        mangle: { screw_ie8: true, keep_fnames: true }
+        mangle: { screw_ie8: true, keep_fnames: true },
+        sourceMap: true
       })
     ]
   });
