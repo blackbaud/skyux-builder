@@ -85,7 +85,10 @@ function getWebpackConfig(skyPagesConfig) {
         {
           enforce: 'post',
           loader: outPath('loader', 'sky-processor', 'postload'),
-          exclude: /node_modules/
+          exclude: [
+            /node_modules/,
+            /\.ts$/
+          ]
         },
         {
           test: /\.ts$/,
