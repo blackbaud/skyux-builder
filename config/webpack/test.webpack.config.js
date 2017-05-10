@@ -139,7 +139,8 @@ function getWebpackConfig(skyPagesConfig) {
             /node_modules/,
             /index\.ts/,
             /fixtures/,
-            /testing/
+            /testing/,
+            /src(\\|\/)app(\\|\/)lib/
           ]
         }
       ]
