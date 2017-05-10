@@ -1,3 +1,7 @@
+# 1.0.0-beta.24 (2017-05-10)
+
+- Bugfix: correctly returning a non-zero exit code if the `skyux build` command fails.
+
 # 1.0.0-beta.23 (2017-05-10)
 
 - Correctly displaying sourcemaps for TypeScript file. [#136](https://github.com/blackbaud/skyux-builder/pull/136)
