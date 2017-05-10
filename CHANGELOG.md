@@ -1,3 +1,8 @@
+# 1.0.0-beta.23 (2017-05-10)
+
+- Correctly displaying sourcemaps for TypeScript file. [#136](https://github.com/blackbaud/skyux-builder/pull/136)
+- Updated dependencies. [#133](https://github.com/blackbaud/skyux-builder/pull/133), [#137](https://github.com/blackbaud/skyux-builder/pull/137)
+
 # 1.0.0-beta.22 (2017-04-27)
 
 - Added ability for tokens to be provided via a token provider rather than always using `BBAuth` to obtain a token. [#129](https://github.com/blackbaud/skyux-builder/pull/129)
