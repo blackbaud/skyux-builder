@@ -10,6 +10,7 @@ const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin')
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
+const processExitCode = require('../../plugin/process-exit-code');
 
 function spaPath() {
   return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
@@ -138,7 +139,10 @@ function getWebpackConfig(skyPagesConfig) {
         /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
         spaPath('src'), // location of your src
         {}
-      )
+      ),
+
+      // Webpack 2 behavior does not correctly return non-zero exit code.
+      processExitCode
     ]
   };
 }
