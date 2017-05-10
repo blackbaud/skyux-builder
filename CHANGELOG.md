@@ -3,6 +3,8 @@
 - Correctly displaying sourcemaps for TypeScript file. [#136](https://github.com/blackbaud/skyux-builder/pull/136)
 - Updated dependencies. [#133](https://github.com/blackbaud/skyux-builder/pull/133)
 - Fixed dependency reference for `remap-istanbul`.
+- Excluding `src/app/lib/` folder from code coverage instrumentation.  [#135](https://github.com/blackbaud/skyux-builder/pull/135)
+- Allowing TSLint errors to fail the `skyux build` command. [#139](https://github.com/blackbaud/skyux-builder/pull/139)
 
 # 1.0.0-beta.22 (2017-04-27)
 
