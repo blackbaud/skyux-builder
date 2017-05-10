@@ -69,7 +69,11 @@ function getWebpackConfig(skyPagesConfig) {
           enforce: 'pre',
           test: /\.ts$/,
           loader: 'tslint-loader',
-          exclude: excludes
+          exclude: excludes,
+          options: {
+            emitErrors: true,
+            failOnHint: true
+          }
         },
         {
           enforce: 'pre',
