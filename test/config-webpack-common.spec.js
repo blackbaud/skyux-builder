@@ -94,4 +94,75 @@ describe('config webpack common', () => {
   it('should allow for an app-extras module to be provided by the SPA project', () => {
     validateAppExtras(true);
   });
+
+  it('should not bind to beforeExit if no errors', () => {
+    const processOnSpy = spyOn(process, 'on');
+    const lib = require('../config/webpack/common.webpack.config');
+    const config = lib.getWebpackConfig({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'processExitCode') {
+        plugin.apply({
+          plugin: (evt, cb) => {
+            switch (evt) {
+              case 'run':
+                cb(() => {}, () => {});
+              break;
+              case 'done':
+                cb({
+                  compilation: {}
+                });
+              break;
+            }
+          }
+        });
+      }
+    });
+
+    expect(processOnSpy).not.toHaveBeenCalled();
+  })
+
+  it('should pass a non-zero exit code to process.exit on errors', () => {
+    const processExitSpy = spyOn(process, 'exit');
+    const processOnSpy = spyOn(process, 'on').and.callFake((evt, cb) => {
+      if (evt === 'beforeExit') {
+        cb();
+      }
+    });
+    const lib = require('../config/webpack/common.webpack.config');
+    const config = lib.getWebpackConfig({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'processExitCode') {
+        plugin.apply({
+          plugin: (evt, cb) => {
+            switch (evt) {
+              case 'run':
+                cb(() => {}, () => {});
+              break;
+              case 'done':
+                cb({
+                  compilation: {
+                    errors: [
+                      'test-error'
+                    ]
+                  }
+                });
+              break;
+            }
+          }
+        });
+      }
+    });
+
+    expect(processOnSpy).toHaveBeenCalled();
+    expect(processExitSpy).toHaveBeenCalledWith(1);
+  });
+
 });
