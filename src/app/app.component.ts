@@ -15,7 +15,6 @@ import {
 
 import {
   BBOmnibar,
-  BBOmnibarConfig,
   BBOmnibarNavigation,
   BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
@@ -56,7 +55,7 @@ export class AppComponent implements OnInit {
     this.initShellComponents();
   }
 
-  private setParamsFromQS(omnibarConfig: BBOmnibarConfig) {
+  private setParamsFromQS(omnibarConfig: any) {
     const urlSearchParams = new URLSearchParams(
       this.windowRef.nativeWindow.location.search.substr(1)
     );
@@ -65,7 +64,7 @@ export class AppComponent implements OnInit {
     omnibarConfig.svcId = urlSearchParams.get('svcid');
   }
 
-  private setOnSearch(omnibarConfig: BBOmnibarConfig) {
+  private setOnSearch(omnibarConfig: any) {
     if (this.searchProvider) {
       omnibarConfig.onSearch = (searchArgs: BBOmnibarSearchArgs) => {
         return this.searchProvider.getSearchResults(searchArgs);
@@ -73,7 +72,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private setNav(omnibarConfig: BBOmnibarConfig) {
+  private setNav(omnibarConfig: any) {
     const baseUrl =
       (
         this.config.skyux.host.url +
@@ -122,7 +121,7 @@ export class AppComponent implements OnInit {
     const omnibarBootstrapConfig = this.config.skyux.omnibar;
 
     if (omnibarBootstrapConfig) {
-      const omnibarConfig: BBOmnibarConfig = {
+      const omnibarConfig = {
         serviceName: omnibarBootstrapConfig.serviceName,
         experimental: omnibarBootstrapConfig.experimental
       };
