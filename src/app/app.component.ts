@@ -119,18 +119,12 @@ export class AppComponent implements OnInit {
   }
 
   private initShellComponents() {
-    const omnibarBootstrapConfig = this.config.skyux.omnibar;
+    const omnibarConfig = this.config.skyux.omnibar;
 
-    if (omnibarBootstrapConfig) {
-      const omnibarConfig: BBOmnibarConfig = {
-        serviceName: omnibarBootstrapConfig.serviceName,
-        experimental: omnibarBootstrapConfig.experimental
-      };
-
+    if (omnibarConfig) {
       this.setParamsFromQS(omnibarConfig);
       this.setNav(omnibarConfig);
       this.setOnSearch(omnibarConfig);
-
       BBOmnibar.load(omnibarConfig);
     }
 
