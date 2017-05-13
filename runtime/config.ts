@@ -34,6 +34,7 @@ export interface SkyuxConfigHost {
 
 export interface SkyuxConfig {
   app?: SkyuxConfigApp;
+  appSettings?: any;
   auth?: boolean;
   cssPath?: string;
   command?: string;
