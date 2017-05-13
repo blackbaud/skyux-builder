@@ -124,7 +124,8 @@ export class AppComponent implements OnInit {
     if (omnibarBootstrapConfig) {
       const omnibarConfig: BBOmnibarConfig = {
         serviceName: omnibarBootstrapConfig.serviceName,
-        experimental: omnibarBootstrapConfig.experimental
+        experimental: omnibarBootstrapConfig.experimental,
+        signOutRedirectUrl: omnibarBootstrapConfig.signOutRedirectUrl
       };
 
       this.setParamsFromQS(omnibarConfig);
