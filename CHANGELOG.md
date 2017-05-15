@@ -1,9 +1,9 @@
 # 1.0.0-beta.25 (2017-05-15)
 
 - Added `appSettings` property to `skyuxconfig.json`. [#146](https://github.com/blackbaud/skyux-builder/pull/146)
-- Removed internal duplicate interface for AuthClient [#145](https://github.com/blackbaud/skyux-builder/pull/145), [#149](https://github.com/blackbaud/skyux-builder/pull/149)
-- Removed internal duplicate interface for HelpClient.  [#147](https://github.com/blackbaud/skyux-builder/pull/147)
-- Bugfix: Correctly exposing `SkyAppConfig.runtime.routes`. [#150](https://github.com/blackbaud/skyux-builder/pull/150)
+- Removed internal duplicate interface for AuthClient. [#145](https://github.com/blackbaud/skyux-builder/pull/145), [#149](https://github.com/blackbaud/skyux-builder/pull/149)
+- Removed internal duplicate interface for HelpClient. [#147](https://github.com/blackbaud/skyux-builder/pull/147)
+- Bugfix: Correctly expose `SkyAppConfig.runtime.routes`. [#150](https://github.com/blackbaud/skyux-builder/pull/150)
 
 # 1.0.0-beta.24 (2017-05-10)
 
