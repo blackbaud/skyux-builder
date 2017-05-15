@@ -150,12 +150,24 @@ BBAuth.mock = true;`);
   it('should add routes to skyPagesConfig.runtime', () => {
     const routeGenerator = require('../lib/sky-pages-route-generator');
     const config = {
-      runtime: runtimeUtils.getDefaultRuntime(),
+      runtime: runtimeUtils.getDefaultRuntime({
+        routes: [{
+          routePath: 'fake-path',
+          routeParams: [
+            'fake-param'
+          ]
+        }]
+      }),
       skyux: {}
     };
-    const routes = routeGenerator.getRoutes(config);
-    const source = generator.getSource(config);
 
-    expect(source).toContain(JSON.stringify(routes.routesForConfig));
+    const routeGeneratorGetRoutes = routeGenerator.getRoutes;
+    spyOn(routeGenerator, 'getRoutes').and.callFake(() => {
+      return routeGeneratorGetRoutes(config);
+    });
+
+
+    const source = generator.getSource(config);
+    expect(source).toContain(JSON.stringify(config));
   });
 });
