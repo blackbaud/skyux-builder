@@ -31,6 +31,40 @@ import {
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
 require('style-loader!./app.component.scss');
 
+function fixUpNavItems(items: any[], baseUrl: string) {
+  for (const item of items) {
+    if (!item.url && item.route) {
+      item.url = baseUrl + item.route;
+    }
+
+    if (item.items) {
+      fixUpNavItems(item.items, baseUrl);
+    }
+  }
+}
+
+function fixUpNav(nav: any, baseUrl: string) {
+  const services = nav.services;
+
+  if (services && services.length > 0) {
+    let foundSelectedService = false;
+
+    for (const service of services) {
+      if (service.items) {
+        fixUpNavItems(service.items, baseUrl);
+      }
+
+      if (service.selected) {
+        foundSelectedService = true;
+      }
+    }
+
+    if (!foundSelectedService) {
+      services[0].selected = true;
+    }
+  }
+}
+
 @Component({
   selector: 'sky-pages-app',
   templateUrl: './app.component.html'
@@ -73,13 +107,22 @@ export class AppComponent implements OnInit {
   }
 
   private setNav(omnibarConfig: any) {
+    const skyuxConfig = this.config.skyux;
+
     const baseUrl =
       (
-        this.config.skyux.host.url +
+        skyuxConfig.host.url +
         this.config.runtime.app.base.substr(0, this.config.runtime.app.base.length - 1)
       ).toLowerCase();
 
-    const nav = new BBOmnibarNavigation();
+    let nav: BBOmnibarNavigation;
+
+    if (omnibarConfig.nav) {
+      nav = omnibarConfig.nav;
+      fixUpNav(nav, baseUrl);
+    } else {
+      nav = omnibarConfig.nav = new BBOmnibarNavigation();
+    }
 
     nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
       const url = item.url.toLowerCase();
@@ -94,8 +137,9 @@ export class AppComponent implements OnInit {
     if (this.config.runtime.command === 'serve') {
       // Add any global routes to the omnibar as a convenience to the developer.
       const globalRoutes =
-        this.config.skyux.publicRoutes &&
-        this.config.skyux.publicRoutes.filter((value: any) => {
+        skyuxConfig.routes &&
+        skyuxConfig.routes.public &&
+        skyuxConfig.routes.public.filter((value: any) => {
           return value.global;
         });
 
@@ -113,8 +157,6 @@ export class AppComponent implements OnInit {
         nav.localNavItems = localNavItems;
       }
     }
-
-    omnibarConfig.nav = nav;
   }
 
   private initShellComponents() {
