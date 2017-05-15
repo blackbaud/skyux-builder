@@ -41,6 +41,7 @@ export interface SkyuxConfigHelp {
   caseCentralUrl?: string;
   helpCenterUrl?: string;
   hideUndock?: boolean;
+  useFlareSearch?: boolean;
   getChatData?(): any;
   getCurrentHelpKey(): string;
 }
