@@ -40,6 +40,7 @@ export interface SkyuxConfigHelp {
   knowledgebaseUrl?: string;
   caseCentralUrl?: string;
   helpCenterUrl?: string;
+  showWidgetOnMobile?: boolean;
   hideUndock?: boolean;
   getChatData?(): any;
   getCurrentHelpKey(): string;
