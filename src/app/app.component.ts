@@ -11,7 +11,6 @@ import {
 
 import {
   BBOmnibar,
-  BBOmnibarConfig,
   BBOmnibarNavigation,
   BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
@@ -59,13 +58,11 @@ export class AppComponent implements OnInit {
   // Only pass params that omnibar config cares about
   private setParamsFromQS(omnibarConfig: BBOmnibarConfig) {
     this.config.runtime.params.getAllKeys().forEach(key => {
-      if (omnibarConfig[key]) {
-        omnibarConfig[key] = this.config.runtime.params.get(key);
-      }
+      omnibarConfig[key] = this.config.runtime.params.get(key);
     });
   }
 
-  private setOnSearch(omnibarConfig: BBOmnibarConfig) {
+  private setOnSearch(omnibarConfig: any) {
     if (this.searchProvider) {
       omnibarConfig.onSearch = (searchArgs: BBOmnibarSearchArgs) => {
         return this.searchProvider.getSearchResults(searchArgs);
@@ -73,7 +70,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private setNav(omnibarConfig: BBOmnibarConfig) {
+  private setNav(omnibarConfig: any) {
     const baseUrl =
       (
         this.config.skyux.host.url +
@@ -119,18 +116,12 @@ export class AppComponent implements OnInit {
   }
 
   private initShellComponents() {
-    const omnibarBootstrapConfig = this.config.skyux.omnibar;
+    const omnibarConfig = this.config.skyux.omnibar;
 
-    if (omnibarBootstrapConfig) {
-      const omnibarConfig: BBOmnibarConfig = {
-        serviceName: omnibarBootstrapConfig.serviceName,
-        experimental: omnibarBootstrapConfig.experimental
-      };
-
+    if (omnibarConfig) {
       this.setParamsFromQS(omnibarConfig);
       this.setNav(omnibarConfig);
       this.setOnSearch(omnibarConfig);
-
       BBOmnibar.load(omnibarConfig);
     }
 

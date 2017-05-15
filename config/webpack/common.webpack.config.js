@@ -8,6 +8,7 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+const processExitCode = require('../../plugin/process-exit-code');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
 
@@ -93,11 +94,6 @@ function getWebpackConfig(skyPagesConfig) {
           exclude: /node_modules/
         },
         {
-          enforce: 'post',
-          loader: outPath('loader', 'sky-processor', 'postload'),
-          exclude: /node_modules/
-        },
-        {
           test: /\.s?css$/,
           use: [
             'raw-loader',
@@ -143,7 +139,10 @@ function getWebpackConfig(skyPagesConfig) {
         /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
         spaPath('src'), // location of your src
         {}
-      )
+      ),
+
+      // Webpack 2 behavior does not correctly return non-zero exit code.
+      processExitCode
     ]
   };
 }

@@ -1,3 +1,22 @@
+# 1.0.0-beta.25 (2017-05-15)
+
+- Added `appSettings` property to `skyuxconfig.json`. [#146](https://github.com/blackbaud/skyux-builder/pull/146)
+- Removed internal duplicate interface for AuthClient. [#145](https://github.com/blackbaud/skyux-builder/pull/145), [#149](https://github.com/blackbaud/skyux-builder/pull/149)
+- Removed internal duplicate interface for HelpClient. [#147](https://github.com/blackbaud/skyux-builder/pull/147)
+- Bugfix: Correctly expose `SkyAppConfig.runtime.routes`. [#150](https://github.com/blackbaud/skyux-builder/pull/150)
+
+# 1.0.0-beta.24 (2017-05-10)
+
+- Bugfix: Correctly return a non-zero exit code if the `skyux build` command fails.
+
+# 1.0.0-beta.23 (2017-05-10)
+
+- Correctly displaying sourcemaps for TypeScript file. [#136](https://github.com/blackbaud/skyux-builder/pull/136)
+- Updated dependencies. [#133](https://github.com/blackbaud/skyux-builder/pull/133)
+- Fixed dependency reference for `remap-istanbul`.
+- Excluding `src/app/lib/` folder from code coverage instrumentation.  [#135](https://github.com/blackbaud/skyux-builder/pull/135)
+- Allowing TSLint errors to fail the `skyux build` command. [#139](https://github.com/blackbaud/skyux-builder/pull/139)
+
 # 1.0.0-beta.22 (2017-04-27)
 
 - Added ability for tokens to be provided via a token provider rather than always using `BBAuth` to obtain a token. [#129](https://github.com/blackbaud/skyux-builder/pull/129)

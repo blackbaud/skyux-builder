@@ -30,34 +30,18 @@ export interface SkyuxConfigApp {
   title?: string;
 }
 
-// https://github.com/blackbaud/bb-help#configuration
-export interface SkyuxConfigHelp {
-  productId: string;
-  helpBaseUrl: string;
-  locale?: string;
-  customLocales?: string;
-  headerColor?: string;
-  headerTextColor?: string;
-  trainingCentralUrl?: string;
-  knowledgebaseUrl?: string;
-  caseCentralUrl?: string;
-  helpCenterUrl?: string;
-  hideUndock?: boolean;
-  getChatData?(): any;
-  getCurrentHelpKey(): string;
-}
-
 export interface SkyuxConfigHost {
   url?: string;
 }
 
 export interface SkyuxConfig {
   app?: SkyuxConfigApp;
+  appSettings?: any;
   auth?: boolean;
   cssPath?: string;
   command?: string;
   compileMode?: string;
-  help?: SkyuxConfigHelp;
+  help?: any;
   host?: SkyuxConfigHost;
   importPath?: string;
   mode?: string;

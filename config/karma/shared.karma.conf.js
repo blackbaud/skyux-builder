@@ -58,6 +58,10 @@ function getConfig(config) {
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
+    browserDisconnectTimeout: 3e5,
+    browserDisconnectTolerance: 3,
+    browserNoActivityTimeout: 3e5,
+    captureTimeout: 3e5,
     autoWatch: false,
     singleRun: true,
     failOnEmptyTestSuite: false

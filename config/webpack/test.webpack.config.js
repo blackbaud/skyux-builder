@@ -15,6 +15,7 @@ function getWebpackConfig(skyPagesConfig) {
   const DefinePlugin = require('webpack/lib/DefinePlugin');
   const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
   const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+  const processExitCode = require('../../plugin/process-exit-code');
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
   const aliasBuilder = require('./alias-builder');
 
@@ -69,7 +70,11 @@ function getWebpackConfig(skyPagesConfig) {
           enforce: 'pre',
           test: /\.ts$/,
           loader: 'tslint-loader',
-          exclude: excludes
+          exclude: excludes,
+          options: {
+            emitErrors: true,
+            failOnHint: true
+          }
         },
         {
           enforce: 'pre',
@@ -80,11 +85,6 @@ function getWebpackConfig(skyPagesConfig) {
         {
           enforce: 'pre',
           loader: outPath('loader', 'sky-processor', 'preload'),
-          exclude: /node_modules/
-        },
-        {
-          enforce: 'post',
-          loader: outPath('loader', 'sky-processor', 'postload'),
           exclude: /node_modules/
         },
         {
@@ -140,7 +140,8 @@ function getWebpackConfig(skyPagesConfig) {
             /node_modules/,
             /index\.ts/,
             /fixtures/,
-            /testing/
+            /testing/,
+            /src(\\|\/)app(\\|\/)lib/
           ]
         }
       ]
@@ -178,7 +179,10 @@ function getWebpackConfig(skyPagesConfig) {
         /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
         skyPagesConfigUtil.spaPath('src'), // location of your src
         {}
-      )
+      ),
+
+      // Webpack 2 behavior does not correctly return non-zero exit code.
+      processExitCode
     ]
   };
 }
