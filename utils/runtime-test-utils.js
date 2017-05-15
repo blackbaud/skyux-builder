@@ -23,5 +23,18 @@ module.exports = {
       skyuxPathAlias: '@blackbaud/skyux/dist',
       useTemplateUrl: false
     }, runtime);
+  },
+
+  getDefaultSkyux: function (skyux) {
+    return merge.recursive({
+      host: {
+        url: ''
+      },
+      mode: '',
+      params: [
+        'envid',
+        'svcid'
+      ]
+    }, skyux);
   }
 };

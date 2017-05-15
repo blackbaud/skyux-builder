@@ -49,6 +49,11 @@ function getConfig(config) {
       noInfo: true,
       stats: 'minimal'
     },
+
+    // This flag allows console.log calls to come through the cli
+    browserConsoleLogOptions: {
+      level: 'log'
+    },
     reporters: ['mocha', 'coverage'],
     port: 9876,
     colors: true,

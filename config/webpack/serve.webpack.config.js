@@ -17,18 +17,16 @@ const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
 
 /**
  * Returns the querystring base for parameters allowed to be passed through.
+ * PLEASE NOTE: The method is nearly duplicated in `runtime/params.ts`.
  * @name getQueryStringFromArgv
  * @param {Object} argv
+ * @param {SkyPagesConfig} skyPagesConfig
  * @returns {string}
  */
-function getQueryStringFromArgv(argv) {
-  const allowed = [
-    'envid',
-    'svcid'
-  ];
+function getQueryStringFromArgv(argv, skyPagesConfig) {
 
   let found = [];
-  allowed.forEach(param => {
+  skyPagesConfig.skyux.params.forEach(param => {
     if (argv[param]) {
       found.push(`${param}=${encodeURIComponent(argv[param])}`);
     }
@@ -57,7 +55,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
     this.plugin('done', (stats) => {
       if (!launched) {
 
-        const queryStringBase = getQueryStringFromArgv(argv);
+        const queryStringBase = getQueryStringFromArgv(argv, skyPagesConfig);
         let localUrl = util.format(
           'https://localhost:%s%s',
           this.options.devServer.port,

@@ -5,10 +5,6 @@ import {
 } from '@angular/core';
 
 import {
-  URLSearchParams
-} from '@angular/http';
-
-import {
   NavigationEnd,
   Router
 } from '@angular/router';
@@ -45,24 +41,28 @@ export class AppComponent implements OnInit {
   ) { }
 
   public ngOnInit() {
+
+    // Filter params through paramsAllowed
+    this.config.runtime.params.parse(this.windowRef.nativeWindow.location);
+
     // Without this code, navigating to a new route doesn't cause the window to be
     // scrolled to the top like the browser does automatically with non-SPA navigation.
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
-        window.scroll(0, 0);
+        this.windowRef.nativeWindow.scroll(0, 0);
       }
     });
 
     this.initShellComponents();
   }
 
+  // Only pass params that omnibar config cares about
   private setParamsFromQS(omnibarConfig: BBOmnibarConfig) {
-    const urlSearchParams = new URLSearchParams(
-      this.windowRef.nativeWindow.location.search.substr(1)
-    );
-
-    omnibarConfig.envId = urlSearchParams.get('envid');
-    omnibarConfig.svcId = urlSearchParams.get('svcid');
+    this.config.runtime.params.getAllKeys().forEach(key => {
+      if (omnibarConfig[key]) {
+        omnibarConfig[key] = this.config.runtime.params.get(key);
+      }
+    });
   }
 
   private setOnSearch(omnibarConfig: BBOmnibarConfig) {
