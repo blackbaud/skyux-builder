@@ -48,7 +48,10 @@ export interface SkyuxConfig {
   name?: string;
   params?: string[]; // Array of allowed params
   plugins?: string[];
-  publicRoutes?: any[];
+  routes?: {
+    public: any[],
+    referenced: any[]
+  };
   omnibar?: any;
 }
 
