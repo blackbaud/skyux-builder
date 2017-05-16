@@ -49,7 +49,7 @@ function getConfig(config) {
   config.set({
     webpack: webpackConfig,
     coverageReporter: {
-      dir: path.join(process.cwd(), 'coverage-src-app')
+      dir: path.join(process.cwd(), 'coverage', 'src-app')
     }
   });
 }

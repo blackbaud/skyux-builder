@@ -90,7 +90,7 @@ export class AppComponent implements OnInit {
   }
 
   // Only pass params that omnibar config cares about
-  private setParamsFromQS(omnibarConfig: BBOmnibarConfig) {
+  private setParamsFromQS(omnibarConfig: any) {
     this.config.runtime.params.getAllKeys().forEach(key => {
       omnibarConfig[key] = this.config.runtime.params.get(key);
     });
