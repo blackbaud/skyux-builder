@@ -19,7 +19,8 @@ function resolve(root, args) {
 }
 
 function readConfig(file) {
-  return JSON.parse(fs.readFileSync(file, 'utf8'));
+  let bomFreeFile = fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, '');
+  return JSON.parse(bomFreeFile);
 }
 
 module.exports = {
