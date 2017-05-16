@@ -18,7 +18,6 @@ import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/mergeMap';
 
 import { SkyAppWindowRef } from '@blackbaud/skyux-builder/runtime/window-ref';
-
 import { SkyAuthTokenProvider } from '@blackbaud/skyux-builder/runtime/auth-token-provider';
 
 @Injectable()

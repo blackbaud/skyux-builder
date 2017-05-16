@@ -16,7 +16,7 @@ let config = {
   },
   onPrepare: () => {
 
-    const url = 'https://github.com/blackbaud/skyux-template';
+    const url = 'https://github.com/blackbaud/skyux-template.git#update-package-dependencies';
     jasmine.getEnv().addReporter(new SpecReporter());
 
     return new Promise((resolve, reject) => {
