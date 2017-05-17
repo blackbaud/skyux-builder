@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const merge = require('merge');
 const logger = require('winston');
@@ -19,8 +19,7 @@ function resolve(root, args) {
 }
 
 function readConfig(file) {
-  let bomFreeFile = fs.readFileSync(file, 'utf8').replace(/^\uFEFF/, '');
-  return JSON.parse(bomFreeFile);
+  return fs.readJsonSync(file, 'utf8');
 }
 
 module.exports = {
