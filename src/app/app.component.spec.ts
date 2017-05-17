@@ -2,9 +2,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 
-import { SkyAppConfig, SkyAppWindowRef } from '@blackbaud/skyux-builder/runtime';
+import {
+  SkyAppConfig,
+  SkyAppSearchResultsProvider,
+  SkyAppWindowRef
+} from '@blackbaud/skyux-builder/runtime';
 import { BBHelp } from '@blackbaud/help-client';
-import { BBOmnibar } from '@blackbaud/auth-client';
+import { BBOmnibar, BBOmnibarSearchArgs } from '@blackbaud/auth-client';
 
 import { AppComponent } from './app.component';
 
@@ -13,6 +17,7 @@ describe('AppComponent', () => {
   let comp: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let parseParams: any;
+  let searchArgs: BBOmnibarSearchArgs;
   let navigateByUrlParams: any;
   let subscribeHandler: any;
   let scrollCalled: boolean = false;
@@ -36,7 +41,41 @@ describe('AppComponent', () => {
     }
   };
 
-  function setup(config) {
+  function setup(config: any, includeSearchProvider?: boolean) {
+    let providers = [
+      {
+        provide: Router,
+        useValue: {
+          events: {
+            subscribe: handler => subscribeHandler = handler
+          },
+          navigateByUrl: url => navigateByUrlParams = url
+        }
+      },
+      {
+        provide: SkyAppWindowRef,
+        useValue: {
+          nativeWindow: {
+            location: location,
+            scroll: () => scrollCalled = true
+          }
+        }
+      },
+      {
+        provide: SkyAppConfig,
+        useValue: config
+      }
+    ];
+
+    if (includeSearchProvider) {
+      providers.push({
+        provide: SkyAppSearchResultsProvider,
+        useValue: {
+          getSearchResults: sa => searchArgs = sa
+        }
+      });
+    }
+
     return TestBed.configureTestingModule({
       declarations: [
         AppComponent
@@ -44,30 +83,7 @@ describe('AppComponent', () => {
       imports: [
         RouterTestingModule
       ],
-      providers: [
-        {
-          provide: Router,
-          useValue: {
-            events: {
-              subscribe: handler => subscribeHandler = handler
-            },
-            navigateByUrl: url => navigateByUrlParams = url
-          }
-        },
-        {
-          provide: SkyAppWindowRef,
-          useValue: {
-            nativeWindow: {
-              location: location,
-              scroll: () => scrollCalled = true
-            }
-          }
-        },
-        {
-          provide: SkyAppConfig,
-          useValue: config
-        }
-      ]
+      providers: providers
     })
     .compileComponents()
     .then(() => {
@@ -123,11 +139,39 @@ describe('AppComponent', () => {
   }));
 
   it('should set the onSearch property if a search provider is provided', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.skyux.omnibar = {};
+    setup(skyAppConfig, true).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].onSearch).toBeDefined();
+    });
+  }));
 
+  it('should call the search provider getSearchResults in the onSearch callback', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.skyux.omnibar = {};
+    setup(skyAppConfig, true).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].onSearch).toBeDefined();
+
+      const search = {
+        searchText: 'test-search'
+      };
+      spyOmnibar.calls.first().args[0].onSearch(search);
+      expect(searchArgs).toEqual(search);
+    });
   }));
 
   it('should set the allowed params on the omnibar config', async(() => {
-
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.skyux.omnibar = {};
+    skyAppConfig.skyux.params = ['asdf'];
+    skyAppConfig.runtime.params.getAllKeys = () => ['asdf'];
+    skyAppConfig.runtime.params.get = (key) => 'jkl';
+    setup(skyAppConfig, true).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].asdf).toEqual('jkl');
+    });
   }));
 
   it('should not create BBOmnibarNavigation if the omnibar nav property is set', async(() => {
@@ -135,6 +179,18 @@ describe('AppComponent', () => {
   }));
 
   it('should create BBOmnibarNavigation if the omnibar nav property is not set', async(() => {
+
+  }));
+
+  it('should add the beforeNavCallback', async(() => {
+
+  }));
+
+  it('should call navigateByUrl, return false in the beforeNavCallback if local link', async(() => {
+
+  }));
+
+  it('should add global routes to omnibar during serve', async(() => {
 
   }));
 
