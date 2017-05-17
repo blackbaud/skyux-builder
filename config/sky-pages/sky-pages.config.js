@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const merge = require('merge');
 const logger = require('winston');
@@ -19,7 +19,7 @@ function resolve(root, args) {
 }
 
 function readConfig(file) {
-  return JSON.parse(fs.readFileSync(file, 'utf8'));
+  return fs.readJsonSync(file, 'utf8');
 }
 
 module.exports = {
