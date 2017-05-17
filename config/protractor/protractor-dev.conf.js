@@ -21,7 +21,16 @@ let config = {
 
     return new Promise((resolve, reject) => {
       common.exec(`rm`, [`-rf`, `${common.tmp}`])
-        .then(() => common.exec(`git`, [`clone`, `${url}`, `${common.tmp}`]))
+
+        .then(() => common.exec(`git`, [
+          `clone`,
+          `-b`,
+          `update-package-dependencies`,
+          `--single-branch`,
+          `${url}`,
+          `${common.tmp}`
+        ]))
+
         .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
         .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
         .then(resolve)
