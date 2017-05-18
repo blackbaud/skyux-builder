@@ -22,7 +22,7 @@ describe('cli test', () => {
       };
     });
 
-    require('../cli/test')(cmd);
+    require('../cli/test')(cmd, {});
     expect(found).toEqual(true);
     mock.stop('cross-spawn');
 
@@ -45,7 +45,7 @@ describe('cli test', () => {
       };
     });
 
-    require('../cli/test')(cmd);
+    require('../cli/test')(cmd, {});
     expect(found).toEqual(true);
     mock.stop('cross-spawn');
 
@@ -65,10 +65,27 @@ describe('cli test', () => {
       };
     });
 
-    require('../cli/test')(cmd);
+    require('../cli/test')(cmd, {});
     expect(argv.command).toEqual(cmd);
     mock.stop('cross-spawn');
 
+  });
+
+  it('should pass the --no-coverage flag to karma', () => {
+    const cmd = 'CUSTOM_CMD';
+    let argv;
+
+    const minimist = require('minimist');
+    mock('cross-spawn', (node, flags) => {
+      argv = minimist(flags);
+      return {
+        on: () => {}
+      };
+    });
+
+    require('../cli/test')(cmd, { coverage: false });
+    expect(argv.coverage).toEqual('false');
+    mock.stop('cross-spawn');
   });
 
   it('should pass the exitCode', (done) => {
@@ -87,7 +104,7 @@ describe('cli test', () => {
       }
     }));
 
-    require('../cli/test')('test');
+    require('../cli/test')('test', {});
     mock.stop('cross-spawn');
 
   });

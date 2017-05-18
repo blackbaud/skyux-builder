@@ -5,10 +5,15 @@
  * Spawns the karam start command.
  * @name test
  */
-function test(command) {
+function test(command, argv) {
 
   const path = require('path');
   const spawn = require('cross-spawn');
+
+  let runCoverage = 'true';
+  if (argv && argv.coverage === false) {
+    runCoverage = 'false';
+  }
 
   const karmaConfigPath = path.resolve(
     __dirname,
@@ -22,7 +27,9 @@ function test(command) {
     'start',
     karmaConfigPath,
     '--command',
-    command
+    command,
+    '--coverage',
+    runCoverage
   ];
 
   const options = {
