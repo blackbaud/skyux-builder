@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.0.0-beta.25",
+  "version": "1.0.0-beta.26",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/blackbaud/skyux-builder#readme",
   "peerDependencies": {
-    "@blackbaud/skyux": "2.0.0-beta.26"
+    "@blackbaud/skyux": "blackbaud/skyux2#ng4-upgrade-revert"
   },
   "dependencies": {
     "@angular/common": "4.1.2",
@@ -39,7 +39,7 @@
     "@angular/platform-browser": "4.1.2",
     "@angular/platform-browser-dynamic": "4.1.2",
     "@angular/router": "4.1.2",
-    "@blackbaud/auth-client": "1.4.0",
+    "@blackbaud/auth-client": "1.5.0",
     "@blackbaud/help-client": "1.0.1",
     "@ngtools/webpack": "1.3.1",
     "@types/core-js": "^0.9.41",

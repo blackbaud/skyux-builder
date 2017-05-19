@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const logger = require('winston');
 
 describe('config sky-pages', () => {
@@ -25,7 +25,7 @@ describe('config sky-pages', () => {
 
   it('should load the config files that exist in order', () => {
     const tempSpaReference = 'SPA_REFERENCE';
-    const readFileSync = fs.readFileSync;
+    const readFileSync = fs.readJsonSync;
     const existsSync = fs.existsSync;
 
     spyOn(logger, 'info');
@@ -46,7 +46,7 @@ describe('config sky-pages', () => {
       return existsSync(filename);
     });
 
-    spyOn(fs, 'readFileSync').and.callFake((filename, encoding) => {
+    spyOn(fs, 'readJsonSync').and.callFake((filename, encoding) => {
 
       const isSpaDirectory = filename.includes(tempSpaReference);
       const isDefaultConfig = filename.includes('skyuxconfig.json');
@@ -89,11 +89,11 @@ describe('config sky-pages', () => {
           config.w = 6; // Unique to this file
         }
 
-        return JSON.stringify(config);
+        return config;
       }
 
       // Pass through normal behavior
-      return readFileSync(filename, encoding);
+      return readJsonSync(filename, encoding);
     });
 
     const lib = require('../config/sky-pages/sky-pages.config');
