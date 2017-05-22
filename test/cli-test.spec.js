@@ -22,7 +22,7 @@ describe('cli test', () => {
       };
     });
 
-    require('../cli/test')(cmd, {});
+    require('../cli/test')(cmd);
     expect(found).toEqual(true);
     mock.stop('cross-spawn');
 
@@ -45,7 +45,7 @@ describe('cli test', () => {
       };
     });
 
-    require('../cli/test')(cmd, {});
+    require('../cli/test')(cmd);
     expect(found).toEqual(true);
     mock.stop('cross-spawn');
 
@@ -65,7 +65,7 @@ describe('cli test', () => {
       };
     });
 
-    require('../cli/test')(cmd, {});
+    require('../cli/test')(cmd);
     expect(argv.command).toEqual(cmd);
     mock.stop('cross-spawn');
 
