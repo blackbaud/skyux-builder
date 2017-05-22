@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
 
-function getWebpackConfig(argv, skyPagesConfig) {
+function getWebpackConfig(skyPagesConfig, argv = {}) {
 
   function spaPath() {
     return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
@@ -163,7 +163,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
     ]
   };
 
-  if (argv.coverage === 'true') {
+  if (argv.coverage !== false) {
     config.module.rules.push({
       enforce: 'post',
       test: /\.(js|ts)$/,

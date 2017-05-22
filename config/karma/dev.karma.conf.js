@@ -17,7 +17,7 @@ function getConfig(config) {
 
   const runtimePath = path.resolve(process.cwd(), 'runtime');
   const skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig('test');
-  let webpackConfig = testWebpackConfig.getWebpackConfig({}, skyPagesConfig);
+  let webpackConfig = testWebpackConfig.getWebpackConfig(skyPagesConfig);
 
   // Import shared karma config
   testKarmaConf(config);

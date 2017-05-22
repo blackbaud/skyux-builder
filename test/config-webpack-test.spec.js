@@ -8,9 +8,7 @@ describe('config webpack common', () => {
   let skyPagesConfig;
 
   beforeEach(() => {
-    argv = {
-      coverage: 'true'
-    };
+    argv = {};
     skyPagesConfig = {
       skyux: {
         mode: 'advanced'
@@ -26,14 +24,25 @@ describe('config webpack common', () => {
 
   it('should return a config object', () => {
     const lib = require('../config/webpack/test.webpack.config');
-    const config = lib.getWebpackConfig(argv, skyPagesConfig);
+    const config = lib.getWebpackConfig(skyPagesConfig);
     expect(config).toEqual(jasmine.any(Object));
   });
 
-  it('should not run coverage if argv.coverage is false', () => {
-    argv.coverage = 'false';
+  it('should run coverage by default', () => {
     const lib = require('../config/webpack/test.webpack.config');
-    const config = lib.getWebpackConfig(argv, skyPagesConfig);
+    const config = lib.getWebpackConfig(skyPagesConfig);
+
+    let instrumentLoader = config.module.rules.filter(rule => {
+      return (rule.use && rule.use[0].loader === 'istanbul-instrumenter-loader');
+    })[0];
+
+    expect(instrumentLoader).toBeDefined();
+  });
+
+  it('should not run coverage if argv.coverage is false', () => {
+    argv.coverage = false;
+    const lib = require('../config/webpack/test.webpack.config');
+    const config = lib.getWebpackConfig(skyPagesConfig, argv);
 
     let instrumentLoader = config.module.rules.filter(rule => {
       return (rule.use && rule.use[0].loader === 'istanbul-instrumenter-loader');

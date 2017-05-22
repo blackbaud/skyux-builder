@@ -71,20 +71,35 @@ describe('cli test', () => {
 
   });
 
+  it('should pass the --coverage flag to karma by default', () => {
+    const cmd = 'CUSTOM_CMD';
+    let found = false;
+
+    mock('cross-spawn', (node, flags) => {
+      found = flags.includes('--coverage');
+      return {
+        on: () => {}
+      };
+    });
+
+    require('../cli/test')(cmd);
+    expect(found).toEqual(true);
+    mock.stop('cross-spawn');
+  });
+
   it('should pass the --no-coverage flag to karma', () => {
     const cmd = 'CUSTOM_CMD';
-    let argv;
+    let found = false;
 
-    const minimist = require('minimist');
     mock('cross-spawn', (node, flags) => {
-      argv = minimist(flags);
+      found = flags.includes('--no-coverage');
       return {
         on: () => {}
       };
     });
 
     require('../cli/test')(cmd, { coverage: false });
-    expect(argv.coverage).toEqual('false');
+    expect(found).toEqual(true);
     mock.stop('cross-spawn');
   });
 
