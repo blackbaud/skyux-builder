@@ -119,7 +119,7 @@ describe('cli test', () => {
       }
     }));
 
-    require('../cli/test')('test', {});
+    require('../cli/test')('test');
     mock.stop('cross-spawn');
 
   });
