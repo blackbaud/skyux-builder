@@ -83,7 +83,7 @@ function spawnProtractor(chunks, port, skyPagesConfig) {
     }
   };
   trimmedConfig.skyux.name = skyPagesConfig.skyux.name;
-  trimmedConfig.skyux.home.url = skyPagesConfig.skyux.host.url;
+  trimmedConfig.skyux.host.url = skyPagesConfig.skyux.host.url;
   trimmedConfig.skyux.app.externals = skyPagesConfig.skyux.app.externals;
 
   const protractor = spawn.spawn(
