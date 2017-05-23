@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
 
-function getWebpackConfig(skyPagesConfig, argv = {}) {
+function getWebpackConfig(skyPagesConfig, argv) {
 
   function spaPath() {
     return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
@@ -20,6 +20,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
   const aliasBuilder = require('./alias-builder');
 
+  const runCoverage = (!argv || argv.coverage !== false);
   skyPagesConfig.runtime.includeRouteModule = false;
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
@@ -163,7 +164,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     ]
   };
 
-  if (argv.coverage !== false) {
+  if (runCoverage) {
     config.module.rules.push({
       enforce: 'post',
       test: /\.(js|ts)$/,
