@@ -77,6 +77,17 @@ function spawnProtractor(chunks, port, skyPagesConfig) {
     'protractor'
   );
 
+  // Generate a trimmed-down version of skyPagesConfig to pass to host-utils.js
+  let trimmedConfig = {
+    skyux: {
+      host: {},
+      app: {}
+    }
+  };
+  trimmedConfig.skyux.name = skyPagesConfig.skyux.name;
+  trimmedConfig.skyux.host.url = skyPagesConfig.skyux.host.url;
+  trimmedConfig.skyux.app.externals = skyPagesConfig.skyux.app.externals;
+
   const protractor = spawn.spawn(
     protractorPath,
     [
@@ -84,7 +95,7 @@ function spawnProtractor(chunks, port, skyPagesConfig) {
       `--baseUrl ${skyPagesConfig.skyux.host.url}`,
       `--params.localUrl=https://localhost:${port}`,
       `--params.chunks=${JSON.stringify(chunks)}`,
-      `--params.skyPagesConfig=${JSON.stringify(skyPagesConfig)}`
+      `--params.skyPagesConfig=${JSON.stringify(trimmedConfig)}`
     ],
     spawnOptions
   );
