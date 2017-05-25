@@ -26,7 +26,7 @@ import {
   SkyAppConfig,
   SkyAppSearchResultsProvider,
   SkyAppWindowRef,
-  styleLoader
+  StyleLoader
 } from '@blackbaud/skyux-builder/runtime';
 
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
@@ -79,7 +79,7 @@ export class AppComponent implements OnInit {
     private config: SkyAppConfig,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) {
-    styleLoader.loadStyles().then(() => {
+    StyleLoader.loadStyles().then(() => {
       this.isReady = true;
     });
   }
