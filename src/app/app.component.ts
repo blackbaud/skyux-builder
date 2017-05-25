@@ -77,7 +77,7 @@ export class AppComponent implements OnInit {
     private router: Router,
     private windowRef: SkyAppWindowRef,
     private config: SkyAppConfig,
-    private styleLoader: SkyAppStyleLoader
+    private styleLoader: SkyAppStyleLoader,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) {
     styleLoader.loadStyles().then(() => {
