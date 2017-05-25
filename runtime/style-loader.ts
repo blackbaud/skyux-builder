@@ -1,7 +1,7 @@
 import * as FontFaceObserver from 'fontfaceobserver';
 
 export class StyleLoader {
-  public static readonly LOAD_TIMEOUT: number = 30000;
+  public static readonly LOAD_TIMEOUT: number = 3000;
   public static loadStyles(): Promise<any> {
     const fontAwesome = new FontFaceObserver('FontAwesome');
     const openSans = new FontFaceObserver('Open Sans');
