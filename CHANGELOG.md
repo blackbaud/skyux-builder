@@ -1,3 +1,7 @@
+# 1.0.0-beta.28 (2017-05-25)
+
+- Bugfix to correct incorrect paths specified when running `skyux e2e`.
+
 # 1.0.0-beta.27 (2017-05-25)
 
 - Passing `enableHelp` to the omnibar config. [#160](https://github.com/blackbaud/skyux-builder/pull/160)
