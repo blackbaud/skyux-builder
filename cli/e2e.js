@@ -70,8 +70,6 @@ function spawnProtractor(chunks, port, skyPagesConfig) {
   logger.info('Running Protractor');
 
   const protractorPath = path.resolve(
-    __dirname,
-    '..',
     'node_modules',
     '.bin',
     'protractor'
@@ -133,8 +131,6 @@ function spawnSelenium() {
     // Otherwise we need to prep protractor's selenium
     } else {
       const webdriverManagerPath = path.resolve(
-        __dirname,
-        '..',
         'node_modules',
         '.bin',
         'webdriver-manager'
