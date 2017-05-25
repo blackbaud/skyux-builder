@@ -168,16 +168,22 @@ export class AppComponent implements OnInit {
 
   private initShellComponents() {
     const omnibarConfig = this.config.skyux.omnibar;
+    const helpConfig = this.config.skyux.help;
 
     if (omnibarConfig) {
       this.setParamsFromQS(omnibarConfig);
       this.setNav(omnibarConfig);
       this.setOnSearch(omnibarConfig);
+
+      if (helpConfig) {
+        omnibarConfig.enableHelp = true;
+      }
+
       BBOmnibar.load(omnibarConfig);
     }
 
-    if (this.config.skyux.help) {
-      BBHelp.load(this.config.skyux.help);
+    if (helpConfig) {
+      BBHelp.load(helpConfig);
     }
   }
 }

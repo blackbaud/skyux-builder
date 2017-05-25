@@ -15,7 +15,7 @@ function validateTestRun(done) {
     });
 }
 
-xdescribe('skyux e2e', () => {
+describe('skyux e2e', () => {
   it('should successfully run e2e tests', (done) => {
     validateTestRun(done);
   });
