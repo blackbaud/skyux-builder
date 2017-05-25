@@ -25,7 +25,8 @@ import { BBHelp } from '@blackbaud/help-client';
 import {
   SkyAppConfig,
   SkyAppSearchResultsProvider,
-  SkyAppWindowRef
+  SkyAppWindowRef,
+  loadStyles
 } from '@blackbaud/skyux-builder/runtime';
 
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
@@ -70,12 +71,18 @@ function fixUpNav(nav: any, baseUrl: string) {
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
+  public isReady = false;
+
   constructor(
     private router: Router,
     private windowRef: SkyAppWindowRef,
     private config: SkyAppConfig,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
-  ) { }
+  ) {
+    loadStyles().then(() => {
+      this.isReady = true;
+    });
+  }
 
   public ngOnInit() {
     // Without this code, navigating to a new route doesn't cause the window to be

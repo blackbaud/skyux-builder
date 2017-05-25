@@ -2,7 +2,7 @@
 
 'use strict';
 
-var styleLoader = require('./sky-style-loader');
+var styleLoader = require('../runtime/sky-style-loader');
 
 // A race condition exists in Firefox where tests can begin before styles are loaded.
 // This will ensure that styles are loaded before tests run by ensuring the style rule

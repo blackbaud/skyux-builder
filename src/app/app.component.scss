@@ -1,0 +1,7 @@
+.sky-pages-cloak {
+  visibility: hidden;
+
+  &.visible {
+    visibility: visible;
+  }
+}
