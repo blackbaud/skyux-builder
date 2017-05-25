@@ -7,7 +7,6 @@ const logger = require('winston');
 const selenium = require('selenium-standalone');
 
 describe('cli e2e', () => {
-
   const PORT = 1234;
   const CHUNKS = [{ name: 'asdf' }];
   const SKY_PAGES_CONFIG = {
@@ -43,7 +42,6 @@ describe('cli e2e', () => {
   let PROTRACTOR_CB;
 
   beforeEach(() => {
-
     EXIT_CODE = 0;
 
     mock('../cli/build', () => {
@@ -57,7 +55,7 @@ describe('cli e2e', () => {
     });
 
     mock('cross-spawn', {
-      spawn: (cmd, config) => {
+      spawn: () => {
         return {
           on: (evt, cb) => {
             if (evt === 'exit') {
@@ -67,8 +65,9 @@ describe('cli e2e', () => {
           }
         };
       },
-
-      sync: () => {}
+      sync: () => {
+        return { };
+      }
     });
 
     mock('portfinder', {
@@ -85,23 +84,14 @@ describe('cli e2e', () => {
     });
 
     spyOn(logger, 'info');
-    spyOn(Promise, 'all').and.callFake(() => {
-      return Promise.resolve([CHUNKS, PORT]);
-    });
-
   });
 
   afterEach(() => {
     EXIT_CODE = null;
-    mock.stop(configPath);
-    mock.stop('../cli/build');
-    mock.stop('cross-spawn');
-    mock.stop('portfinder');
-    mock.stop('http-server');
+    mock.stopAll();
   });
 
   it('should spawn protractor after build, server, and selenium, then kill servers', (done) => {
-
     spyOn(logger, 'warn');
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(EXIT_CODE);
@@ -113,7 +103,6 @@ describe('cli e2e', () => {
   });
 
   it('should catch protractor kitchen sink error', (done) => {
-
     spyOn(logger, 'warn');
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(logger.warn).toHaveBeenCalledWith('Supressing protractor\'s "kitchen sink" error 199');
@@ -125,8 +114,7 @@ describe('cli e2e', () => {
     require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('selenium should install and start only if a seleniumAddress is specified', (done) => {
-
+  it('should install and start selenium only if a seleniumAddress is specified', (done) => {
     let killCalled = false;
 
     mock(configPath, {
@@ -135,7 +123,6 @@ describe('cli e2e', () => {
       }
     });
 
-    spyOn(logger, 'warn');
     spyOn(selenium, 'install').and.callFake((config, cb) => {
       cb();
     });
@@ -147,19 +134,16 @@ describe('cli e2e', () => {
     });
 
     spyOn(process, 'exit').and.callFake(exitCode => {
-
       expect(infoCalledWith('Selenium server is ready.')).toEqual(true);
       expect(killCalled).toEqual(true);
       expect(exitCode).toEqual(0);
-
-      mock.stop(configPath);
       done();
     });
 
     require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('only kill servers that exist', (done) => {
+  it('should only kill servers that exist', (done) => {
     let called = false;
     spyOn(logger, 'warn');
     spyOn(process, 'exit').and.callFake(() => {
@@ -175,5 +159,101 @@ describe('cli e2e', () => {
     });
 
     require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should catch build failures', (done) => {
+    mock('../cli/build', () => Promise.reject(new Error('Build failed.')));
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(1);
+      done();
+    });
+
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should catch http-server failures', (done) => {
+    mock('http-server', {
+      createServer: (opts) => ({
+        close: () => {},
+        listen: () => {
+          // Log a message.
+          opts.logFn.call({}, null, null, null);
+
+          // Log an error.
+          opts.logFn.call({}, null, null, new Error('Server failed.'));
+        }
+      })
+    });
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(1);
+      done();
+    });
+
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should catch portfinder failures', (done) => {
+    mock('portfinder', {
+      getPortPromise: () => Promise.reject(new Error('Portfinder failed.'))
+    });
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(1);
+      done();
+    });
+
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should catch selenium failures', (done) => {
+    mock(configPath, {
+      config: {
+        seleniumAddress: 'asdf'
+      }
+    });
+
+    spyOn(selenium, 'install').and.callFake((config, cb) => {
+      cb();
+    });
+
+    spyOn(selenium, 'start').and.callFake((cb) => {
+      let error = new Error('Selenium start failed.');
+      cb(error, {});
+    });
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(1);
+      done();
+    });
+
+    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should catch protractor\'s selenium failures', (done) => {
+    mock(configPath, {
+      config: {}
+    });
+
+    mock('cross-spawn', {
+      spawn: () => {
+        return {
+          on: () => { }
+        };
+      },
+      sync: () => {
+        return {
+          error: new Error('Webdriver update failed.')
+        };
+      }
+    });
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(1);
+      done();
+    });
+
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 });
