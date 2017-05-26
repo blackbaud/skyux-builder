@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/blackbaud/skyux-builder#readme",
   "peerDependencies": {
-    "@blackbaud/skyux": "blackbaud/skyux2#ng4-upgrade-revert"
+    "@blackbaud/skyux": "blackbaud/skyux2#ng4-upgrade"
   },
   "dependencies": {
     "@angular/common": "4.1.3",
