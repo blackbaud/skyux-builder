@@ -75,9 +75,6 @@ export class AppComponent implements OnInit {
 
   public ngOnInit() {
 
-    // Filter params through paramsAllowed
-    this.config.runtime.params.parse(this.windowRef.nativeWindow.location);
-
     // Without this code, navigating to a new route doesn't cause the window to be
     // scrolled to the top like the browser does automatically with non-SPA navigation.
     this.router.events.subscribe((event: any) => {

@@ -103,13 +103,6 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should pass the current location to RuntimeConfigParams to be parsed', async(() => {
-    setup(skyAppConfig).then(() => {
-      fixture.detectChanges();
-      expect(parseParams).toEqual(location);
-    });
-  }));
-
   it('should subscribe to router events and call scroll on NavigationEnd', async(() => {
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();

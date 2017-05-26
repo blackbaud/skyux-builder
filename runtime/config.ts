@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RuntimeConfigParams } from './params';
+import { SkyAppRuntimeConfigParams } from './params';
 
 export interface RuntimeConfigApp {
   base: string;
@@ -13,7 +13,7 @@ export interface RuntimeConfig {
   componentsPattern: string;
   handle404?: boolean;  // Dynamically added in sky-pages-module-generator.js
   includeRouteModule: boolean;
-  params: RuntimeConfigParams;
+  params: SkyAppRuntimeConfigParams;
   routes?: Object[]; // Dynamically added in sky-pages-module-generator.js
   routesPattern: string;
   runtimeAlias: string;

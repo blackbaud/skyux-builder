@@ -2,7 +2,6 @@ import { Directive, Input } from '@angular/core';
 import { LocationStrategy } from '@angular/common';
 import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
 import { SkyAppConfig } from '../config';
-import { RuntimeConfigParams } from '../params';
 
 @Directive({
   selector: '[skyAppLink]'
@@ -21,8 +20,6 @@ export class SkyAppLinkDirective extends RouterLinkWithHref {
     private skyAppConfig: SkyAppConfig
   ) {
     super(router, route, locationStrategy);
-
-    const runtimeConfigParams: RuntimeConfigParams = skyAppConfig.runtime.params;
-    this.queryParams = runtimeConfigParams.getAll();
+    this.queryParams = skyAppConfig.runtime.params.getAll();
   }
 }

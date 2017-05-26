@@ -7,7 +7,7 @@ import { BBAuth } from '@blackbaud/auth-client';
 import { SkyAuthHttp } from './auth-http';
 
 import { SkyAppConfig } from './config';
-import { RuntimeConfigParams } from './params';
+import { SkyAppRuntimeConfigParams } from './params';
 import { SkyAuthTokenProvider } from './auth-token-provider';
 
 describe('SkyAuthHttp', () => {
@@ -16,16 +16,6 @@ describe('SkyAuthHttp', () => {
   let lastConnection: MockConnection;
 
   function setupInjector(url: string) {
-
-    RuntimeConfigParams.clear();
-    RuntimeConfigParams.setConfig({
-      params: [
-        'envid',
-        'svcid'
-      ]
-    });
-    RuntimeConfigParams.parse(url);
-
     const injector = ReflectiveInjector.resolveAndCreate([
       SkyAuthTokenProvider,
       SkyAuthHttp,
@@ -41,7 +31,10 @@ describe('SkyAuthHttp', () => {
         provide: SkyAppConfig,
         useValue: {
           runtime: {
-            params: RuntimeConfigParams
+            params: new SkyAppRuntimeConfigParams(url, [
+              'envid',
+              'svcid'
+            ])
           }
         }
       }
