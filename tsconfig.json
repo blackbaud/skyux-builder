@@ -13,10 +13,8 @@
       "dom",
       "es6"
     ],
-    "types": [
-      "fontfaceobserver",
-      "jasmine",
-      "node"
+    "typeRoots": [
+      "./node_modules/@types"
     ]
   },
   "compileOnSave": false,

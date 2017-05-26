@@ -1,5 +1,8 @@
 import * as FontFaceObserver from 'fontfaceobserver';
 
+import { Injectable } from '@angular/core';
+
+@Injectable()
 export class SkyAppStyleLoader {
   public static readonly LOAD_TIMEOUT: number = 3000;
   public isLoaded: boolean = false;

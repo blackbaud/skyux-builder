@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/blackbaud/skyux-builder#readme",
   "peerDependencies": {
-    "@blackbaud/skyux": "2.0.0-beta.29"
+    "@blackbaud/skyux": "^2.0.0-beta.24"
   },
   "dependencies": {
     "@angular/common": "2.4.8",

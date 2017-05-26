@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
     private styleLoader: SkyAppStyleLoader,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) {
-    styleLoader.loadStyles().then(() => {
+    this.styleLoader.loadStyles().then(() => {
       this.isReady = true;
     });
   }
