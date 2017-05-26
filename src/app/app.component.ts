@@ -1,8 +1,7 @@
 import {
   Component,
   OnInit,
-  Optional,
-  NgZone
+  Optional
 } from '@angular/core';
 
 import {
@@ -79,15 +78,10 @@ export class AppComponent implements OnInit {
     private windowRef: SkyAppWindowRef,
     private config: SkyAppConfig,
     private styleLoader: SkyAppStyleLoader,
-    private ngZone: NgZone,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) {
-    this.ngZone.runOutsideAngular(() => {
-      this.styleLoader.loadStyles().then(() => {
-        this.ngZone.run(() => {
-          this.isReady = true;
-        });
-      });
+    this.styleLoader.loadStyles().then(() => {
+      this.isReady = true;
     });
   }
 
