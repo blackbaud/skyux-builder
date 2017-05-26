@@ -80,9 +80,14 @@ export class AppComponent implements OnInit {
     private styleLoader: SkyAppStyleLoader,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) {
-    this.styleLoader.loadStyles().then(() => {
-      this.isReady = true;
-    });
+    this.styleLoader.loadStyles()
+      .then((result) => {
+        this.isReady = true;
+
+        if (result.error) {
+          console.log(result.error.message);
+        }
+      });
   }
 
   public ngOnInit() {

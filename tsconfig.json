@@ -13,8 +13,9 @@
       "dom",
       "es6"
     ],
-    "typeRoots": [
-      "./node_modules/@types"
+    "types": [
+      "jasmine",
+      "node"
     ]
   },
   "compileOnSave": false,
