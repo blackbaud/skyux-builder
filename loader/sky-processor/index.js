@@ -36,13 +36,25 @@ const processContent = (content, callbackName, ...additionalArgs) => {
 };
 
 function preload(content, loaderConfig) {
-  plugins = getPluginContents(loaderConfig.options.skyPagesConfig);
-  return processContent(content, 'preload', loaderConfig.resourcePath);
+  const skyPagesConfig = loaderConfig.options.skyPagesConfig;
+  plugins = getPluginContents(skyPagesConfig);
+  return processContent(
+    content,
+    'preload',
+    loaderConfig.resourcePath,
+    skyPagesConfig
+  );
 }
 
 function postload(content, loaderConfig) {
-  plugins = getPluginContents(loaderConfig.options.skyPagesConfig);
-  return processContent(content, 'postload', loaderConfig.resourcePath);
+  const skyPagesConfig = loaderConfig.options.skyPagesConfig;
+  plugins = getPluginContents(skyPagesConfig);
+  return processContent(
+    content,
+    'postload',
+    loaderConfig.resourcePath,
+    skyPagesConfig
+  );
 }
 
 module.exports = {

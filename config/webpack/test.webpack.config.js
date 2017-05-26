@@ -1,7 +1,8 @@
 /*jslint node: true */
 'use strict';
 
-function getWebpackConfig(skyPagesConfig) {
+function getWebpackConfig(skyPagesConfig, argv) {
+
   function spaPath() {
     return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
   }
@@ -19,6 +20,7 @@ function getWebpackConfig(skyPagesConfig) {
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
   const aliasBuilder = require('./alias-builder');
 
+  const runCoverage = (!argv || argv.coverage !== false);
   skyPagesConfig.runtime.includeRouteModule = false;
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
@@ -38,7 +40,7 @@ function getWebpackConfig(skyPagesConfig) {
 
   let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
-  return {
+  let config = {
     devtool: 'inline-source-map',
 
     resolveLoader: {
@@ -119,30 +121,6 @@ function getWebpackConfig(skyPagesConfig) {
             'raw-loader',
             'sass-loader'
           ]
-        },
-        {
-          enforce: 'post',
-          test: /\.(js|ts)$/,
-          use: [
-            {
-              loader: 'istanbul-instrumenter-loader',
-              options: {
-                esModules: true
-              }
-            },
-            {
-              loader: 'source-map-inline-loader'
-            }
-          ],
-          include: srcPath,
-          exclude: [
-            /\.(e2e|spec)\.ts$/,
-            /node_modules/,
-            /index\.ts/,
-            /fixtures/,
-            /testing/,
-            /src(\\|\/)app(\\|\/)lib/
-          ]
         }
       ]
     },
@@ -184,6 +162,35 @@ function getWebpackConfig(skyPagesConfig) {
       processExitCode
     ]
   };
+
+  if (runCoverage) {
+    config.module.rules.push({
+      enforce: 'post',
+      test: /\.(js|ts)$/,
+      use: [
+        {
+          loader: 'istanbul-instrumenter-loader',
+          options: {
+            esModules: true
+          }
+        },
+        {
+          loader: 'source-map-inline-loader'
+        }
+      ],
+      include: srcPath,
+      exclude: [
+        /\.(e2e|spec)\.ts$/,
+        /node_modules/,
+        /index\.ts/,
+        /fixtures/,
+        /testing/,
+        /src(\\|\/)app(\\|\/)lib/
+      ]
+    });
+  }
+
+  return config;
 }
 
 module.exports = {

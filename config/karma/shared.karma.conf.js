@@ -34,7 +34,7 @@ function getConfig(config) {
       '../../utils/spec-styles.js': ['webpack'],
       '../../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
     },
-    webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig),
+    webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
       reporters: [
