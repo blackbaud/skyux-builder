@@ -43,7 +43,7 @@ describe('SKY UX processor Webpack loader', () => {
 
   it('should pass file contents to the plugin to be altered', () => {
     mock('my-plugin', {
-      preload: (content) => '<p></p>'
+      preload: () => '<p></p>'
     });
 
     config.options.skyPagesConfig.skyux.plugins = ['my-plugin'];
@@ -79,7 +79,7 @@ describe('SKY UX processor Webpack loader', () => {
 
   it('should pass file contents to the plugin to be altered after', () => {
     mock('my-plugin', {
-      preload: (content) => '<p></p>',
+      preload: () => '<p></p>',
       postload: (content) => content + '<br>'
     });
 
@@ -105,9 +105,24 @@ describe('SKY UX processor Webpack loader', () => {
     expect(result).toBe(`<p>${config.resourcePath}</p>`);
   });
 
+  it('should pass skyPagesConfig into the plugin', () => {
+    mock('my-plugin', {
+      postload: (content, resourcePath, skyPagesConfig) => `<p>${skyPagesConfig.skyux.app.name}</p>`
+    });
+
+    config.options.skyPagesConfig.skyux.app = {
+      name: 'My App'
+    };
+    config.options.skyPagesConfig.skyux.plugins = ['my-plugin'];
+    const loader = require(postloaderPath);
+    const result = loader.call(config, content);
+
+    expect(result).toBe(`<p>${config.options.skyPagesConfig.skyux.app.name}</p>`);
+  });
+
   it('should pass file contents to many plugins', () => {
     mock('my-plugin', {
-      preload: (content) => '<p></p>'
+      preload: () => '<p></p>'
     });
     mock('my-other-plugin', {
       preload: (content) => `${content}<br>`

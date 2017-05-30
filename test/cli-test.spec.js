@@ -71,6 +71,38 @@ describe('cli test', () => {
 
   });
 
+  it('should pass the --coverage flag to karma by default', () => {
+    const cmd = 'CUSTOM_CMD';
+    let found = false;
+
+    mock('cross-spawn', (node, flags) => {
+      found = flags.includes('--coverage');
+      return {
+        on: () => {}
+      };
+    });
+
+    require('../cli/test')(cmd);
+    expect(found).toEqual(true);
+    mock.stop('cross-spawn');
+  });
+
+  it('should pass the --no-coverage flag to karma', () => {
+    const cmd = 'CUSTOM_CMD';
+    let found = false;
+
+    mock('cross-spawn', (node, flags) => {
+      found = flags.includes('--no-coverage');
+      return {
+        on: () => {}
+      };
+    });
+
+    require('../cli/test')(cmd, { coverage: false });
+    expect(found).toEqual(true);
+    mock.stop('cross-spawn');
+  });
+
   it('should pass the exitCode', (done) => {
     const EXIT_CODE = 1337;
 

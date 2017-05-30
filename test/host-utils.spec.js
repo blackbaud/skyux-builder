@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const mock = require('mock-require');
 
 describe('host-utils', () => {
@@ -65,12 +65,12 @@ describe('host-utils', () => {
 
   it('should add externals, trim slash from host, and read name from package.json', () => {
 
-    const readFileSync = fs.readFileSync;
-    spyOn(fs, 'readFileSync').and.callFake((filename, encoding) => {
+    const readJsonSync = fs.readJsonSync;
+    spyOn(fs, 'readJsonSync').and.callFake((filename, encoding) => {
       if (filename.indexOf('package.json') > -1) {
-        return JSON.stringify({
+        return {
           name: 'my-name'
-        });
+        };
       }
 
       return readFileSync(filename, encoding);
