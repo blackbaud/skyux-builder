@@ -2,7 +2,7 @@ import { URLSearchParams } from '@angular/http';
 
 export class SkyAppRuntimeConfigParams {
 
-  private params: Object = {};
+  private params: {[key: string]: string} = {};
 
   constructor(
     private url: string,
@@ -64,7 +64,7 @@ export class SkyAppRuntimeConfigParams {
    */
   public getUrl(url: string): string {
     const delimiter = url.indexOf('?') === -1 ? '?' : '&';
-    let joined = [];
+    let joined: string[] = [];
 
     this.getAllKeys().forEach(key => {
       joined.push(`${key}=${encodeURIComponent(this.get(key))}`);
