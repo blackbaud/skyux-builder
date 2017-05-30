@@ -23,6 +23,9 @@ export class SkyAppStyleLoader {
       ])
       .then(() => {
         this.isLoaded = true;
+        return Promise.resolve({
+          status: true
+        });
       })
       .catch((error) => {
         // Errors loading the font should not stop the page from rendering.
