@@ -81,10 +81,10 @@ export class AppComponent implements OnInit {
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) {
     this.styleLoader.loadStyles()
-      .then((result) => {
+      .then((result?: any) => {
         this.isReady = true;
 
-        if (result.error) {
+        if (result && result.error) {
           console.log(result.error.message);
         }
       });
