@@ -5,6 +5,7 @@ import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import {
   SkyAppConfig,
   SkyAppSearchResultsProvider,
+  SkyAppStyleLoader,
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
 import { BBHelp } from '@blackbaud/help-client';
@@ -41,7 +42,11 @@ describe('AppComponent', () => {
     }
   };
 
-  function setup(config: any, includeSearchProvider?: boolean) {
+  function setup(
+    config: any,
+    includeSearchProvider?: boolean,
+    styleLoadError?: any
+  ) {
     let providers = [
       {
         provide: Router,
@@ -64,6 +69,12 @@ describe('AppComponent', () => {
       {
         provide: SkyAppConfig,
         useValue: config
+      },
+      {
+        provide: SkyAppStyleLoader,
+        useValue: {
+          loadStyles: () => Promise.resolve(styleLoadError)
+        }
       }
     ];
 
@@ -201,6 +212,26 @@ describe('AppComponent', () => {
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyHelp).toHaveBeenCalledWith(skyAppConfig.skyux.help);
+    });
+  }));
+
+  it('should set isReady after SkyAppStyleLoader.loadStyles is resolved', async(() => {
+    setup(skyAppConfig).then(() => {
+      expect(comp.isReady).toEqual(true);
+    });
+  }));
+
+  it('should pass SkyAppStyleLoader error through resolve and console.log it', async(() => {
+    const result = {
+      error: {
+        message: 'my-error'
+      }
+    };
+
+    spyOn(console, 'log');
+    setup(skyAppConfig, false, result).then(() => {
+      expect(comp.isReady).toEqual(true);
+      expect(console.log).toHaveBeenCalledWith(result.error.message);
     });
   }));
 });
