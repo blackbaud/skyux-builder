@@ -24,7 +24,8 @@ describe('config webpack serve', () => {
 
   let lib;
   let called;
-  let openCalledWith;
+  let openParamUrl;
+  let openParamBrowser;
   let config;
   let argv = {};
 
@@ -41,13 +42,16 @@ describe('config webpack serve', () => {
 
   beforeEach(() => {
     called = false;
-    openCalledWith = '';
+    openParamUrl = '';
+    openParamBrowser = undefined;
+
     argv = {};
 
     spyOn(logger, 'info');
-    mock('open', (url) => {
+    mock('open', (url, browser) => {
       called = true;
-      openCalledWith = url;
+      openParamUrl = url;
+      openParamBrowser = browser;
     });
 
     lib = require('../config/webpack/serve.webpack.config');
@@ -129,7 +133,7 @@ describe('config webpack serve', () => {
     });
 
     expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openCalledWith).toContain(
+    expect(openParamUrl).toContain(
       'https://my-host-server.url/@blackbaud/skyux-builder/?local=true&_cfg='
     );
   });
@@ -154,7 +158,7 @@ describe('config webpack serve', () => {
     });
 
     expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openCalledWith).toContain('https://my-host-server.url');
+    expect(openParamUrl).toContain('https://my-host-server.url');
   });
 
   it('should log the local url and launch it when --launch local', () => {
@@ -177,7 +181,7 @@ describe('config webpack serve', () => {
     });
 
     expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openCalledWith).toContain('https://localhost:1234');
+    expect(openParamUrl).toContain('https://localhost:1234');
   });
 
   it('should log a done message and not launch it when --launch none', () => {
@@ -226,6 +230,8 @@ describe('config webpack serve', () => {
     expect(called).toEqual(false);
   });
 
+
+
   it('host querystring should not contain externals if they do not exist', () => {
     const localConfig = lib.getWebpackConfig(argv, {
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -250,7 +256,7 @@ describe('config webpack serve', () => {
                   chunks: []
                 })
               });
-              const urlParsed = urlLibrary.parse(openCalledWith, true);
+              const urlParsed = urlLibrary.parse(openParamUrl, true);
               const configString = new Buffer.from(urlParsed.query._cfg, 'base64').toString();
               const configObject = JSON.parse(configString);
 
@@ -286,7 +292,7 @@ describe('config webpack serve', () => {
                   ]
                 })
               });
-              const urlParsed = urlLibrary.parse(openCalledWith, true);
+              const urlParsed = urlLibrary.parse(openParamUrl, true);
               const configString = new Buffer.from(urlParsed.query._cfg, 'base64').toString();
               const configObject = JSON.parse(configString);
 
@@ -308,14 +314,14 @@ describe('config webpack serve', () => {
     argv.envid = 'asdf';
 
     bindToDone();
-    expect(openCalledWith).toContain(`?envid=asdf`);
+    expect(openParamUrl).toContain(`?envid=asdf`);
   });
 
   it('should pass through svcid from the command line', () => {
     argv.svcid = 'asdf';
 
     bindToDone();
-    expect(openCalledWith).toContain(`?svcid=asdf`);
+    expect(openParamUrl).toContain(`?svcid=asdf`);
   });
 
   it('should run envid and svcid through encodeURIComponent', () => {
@@ -323,7 +329,7 @@ describe('config webpack serve', () => {
     argv.svcid = '^%';
 
     bindToDone();
-    expect(openCalledWith).toContain(
+    expect(openParamUrl).toContain(
       `?envid=${encodeURIComponent(argv.envid)}&svcid=${encodeURIComponent(argv.svcid)}`
     );
   });
@@ -334,8 +340,21 @@ describe('config webpack serve', () => {
     argv.myid = 'asdf3';
 
     bindToDone();
-    expect(openCalledWith).toContain(`?envid=asdf1&svcid=asdf2`);
-    expect(openCalledWith).not.toContain(`myid=asdf3`);
+    expect(openParamUrl).toContain(`?envid=asdf1&svcid=asdf2`);
+    expect(openParamUrl).not.toContain(`myid=asdf3`);
+  });
+
+  it('should pass --browser flag to open', () => {
+    argv.browser = 'custom-browser';
+    bindToDone();
+    expect(openParamBrowser).toEqual(argv.browser);
+  });
+
+  it('should handle --browser edge different syntax', () => {
+    argv.browser = 'edge';
+    bindToDone();
+    expect(openParamBrowser).not.toBeDefined();
+    expect(openParamUrl).toContain('microsoft-edge:');
   });
 
 });
