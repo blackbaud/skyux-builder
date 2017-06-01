@@ -10,17 +10,16 @@ describe('config webpack serve', () => {
 
   const skyuxConfig = {
     runtime: runtimeUtils.getDefaultRuntime(),
-    skyux: {
-      mode: '',
-      host: {
-        url: 'https://my-host-server.url'
-      },
+    skyux: runtimeUtils.getDefaultSkyux({
       app: {
         externals: {
           test: true
         }
+      },
+      host: {
+        url: 'https://my-host-server.url'
       }
-    }
+    })
   };
 
   let lib;
@@ -230,11 +229,7 @@ describe('config webpack serve', () => {
   it('host querystring should not contain externals if they do not exist', () => {
     const localConfig = lib.getWebpackConfig(argv, {
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {
-        host: {
-          url: ''
-        }
-      }
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     localConfig.plugins.forEach(plugin => {

@@ -6,7 +6,8 @@ import { MockBackend, MockConnection } from '@angular/http/testing';
 import { BBAuth } from '@blackbaud/auth-client';
 import { SkyAuthHttp } from './auth-http';
 
-import { SkyAppWindowRef } from './window-ref';
+import { SkyAppConfig } from './config';
+import { SkyAppRuntimeConfigParams } from './params';
 import { SkyAuthTokenProvider } from './auth-token-provider';
 
 describe('SkyAuthHttp', () => {
@@ -14,10 +15,10 @@ describe('SkyAuthHttp', () => {
   let skyAuthHttp: SkyAuthHttp;
   let lastConnection: MockConnection;
 
-  function setupInjector(windowLocationSearch: string) {
-
+  function setupInjector(url: string) {
     const injector = ReflectiveInjector.resolveAndCreate([
       SkyAuthTokenProvider,
+      SkyAuthHttp,
       {
         provide: ConnectionBackend,
         useClass: MockBackend
@@ -27,16 +28,16 @@ describe('SkyAuthHttp', () => {
         useClass: BaseRequestOptions
       },
       {
-        provide: SkyAppWindowRef,
-        useFactory: () => ({
-          nativeWindow: {
-            location: {
-              search: windowLocationSearch
-            }
+        provide: SkyAppConfig,
+        useValue: {
+          runtime: {
+            params: new SkyAppRuntimeConfigParams(url, [
+              'envid',
+              'svcid'
+            ])
           }
-        })
-      },
-      SkyAuthHttp
+        }
+      }
     ]);
 
     skyAuthHttp = injector.get(SkyAuthHttp);
