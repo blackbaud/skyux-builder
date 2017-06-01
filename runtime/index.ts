@@ -4,3 +4,4 @@ export * from './bootstrapper';
 export * from './config';
 export * from './search-results-provider';
 export * from './window-ref';
+export * from './style-loader';
