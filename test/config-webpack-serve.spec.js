@@ -354,7 +354,7 @@ describe('config webpack serve', () => {
     argv.browser = 'edge';
     bindToDone();
     expect(openParamBrowser).not.toBeDefined();
-    expect(openParamUrl).toContain('microsoft-edge:');
+    expect(openParamUrl.indexOf('microsoft-edge')).toBe(0);
   });
 
 });
