@@ -132,10 +132,9 @@ describe('config webpack serve', () => {
       }
     });
 
+    const url = 'https://my-host-server.url/@blackbaud/skyux-builder/?local=true&_cfg=';
     expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openParamUrl).toContain(
-      'https://my-host-server.url/@blackbaud/skyux-builder/?local=true&_cfg='
-    );
+    expect(openParamUrl.indexOf(url)).toBe(0);
   });
 
   it('should log the host url and launch it when --launch host', () => {
@@ -157,8 +156,9 @@ describe('config webpack serve', () => {
       }
     });
 
+    const url = 'https://my-host-server.url';
     expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openParamUrl).toContain('https://my-host-server.url');
+    expect(openParamUrl.indexOf(url)).toBe(0);
   });
 
   it('should log the local url and launch it when --launch local', () => {
@@ -180,8 +180,9 @@ describe('config webpack serve', () => {
       }
     });
 
+    const url = 'https://localhost:1234';
     expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openParamUrl).toContain('https://localhost:1234');
+    expect(openParamUrl.indexOf(url)).toBe(0);
   });
 
   it('should log a done message and not launch it when --launch none', () => {
@@ -295,10 +296,11 @@ describe('config webpack serve', () => {
               const urlParsed = urlLibrary.parse(openParamUrl, true);
               const configString = new Buffer.from(urlParsed.query._cfg, 'base64').toString();
               const configObject = JSON.parse(configString);
+              const url = 'https://localhost:1234';
 
               expect(urlParsed.query._cfg).toBeDefined();
               expect(configObject.externals).toEqual(skyuxConfig.skyux.app.externals);
-              expect(configObject.localUrl).toContain('https://localhost:1234');
+              expect(configObject.localUrl.indexOf(url)).toBe(0);
               expect(configObject.scripts).toEqual([
                 { name: 'a.js' },
                 { name: 'b.js' }
