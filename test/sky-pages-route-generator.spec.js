@@ -104,4 +104,31 @@ describe('SKY UX Builder route generator', () => {
     expect(suppliedPattern).toEqual('my-custom-src/my-custom-pattern');
   });
 
+  it('should support guards with custom routesPattern', () => {
+    let suppliedPattern;
+    spyOn(glob, 'sync').and.callFake((p) => {
+      suppliedPattern = p;
+      return ['my-custom-src/my-custom-route/index.html'];
+    });
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    let routes = generator.getRoutes({
+      runtime: {
+        srcPath: 'my-custom-src/',
+        routesPattern: 'my-custom-pattern',
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `canActivate: [require(\'my-custom-src/my-custom-route/index.guard.ts\').default]`
+    );
+
+    expect(routes.declarations).toContain(
+      `canDeactivate: [require(\'my-custom-src/my-custom-route/index.guard.ts\').default]`
+    );
+
+    expect(routes.providers).toContain(
+      `require(\'my-custom-src/my-custom-route/index.guard.ts\').default`
+    );
+  });
 });
