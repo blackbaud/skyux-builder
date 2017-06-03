@@ -105,11 +105,33 @@ describe('SKY UX Builder route generator', () => {
   });
 
   it('should support guards with custom routesPattern', () => {
-    let suppliedPattern;
-    spyOn(glob, 'sync').and.callFake((p) => {
-      suppliedPattern = p;
-      return ['my-custom-src/my-custom-route/index.html'];
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export class Guard {}');
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    let routes = generator.getRoutes({
+      runtime: {
+        srcPath: 'my-custom-src/',
+        routesPattern: 'my-custom-pattern',
+      }
     });
+
+    expect(routes.declarations).toContain(
+      `canActivate: [require(\'my-custom-src/my-custom-route/index.guard.ts\').Guard]`
+    );
+
+    expect(routes.declarations).toContain(
+      `canDeactivate: [require(\'my-custom-src/my-custom-route/index.guard.ts\').Guard]`
+    );
+
+    expect(routes.providers).toContain(
+      `require(\'my-custom-src/my-custom-route/index.guard.ts\').Guard`
+    );
+  });
+
+  it('should support default export guards', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export default class Guard {}');
     spyOn(fs, 'existsSync').and.returnValue(true);
 
     let routes = generator.getRoutes({
@@ -130,5 +152,22 @@ describe('SKY UX Builder route generator', () => {
     expect(routes.providers).toContain(
       `require(\'my-custom-src/my-custom-route/index.guard.ts\').default`
     );
+  });
+
+  it('should throw when a file has multiple guards', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    spyOn(fs, 'readFileSync').and.returnValue(`
+      @Injectable() export default class Guard {}
+      @Injectable() export class Guard2 {}
+    `);
+
+    let file = 'my-custom-src/my-custom-route/index.guard.ts';
+    expect(() => generator.getRoutes({
+      runtime: {
+        srcPath: 'my-custom-src/',
+        routesPattern: 'my-custom-pattern',
+      }
+    })).toThrow(new Error(`As a best practice, only export one guard per file in ${file}`));
   });
 });
