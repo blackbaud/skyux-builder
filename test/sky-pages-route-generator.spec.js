@@ -117,40 +117,15 @@ describe('SKY UX Builder route generator', () => {
     });
 
     expect(routes.declarations).toContain(
-      `canActivate: [require(\'my-custom-src/my-custom-route/index.guard.ts\').Guard]`
+      `canActivate: [Guard]`
     );
 
     expect(routes.declarations).toContain(
-      `canDeactivate: [require(\'my-custom-src/my-custom-route/index.guard.ts\').Guard]`
+      `canDeactivate: [Guard]`
     );
 
     expect(routes.providers).toContain(
-      `require(\'my-custom-src/my-custom-route/index.guard.ts\').Guard`
-    );
-  });
-
-  it('should support default export guards', () => {
-    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
-    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export default class Guard {}');
-    spyOn(fs, 'existsSync').and.returnValue(true);
-
-    let routes = generator.getRoutes({
-      runtime: {
-        srcPath: 'my-custom-src/',
-        routesPattern: 'my-custom-pattern',
-      }
-    });
-
-    expect(routes.declarations).toContain(
-      `canActivate: [require(\'my-custom-src/my-custom-route/index.guard.ts\').default]`
-    );
-
-    expect(routes.declarations).toContain(
-      `canDeactivate: [require(\'my-custom-src/my-custom-route/index.guard.ts\').default]`
-    );
-
-    expect(routes.providers).toContain(
-      `require(\'my-custom-src/my-custom-route/index.guard.ts\').default`
+      `Guard`
     );
   });
 
@@ -158,7 +133,7 @@ describe('SKY UX Builder route generator', () => {
     spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
     spyOn(fs, 'existsSync').and.returnValue(true);
     spyOn(fs, 'readFileSync').and.returnValue(`
-      @Injectable() export default class Guard {}
+      @Injectable() export class Guard {}
       @Injectable() export class Guard2 {}
     `);
 
