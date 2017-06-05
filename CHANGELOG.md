@@ -1,3 +1,10 @@
+# 1.0.0-beta.29 (2017-06-05)
+
+- Implemented style loader to resolve FOUC (flash of unstyled content). [#166](https://github.com/blackbaud/skyux-builder/pull/166)
+- Initial creation of `skyRouterLink` directive. [#159](https://github.com/blackbaud/skyux-builder/pull/159)
+- Updated testing suite to include internal files in `src/app` directory.
+- Added the `--browser` or `-b` flag to determine which browser to open during `skyux serve`. [#167](https://github.com/blackbaud/skyux-builder/pull/167)
+
 # 1.0.0-beta.28 (2017-05-25)
 
 - Bugfix to correct incorrect paths specified when running `skyux e2e`.
