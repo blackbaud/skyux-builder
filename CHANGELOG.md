@@ -1,4 +1,4 @@
-# 1.0.0-beta.29 (2017-06-05)
+# 1.0.0-beta.30 (2017-06-06)
 
 - Bugfix for `SkyAuthHttp`. [#171](https://github.com/blackbaud/skyux-builder/pull/171)
 
