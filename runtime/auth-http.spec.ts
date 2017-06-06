@@ -128,4 +128,16 @@ describe('SkyAuthHttp', () => {
     });
   });
 
+  /**
+   * PLEASE NOTE
+   * If this tests fails, it means you've changed the required parameters to the constructor.
+   * To successfully maintain backwards compatibility:
+   *  - make any new parameters optional
+   *  - add any new parameters to the end of the constructor
+   */
+  it('should maintain backwards compatibility if new parameters added to the constructor', () => {
+    setupInjector('');
+    expect(skyAuthHttp).toBeDefined();
+  });
+
 });
