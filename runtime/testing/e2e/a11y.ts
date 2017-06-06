@@ -19,7 +19,7 @@ export class A11yTest {
   ${node.html}`;
           }, "\n");
           console.error(`${result.nodes.length} ${label} failed '${result.id}' rule: ${result.help} ${msg}
-  Get help at: ${result.helpUrl}.
+  Get help at: ${result.helpUrl}
 `)
         });
       }
