@@ -178,24 +178,170 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should not create BBOmnibarNavigation if the omnibar nav property is set', async(() => {
+  it('should not create BBOmnibarNavigation if omnibar.nav is set', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.skyux.omnibar = {
+      nav: {
+        junk: true
+      }
+    };
 
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].nav.junk).toEqual(true);
+    });
   }));
 
-  it('should create BBOmnibarNavigation if the omnibar nav property is not set', async(() => {
+  it('should mark first service as selected if no omnibar.nav.services are selected', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.skyux.omnibar = {
+      nav: {
+        services: [
+          { },
+          { }
+        ]
+      }
+    };
 
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].nav.services[0].selected).toEqual(true);
+    });
+  }));
+
+  it('should not markt he first service as select if another one is already marked', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.skyux.omnibar = {
+      nav: {
+        services: [
+          { },
+          { selected: true }
+        ]
+      }
+    };
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].nav.services[1].selected).toEqual(true);
+    });
+  }));
+
+  it('should recursively set the url property to omnibar.nav.services.items', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.host.url = 'base.com/';
+    skyAppConfig.runtime.app.base = 'custom-base/';
+    skyAppConfig.skyux.omnibar = {
+      nav: {
+        services: [
+          {
+            items: [
+              {
+                url: 'ignored.com'
+              },
+              {
+                route: '/custom-route'
+              },
+              {
+                items: [
+                  {
+                    route: '/another-custom-route'
+                  },
+                  {
+                    url: 'another-ignored.com'
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    };
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      const items = spyOmnibar.calls.first().args[0].nav.services[0].items;
+      expect(items[0].url).toEqual('ignored.com');
+      expect(items[1].url).toEqual('base.com/custom-base/custom-route');
+      expect(items[2].items[0].url).toEqual('base.com/custom-base/another-custom-route');
+      expect(items[2].items[1].url).toEqual('another-ignored.com');
+    });
   }));
 
   it('should add the beforeNavCallback', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
 
+    skyAppConfig.skyux.host.url = 'base.com/';
+    skyAppConfig.runtime.app.base = 'custom-base/';
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].nav.beforeNavCallback).toBeDefined();
+    });
   }));
 
   it('should call navigateByUrl, return false in the beforeNavCallback if local link', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
 
+    skyAppConfig.skyux.host.url = 'base.com/';
+    skyAppConfig.runtime.app.base = 'custom-base/';
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
+
+      const globalLink = cb({ url: 'asdf.com' });
+      expect(globalLink).not.toBeDefined();
+      expect(navigateByUrlParams).not.toBeDefined();
+
+      const localLink = cb({ url: 'base.com/custom-base/new-place' });
+      expect(localLink).toEqual(false);
+      expect(navigateByUrlParams).toEqual('/new-place');
+    });
   }));
 
-  it('should add global routes to omnibar during serve', async(() => {
+  it('should handle no public routes during serve', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.runtime.command = 'serve';
+    skyAppConfig.skyux.routes = {};
 
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].nav.localNavItems).not.toBeDefined();
+    });
+  }));
+
+  it('should add global public routes as localNavItems during serve', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.host.url = 'base.com/';
+    skyAppConfig.runtime.app.base = 'custom-base/';
+    skyAppConfig.runtime.command = 'serve';
+    skyAppConfig.skyux.routes = {
+      public: [
+        {
+          global: false
+        },
+        {
+          global: true,
+          name: 'my-name',
+          route: '/my-route'
+        }
+      ]
+    };
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar.calls.first().args[0].nav.localNavItems[0]).toEqual({
+        title: 'my-name',
+        url: 'base.com/custom-base/my-route',
+        data: {
+          global: true,
+          name: 'my-name',
+          route: '/my-route'
+        }
+      });
+    });
   }));
 
   it('should not call BBHelp.load if config.skyux.help does not exist', async(() => {
