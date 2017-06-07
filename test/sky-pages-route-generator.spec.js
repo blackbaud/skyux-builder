@@ -104,4 +104,45 @@ describe('SKY UX Builder route generator', () => {
     expect(suppliedPattern).toEqual('my-custom-src/my-custom-pattern');
   });
 
+  it('should support guards with custom routesPattern', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export class Guard {}');
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    let routes = generator.getRoutes({
+      runtime: {
+        srcPath: 'my-custom-src/',
+        routesPattern: 'my-custom-pattern',
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `canActivate: [Guard]`
+    );
+
+    expect(routes.declarations).toContain(
+      `canDeactivate: [Guard]`
+    );
+
+    expect(routes.providers).toContain(
+      `Guard`
+    );
+  });
+
+  it('should throw when a file has multiple guards', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    spyOn(fs, 'readFileSync').and.returnValue(`
+      @Injectable() export class Guard {}
+      @Injectable() export class Guard2 {}
+    `);
+
+    let file = 'my-custom-src/my-custom-route/index.guard.ts';
+    expect(() => generator.getRoutes({
+      runtime: {
+        srcPath: 'my-custom-src/',
+        routesPattern: 'my-custom-pattern',
+      }
+    })).toThrow(new Error(`As a best practice, only export one guard per file in ${file}`));
+  });
 });

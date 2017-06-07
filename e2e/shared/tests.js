@@ -46,5 +46,12 @@ module.exports = {
     nav.get(1).click();
     expect(element(by.tagName('h1')).getText()).toBe('About our Team');
     done();
+  },
+
+  respectGuardCanActivate: (done) => {
+    const nav = $$('.sky-navbar-item a');
+    nav.get(1).click();
+    expect(element(by.tagName('h1')).getText()).toBe('SKY UX Template');
+    done();
   }
 };
