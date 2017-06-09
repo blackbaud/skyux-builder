@@ -141,7 +141,11 @@ describe('SKY UX Builder route generator', () => {
 
   it('should support guards with custom routesPattern', () => {
     spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
-    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export class Guard {}');
+    spyOn(fs, 'readFileSync').and.returnValue(`@Injectable() export class Guard {
+      canActivate() {}
+      canDeactivate() {}
+      canActivateChild() {}
+    }`);
     spyOn(fs, 'existsSync').and.returnValue(true);
 
     let routes = generator.getRoutes({
@@ -157,6 +161,10 @@ describe('SKY UX Builder route generator', () => {
 
     expect(routes.declarations).toContain(
       `canDeactivate: [Guard]`
+    );
+
+    expect(routes.declarations).toContain(
+      `canActivateChild: [Guard]`
     );
 
     expect(routes.providers).toContain(
