@@ -230,14 +230,10 @@ describe('SKY UX Builder route generator', () => {
       }
     });
 
-    expect(routes.declarations).toContain(
-      `path: 'my-custom-src'`
-    );
-
-    expect(routes.declarations).toContain(
-      `path: 'my-custom-route'`
-    );
-
+    // expect only one instance each of `my-custom-src` and `my-custom-route`
+    // in the declarations
+    expect(routes.declarations.match(/path\:\s\'my\-custom\-src\'/g).length).toBe(1);
+    expect(routes.declarations.match(/path\:\s\'my\-custom\-route\'/g).length).toBe(1);
     expect(routes.declarations).toContain(
       `path: 'nested'`
     );
