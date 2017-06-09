@@ -188,4 +188,104 @@ describe('SKY UX Builder route generator', () => {
       }
     })).toThrow(new Error(`As a best practice, only export one guard per file in ${file}`));
   });
+
+  it('should handle top-level routes', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src/my-custom-route'`
+    );
+  });
+
+  it('should handle child routes', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/#my-custom-route/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src'`
+    );
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-route'`
+    );
+  });
+
+  it('should handle nested child routes', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/#my-custom-route/#nested/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src'`
+    );
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-route'`
+    );
+
+    expect(routes.declarations).toContain(
+      `path: 'nested'`
+    );
+  });
+
+  it('should merge child routes when necessary', () => {
+    spyOn(glob, 'sync').and.callFake(() => [
+      'my-custom-src/#my-custom-route/#nested/index.html',
+      'my-custom-src/#my-custom-route/index.html',
+      ''
+    ]);
+    spyOn(fs, 'readFileSync').and.returnValue(`@Injectable() export class Guard {
+      canActivate() {}
+      canDeactivate() {}
+      canActivateChild() {}
+    }`);
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src'`
+    );
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-route'`
+    );
+
+    expect(routes.declarations).toContain(
+      `path: 'nested'`
+    );
+  });
+
+  it('should handle top-level routes within a child route', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/#my-custom-route/top-level/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src/my-custom-route/top-level'`
+    );
+  });
 });
