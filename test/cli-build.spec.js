@@ -14,6 +14,7 @@ describe('cli build', () => {
 
   afterEach(() => {
     mock.stop('../config/webpack/build.webpack.config');
+    mock.stop('../lib/source-files-walker');
   });
 
   it('should call getWebpackConfig', () => {
