@@ -37,7 +37,7 @@ const processContent = (content, callbackName, ...additionalArgs) => {
 
 function preload(content, loaderConfig) {
   const skyPagesConfig = loaderConfig.options.skyPagesConfig;
-  init(skyPagesConfig);
+  plugins = getPluginContents(skyPagesConfig);
   return processContent(
     content,
     'preload',
@@ -48,7 +48,7 @@ function preload(content, loaderConfig) {
 
 function postload(content, loaderConfig) {
   const skyPagesConfig = loaderConfig.options.skyPagesConfig;
-  init(skyPagesConfig);
+  plugins = getPluginContents(skyPagesConfig);
   return processContent(
     content,
     'postload',
@@ -57,13 +57,7 @@ function postload(content, loaderConfig) {
   );
 }
 
-const init = (skyPagesConfig) => {
-  plugins = getPluginContents(skyPagesConfig);
-};
-
 module.exports = {
-  init,
   preload,
-  postload,
-  processContent
+  postload
 };
