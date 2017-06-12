@@ -104,6 +104,41 @@ describe('SKY UX Builder route generator', () => {
     expect(suppliedPattern).toEqual('my-custom-src/my-custom-pattern');
   });
 
+  it('should handle windows guard paths correctly', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-src\\my-custom-route\\index.html']);
+    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export class Guard {}');
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    let routes = generator.getRoutes({
+      runtime: {
+        srcPath: 'my-src',
+        routesPattern: '**/index.html'
+      }
+    });
+
+    expect(routes.imports[0]).toContain(
+      `my-src/my-custom-route/index.guard`
+    );
+  });
+
+  it('should prefix guard imports with spaPathAlias', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-src/my-custom-route/index.html']);
+    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export class Guard {}');
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    let routes = generator.getRoutes({
+      runtime: {
+        srcPath: '',
+        routesPattern: '**/index.html',
+        spaPathAlias: 'spa-path-alias'
+      }
+    });
+
+    expect(routes.imports[0]).toContain(
+      `import { Guard } from \'spa-path-alias/my-src/my-custom-route/index.guard\';`
+    );
+  });
+
   it('should support guards with custom routesPattern', () => {
     spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
     spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export class Guard {}');
