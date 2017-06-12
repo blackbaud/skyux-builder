@@ -23,7 +23,7 @@ describe('SKY UX Builder module generator', () => {
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
     });
-    expect(source).toContain("template: '404'");
+    expect(source).toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
   });
 
   it('should not add the NotFoundComponent if it exists', () => {
@@ -39,7 +39,7 @@ describe('SKY UX Builder module generator', () => {
       skyux: {}
     });
     expect(source).toContain('NotFoundComponent');
-    expect(source).not.toContain("template: '404'");
+    expect(source).not.toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
   });
 
   it('should allow the SKY UX Builder out alias to be overridden', () => {
