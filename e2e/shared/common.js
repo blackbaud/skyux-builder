@@ -212,6 +212,34 @@ function writeAppFile(filePath, content) {
 }
 
 /**
+ * Verify directory exists in src/app folder
+ */
+function verifyAppFolder(folderPath) {
+  const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', folderPath);
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(resolvedFolderPath)) {
+      fs.mkdirSync(resolvedFolderPath);
+    }
+
+    resolve();
+  });
+}
+
+/**
+ * Remove directory if it exists in src/app folder
+ */
+function removeAppFolder(folderPath) {
+  const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', folderPath);
+  return new Promise((resolve, reject) => {
+    if (fs.existsSync(resolvedFolderPath)) {
+      fs.rmdirSync(resolvedFolderPath);
+    }
+
+    resolve();
+  });
+}
+
+/**
  * Remove file from the src/app folder -- Used for cleaning up after we've injected
  * files for a specific test or group of tests
  */
@@ -242,5 +270,7 @@ module.exports = {
   prepareServe: prepareServe,
   tmp: tmp,
   writeAppFile: writeAppFile,
-  removeAppFile: removeAppFile
+  removeAppFile: removeAppFile,
+  verifyAppFolder: verifyAppFolder,
+  removeAppFolder: removeAppFolder
 };
