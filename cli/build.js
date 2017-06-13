@@ -7,7 +7,7 @@ const merge = require('merge');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 const assetsConfig = require('../lib/assets-configuration');
-const walkSourceFiles = require('../lib/source-files-walker');
+const pluginFileProcessor = require('../lib/plugin-file-processor');
 
 function writeTSConfig() {
   var config = {
@@ -96,7 +96,7 @@ function stageAot(skyPagesConfig) {
     }
   );
 
-  walkSourceFiles(skyPagesConfig);
+  pluginFileProcessor.processFiles(skyPagesConfig);
   writeTSConfig();
 }
 

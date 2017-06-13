@@ -9,7 +9,9 @@ const runtimeUtils = require('../utils/runtime-test-utils');
 describe('cli build', () => {
 
   beforeEach(() => {
-    mock('../lib/source-files-walker', () => {});
+    mock('../lib/plugin-file-processor', {
+      processFiles: () => {}
+    });
   });
 
   afterEach(() => {
