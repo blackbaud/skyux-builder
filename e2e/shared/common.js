@@ -226,7 +226,7 @@ function verifyAppFolder(folderPath) {
 }
 
 /**
- * Verify directory exists in src/app folder
+ * Remove directory if it exists in src/app folder
  */
 function removeAppFolder(folderPath) {
   const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', folderPath);
