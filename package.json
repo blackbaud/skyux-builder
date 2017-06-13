@@ -41,7 +41,7 @@
     "@angular/platform-browser": "2.4.8",
     "@angular/platform-browser-dynamic": "2.4.8",
     "@angular/router": "3.4.8",
-    "@blackbaud/auth-client": "1.6.0",
+    "@blackbaud/auth-client": "1.8.1",
     "@blackbaud/help-client": "1.0.1",
     "@ngtools/webpack": "1.2.14",
     "@types/fontfaceobserver": "0.0.5",
