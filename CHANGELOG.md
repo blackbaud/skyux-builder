@@ -1,7 +1,7 @@
 # 1.0.0-beta.32 (2017-06-14)
 
 - Bugfix for plugins to successfully run in an AOT build. [#180](https://github.com/blackbaud/skyux-builder/pull/180)
-- Upgraded the default 404 route to use SKY UX error component. [#178](https://github.com/blackbaud/skyux-builder/pull/178)
+- Upgraded the default 404 route to use the SKY UX error component. [#178](https://github.com/blackbaud/skyux-builder/pull/178)
 - Added support for a root route guard and child routes. [#177](https://github.com/blackbaud/skyux-builder/pull/177) Thanks [@blackbaud-brandonstirnaman](https://github.com/blackbaud-brandonstirnaman)!
 
 # 1.0.0-beta.31 (2017-06-07)
