@@ -8,8 +8,15 @@ const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('cli build', () => {
 
+  beforeEach(() => {
+    mock('../lib/plugin-file-processor', {
+      processFiles: () => {}
+    });
+  });
+
   afterEach(() => {
     mock.stop('../config/webpack/build.webpack.config');
+    mock.stop('../lib/source-files-walker');
   });
 
   it('should call getWebpackConfig', () => {
