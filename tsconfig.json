@@ -16,7 +16,8 @@
     ],
     "types": [
       "node",
-      "jasmine"
+      "jasmine",
+      "fontfaceobserver"
     ]
   },
   "compileOnSave": false,
