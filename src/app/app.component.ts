@@ -5,10 +5,6 @@ import {
 } from '@angular/core';
 
 import {
-  URLSearchParams
-} from '@angular/http';
-
-import {
   NavigationEnd,
   Router
 } from '@angular/router';
@@ -25,7 +21,8 @@ import { BBHelp } from '@blackbaud/help-client';
 import {
   SkyAppConfig,
   SkyAppSearchResultsProvider,
-  SkyAppWindowRef
+  SkyAppWindowRef,
+  SkyAppStyleLoader
 } from '@blackbaud/skyux-builder/runtime';
 
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
@@ -70,32 +67,43 @@ function fixUpNav(nav: any, baseUrl: string) {
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
+  public isReady = false;
+
   constructor(
     private router: Router,
     private windowRef: SkyAppWindowRef,
     private config: SkyAppConfig,
+    private styleLoader: SkyAppStyleLoader,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
-  ) { }
+  ) {
+    this.styleLoader.loadStyles()
+      .then((result?: any) => {
+        this.isReady = true;
+
+        if (result && result.error) {
+          console.log(result.error.message);
+        }
+      });
+  }
 
   public ngOnInit() {
+
     // Without this code, navigating to a new route doesn't cause the window to be
     // scrolled to the top like the browser does automatically with non-SPA navigation.
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
-        window.scroll(0, 0);
+        this.windowRef.nativeWindow.scroll(0, 0);
       }
     });
 
     this.initShellComponents();
   }
 
+  // Only pass params that omnibar config cares about
   private setParamsFromQS(omnibarConfig: any) {
-    const urlSearchParams = new URLSearchParams(
-      this.windowRef.nativeWindow.location.search.substr(1)
-    );
-
-    omnibarConfig.envId = urlSearchParams.get('envid');
-    omnibarConfig.svcId = urlSearchParams.get('svcid');
+    this.config.runtime.params.getAllKeys().forEach(key => {
+      omnibarConfig[key] = this.config.runtime.params.get(key);
+    });
   }
 
   private setOnSearch(omnibarConfig: any) {
@@ -161,16 +169,22 @@ export class AppComponent implements OnInit {
 
   private initShellComponents() {
     const omnibarConfig = this.config.skyux.omnibar;
+    const helpConfig = this.config.skyux.help;
 
     if (omnibarConfig) {
       this.setParamsFromQS(omnibarConfig);
       this.setNav(omnibarConfig);
       this.setOnSearch(omnibarConfig);
+
+      if (helpConfig) {
+        omnibarConfig.enableHelp = true;
+      }
+
       BBOmnibar.load(omnibarConfig);
     }
 
-    if (this.config.skyux.help) {
-      BBHelp.load(this.config.skyux.help);
+    if (helpConfig) {
+      BBHelp.load(helpConfig);
     }
   }
 }

@@ -34,7 +34,7 @@ function getConfig(config) {
       '../../utils/spec-styles.js': ['webpack'],
       '../../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
     },
-    webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig),
+    webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
       reporters: [
@@ -48,6 +48,11 @@ function getConfig(config) {
     webpackServer: {
       noInfo: true,
       stats: 'minimal'
+    },
+
+    // This flag allows console.log calls to come through the cli
+    browserConsoleLogOptions: {
+      level: 'log'
     },
     reporters: ['mocha', 'coverage'],
     port: 9876,

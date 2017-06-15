@@ -114,7 +114,7 @@ function prepareBuild(config) {
     resetConfig();
 
     // Create our server
-    httpServer = HttpServer.createServer({ root: tmp });
+    httpServer = HttpServer.createServer({ root: tmp, cache: 0 });
 
     return new Promise((resolve, reject) => {
       portfinder.getPortPromise()
@@ -193,6 +193,71 @@ function writeConfigServe(port) {
   });
 }
 
+/**
+ * Write a file into the src/app folder -- Used for injecting files prior to build
+ * that we don't want to include in the skyux-template but need to test
+ */
+function writeAppFile(filePath, content) {
+  return new Promise((resolve, reject) => {
+    const resolvedFilePath = path.join(path.resolve(tmp), 'src', 'app', filePath);
+    fs.writeFile(resolvedFilePath, content, (err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      resolve();
+    });
+  });
+}
+
+/**
+ * Verify directory exists in src/app folder
+ */
+function verifyAppFolder(folderPath) {
+  const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', folderPath);
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(resolvedFolderPath)) {
+      fs.mkdirSync(resolvedFolderPath);
+    }
+
+    resolve();
+  });
+}
+
+/**
+ * Remove directory if it exists in src/app folder
+ */
+function removeAppFolder(folderPath) {
+  const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', folderPath);
+  return new Promise((resolve, reject) => {
+    if (fs.existsSync(resolvedFolderPath)) {
+      fs.rmdirSync(resolvedFolderPath);
+    }
+
+    resolve();
+  });
+}
+
+/**
+ * Remove file from the src/app folder -- Used for cleaning up after we've injected
+ * files for a specific test or group of tests
+ */
+function removeAppFile(filePath) {
+  return new Promise((resolve, reject) => {
+    const resolvedFilePath = path.join(path.resolve(tmp), 'src', 'app', filePath);
+
+    fs.unlink(resolvedFilePath, (err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      resolve();
+    });
+  });
+}
+
 module.exports = {
   afterAll: afterAll,
   catchReject: catchReject,
@@ -203,5 +268,9 @@ module.exports = {
   getExitCode: getExitCode,
   prepareBuild: prepareBuild,
   prepareServe: prepareServe,
-  tmp: tmp
+  tmp: tmp,
+  writeAppFile: writeAppFile,
+  removeAppFile: removeAppFile,
+  verifyAppFolder: verifyAppFolder,
+  removeAppFolder: removeAppFolder
 };

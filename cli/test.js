@@ -5,8 +5,7 @@
  * Spawns the karam start command.
  * @name test
  */
-function test(command) {
-
+function test(command, argv) {
   const path = require('path');
   const spawn = require('cross-spawn');
 
@@ -24,6 +23,12 @@ function test(command) {
     '--command',
     command
   ];
+
+  if (argv && argv.coverage === false) {
+    flags.push('--no-coverage');
+  } else {
+    flags.push('--coverage');
+  }
 
   const options = {
     stdio: 'inherit'

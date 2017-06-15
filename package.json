@@ -1,16 +1,18 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.0.0-beta.26",
+  "version": "1.0.0-beta.33",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
-    "coverage": "istanbul cover --report=html jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "coverage": "npm run coverage:builder && npm run coverage:runtime && npm run coverage:src-app",
+    "coverage:builder": "istanbul cover --report=html --dir=./coverage/builder jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "coverage:runtime": "node ./utils/cli-test.js dev-runtime",
+    "coverage:src-app": "node ./utils/cli-test.js dev-src-app",
     "e2e": "webdriver-manager update && protractor ./config/protractor/protractor-dev.conf.js",
     "jscs": "jscs cli config lib loader plugin src utils",
     "jshint": "jshint cli config lib loader plugin src utils",
     "lint": "npm run jshint && npm run jscs",
-    "runtime": "node ./utils/runtime-test.js",
-    "test": "npm run lint && npm run coverage && npm run runtime && npm run e2e"
+    "test": "npm run lint && npm run coverage && npm run e2e"
   },
   "repository": {
     "type": "git",
@@ -39,9 +41,10 @@
     "@angular/platform-browser": "2.4.8",
     "@angular/platform-browser-dynamic": "2.4.8",
     "@angular/router": "3.4.8",
-    "@blackbaud/auth-client": "1.5.0",
+    "@blackbaud/auth-client": "1.8.1",
     "@blackbaud/help-client": "1.0.1",
     "@ngtools/webpack": "1.2.14",
+    "@types/fontfaceobserver": "0.0.5",
     "@types/jasmine": "2.5.40",
     "@types/node": "7.0.14",
     "angular2-template-loader": "0.5.0",
