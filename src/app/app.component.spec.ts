@@ -291,7 +291,7 @@ describe('AppComponent', () => {
       const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
 
       const globalLink = cb({ url: 'asdf.com' });
-      expect(globalLink).not.toBeDefined();
+      expect(globalLink).toEqual(true);
       expect(navigateByUrlParams).not.toBeDefined();
 
       const localLink = cb({ url: 'base.com/custom-base/new-place' });
