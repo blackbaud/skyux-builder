@@ -1,3 +1,7 @@
+# 1.0.0-beta.33 (2017-06-15)
+
+- Bugfix to stop `SkyAuthHttp` from adding duplicate `envid` or `svcid` params. [#182](https://github.com/blackbaud/skyux-builder/pull/182)
+
 # 1.0.0-beta.32 (2017-06-14)
 
 - Bugfix for plugins to successfully run in an AOT build. [#180](https://github.com/blackbaud/skyux-builder/pull/180)
