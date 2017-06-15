@@ -1,5 +1,5 @@
 /*jshint jasmine: true, node: true */
-/*global element, by, $$*/
+/*global element, by, $$, protractor, browser*/
 'use strict';
 
 const fs = require('fs');
@@ -45,6 +45,47 @@ module.exports = {
     const nav = $$('.sky-navbar-item a');
     nav.get(1).click();
     expect(element(by.tagName('h1')).getText()).toBe('About our Team');
+    done();
+  },
+
+  respectGuardCanActivate: (done) => {
+    const nav = $$('.sky-navbar-item a');
+    nav.get(1).click();
+    expect(element(by.tagName('h1')).getText()).toBe('SKY UX Template');
+
+    const aboutComponent = $$('my-about')[0];
+    expect(aboutComponent).toBe(undefined);
+
+    done();
+  },
+
+  respectRootGuard: (done) => {
+    // if the home component isn't there, the outlet was not
+    // allowed to activate due to the Guard!
+    const homeComponent = $$('my-home')[0];
+    expect(homeComponent).toBe(undefined);
+    done();
+  },
+
+  verifyChildRoute: (done) => {
+    $$('#test').get(0).click();
+    expect($$('h1').get(0).getText()).toBe('Hi');
+    done();
+  },
+
+  verifyNestedChildRoute: (done) => {
+    $$('#child').get(0).click();
+
+    expect($$('h1').get(0).getText()).toBe('Hi');
+    expect($$('#text').get(0).getText()).toBe('Child');
+    done();
+  },
+
+  verifyNestedTopRoute: (done) => {
+    $$('#top').get(0).click();
+
+    expect($$('h1')[0]).toBe(undefined);
+    expect($$('#text').get(0).getText()).toBe('Top');
     done();
   }
 };

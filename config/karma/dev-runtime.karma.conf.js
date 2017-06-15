@@ -43,7 +43,7 @@ function getConfig(config) {
   config.set({
     webpack: webpackConfig,
     coverageReporter: {
-      dir: path.join(process.cwd(), 'coverage-runtime')
+      dir: path.join(process.cwd(), 'coverage', 'runtime')
     }
   });
 }

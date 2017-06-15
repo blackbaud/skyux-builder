@@ -104,4 +104,184 @@ describe('SKY UX Builder route generator', () => {
     expect(suppliedPattern).toEqual('my-custom-src/my-custom-pattern');
   });
 
+  it('should handle windows guard paths correctly', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-src\\my-custom-route\\index.html']);
+    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export class Guard {}');
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    let routes = generator.getRoutes({
+      runtime: {
+        srcPath: 'my-src',
+        routesPattern: '**/index.html'
+      }
+    });
+
+    expect(routes.imports[0]).toContain(
+      `my-src/my-custom-route/index.guard`
+    );
+  });
+
+  it('should prefix guard imports with spaPathAlias', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-src/my-custom-route/index.html']);
+    spyOn(fs, 'readFileSync').and.returnValue('@Injectable() export class Guard {}');
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    let routes = generator.getRoutes({
+      runtime: {
+        srcPath: '',
+        routesPattern: '**/index.html',
+        spaPathAlias: 'spa-path-alias'
+      }
+    });
+
+    expect(routes.imports[0]).toContain(
+      `import { Guard } from \'spa-path-alias/my-src/my-custom-route/index.guard\';`
+    );
+  });
+
+  it('should support guards with custom routesPattern', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(fs, 'readFileSync').and.returnValue(`@Injectable() export class Guard {
+      canActivate() {}
+      canDeactivate() {}
+      canActivateChild() {}
+    }`);
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    let routes = generator.getRoutes({
+      runtime: {
+        srcPath: 'my-custom-src/',
+        routesPattern: 'my-custom-pattern',
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `canActivate: [Guard]`
+    );
+
+    expect(routes.declarations).toContain(
+      `canDeactivate: [Guard]`
+    );
+
+    expect(routes.declarations).toContain(
+      `canActivateChild: [Guard]`
+    );
+
+    expect(routes.providers).toContain(
+      `Guard`
+    );
+  });
+
+  it('should throw when a file has multiple guards', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    spyOn(fs, 'readFileSync').and.returnValue(`
+      @Injectable() export class Guard {}
+      @Injectable() export class Guard2 {}
+    `);
+
+    let file = 'my-custom-src/my-custom-route/index.guard.ts';
+    expect(() => generator.getRoutes({
+      runtime: {
+        srcPath: 'my-custom-src/',
+        routesPattern: 'my-custom-pattern',
+      }
+    })).toThrow(new Error(`As a best practice, only export one guard per file in ${file}`));
+  });
+
+  it('should handle top-level routes', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src/my-custom-route'`
+    );
+  });
+
+  it('should handle child routes', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/#my-custom-route/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src'`
+    );
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-route'`
+    );
+  });
+
+  it('should handle nested child routes', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/#my-custom-route/#nested/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    // expect only one instance each of `my-custom-src` and `my-custom-route`
+    // in the declarations
+    expect(routes.declarations.match(/path\:\s\'my\-custom\-src\'/g).length).toBe(1);
+    expect(routes.declarations.match(/path\:\s\'my\-custom\-route\'/g).length).toBe(1);
+    expect(routes.declarations).toContain(
+      `path: 'nested'`
+    );
+  });
+
+  it('should merge child routes when necessary', () => {
+    spyOn(glob, 'sync').and.callFake(() => [
+      'my-custom-src/#my-custom-route/#nested/index.html',
+      'my-custom-src/#my-custom-route/index.html',
+      ''
+    ]);
+    spyOn(fs, 'readFileSync').and.returnValue(`@Injectable() export class Guard {
+      canActivate() {}
+      canDeactivate() {}
+      canActivateChild() {}
+    }`);
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src'`
+    );
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-route'`
+    );
+
+    expect(routes.declarations).toContain(
+      `path: 'nested'`
+    );
+  });
+
+  it('should handle top-level routes within a child route', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/#my-custom-route/top-level/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(
+      `path: 'my-custom-src/my-custom-route/top-level'`
+    );
+  });
 });

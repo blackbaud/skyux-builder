@@ -7,7 +7,8 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-const processExitCode = require('../../plugin/process-exit-code');
+const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+const ProcessExitCode = require('../../plugin/process-exit-code');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
 
@@ -138,7 +139,7 @@ function getWebpackConfig(skyPagesConfig) {
       ),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
-      processExitCode
+      new ProcessExitCode()
     ]
   };
 }

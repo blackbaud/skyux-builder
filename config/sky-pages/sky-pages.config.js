@@ -83,6 +83,7 @@ module.exports = {
       skyux: skyuxConfig
     };
 
+    // Manually set after as it depends on properties set above
     config.runtime.app.base = this.getAppBase(config);
     return config;
   },

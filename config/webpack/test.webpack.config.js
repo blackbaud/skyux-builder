@@ -16,7 +16,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
   const DefinePlugin = require('webpack/lib/DefinePlugin');
   const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
   const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-  const processExitCode = require('../../plugin/process-exit-code');
+  const ProcessExitCode = require('../../plugin/process-exit-code');
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
   const aliasBuilder = require('./alias-builder');
 
@@ -159,7 +159,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
       ),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
-      processExitCode
+      new ProcessExitCode()
     ]
   };
 

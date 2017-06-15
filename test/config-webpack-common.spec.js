@@ -3,6 +3,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const ProcessExitCode = require('../plugin/process-exit-code');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack common', () => {
@@ -123,12 +124,11 @@ describe('config webpack common', () => {
     });
 
     expect(processOnSpy).not.toHaveBeenCalled();
-  })
+  });
 
-  it('should pass a non-zero exit code to process.exit on errors', () => {
-    const processExitSpy = spyOn(process, 'exit');
+  it('should set process.exitCode to 1 if compilation errors', () => {
     const processOnSpy = spyOn(process, 'on').and.callFake((evt, cb) => {
-      if (evt === 'beforeExit') {
+      if (evt === 'exit') {
         cb();
       }
     });
@@ -139,13 +139,10 @@ describe('config webpack common', () => {
     });
 
     config.plugins.forEach(plugin => {
-      if (plugin.name === 'processExitCode') {
+      if (plugin instanceof ProcessExitCode) {
         plugin.apply({
           plugin: (evt, cb) => {
             switch (evt) {
-              case 'run':
-                cb(() => {}, () => {});
-              break;
               case 'done':
                 cb({
                   compilation: {
@@ -162,7 +159,41 @@ describe('config webpack common', () => {
     });
 
     expect(processOnSpy).toHaveBeenCalled();
-    expect(processExitSpy).toHaveBeenCalledWith(1);
+    expect(process.exitCode).toEqual(1);
+  });
+
+  it('should not set process.exit listener if no compilation errors', () => {
+
+    // Reset process.exitCode from any previous tests
+    process.exitCode = 0;
+
+    const processOnSpy = spyOn(process, 'on');
+    const lib = require('../config/webpack/common.webpack.config');
+    const config = lib.getWebpackConfig({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    config.plugins.forEach(plugin => {
+      if (plugin instanceof ProcessExitCode) {
+        plugin.apply({
+          plugin: (evt, cb) => {
+            switch (evt) {
+              case 'done':
+                cb({
+                  compilation: {
+                    errors: []
+                  }
+                });
+              break;
+            }
+          }
+        });
+      }
+    });
+
+    expect(processOnSpy).not.toHaveBeenCalled();
+    expect(process.exitCode).not.toEqual(1);
   });
 
 });

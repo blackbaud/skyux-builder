@@ -17,18 +17,16 @@ const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
 
 /**
  * Returns the querystring base for parameters allowed to be passed through.
+ * PLEASE NOTE: The method is nearly duplicated in `runtime/params.ts`.
  * @name getQueryStringFromArgv
  * @param {Object} argv
+ * @param {SkyPagesConfig} skyPagesConfig
  * @returns {string}
  */
-function getQueryStringFromArgv(argv) {
-  const allowed = [
-    'envid',
-    'svcid'
-  ];
+function getQueryStringFromArgv(argv, skyPagesConfig) {
 
   let found = [];
-  allowed.forEach(param => {
+  skyPagesConfig.skyux.params.forEach(param => {
     if (argv[param]) {
       found.push(`${param}=${encodeURIComponent(argv[param])}`);
     }
@@ -53,18 +51,23 @@ function getWebpackConfig(argv, skyPagesConfig) {
    * @name WebpackPluginDone
    */
   function WebpackPluginDone() {
+    const shorthand = {
+      l: 'launch',
+      b: 'browser'
+    };
+
     let launched = false;
     this.plugin('done', (stats) => {
       if (!launched) {
 
-        const queryStringBase = getQueryStringFromArgv(argv);
+        const queryStringBase = getQueryStringFromArgv(argv, skyPagesConfig);
         let localUrl = util.format(
           'https://localhost:%s%s',
           this.options.devServer.port,
           this.options.devServer.publicPath
         );
 
-        const hostUrl = hostUtils.resolve(
+        let hostUrl = hostUtils.resolve(
           queryStringBase,
           localUrl,
           stats.toJson().chunks,
@@ -75,8 +78,18 @@ function getWebpackConfig(argv, skyPagesConfig) {
         launched = true;
 
         // Process shorthand flags
-        if (argv.l) {
-          argv.launch = argv.l;
+        Object.keys(shorthand).forEach(key => {
+          if (argv[key]) {
+            argv[shorthand[key]] = argv[key];
+          }
+        });
+
+        // Edge uses a different technique (protocol vs executable)
+        if (argv.browser === 'edge') {
+          const edge = 'microsoft-edge:';
+          argv.browser = undefined;
+          hostUrl = edge + hostUrl;
+          localUrl = edge + localUrl;
         }
 
         switch (argv.launch) {
@@ -89,11 +102,11 @@ function getWebpackConfig(argv, skyPagesConfig) {
             localUrl += queryStringBase;
 
             logger.info(`Launching Local URL: ${localUrl}`);
-            open(localUrl);
+            open(localUrl, argv.browser);
             break;
           default:
             logger.info(`Launching Host URL: ${hostUrl}`);
-            open(hostUrl);
+            open(hostUrl, argv.browser);
             break;
         }
       }
