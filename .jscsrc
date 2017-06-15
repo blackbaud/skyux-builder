@@ -6,6 +6,7 @@
     "requireLineFeedAtFileEnd": null,
     "requireTrailingComma": null,
     "requirePaddingNewLinesBeforeLineComments": null,
+    "validateLineBreaks": null,
     "excludeFiles": [
       "coverage/**"
     ]
