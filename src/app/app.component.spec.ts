@@ -47,7 +47,7 @@ describe('AppComponent', () => {
     includeSearchProvider?: boolean,
     styleLoadError?: any
   ) {
-    let providers = [
+    let providers: any[] = [
       {
         provide: Router,
         useValue: {
