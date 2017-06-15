@@ -4,12 +4,10 @@
 const AxeBuilder = require('axe-webdriverjs');
 import { browser } from 'protractor';
 
-export class A11yTest {
+export class SkyA11y {
 
   public static log(results): any {
-      //console.error(`${violations}`);
-      var numResults = results.violations.length;
-
+      const numResults = results.violations.length;
       if (numResults > 0) {
         console.error("Accessibility failure(s) found for: " + results.url + "\n");
         results.violations.forEach(result => {
@@ -35,12 +33,10 @@ export class A11yTest {
         .analyze(results => {
           const violations = results.violations.length;
           if (violations) {
-            A11yTest.log(results);
+            SkyA11y.log(results);
           }
-          var fail = results.violations.length === 1 ? ' failure' : ' failures';
-          resolve(violations + fail);
+          resolve(violations);
         });
     });
   }
-
 }
