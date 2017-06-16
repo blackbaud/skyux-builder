@@ -1,8 +1,13 @@
 language: node_js
 sudo: required
+dist: trusty
 
 addons:
-  firefox: "52.0"
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
 
 branches:
   only:
