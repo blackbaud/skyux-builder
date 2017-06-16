@@ -52,7 +52,7 @@ let config = {
 
 // In CI, use firefox
 if (process.env.TRAVIS) {
-  config.capabilities = { browserName: 'firefox' };
+  config.capabilities = { browserName: 'firefox', acceptInsecureCerts: true };
 }
 
 exports.config = merge(commonConfig.config, config);
