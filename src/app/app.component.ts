@@ -140,6 +140,8 @@ export class AppComponent implements OnInit {
         this.router.navigateByUrl(routePath);
         return false;
       }
+
+      return true;
     };
 
     if (this.config.runtime.command === 'serve') {
