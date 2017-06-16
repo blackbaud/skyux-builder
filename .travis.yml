@@ -1,6 +1,9 @@
 language: node_js
 sudo: required
 
+addons:
+  firefox: "52.0"
+
 branches:
   only:
     - master

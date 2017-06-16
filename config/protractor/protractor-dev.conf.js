@@ -50,4 +50,9 @@ let config = {
   }
 };
 
+// In CI, use firefox
+if (process.env.TRAVIS) {
+  config.capabilities = { browserName: 'firefox' };
+}
+
 exports.config = merge(commonConfig.config, config);
