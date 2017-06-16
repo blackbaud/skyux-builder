@@ -15,11 +15,10 @@ let config = {
     defaultTimeoutInterval: 480000 // git clone, npm install, and skyux build can be slow
   },
   onPrepare: () => {
-
-    const url = 'https://github.com/blackbaud/skyux-template';
     jasmine.getEnv().addReporter(new SpecReporter());
 
     return new Promise((resolve, reject) => {
+      const url = 'https://github.com/blackbaud/skyux-template';
       common.exec(`rm`, [`-rf`, `${common.tmp}`])
 
         .then(() => common.exec(`git`, [

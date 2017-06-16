@@ -8,8 +8,7 @@
     "sourceMap": true,
     "noEmitHelpers": true,
     "noEmitOnError": true,
-    "noResolve": false,
-    "noImplicitReturns": true,
+    "noResolve": true,
     "lib": [
       "dom",
       "es6"

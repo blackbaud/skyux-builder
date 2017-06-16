@@ -153,8 +153,9 @@ function getWebpackConfig(skyPagesConfig, argv) {
       }),
 
       new ContextReplacementPlugin(
+        // The (\\|\/) piece accounts for path separators in *nix and Windows
         /angular(\\|\/)core(\\|\/)@angular/,
-        skyPagesConfigUtil.spaPath('./src'),
+        skyPagesConfigUtil.spaPath('src'),
         {}
       ),
 
