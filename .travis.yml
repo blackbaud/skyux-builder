@@ -2,7 +2,7 @@ language: node_js
 sudo: required
 
 addons:
-  firefox: "latest-nightly"
+  firefox: "51.0"
 
 branches:
   only:
