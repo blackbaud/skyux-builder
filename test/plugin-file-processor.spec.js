@@ -9,6 +9,7 @@ describe('SKY UX plugin file processor', () => {
   const processorPath = '../lib/plugin-file-processor';
   const content = '';
   let config;
+  let lstatSpy;
 
   beforeEach(() => {
     mock('../config/sky-pages/sky-pages.config', {
@@ -31,6 +32,9 @@ describe('SKY UX plugin file processor', () => {
     };
 
     spyOn(fs, 'writeFileSync').and.callFake(() => {});
+    lstatSpy = spyOn(fs, 'lstatSync').and.returnValue({
+      isDirectory: () => false
+    });
   });
 
   afterEach(() => {
@@ -73,5 +77,17 @@ describe('SKY UX plugin file processor', () => {
     const processor = require(processorPath);
     processor.processFiles(config);
     expect(fs.writeFileSync).not.toHaveBeenCalled();
+  });
+
+  it('should abort if a directory is encountered', () => {
+    spyOn(glob, 'sync').and.returnValue([ 'my-directory' ]);
+    spyOn(fs, 'readFileSync').and.returnValue('changed content');
+    lstatSpy.and.callThrough();
+    lstatSpy.and.returnValue({
+      isDirectory: () => true
+    });
+    const processor = require(processorPath);
+    processor.processFiles(config);
+    expect(fs.readFileSync).not.toHaveBeenCalled();
   });
 });
