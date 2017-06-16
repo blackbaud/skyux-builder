@@ -18,12 +18,7 @@
       "node",
       "jasmine",
       "fontfaceobserver"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@blackbaud/skyux-builder/runtime/*": ["./runtime/*"],
-      "@blackbaud/skyux-builder/runtime": ["./runtime"]
-    }
+    ]
   },
   "compileOnSave": false,
   "buildOnSave": false
