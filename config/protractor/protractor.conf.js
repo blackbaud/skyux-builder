@@ -20,8 +20,8 @@ exports.config = {
       'args': ['--disable-extensions --ignore-certificate-errors']
     }
   },
-  directConnect: true,
-  // seleniumAddress: 'http://localhost:4444/wd/hub',
+  // directConnect: true,
+  seleniumAddress: 'http://localhost:4444/wd/hub',
   framework: 'jasmine',
   jasmineNodeOpts: {
     showColors: true,
