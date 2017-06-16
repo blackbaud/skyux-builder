@@ -13,7 +13,7 @@ module.exports = {
       },
       command: '',
       componentsPattern: '**/*.component.ts',
-      componentsIgnorePattern: './public/**/*.component.ts',
+      componentsIgnorePattern: './public/',
       includeRouteModule: true,
       routes: [],
       routesPattern: '**/index.html',
