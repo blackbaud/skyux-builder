@@ -9,6 +9,7 @@ describe('SKY UX plugin file processor', () => {
   const processorPath = '../lib/plugin-file-processor';
   const content = '';
   let config;
+  let lstatSpy;
 
   beforeEach(() => {
     mock('../config/sky-pages/sky-pages.config', {
@@ -31,6 +32,9 @@ describe('SKY UX plugin file processor', () => {
     };
 
     spyOn(fs, 'writeFileSync').and.callFake(() => {});
+    lstatSpy = spyOn(fs, 'lstatSync').and.returnValue({
+      isDirectory: () => false
+    });
   });
 
   afterEach(() => {
@@ -46,11 +50,6 @@ describe('SKY UX plugin file processor', () => {
   it('should generate an array of file paths and contents for the SPA\'s source', () => {
     spyOn(glob, 'sync').and.returnValue([ 'my-file.js' ]);
     spyOn(fs, 'readFileSync').and.returnValue('');
-    spyOn(fs, 'lstatSync').and.returnValue({
-      isDirectory: function () {
-        return false;
-      }
-    });
     const processor = require(processorPath);
     processor.processFiles(config);
     expect(glob.sync).toHaveBeenCalled();
@@ -67,11 +66,6 @@ describe('SKY UX plugin file processor', () => {
   it('should allow plugin preload hooks to alter the content', () => {
     spyOn(glob, 'sync').and.returnValue([ 'my-file.js' ]);
     spyOn(fs, 'readFileSync').and.returnValue('');
-    spyOn(fs, 'lstatSync').and.returnValue({
-      isDirectory: function () {
-        return false;
-      }
-    });
     const processor = require(processorPath);
     processor.processFiles(config);
     expect(fs.writeFileSync).toHaveBeenCalled();
@@ -80,23 +74,17 @@ describe('SKY UX plugin file processor', () => {
   it('should not alter the content of a file if nothing has changed', () => {
     spyOn(glob, 'sync').and.returnValue([ 'my-file.js' ]);
     spyOn(fs, 'readFileSync').and.returnValue('changed content');
-    spyOn(fs, 'lstatSync').and.returnValue({
-      isDirectory: function () {
-        return false;
-      }
-    });
     const processor = require(processorPath);
     processor.processFiles(config);
     expect(fs.writeFileSync).not.toHaveBeenCalled();
   });
 
-  it('should not alter the content of a directory if nothing has changed', () => {
-    spyOn(glob, 'sync').and.returnValue([ 'my-file' ]);
+  it('should abort if a directory is encountered', () => {
+    spyOn(glob, 'sync').and.returnValue([ 'my-directory' ]);
     spyOn(fs, 'readFileSync').and.returnValue('changed content');
-    spyOn(fs, 'lstatSync').and.returnValue({
-      isDirectory: function () {
-        return true;
-      }
+    lstatSpy.and.callThrough();
+    lstatSpy.and.returnValue({
+      isDirectory: () => true
     });
     const processor = require(processorPath);
     processor.processFiles(config);
