@@ -101,7 +101,7 @@ export class AppComponent implements OnInit {
 
   // Only pass params that omnibar config cares about
   private setParamsFromQS(omnibarConfig: any) {
-    const omnibarConfigMap = {
+    const omnibarConfigMap: {[key: string]: string} = {
       envid: 'envId',
       svid: 'svcId'
     };
