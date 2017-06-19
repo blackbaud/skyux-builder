@@ -178,6 +178,20 @@ describe('AppComponent', () => {
     });
   }));
 
+  it('should use the omnibarConfigMap key if it exists', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.skyux.omnibar = {};
+    skyAppConfig.skyux.params = ['envid'];
+    skyAppConfig.runtime.params.getAllKeys = () => ['envid'];
+    skyAppConfig.runtime.params.get = (key) => 'envidValue';
+    setup(skyAppConfig, true).then(() => {
+      fixture.detectChanges();
+
+      // Notice envid => envId
+      expect(spyOmnibar.calls.first().args[0].envId).toEqual('envidValue');
+    });
+  }));
+
   it('should not create BBOmnibarNavigation if omnibar.nav is set', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
