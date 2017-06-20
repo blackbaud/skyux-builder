@@ -1,6 +1,8 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const path = require('path');
+
 describe('SKY UX Builder component generator', () => {
 
   const runtimeUtils = require('../utils/runtime-test-utils');
@@ -142,7 +144,7 @@ describe('SKY UX Builder component generator', () => {
 
   it('should ignore components in the public directory', () => {
     let config = runtimeUtils.getDefaultRuntime();
-    config.srcPath = './fixtures';
+    config.srcPath = path.resolve(__dirname, 'fixtures');
     const components = generator.getComponents({
       runtime: config
     });
