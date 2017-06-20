@@ -19,15 +19,16 @@ let config = {
 
     return new Promise((resolve, reject) => {
       const url = 'https://github.com/blackbaud/skyux-template';
+      const branch = 'master';
       common.exec(`rm`, [`-rf`, `${common.tmp}`])
 
         .then(() => common.exec(`git`, [
           `clone`,
           `-b`,
-          `update-package-dependencies`,
+          branch,
           `--single-branch`,
-          `${url}`,
-          `${common.tmp}`
+          url,
+          common.tmp
         ]))
 
         .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
