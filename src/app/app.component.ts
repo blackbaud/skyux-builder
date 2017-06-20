@@ -101,8 +101,13 @@ export class AppComponent implements OnInit {
 
   // Only pass params that omnibar config cares about
   private setParamsFromQS(omnibarConfig: any) {
+    const omnibarConfigMap: {[key: string]: string} = {
+      envid: 'envId',
+      svid: 'svcId'
+    };
     this.config.runtime.params.getAllKeys().forEach(key => {
-      omnibarConfig[key] = this.config.runtime.params.get(key);
+      const omnibarConfigKey = omnibarConfigMap[key] || key;
+      omnibarConfig[omnibarConfigKey] = this.config.runtime.params.get(key);
     });
   }
 
@@ -140,6 +145,8 @@ export class AppComponent implements OnInit {
         this.router.navigateByUrl(routePath);
         return false;
       }
+
+      return true;
     };
 
     if (this.config.runtime.command === 'serve') {

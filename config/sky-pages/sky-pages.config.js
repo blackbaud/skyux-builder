@@ -71,6 +71,7 @@ module.exports = {
         },
         command: command,
         componentsPattern: '**/*.component.ts',
+        componentsIgnorePattern: './public/',
         includeRouteModule: true,
         routesPattern: '**/index.html',
         runtimeAlias: 'sky-pages-internal/runtime',

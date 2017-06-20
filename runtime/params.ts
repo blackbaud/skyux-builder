@@ -23,7 +23,7 @@ export class SkyAppRuntimeConfigParams {
     private allowed: string[]
   ) {
 
-    const urlSearchParams: URLSearchParams = getUrlSearchParams(url);
+    const urlSearchParams: URLSearchParams = getUrlSearchParams(this.url);
 
     // Filter to allowed params
     this.allowed.forEach(key => {

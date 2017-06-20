@@ -140,4 +140,13 @@ describe('SKY UX Builder component generator', () => {
     );
   });
 
+  it('should ignore components in the public directory', () => {
+    let config = runtimeUtils.getDefaultRuntime();
+    config.srcPath = './fixtures';
+    const components = generator.getComponents({
+      runtime: config
+    });
+    expect(components.names.length).toEqual(0);
+  });
+
 });
