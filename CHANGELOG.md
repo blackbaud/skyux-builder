@@ -1,3 +1,9 @@
+# 1.0.0-rc.1 (2017-06-20)
+
+- Ignoring `src/app/public` directory when auto-generating components. [#187](https://github.com/blackbaud/skyux-builder/pull/187)
+- Updated path and rules related to Codelyzer. [#192](https://github.com/blackbaud/skyux-builder/pull/192)
+- Correctly settings `envId` and `svcId` for `auth-client`. [#193](https://github.com/blackbaud/skyux-builder/pull/193)
+
 # 1.0.0-rc.0 (2017-06-16)
 
 - Added support for Angular v4.1.3 and SKY UX 2.0.0-rc.0. 
