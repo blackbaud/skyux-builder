@@ -47,7 +47,7 @@ describe('AppComponent', () => {
     includeSearchProvider?: boolean,
     styleLoadError?: any
   ) {
-    let providers = [
+    let providers: any[] = [
       {
         provide: Router,
         useValue: {
@@ -178,6 +178,20 @@ describe('AppComponent', () => {
     });
   }));
 
+  it('should use the omnibarConfigMap key if it exists', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    skyAppConfig.skyux.omnibar = {};
+    skyAppConfig.skyux.params = ['envid'];
+    skyAppConfig.runtime.params.getAllKeys = () => ['envid'];
+    skyAppConfig.runtime.params.get = (key) => 'envidValue';
+    setup(skyAppConfig, true).then(() => {
+      fixture.detectChanges();
+
+      // Notice envid => envId
+      expect(spyOmnibar.calls.first().args[0].envId).toEqual('envidValue');
+    });
+  }));
+
   it('should not create BBOmnibarNavigation if omnibar.nav is set', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
@@ -291,7 +305,7 @@ describe('AppComponent', () => {
       const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
 
       const globalLink = cb({ url: 'asdf.com' });
-      expect(globalLink).not.toBeDefined();
+      expect(globalLink).toEqual(true);
       expect(navigateByUrlParams).not.toBeDefined();
 
       const localLink = cb({ url: 'base.com/custom-base/new-place' });

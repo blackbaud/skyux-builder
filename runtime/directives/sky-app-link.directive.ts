@@ -20,6 +20,6 @@ export class SkyAppLinkDirective extends RouterLinkWithHref {
     private skyAppConfig: SkyAppConfig
   ) {
     super(router, route, locationStrategy);
-    this.queryParams = skyAppConfig.runtime.params.getAll();
+    this.queryParams = this.skyAppConfig.runtime.params.getAll();
   }
 }

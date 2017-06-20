@@ -1,3 +1,7 @@
+# 1.0.0-rc.0 (2017-06-16)
+
+- Added support for Angular v4.1.3 and SKY UX 2.0.0-rc.0. 
+
 # 1.0.0-beta.33 (2017-06-15)
 
 - Bugfix to stop `SkyAuthHttp` from adding duplicate `envid` or `svcid` params. [#182](https://github.com/blackbaud/skyux-builder/pull/182)

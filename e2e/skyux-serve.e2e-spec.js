@@ -61,9 +61,12 @@ describe('skyux serve', () => {
     common.bindServe().then(() => {
       browser.get(url)
         .then(() => {
-          expect($$('#ts').getText()).toEqual(timestamp);
-          fs.writeFileSync(file, content, 'utf8');
-          done();
+          $$('#ts').getText().then((tsResult) => {
+            expect(tsResult[0]).toEqual(timestamp.toString());
+            fs.writeFileSync(file, content, 'utf8');
+            done();
+          });
+
         })
         .catch(err => {
           console.log(err);
