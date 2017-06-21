@@ -6,13 +6,14 @@ const ngcWebpack = require('ngc-webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
 function getWebpackConfig(skyPagesConfig) {
+  const libraryName = skyPagesConfigUtil.getSkyPagesConfig().skyux.name || 'SkyAppLibrary';
   return {
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
     output: {
       path: skyPagesConfigUtil.spaPath('dist', 'bundles'),
-      filename: 'stache.umd.js',
+      filename: 'bundle.umd.js',
       libraryTarget: 'umd',
-      library: 'Stache'
+      library: libraryName
     },
     externals: [
       /^@angular\//,
@@ -44,15 +45,14 @@ function getWebpackConfig(skyPagesConfig) {
       ]
     },
     plugins: [
-      // new webpack.ContextReplacementPlugin(
-      //   // The (\\|\/) piece accounts for path separators in *nix and Windows
-      //   /angular(\\|\/)core(\\|\/)@angular/,
-      //   skyPagesConfigUtil.spaPath('src'),
-      //   {}
-      // ),
-
       new ngcWebpack.NgcWebpackPlugin({
         tsConfig: skyPagesConfigUtil.spaPathTemp('tsconfig.json')
+      }),
+      new webpack.optimize.UglifyJsPlugin({
+        beautify: false,
+        comments: false,
+        compress: { warnings: false },
+        mangle: { screw_ie8: true, keep_fnames: true }
       })
     ]
   };

@@ -3,15 +3,7 @@
 'use strict';
 
 const fs = require('fs-extra');
-const mkdirp = require('mkdirp');
-const rimraf = require('rimraf');
-const path = require('path');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
-
-function createDist() {
-  rimraf.sync(skyPagesConfigUtil.spaPath('dist'));
-  mkdirp.sync(skyPagesConfigUtil.spaPath('dist'));
-}
 
 function makePackageFileForDist() {
   const packageJson = fs.readJSONSync(
@@ -38,7 +30,6 @@ function copyFilesToDist() {
 }
 
 module.exports = () => {
-  // createDist();
   makePackageFileForDist();
   copyFilesToDist();
 };
