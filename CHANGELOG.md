@@ -1,3 +1,7 @@
+# 1.0.0-rc.2 (2017-06-21)
+
+- Fixed invalid glob pattern (and unit tests) for ignored auto-generated components.
+
 # 1.0.0-rc.1 (2017-06-20)
 
 - Ignoring `src/app/public` directory when auto-generating components. [#187](https://github.com/blackbaud/skyux-builder/pull/187)
