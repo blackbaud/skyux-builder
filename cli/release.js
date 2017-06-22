@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const logger = require('winston');
 const rimraf = require('rimraf');
 const webpack = require('webpack');
+
 const stageTypeScriptFiles = require('./utils/stage-ts');
 const preparePackage = require('./utils/prepare-package');
 const releaseConfig = require('../config/webpack/release.webpack.config.js');
@@ -91,9 +92,15 @@ module.exports = () => {
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();
-  transpile().then(() => {
-    preparePackage();
-    cleanTemp();
-    process.exit();
-  });
+
+  return transpile()
+    .then(() => {
+      preparePackage();
+      cleanTemp();
+      process.exit(0);
+    })
+    .catch(() => {
+      cleanAll();
+      process.exit(1);
+    });
 };
