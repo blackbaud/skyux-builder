@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const ngcWebpack = require('ngc-webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
-function getWebpackConfig(skyPagesConfig) {
+function getWebpackConfig() {
   const libraryName = skyPagesConfigUtil.getSkyPagesConfig().skyux.name || 'SkyAppLibrary';
   return {
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
@@ -27,7 +27,7 @@ function getWebpackConfig(skyPagesConfig) {
       rules: [
         {
           test: /\.ts$/,
-          use: ['awesome-typescript-loader','angular2-template-loader'],
+          use: ['awesome-typescript-loader', 'angular2-template-loader'],
           exclude: [/\.(spec|e2e)\.ts$/]
         },
         {

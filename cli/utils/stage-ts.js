@@ -1,3 +1,6 @@
+/*jshint node: true*/
+'use strict';
+
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
@@ -29,11 +32,13 @@ function inlineHtmlCss() {
     let matches;
 
     // templateUrl
-    while (matches = templateUrlRegEx.exec(fileContents)) {
+    matches = templateUrlRegEx.exec(fileContents);
+    while (matches.length) {
       let requireFile = path.join(dirname, matches[1]);
       let requireContents = getFileContents(requireFile);
       requireContents = `template: ${requireContents}`;
       fileContents = fileContents.replace(matches[0], requireContents);
+      matches = templateUrlRegEx.exec(fileContents);
 
       // Since we're changing the file contents in each iteration and since the regex is stateful
       // we need to reset the regex; otherwise it might not be able to locate subsequent matches
@@ -42,12 +47,14 @@ function inlineHtmlCss() {
     }
 
     // styleUrls
-    while (matches = styleUrlsRegEx.exec(fileContents)) {
+    matches = styleUrlsRegEx.exec(fileContents);
+    while (matches.length) {
       let requireFile = path.join(dirname, matches[1]);
       let requireContents = getFileContents(requireFile);
       requireContents = `styles: [${requireContents}]`;
       fileContents = fileContents.replace(matches[0], requireContents);
       styleUrlsRegEx.lastIndex = 0;
+      matches = styleUrlsRegEx.exec(fileContents);
     }
 
     fs.writeFileSync(file, fileContents, { encoding: 'utf8' });

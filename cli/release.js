@@ -1,3 +1,6 @@
+/*jshint node: true*/
+'use strict';
+
 const fs = require('fs-extra');
 const logger = require('winston');
 const rimraf = require('rimraf');
