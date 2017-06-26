@@ -103,7 +103,7 @@ export class AppComponent implements OnInit {
   private setParamsFromQS(omnibarConfig: any) {
     const omnibarConfigMap: {[key: string]: string} = {
       envid: 'envId',
-      svid: 'svcId'
+      svcid: 'svcId'
     };
     this.config.runtime.params.getAllKeys().forEach(key => {
       const omnibarConfigKey = omnibarConfigMap[key] || key;

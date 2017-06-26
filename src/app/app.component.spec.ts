@@ -181,14 +181,15 @@ describe('AppComponent', () => {
   it('should use the omnibarConfigMap key if it exists', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {};
-    skyAppConfig.skyux.params = ['envid'];
-    skyAppConfig.runtime.params.getAllKeys = () => ['envid'];
-    skyAppConfig.runtime.params.get = (key) => 'envidValue';
+    skyAppConfig.skyux.params = ['asdf'];
+    skyAppConfig.runtime.params.getAllKeys = () => ['envid', 'svcid'];
+    skyAppConfig.runtime.params.get = (key) => key + 'Value';
     setup(skyAppConfig, true).then(() => {
       fixture.detectChanges();
 
-      // Notice envid => envId
+      // Notice envid => envId and svid => svcId
       expect(spyOmnibar.calls.first().args[0].envId).toEqual('envidValue');
+      expect(spyOmnibar.calls.first().args[0].svcId).toEqual('svcidValue');
     });
   }));
 
