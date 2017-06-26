@@ -169,7 +169,8 @@ describe('AppComponent', () => {
   it('should set the allowed params on the omnibar config', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {};
-    skyAppConfig.skyux.params = ['asdf'];
+
+    // Bypassing the allowed params functionality
     skyAppConfig.runtime.params.getAllKeys = () => ['asdf'];
     skyAppConfig.runtime.params.get = (key) => 'jkl';
     setup(skyAppConfig, true).then(() => {
@@ -181,7 +182,8 @@ describe('AppComponent', () => {
   it('should use the omnibarConfigMap key if it exists', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {};
-    skyAppConfig.skyux.params = ['asdf'];
+
+    // Bypassing the allowed params functionality
     skyAppConfig.runtime.params.getAllKeys = () => ['envid', 'svcid'];
     skyAppConfig.runtime.params.get = (key) => key + 'Value';
     setup(skyAppConfig, true).then(() => {
