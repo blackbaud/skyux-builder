@@ -41,16 +41,24 @@ export class SkyAppRuntimeConfigParams {
   }
 
   /**
+   * Does the key exist
+   * @param {string} key
+   * @returns {boolean}
+   */
+  public has(key: string): boolean {
+    return this.params && this.params.hasOwnProperty(key);
+  }
+
+  /**
    * Returns the value of the requested param.
    * @name get
    * @param {string} key
    * @returns {string}
    */
   public get(key: string): string {
-    if (this.params && this.params[key]) {
+    if (this.has(key)) {
       return this.params[key];
     }
-    return '';
   }
 
   /**

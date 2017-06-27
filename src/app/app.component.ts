@@ -100,15 +100,14 @@ export class AppComponent implements OnInit {
   }
 
   // Only pass params that omnibar config cares about
+  // Internally we store as envid/svcid but auth-client wants envId/svcId
   private setParamsFromQS(omnibarConfig: any) {
-    const omnibarConfigMap: {[key: string]: string} = {
-      envid: 'envId',
-      svcid: 'svcId'
-    };
-    this.config.runtime.params.getAllKeys().forEach(key => {
-      const omnibarConfigKey = omnibarConfigMap[key] || key;
-      omnibarConfig[omnibarConfigKey] = this.config.runtime.params.get(key);
-    });
+    if (this.config.runtime.params.has('envid')) {
+      omnibarConfig.envId = this.config.runtime.params.get('envid');
+    }
+    if (this.config.runtime.params.has('svcid')) {
+      omnibarConfig.svcId = this.config.runtime.params.get('svcid');
+    }
   }
 
   private setOnSearch(omnibarConfig: any) {

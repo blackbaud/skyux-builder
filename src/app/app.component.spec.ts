@@ -31,7 +31,7 @@ describe('AppComponent', () => {
         base: 'app-base'
       },
       params: {
-        getAllKeys: () => [],
+        has: (key) => false,
         parse: (p) => parseParams = p
       }
     },
@@ -166,31 +166,20 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should set the allowed params on the omnibar config', async(() => {
+  it('should set the known params on the omnibar config if they exist', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {};
 
-    // Bypassing the allowed params functionality
-    skyAppConfig.runtime.params.getAllKeys = () => ['asdf'];
-    skyAppConfig.runtime.params.get = (key) => 'jkl';
-    setup(skyAppConfig, true).then(() => {
-      fixture.detectChanges();
-      expect(spyOmnibar.calls.first().args[0].asdf).toEqual('jkl');
-    });
-  }));
-
-  it('should use the omnibarConfigMap key if it exists', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
-    skyAppConfig.skyux.omnibar = {};
-
-    // Bypassing the allowed params functionality
-    skyAppConfig.runtime.params.getAllKeys = () => ['envid', 'svcid'];
+    skyAppConfig.skyux.params = ['envid', 'svcid'];
+    skyAppConfig.runtime.params.has = (key) => true;
     skyAppConfig.runtime.params.get = (key) => key + 'Value';
     setup(skyAppConfig, true).then(() => {
       fixture.detectChanges();
 
-      // Notice envid => envId and svid => svcId
+      // Notice envid => envId
       expect(spyOmnibar.calls.first().args[0].envId).toEqual('envidValue');
+
+      // Notice svcid => svcId
       expect(spyOmnibar.calls.first().args[0].svcId).toEqual('svcidValue');
     });
   }));
