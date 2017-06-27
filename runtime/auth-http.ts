@@ -8,7 +8,8 @@ import {
   Http,
   Request,
   RequestOptions,
-  RequestOptionsArgs
+  RequestOptionsArgs,
+  Response
 } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
@@ -33,7 +34,7 @@ export class SkyAuthHttp extends Http {
   public request(
     url: string | Request,
     options?: RequestOptionsArgs
-  ): Observable<any> {
+  ): Observable<Response> {
     return Observable.fromPromise(this.authTokenProvider.getToken())
       .flatMap((token: string) => {
         let authOptions: Request | RequestOptionsArgs;
