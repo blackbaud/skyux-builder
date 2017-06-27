@@ -79,6 +79,16 @@ function getWebpackConfig(skyPagesConfig, argv) {
           exclude: excludes
         },
         {
+          enforce: 'pre',
+          test: /\.ts$/,
+          loader: 'tslint-loader',
+          exclude: excludes,
+          options: {
+            emitErrors: true,
+            failOnHint: true
+          }
+        },
+        {
           test: /\.s?css$/,
           use: ['raw-loader', 'sass-loader']
         },
@@ -97,7 +107,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
                 // an aliased file.  Webpack will still throw an error when a module
                 // cannot be resolved via a file path or alias.
                 ignoreDiagnostics: [2307],
-                useCache: true
+                transpileOnly: true
               }
             },
             {
@@ -113,7 +123,11 @@ function getWebpackConfig(skyPagesConfig, argv) {
         debug: true,
         options: {
           context: __dirname,
-          skyPagesConfig: skyPagesConfig
+          skyPagesConfig: skyPagesConfig,
+          tslint: {
+            emitErrors: false,
+            failOnHint: false
+          }
         }
       }),
 
