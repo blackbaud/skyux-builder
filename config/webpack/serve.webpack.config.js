@@ -13,8 +13,6 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const hostUtils = require('../../utils/host-utils');
 
-const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
-
 /**
  * Returns the querystring base for parameters allowed to be passed through.
  * PLEASE NOTE: The method is nearly duplicated in `runtime/params.ts`.
