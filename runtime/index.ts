@@ -4,6 +4,7 @@ export * from './bootstrapper';
 export * from './config';
 export * from './params';
 export * from './directives';
+export * from './i18n/resources.ts';
 export * from './search-results-provider';
 export * from './window-ref';
 export * from './style-loader';
