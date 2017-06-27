@@ -121,11 +121,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
     module: {
       rules: [
         {
-          enforce: 'pre',
-          test: /sky-pages\.module\.ts$/,
-          loader: moduleLoader
-        },
-        {
           test: /\.ts$/,
           use: [
             {
@@ -140,9 +135,10 @@ function getWebpackConfig(argv, skyPagesConfig) {
             {
               loader: 'angular2-template-loader'
             }
-          ]
+          ],
+          exclude: [/\.e2e\.ts$/]
         }
-      ],
+      ]
     },
     devServer: {
       compress: true,
