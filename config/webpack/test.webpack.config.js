@@ -127,6 +127,9 @@ function getWebpackConfig(skyPagesConfig, argv) {
           tslint: {
             emitErrors: false,
             failOnHint: false
+            // TODO: Activate type checking after this bug is addressed:
+            // https://github.com/wbuchwalter/tslint-loader/issues/76
+            // typeCheck: true
           }
         }
       }),
