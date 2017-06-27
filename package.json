@@ -95,11 +95,13 @@
     "zone.js": "0.8.9"
   },
   "devDependencies": {
+    "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
     "jasmine": "2.6.0",
     "jscs": "3.0.7",
     "jshint": "2.9.4",
     "mock-require": "2.0.2",
-    "proxyquire": "1.7.11"
+    "proxyquire": "1.7.11",
+    "rimraf": "2.6.1"
   }
 }

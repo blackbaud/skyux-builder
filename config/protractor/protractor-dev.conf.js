@@ -7,6 +7,7 @@ const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
 const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
+
 let config = {
   specs: [
     path.join(process.cwd(), 'e2e', '**', '*.e2e-spec.js')
@@ -20,7 +21,7 @@ let config = {
     jasmine.getEnv().addReporter(new SpecReporter());
 
     return new Promise((resolve, reject) => {
-      common.exec(`rm`, [`-rf`, `${common.tmp}`])
+      common.rimrafPromise(common.tmp)
         .then(() => common.exec(`git`, [`clone`, `${url}`, `${common.tmp}`]))
         .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
         .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
@@ -35,7 +36,7 @@ let config = {
     common.afterAll();
 
     return new Promise((resolve, reject) => {
-      common.exec(`rm`, [`-rf`, `${common.tmp}`])
+      common.rimrafPromise(common.tmp)
         .then(resolve)
         .catch(reject);
     });

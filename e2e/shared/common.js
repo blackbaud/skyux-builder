@@ -5,9 +5,10 @@
 const fs = require('fs');
 const path = require('path');
 const merge = require('merge');
+const rimraf = require('rimraf');
 const portfinder = require('portfinder');
 const HttpServer = require('http-server');
-const childProcessSpawn = require('child_process').spawn;
+const childProcessSpawn = require('cross-spawn');
 
 const tmp = './.e2e-tmp/';
 const cwdOpts = { cwd: tmp };
@@ -130,7 +131,7 @@ function prepareBuild(config) {
   writeConfig(config);
 
   return new Promise((resolve, reject) => {
-    exec(`rm`, [`-rf`, `${tmp}/dist`])
+    rimrafPromise(path.join(tmp, 'dist'))
       .then(() => exec(`node`, [cliPath, `build`], cwdOpts))
       .then(serve)
       .then(resolve)
@@ -161,6 +162,21 @@ function prepareServe() {
  */
 function resetConfig() {
   writeConfig(skyuxConfigOriginal);
+}
+
+/**
+ * Wraps the rimraf command in a promise.
+ */
+function rimrafPromise(dir) {
+  return new Promise((resolve, reject) => {
+    rimraf(dir, err => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
 }
 
 /**
@@ -268,6 +284,7 @@ module.exports = {
   getExitCode: getExitCode,
   prepareBuild: prepareBuild,
   prepareServe: prepareServe,
+  rimrafPromise: rimrafPromise,
   tmp: tmp,
   writeAppFile: writeAppFile,
   removeAppFile: removeAppFile,
