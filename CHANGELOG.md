@@ -1,3 +1,22 @@
+# 1.0.0-rc.3 (2017-06-23)
+
+- Added support for SKY UX 2.0.0-rc.1.
+- Fixed a typings bug with `SkyAuthHttp`.
+
+# 1.0.0-rc.2 (2017-06-21)
+
+- Fixed invalid glob pattern (and unit tests) for ignored auto-generated components.
+
+# 1.0.0-rc.1 (2017-06-20)
+
+- Ignoring `src/app/public` directory when auto-generating components. [#187](https://github.com/blackbaud/skyux-builder/pull/187)
+- Updated path and rules related to Codelyzer. [#192](https://github.com/blackbaud/skyux-builder/pull/192)
+- Correctly setting `envId` and `svcId` for `auth-client`. [#193](https://github.com/blackbaud/skyux-builder/pull/193)
+
+# 1.0.0-rc.0 (2017-06-16)
+
+- Added support for Angular v4.1.3 and SKY UX 2.0.0-rc.0. 
+
 # 1.0.0-beta.33 (2017-06-15)
 
 - Bugfix to stop `SkyAuthHttp` from adding duplicate `envid` or `svcid` params. [#182](https://github.com/blackbaud/skyux-builder/pull/182)
