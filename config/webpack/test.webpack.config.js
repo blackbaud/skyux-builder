@@ -69,6 +69,20 @@ function getWebpackConfig(skyPagesConfig, argv) {
         },
         {
           enforce: 'pre',
+          test: /\.ts$/,
+          loader: 'tslint-loader',
+          exclude: excludes,
+          options: {
+            emitErrors: true,
+            failOnHint: true
+            // TODO: Activate type checking after this bug is addressed:
+            // https://github.com/wbuchwalter/tslint-loader/issues/76
+            // https://github.com/wbuchwalter/tslint-loader/pull/78
+            // typeCheck: true
+          }
+        },
+        {
+          enforce: 'pre',
           test: /\.js$/,
           loader: 'source-map-loader',
           exclude: excludes
@@ -76,25 +90,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {
           enforce: 'pre',
           loader: outPath('loader', 'sky-processor', 'preload'),
-          exclude: excludes
-        },
-        {
-          enforce: 'pre',
-          test: /\.ts$/,
-          loader: 'tslint-loader',
-          exclude: excludes,
-          options: {
-            emitErrors: true,
-            failOnHint: true
-          }
-        },
-        {
-          test: /\.s?css$/,
-          use: ['raw-loader', 'sass-loader']
-        },
-        {
-          test: /\.html$/,
-          loader: 'raw-loader',
           exclude: excludes
         },
         {
@@ -113,7 +108,16 @@ function getWebpackConfig(skyPagesConfig, argv) {
             {
               loader: 'angular2-template-loader'
             }
-          ]
+          ],
+          exclude: [/\.e2e\.ts$/]
+        },
+        {
+          test: /\.s?css$/,
+          use: ['raw-loader', 'sass-loader']
+        },
+        {
+          test: /\.html$/,
+          loader: 'raw-loader'
         }
       ]
     },
@@ -123,14 +127,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         debug: true,
         options: {
           context: __dirname,
-          skyPagesConfig: skyPagesConfig,
-          tslint: {
-            emitErrors: false,
-            failOnHint: false
-            // TODO: Activate type checking after this bug is addressed:
-            // https://github.com/wbuchwalter/tslint-loader/issues/76
-            // typeCheck: true
-          }
+          skyPagesConfig: skyPagesConfig
         }
       }),
 
