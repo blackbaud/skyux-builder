@@ -69,20 +69,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
         },
         {
           enforce: 'pre',
-          test: /\.ts$/,
-          loader: 'tslint-loader',
-          exclude: excludes,
-          options: {
-            emitErrors: true,
-            failOnHint: true
-            // TODO: Activate type checking after this bug is addressed:
-            // https://github.com/wbuchwalter/tslint-loader/issues/76
-            // https://github.com/wbuchwalter/tslint-loader/pull/78
-            // typeCheck: true
-          }
-        },
-        {
-          enforce: 'pre',
           test: /\.js$/,
           loader: 'source-map-loader',
           exclude: excludes
