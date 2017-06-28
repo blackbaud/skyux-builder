@@ -25,6 +25,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
   const srcPath = path.resolve(process.cwd(), 'src', 'app');
+  const moduleLoader = outPath('loader', 'sky-pages-module');
 
   const resolves = [
     process.cwd(),
@@ -65,7 +66,17 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
-          loader: outPath('loader', 'sky-pages-module')
+          loader: moduleLoader
+        },
+        {
+          enforce: 'pre',
+          test: /\.ts$/,
+          loader: 'tslint-loader',
+          exclude: excludes,
+          options: {
+            emitErrors: true,
+            failOnHint: true
+          }
         },
         {
           enforce: 'pre',
@@ -76,7 +87,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {
           enforce: 'pre',
           loader: outPath('loader', 'sky-processor', 'preload'),
-          exclude: excludes
+          exclude: /node_modules/
         },
         {
           test: /\.ts$/,
@@ -87,8 +98,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
                 // Ignore the "Cannot find module" error that occurs when referencing
                 // an aliased file.  Webpack will still throw an error when a module
                 // cannot be resolved via a file path or alias.
-                ignoreDiagnostics: [2307],
-                transpileOnly: true
+                ignoreDiagnostics: [2307]
               }
             },
             {
@@ -98,12 +108,19 @@ function getWebpackConfig(skyPagesConfig, argv) {
           exclude: [/\.e2e\.ts$/]
         },
         {
-          test: /\.s?css$/,
-          use: ['raw-loader', 'sass-loader']
+          test: /\.css$/,
+          loader: 'raw-loader'
         },
         {
           test: /\.html$/,
           loader: 'raw-loader'
+        },
+        {
+          test: /\.scss$/,
+          use: [
+            'raw-loader',
+            'sass-loader'
+          ]
         }
       ]
     },
@@ -113,7 +130,13 @@ function getWebpackConfig(skyPagesConfig, argv) {
         debug: true,
         options: {
           context: __dirname,
-          skyPagesConfig: skyPagesConfig
+          skyPagesConfig: skyPagesConfig,
+          tslint: {
+            emitErrors: false,
+            failOnHint: false,
+            resourcePath: 'src',
+            typeCheck: true
+          }
         }
       }),
 
