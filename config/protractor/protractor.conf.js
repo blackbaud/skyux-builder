@@ -29,7 +29,7 @@ exports.config = {
   },
   useAllAngular2AppRoots: true,
   beforeLaunch: function () {
-    require('ts-node').register();
+    require('ts-node').register({ ignore: false });
   },
 
   onPrepare: function () {

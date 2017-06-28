@@ -1,6 +1,8 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const path = require('path');
+
 describe('SKY UX Builder component generator', () => {
 
   const runtimeUtils = require('../utils/runtime-test-utils');
@@ -138,6 +140,15 @@ describe('SKY UX Builder component generator', () => {
     expect(components.imports).toContain(
       `import { MyComponent } from '../../me.component'`
     );
+  });
+
+  it('should ignore components in the public directory', () => {
+    let config = runtimeUtils.getDefaultRuntime();
+    config.srcPath = path.resolve(__dirname, 'fixtures');
+    const components = generator.getComponents({
+      runtime: config
+    });
+    expect(components.names.length).toEqual(0);
   });
 
 });
