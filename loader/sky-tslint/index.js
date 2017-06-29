@@ -1,3 +1,6 @@
+/*jshint node: true*/
+'use strict';
+
 const tslint = require('tslint');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 const programUtil = require('./program');
@@ -11,9 +14,8 @@ const lint = (instance, input) => {
   };
 
   const program = programUtil.getProgram(tsConfigPath);
-  const linter = new tslint.Linter(linterOptions, program);
   const configuration = tslint.Configuration.findConfiguration(tslintConfigPath).results;
-
+  const linter = new tslint.Linter(linterOptions, program);
   linter.lint(instance.resourcePath, input, configuration);
   const result = linter.getResult();
 
@@ -23,11 +25,12 @@ const lint = (instance, input) => {
 };
 
 module.exports = function (input, map) {
-  const instance = this;
-  const callback = instance.async();
+  const callback = this.async();
 
-  instance.cacheable && instance.cacheable();
+  if (this.cacheable) {
+    this.cacheable();
+  }
 
-  const error = lint(instance, input);
+  const error = lint(this, input);
   callback(error, input, map);
 };
