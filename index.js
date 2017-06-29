@@ -26,6 +26,9 @@ module.exports = {
       case 'version':
         require('./cli/version')();
         break;
+      case 'lint':
+        require('./cli/lint')();
+        break;
       default:
         logger.info('@blackbaud/skyux-builder: Unknown command %s', command);
         break;

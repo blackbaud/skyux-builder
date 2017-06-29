@@ -127,7 +127,8 @@ function getWebpackConfig(argv, skyPagesConfig) {
                 // Ignore the "Cannot find module" error that occurs when referencing
                 // an aliased file.  Webpack will still throw an error when a module
                 // cannot be resolved via a file path or alias.
-                ignoreDiagnostics: [2307]
+                ignoreDiagnostics: [2307],
+                transpileOnly: true
               }
             },
             {

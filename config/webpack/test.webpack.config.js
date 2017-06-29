@@ -1,6 +1,8 @@
 /*jslint node: true */
 'use strict';
 
+const SkyTsLintCheckerPlugin = require('../../loader/sky-tslint/checker-plugin');
+
 function getWebpackConfig(skyPagesConfig, argv) {
 
   function spaPath() {
@@ -79,6 +81,12 @@ function getWebpackConfig(skyPagesConfig, argv) {
           exclude: excludes
         },
         {
+          enforce: 'pre',
+          test: /\.ts$/,
+          loader: outPath('loader', 'sky-tslint'),
+          exclude: excludes
+        },
+        {
           test: /\.ts$/,
           use: [
             {
@@ -135,6 +143,8 @@ function getWebpackConfig(skyPagesConfig, argv) {
         skyPagesConfigUtil.spaPath('src'),
         {}
       ),
+
+      new SkyTsLintCheckerPlugin(),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
       new ProcessExitCode()
