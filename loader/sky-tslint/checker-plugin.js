@@ -1,32 +1,14 @@
 /*jshint node: true*/
 'use strict';
 
-function SkyTsLintCheckerPlugin() {
-  let isWatchMode = false;
-
+module.exports = function () {
   const apply = (compiler) => {
-    compiler.plugin('run', function (params, callback) {
-      isWatchMode = false;
-      callback();
-    });
-
-    compiler.plugin('watch-run', function (params, callback) {
-      isWatchMode = true;
-      callback();
-    });
-
-    compiler.plugin('emit', function (compilation, callback) {
-      if (isWatchMode === true) {
-        require('./program').clearProgram();
-      }
-
-      callback();
+    compiler.plugin('done', () => {
+      // Delete the existing TSLint program after each compilation so that it will get
+      // recreated when files change.
+      require('./program').clearProgram();
     });
   };
 
-  return {
-    apply
-  };
+  return { apply };
 }
-
-module.exports = SkyTsLintCheckerPlugin;

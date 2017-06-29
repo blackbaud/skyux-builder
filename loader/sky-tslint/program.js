@@ -2,21 +2,21 @@
 'use strict';
 
 const tslint = require('tslint');
-const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
+const logger = require('winston');
+let _program;
 
-const tsconfigPath = skyPagesConfigUtil.spaPath('tsconfig.json');
-let _context = {};
-
-const getProgram = () => {
-  if (!_context.tslintProgram) {
-    _context.tslintProgram = tslint.Linter.createProgram(tsconfigPath);
+const getProgram = (tsconfigPath) => {
+  if (!_program) {
+    logger.info('Creating new TSLint compiler...');
+    _program = tslint.Linter.createProgram(tsconfigPath);
+    logger.info('Done.');
   }
 
-  return _context.tslintProgram;
+  return _program;
 };
 
 const clearProgram = () => {
-  delete _context.tslintProgram;
+  _program = undefined;
 };
 
 module.exports = {
