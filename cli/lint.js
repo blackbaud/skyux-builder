@@ -24,10 +24,7 @@ function test(command, argv) {
 
   // Pass our exitCode up
   const test = spawn('node', flags, options);
-  test.on('exit', exitCode => {
-    console.log('exitCode', exitCode);
-    process.exit(exitCode);
-  });
+  test.on('exit', exitCode => process.exit(exitCode));
 }
 
 module.exports = test;

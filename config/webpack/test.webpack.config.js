@@ -96,6 +96,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
                 // an aliased file.  Webpack will still throw an error when a module
                 // cannot be resolved via a file path or alias.
                 ignoreDiagnostics: [2307],
+                // Linting is handled by the sky-tslint loader.
                 transpileOnly: true
               }
             },
@@ -144,6 +145,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {}
       ),
 
+      // Handles watch-mode maintenance for TSLint.
       new SkyTsLintCheckerPlugin(),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
