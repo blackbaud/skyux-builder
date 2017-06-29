@@ -1,27 +1,24 @@
 /*jslint node: true */
 'use strict';
 
+const path = require('path');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+const ProcessExitCode = require('../../plugin/process-exit-code');
 const SkyTsLintCheckerPlugin = require('../../loader/sky-tslint/checker-plugin');
+const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+const aliasBuilder = require('./alias-builder');
+
+function spaPath() {
+  return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
+}
+
+function outPath() {
+  return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+}
 
 function getWebpackConfig(skyPagesConfig, argv) {
-
-  function spaPath() {
-    return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
-  }
-
-  function outPath() {
-    return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
-  }
-
-  const path = require('path');
-
-  const DefinePlugin = require('webpack/lib/DefinePlugin');
-  const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
-  const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-  const ProcessExitCode = require('../../plugin/process-exit-code');
-  const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
-  const aliasBuilder = require('./alias-builder');
-
   const runCoverage = (!argv || argv.coverage !== false);
   skyPagesConfig.runtime.includeRouteModule = false;
 
