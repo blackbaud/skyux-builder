@@ -2,8 +2,6 @@
 'use strict';
 
 const mock = require('mock-require');
-const path = require('path');
-const logger = require('winston');
 const tslint = require('tslint');
 
 describe('SKY UX tslint Webpack loader', () => {
@@ -11,14 +9,21 @@ describe('SKY UX tslint Webpack loader', () => {
   let context;
 
   beforeEach(() => {
-    context = {
-      resourcePath: path.resolve(__dirname, 'fixtures', 'loader-tslint.fixture.ts'),
-      async: () => () => {}
-    };
+    context = {};
 
-    // mock('../config/sky-pages/sky-pages.config', {
-    //   spaPath: (fileName) => fileName
-    // });
+    mock('../config/sky-pages/sky-pages.config', {
+      spaPath: (fileName) => fileName
+    });
+
+    mock('../loader/sky-tslint/program', {
+      getProgram: () => {}
+    });
+
+    spyOn(tslint.Configuration, 'findConfiguration').and.returnValue({
+      results: {}
+    });
+
+    spyOn(tslint.Linter.prototype, 'lint').and.returnValue(undefined);
   });
 
   afterEach(() => {
@@ -26,32 +31,36 @@ describe('SKY UX tslint Webpack loader', () => {
   });
 
   it('should execute tslint for source files', (done) => {
-    mock('../config/sky-pages/sky-pages.config', {
-      spaPath: (fileName) => path.resolve(__dirname, 'fixtures', fileName)
+    spyOn(tslint.Linter.prototype, 'getResult').and.returnValue({
+      failures: []
     });
-    spyOn(tslint.Linter.prototype, 'lint').and.callThrough();
-    const loader = require(loaderPath);
-    let callback = (err, input, map) => {
+
+    const callback = (err, input, map) => {
       expect(err).toBeUndefined();
+      expect(tslint.Configuration.findConfiguration).toHaveBeenCalled();
       expect(tslint.Linter.prototype.lint).toHaveBeenCalled();
+      expect(tslint.Linter.prototype.getResult).toHaveBeenCalled();
       done();
     };
     context.async = () => callback;
+
+    const loader = require(loaderPath);
     loader.call(context, '');
   });
 
   it('should handle tslint errors', (done) => {
-    // const loader = require(loaderPath);
-    // let callback = (err, input, map) => {
-    //   expect(err).toBeDefined();
-    //   done();
-    // };
-    // context.async = () => callback;
-    // try {
-    //   loader.call(context, '');
-    // } catch(err) {
-    //   console.log('error!', err);
-    // }
-    done();
+    spyOn(tslint.Linter.prototype, 'getResult').and.returnValue({
+      failures: ['failed'],
+      output: 'Failed.'
+    });
+
+    const callback = (err, input, map) => {
+      expect(err).toBeDefined();
+      done();
+    };
+    context.async = () => callback;
+
+    const loader = require(loaderPath);
+    loader.call(context, '');
   });
 });

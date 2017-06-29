@@ -26,11 +26,7 @@ const lint = (instance, input) => {
 
 module.exports = function (input, map) {
   const callback = this.async();
-
-  if (this.cacheable) {
-    this.cacheable();
-  }
-
   const error = lint(this, input);
+
   callback(error, input, map);
 };
