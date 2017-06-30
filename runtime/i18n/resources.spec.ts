@@ -4,7 +4,8 @@ describe('SkyAppResourcesPipe', () => {
 
   let pipe: SkyAppResourcesPipe;
   beforeEach(() => {
-    pipe = new SkyAppResourcesPipe('.\\/fixtures\\/resources_en_US.json');
+    pipe = new SkyAppResourcesPipe();
+    pipe.setup('.\\/fixtures\\/resources_en_US.json');
   });
 
   it('should ensure that a defined hello_world identifier returns Hello World', () => {
