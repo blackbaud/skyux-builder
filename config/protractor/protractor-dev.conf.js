@@ -19,7 +19,7 @@ let config = {
 
     return new Promise((resolve, reject) => {
       const url = 'https://github.com/blackbaud/skyux-template';
-      const branch = 'master';
+      const branch = 'update-angular425';
       common.exec(`rm`, [`-rf`, `${common.tmp}`])
 
         .then(() => common.exec(`git`, [
