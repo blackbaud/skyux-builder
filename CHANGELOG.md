@@ -1,7 +1,7 @@
 # 1.0.0-rc.5 (2017-07-01)
 
-  - Added web-animations polyfill to support angular animations in more browsers
-  - Added support for Angular v4.2.5 and SKY UX 2.0.0-rc.4
+  - Added web-animations polyfill to support angular animations in more browsers. [#204](https://github.com/blackbaud/skyux-builder/pull/204)
+  - Added support for Angular v4.2.5 and SKY UX 2.0.0-rc.4. [#208](https://github.com/blackbaud/skyux-builder/pull/208)
 
 # 1.0.0-rc.4 (2017-06-29)
 
