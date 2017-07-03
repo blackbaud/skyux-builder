@@ -1,31 +1,29 @@
 /*jslint node: true */
 'use strict';
 
+const path = require('path');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
+const ProcessExitCode = require('../../plugin/process-exit-code');
+const SkyTsLintCheckerPlugin = require('../../loader/sky-tslint/checker-plugin');
+const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+const aliasBuilder = require('./alias-builder');
+
+function spaPath() {
+  return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
+}
+
+function outPath() {
+  return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+}
+
 function getWebpackConfig(skyPagesConfig, argv) {
-
-  function spaPath() {
-    return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
-  }
-
-  function outPath() {
-    return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
-  }
-
-  const path = require('path');
-
-  const DefinePlugin = require('webpack/lib/DefinePlugin');
-  const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
-  const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-  const ProcessExitCode = require('../../plugin/process-exit-code');
-  const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
-  const aliasBuilder = require('./alias-builder');
-
   const runCoverage = (!argv || argv.coverage !== false);
   skyPagesConfig.runtime.includeRouteModule = false;
 
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
   const srcPath = path.resolve(process.cwd(), 'src', 'app');
-  const moduleLoader = outPath('loader', 'sky-pages-module');
 
   const resolves = [
     process.cwd(),
@@ -66,17 +64,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
-          loader: moduleLoader
-        },
-        {
-          enforce: 'pre',
-          test: /\.ts$/,
-          loader: 'tslint-loader',
-          exclude: excludes,
-          options: {
-            emitErrors: true,
-            failOnHint: true
-          }
+          loader: outPath('loader', 'sky-pages-module')
         },
         {
           enforce: 'pre',
@@ -87,7 +75,13 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {
           enforce: 'pre',
           loader: outPath('loader', 'sky-processor', 'preload'),
-          exclude: /node_modules/
+          exclude: excludes
+        },
+        {
+          enforce: 'pre',
+          test: /\.ts$/,
+          loader: outPath('loader', 'sky-tslint'),
+          exclude: excludes
         },
         {
           test: /\.ts$/,
@@ -98,7 +92,9 @@ function getWebpackConfig(skyPagesConfig, argv) {
                 // Ignore the "Cannot find module" error that occurs when referencing
                 // an aliased file.  Webpack will still throw an error when a module
                 // cannot be resolved via a file path or alias.
-                ignoreDiagnostics: [2307]
+                ignoreDiagnostics: [2307],
+                // Linting is handled by the sky-tslint loader.
+                transpileOnly: true
               }
             },
             {
@@ -108,19 +104,12 @@ function getWebpackConfig(skyPagesConfig, argv) {
           exclude: [/\.e2e\.ts$/]
         },
         {
-          test: /\.css$/,
-          loader: 'raw-loader'
+          test: /\.s?css$/,
+          use: ['raw-loader', 'sass-loader']
         },
         {
           test: /\.html$/,
           loader: 'raw-loader'
-        },
-        {
-          test: /\.scss$/,
-          use: [
-            'raw-loader',
-            'sass-loader'
-          ]
         }
       ]
     },
@@ -130,13 +119,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         debug: true,
         options: {
           context: __dirname,
-          skyPagesConfig: skyPagesConfig,
-          tslint: {
-            emitErrors: false,
-            failOnHint: false,
-            resourcePath: 'src',
-            typeCheck: true
-          }
+          skyPagesConfig: skyPagesConfig
         }
       }),
 
@@ -158,6 +141,9 @@ function getWebpackConfig(skyPagesConfig, argv) {
         skyPagesConfigUtil.spaPath('src'),
         {}
       ),
+
+      // Handles watch-mode maintenance for TSLint.
+      new SkyTsLintCheckerPlugin(),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
       new ProcessExitCode()

@@ -1,3 +1,9 @@
+# 1.0.0-rc.4 (2017-06-29)
+
+- Added support for SKY UX 2.0.0-rc.2.
+- Fixed typo when passing `svcid` to `auth-client`. [#201](https://github.com/blackbaud/skyux-builder/pull/201)
+- Improved execution time for `skyux test` and `skyux watch`. [#202](https://github.com/blackbaud/skyux-builder/pull/202)
+
 # 1.0.0-rc.3 (2017-06-23)
 
 - Added support for SKY UX 2.0.0-rc.1.
