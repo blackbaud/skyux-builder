@@ -63,7 +63,6 @@ function inlineHtmlCss() {
 
 function getFileContents(filePath) {
   let contents = '';
-
   switch (path.extname(filePath)) {
     case '.scss':
       contents = compileSass(filePath);

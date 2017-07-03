@@ -6,8 +6,8 @@ const ngcWebpack = require('ngc-webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const ProcessExitCode = require('../../plugin/process-exit-code');
 
-function getWebpackConfig() {
-  const libraryName = skyPagesConfigUtil.getSkyPagesConfig().skyux.name || 'SkyAppLibrary';
+function getWebpackConfig(skyPagesConfig) {
+  const libraryName = skyPagesConfig.skyux.name || 'SkyAppLibrary';
   return {
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
     output: {

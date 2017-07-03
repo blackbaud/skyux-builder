@@ -56,8 +56,8 @@ function writeTSConfig() {
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);
 }
 
-function transpile() {
-  const config = webpackConfig.getWebpackConfig();
+function transpile(skyPagesConfig) {
+  const config = webpackConfig.getWebpackConfig(skyPagesConfig);
   const compiler = webpack(config);
 
   return new Promise((resolve, reject) => {
@@ -88,12 +88,12 @@ function transpile() {
   });
 }
 
-module.exports = () => {
+module.exports = (skyPagesConfig) => {
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();
 
-  return transpile()
+  return transpile(skyPagesConfig)
     .then(() => {
       preparePackage();
       cleanTemp();

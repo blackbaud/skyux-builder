@@ -73,7 +73,7 @@ describe('host-utils', () => {
         };
       }
 
-      return readFileSync(filename, encoding);
+      return readJsonSync(filename, encoding);
     });
 
     const externals = {
