@@ -54,6 +54,7 @@ export interface SkyuxConfig {
     referenced: any[]
   };
   omnibar?: any;
+  useHashRouting?: boolean;
 }
 
 @Injectable()

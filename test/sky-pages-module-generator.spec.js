@@ -170,4 +170,22 @@ BBAuth.mock = true;`);
     const source = generator.getSource(config);
     expect(source).toContain(JSON.stringify(config));
   });
+
+  it('should use Hash routing if specified in the skyuxconfig', () => {
+    const source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: { useHashRouting: true }
+    });
+
+    expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: true });');
+  });
+
+  it('should not use Hash routing if option is not specified in the skyuxconfig', () => {
+    const source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: false });');
+  });
 });
