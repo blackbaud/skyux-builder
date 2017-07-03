@@ -13,11 +13,11 @@ module.exports = {
       case 'build':
         require('./cli/build')(argv, skyPagesConfig, webpack);
         break;
+      case 'build-public-library':
+        require('./cli/build-public-library')();
+        break;
       case 'e2e':
         require('./cli/e2e')(argv, skyPagesConfig, webpack);
-        break;
-      case 'release':
-        require('./cli/release')();
         break;
       case 'serve':
         require('./cli/serve')(argv, skyPagesConfig, webpack, WebpackDevServer);

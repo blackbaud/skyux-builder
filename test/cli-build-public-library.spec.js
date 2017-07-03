@@ -7,11 +7,12 @@ const rimraf = require('rimraf');
 const logger = require('winston');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
-describe('cli release', () => {
+describe('cli build-public-library', () => {
+  const requirePath = '../cli/build-public-library';
   let webpackConfig;
 
   beforeEach(() => {
-    mock('webpack', (config) => {
+    mock('webpack', () => {
       return {
         run: (cb) => {
           cb(null, {
@@ -23,9 +24,9 @@ describe('cli release', () => {
         }
       };
     });
-    mock('../cli/utils/stage-ts', () => {});
-    mock('../cli/utils/prepare-package', () => {});
-    mock('../config/webpack/release.webpack.config.js', {
+    mock('../cli/utils/stage-library-ts', () => {});
+    mock('../cli/utils/prepare-library-package', () => {});
+    mock('../config/webpack/build-public-library.webpack.config.js', {
       getWebpackConfig: () => {
         webpackConfig = {
           entry: ''
@@ -47,13 +48,13 @@ describe('cli release', () => {
   });
 
   it('should return a function', () => {
-    const release = require('../cli/release');
-    expect(release).toEqual(jasmine.any(Function));
+    const cliCommand = require(requirePath);
+    expect(cliCommand).toEqual(jasmine.any(Function));
   });
 
   it('should clean the dist and temp directories', (done) => {
-    const release = require('../cli/release');
-    release().then(() => {
+    const cliCommand = require(requirePath);
+    cliCommand().then(() => {
       expect(rimraf.sync).toHaveBeenCalled();
       expect(skyPagesConfigUtil.spaPathTemp).toHaveBeenCalled();
       expect(skyPagesConfigUtil.spaPath).toHaveBeenCalledWith('dist');
@@ -62,8 +63,8 @@ describe('cli release', () => {
   });
 
   it('should write a tsconfig.json file', (done) => {
-    const release = require('../cli/release');
-    release().then(() => {
+    const cliCommand = require(requirePath);
+    cliCommand().then(() => {
       const firstArg = fs.writeJSONSync.calls.argsFor(0)[0];
       expect(firstArg).toEqual('tsconfig.json');
       done();
@@ -71,8 +72,8 @@ describe('cli release', () => {
   });
 
   it('should pass config to webpack', (done) => {
-    const release = require('../cli/release');
-    release().then(() => {
+    const cliCommand = require(requirePath);
+    cliCommand().then(() => {
       expect(webpackConfig).toEqual(jasmine.any(Object));
       expect(webpackConfig.entry).toEqual(jasmine.any(String));
       done();
@@ -83,13 +84,13 @@ describe('cli release', () => {
     const errorMessage = 'Something bad happened.';
     spyOn(logger, 'error');
     mock.stop('webpack');
-    mock('webpack', (config) => {
+    mock('webpack', () => {
       return {
         run: (cb) => cb(errorMessage)
       };
     });
-    const release = mock.reRequire('../cli/release');
-    release().then(() => {
+    const cliCommand = mock.reRequire(requirePath);
+    cliCommand().then(() => {
       expect(logger.error).toHaveBeenCalledWith(errorMessage);
       done();
     });
@@ -103,7 +104,7 @@ describe('cli release', () => {
     spyOn(logger, 'warn');
     spyOn(logger, 'info');
 
-    mock('webpack', (config) => {
+    mock('webpack', () => {
       return {
         run: (cb) => cb(null, {
           toJson: () => ({
@@ -114,9 +115,9 @@ describe('cli release', () => {
       };
     });
 
-    const release = mock.reRequire('../cli/release');
+    const cliCommand = mock.reRequire(requirePath);
 
-    release().then(() => {
+    cliCommand().then(() => {
       expect(logger.error).toHaveBeenCalledWith(errs);
       expect(logger.warn).toHaveBeenCalledWith(wrns);
       expect(logger.info).toHaveBeenCalled();
@@ -129,9 +130,9 @@ describe('cli release', () => {
     spyOn(logger, 'warn');
     spyOn(logger, 'info');
 
-    const release = mock.reRequire('../cli/release');
+    const cliCommand = mock.reRequire(requirePath);
 
-    release().then(() => {
+    cliCommand().then(() => {
       expect(logger.error).not.toHaveBeenCalled();
       expect(logger.warn).not.toHaveBeenCalled();
       done();

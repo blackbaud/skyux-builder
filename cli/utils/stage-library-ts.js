@@ -33,7 +33,7 @@ function inlineHtmlCss() {
 
     // templateUrl
     matches = templateUrlRegEx.exec(fileContents);
-    while (matches.length) {
+    while (matches) {
       let requireFile = path.join(dirname, matches[1]);
       let requireContents = getFileContents(requireFile);
       requireContents = `template: ${requireContents}`;
@@ -48,7 +48,7 @@ function inlineHtmlCss() {
 
     // styleUrls
     matches = styleUrlsRegEx.exec(fileContents);
-    while (matches.length) {
+    while (matches) {
       let requireFile = path.join(dirname, matches[1]);
       let requireContents = getFileContents(requireFile);
       requireContents = `styles: [${requireContents}]`;

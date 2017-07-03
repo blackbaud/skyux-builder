@@ -6,9 +6,9 @@ const logger = require('winston');
 const rimraf = require('rimraf');
 const webpack = require('webpack');
 
-const stageTypeScriptFiles = require('./utils/stage-ts');
-const preparePackage = require('./utils/prepare-package');
-const releaseConfig = require('../config/webpack/release.webpack.config.js');
+const stageTypeScriptFiles = require('./utils/stage-library-ts');
+const preparePackage = require('./utils/prepare-library-package');
+const webpackConfig = require('../config/webpack/build-public-library.webpack.config.js');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 function cleanTemp() {
@@ -57,7 +57,7 @@ function writeTSConfig() {
 }
 
 function transpile() {
-  const config = releaseConfig.getWebpackConfig();
+  const config = webpackConfig.getWebpackConfig();
   const compiler = webpack(config);
 
   return new Promise((resolve, reject) => {
