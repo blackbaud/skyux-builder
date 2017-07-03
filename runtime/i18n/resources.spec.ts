@@ -1,11 +1,14 @@
+import { SkyAppResourcesServiceMock } from './resources.service.mock';
 import { SkyAppResourcesPipe } from './resources';
 
 describe('SkyAppResourcesPipe', () => {
-
   let pipe: SkyAppResourcesPipe;
+  let mockResources: SkyAppResourcesServiceMock;
   beforeEach(() => {
+
     pipe = new SkyAppResourcesPipe();
-    pipe.setup('.\\/fixtures\\/resources_en_US.json');
+    mockResources = new SkyAppResourcesServiceMock();
+    pipe.resourcesService = mockResources;
   });
 
   it('should ensure that a defined hello_world identifier returns Hello World', () => {

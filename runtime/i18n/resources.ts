@@ -1,3 +1,4 @@
+import { SkyAppResourcesService } from './resources.service';
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -5,16 +6,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class SkyAppResourcesPipe implements PipeTransform {
   public resources: any;
-
-  public setup(resource: string) {
-    this.resources = require('json-loader!' + resource);
-  }
+  public resourcesService: SkyAppResourcesService = new SkyAppResourcesService();
 
   public transform(val) {
-    if (!this.resources) {
-      this.resources = require
-      ('json-loader!sky-pages-spa/src/assets/locales/resources_en_US.json');
-    }
+    this.resources = this.resourcesService.getResources();
     let stringObj: {_description: string, message: string} = this.resources[val];
     if (stringObj) {
       return stringObj.message;
