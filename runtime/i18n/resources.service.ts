@@ -4,6 +4,12 @@ import { Injectable } from '@angular/core';
 export class SkyAppResourcesService {
   public getResources() {
     // V1 will always return the English file, future versions will be more dynamic
-    return require('json-loader!sky-pages-spa/src/assets/locales/resources_en_US.json');
+    let resources: any;
+    try {
+      resources = require('json-loader!sky-pages-spa/src/assets/locales/resources_en_US.json');
+    } catch (error) {
+      resources = {};
+    }
+    return resources;
   }
 }
