@@ -10,7 +10,7 @@ describe('SkyAppResourcesPipe', () => {
     pipe.resourcesService = mockResources;
   });
 
-  it('should ensure that a defined identifier returns the listed message from the resource file', () => {
+  it('should ensure that a defined identifier returns the listed message from resource file', () => {
     let str: string = pipe.transform('hello_world');
     expect(str).toBe('Hello World');
   });
