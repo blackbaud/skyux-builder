@@ -15,13 +15,22 @@ let config = {
     defaultTimeoutInterval: 480000 // git clone, npm install, and skyux build can be slow
   },
   onPrepare: () => {
-
-    const url = 'https://github.com/blackbaud/skyux-template';
     jasmine.getEnv().addReporter(new SpecReporter());
 
     return new Promise((resolve, reject) => {
+      const url = 'https://github.com/blackbaud/skyux-template';
+      const branch = 'update-angular425';
       common.exec(`rm`, [`-rf`, `${common.tmp}`])
-        .then(() => common.exec(`git`, [`clone`, `${url}`, `${common.tmp}`]))
+
+        .then(() => common.exec(`git`, [
+          `clone`,
+          `-b`,
+          branch,
+          `--single-branch`,
+          url,
+          common.tmp
+        ]))
+
         .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
         .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
         .then(resolve)
@@ -44,7 +53,12 @@ let config = {
 
 // In CI, use firefox
 if (process.env.TRAVIS) {
-  config.capabilities = { browserName: 'firefox' };
+  config.capabilities = {
+    browserName: 'chrome',
+    'chromeOptions': {
+      'args': ['--disable-extensions --ignore-certificate-errors']
+    }
+  };
 }
 
 exports.config = merge(commonConfig.config, config);
