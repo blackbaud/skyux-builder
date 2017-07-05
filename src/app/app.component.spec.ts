@@ -31,7 +31,7 @@ describe('AppComponent', () => {
         base: 'app-base'
       },
       params: {
-        getAllKeys: () => [],
+        has: (key) => false,
         parse: (p) => parseParams = p
       }
     },
@@ -47,7 +47,7 @@ describe('AppComponent', () => {
     includeSearchProvider?: boolean,
     styleLoadError?: any
   ) {
-    let providers = [
+    let providers: any[] = [
       {
         provide: Router,
         useValue: {
@@ -166,15 +166,21 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should set the allowed params on the omnibar config', async(() => {
+  it('should set the known params on the omnibar config if they exist', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {};
-    skyAppConfig.skyux.params = ['asdf'];
-    skyAppConfig.runtime.params.getAllKeys = () => ['asdf'];
-    skyAppConfig.runtime.params.get = (key) => 'jkl';
+
+    skyAppConfig.skyux.params = ['envid', 'svcid'];
+    skyAppConfig.runtime.params.has = (key) => true;
+    skyAppConfig.runtime.params.get = (key) => key + 'Value';
     setup(skyAppConfig, true).then(() => {
       fixture.detectChanges();
-      expect(spyOmnibar.calls.first().args[0].asdf).toEqual('jkl');
+
+      // Notice envid => envId
+      expect(spyOmnibar.calls.first().args[0].envId).toEqual('envidValue');
+
+      // Notice svcid => svcId
+      expect(spyOmnibar.calls.first().args[0].svcId).toEqual('svcidValue');
     });
   }));
 
@@ -291,7 +297,7 @@ describe('AppComponent', () => {
       const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
 
       const globalLink = cb({ url: 'asdf.com' });
-      expect(globalLink).not.toBeDefined();
+      expect(globalLink).toEqual(true);
       expect(navigateByUrlParams).not.toBeDefined();
 
       const localLink = cb({ url: 'base.com/custom-base/new-place' });

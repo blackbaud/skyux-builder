@@ -284,4 +284,17 @@ describe('SKY UX Builder route generator', () => {
       `path: 'my-custom-src/my-custom-route/top-level'`
     );
   });
+
+  it('should publicly expose config variable to template', () => {
+    spyOn(glob, 'sync').and.returnValue(['custom/nested/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    spyOn(fs, 'readFileSync').and.returnValue('');
+
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+    expect(routes.definitions).toContain('public config: SkyAppConfig');
+  });
 });
