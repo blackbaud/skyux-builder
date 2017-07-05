@@ -21,6 +21,7 @@ let config = {
     return new Promise((resolve, reject) => {
       const url = 'https://github.com/blackbaud/skyux-template';
       const branch = 'update-angular425';
+      
       common.rimrafPromise(common.tmp)
         .then(() => common.exec(`git`, [
           `clone`,
