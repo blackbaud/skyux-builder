@@ -64,4 +64,23 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.getUrl('https://mysite.com')).toEqual('https://mysite.com');
   });
 
+  it('should allow querystring param keys to be case insensitive', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?A1=b&A3=c',
+      allowed
+    );
+    expect(params.get('a1')).toEqual('b');
+    expect(params.get('a3')).toEqual('c');
+  });
+
+  it('should expose a `has` method for testing if a param exists', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?a1=b&a2=c',
+      allowed
+    );
+    expect(params.has('a1')).toEqual(true);
+    expect(params.has('a2')).toEqual(false);
+    expect(params.has('a3')).toEqual(false);
+  });
+
 });
