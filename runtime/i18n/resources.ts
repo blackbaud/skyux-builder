@@ -8,7 +8,7 @@ export class SkyAppResourcesPipe implements PipeTransform {
   public resources: any;
   public resourcesService: SkyAppResourcesService = new SkyAppResourcesService();
 
-  public transform(val) {
+  public transform(val: string) {
     this.resources = this.resourcesService.getResources();
     let stringObj: {_description: string, message: string} = this.resources[val];
     if (stringObj) {
