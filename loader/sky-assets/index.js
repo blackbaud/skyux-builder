@@ -2,22 +2,12 @@
 'use strict';
 
 const fs = require('fs');
-const hashFile = require('hash-file');
-
 const loaderUtils = require('loader-utils');
+
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
+const assetsUtils = require('../../utils/assets-utils');
 
 const ASSETS_REGEX = /~\/assets\/.*\.[\.\w]*/gi;
-
-function getFilePathWithHash(filePath) {
-  let indexOfLastDot = filePath.lastIndexOf('.');
-
-  return filePath.substr(0, indexOfLastDot) +
-    '.' +
-    hashFile.sync(skyPagesConfigUtil.spaPath('src', filePath)) +
-    '.' +
-    filePath.substr(indexOfLastDot + 1);
-}
 
 module.exports = function (content) {
   const options = loaderUtils.getOptions(this);
@@ -26,7 +16,7 @@ module.exports = function (content) {
   while (match) {
     const matchString = match[0];
     const filePath = matchString.substring(2, matchString.length);
-    const filePathWithHash = getFilePathWithHash(filePath);
+    const filePathWithHash = assetsUtils.getFilePathWithHash(filePath, true);
 
     this.emitFile(
       filePathWithHash,
