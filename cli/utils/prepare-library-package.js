@@ -9,6 +9,7 @@ function makePackageFileForDist() {
     skyPagesConfigUtil.spaPath('package.json')
   );
   packageJson.module = 'index.js';
+  packageJson.main = 'bundles/bundle.umd.js';
   fs.writeJSONSync(
     skyPagesConfigUtil.spaPath('dist', 'package.json'),
     packageJson,
