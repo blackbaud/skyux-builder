@@ -129,10 +129,12 @@ function build(argv, skyPagesConfig, webpack) {
   assetsConfig.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl);
 
   return runCompiler(webpack, config)
-    .then(() => {
+    .then(stats => {
       if (compileModeIsAoT) {
         cleanupAot();
       }
+
+      return Promise.resolve(stats);
     });
 }
 
