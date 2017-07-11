@@ -10,9 +10,10 @@ const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 describe('cli build-public-library', () => {
   const requirePath = '../cli/build-public-library';
   let webpackConfig;
+  let mockWebpack;
 
   beforeEach(() => {
-    mock('webpack', () => {
+    mockWebpack = () => {
       return {
         run: (cb) => {
           cb(null, {
@@ -23,7 +24,7 @@ describe('cli build-public-library', () => {
         });
         }
       };
-    });
+    };
     mock('../cli/utils/stage-library-ts', () => {});
     mock('../cli/utils/prepare-library-package', () => {});
     mock('../config/webpack/build-public-library.webpack.config.js', {
@@ -54,7 +55,7 @@ describe('cli build-public-library', () => {
 
   it('should clean the dist and temp directories', (done) => {
     const cliCommand = require(requirePath);
-    cliCommand().then(() => {
+    cliCommand({}, mockWebpack).then(() => {
       expect(rimraf.sync).toHaveBeenCalled();
       expect(skyPagesConfigUtil.spaPathTemp).toHaveBeenCalled();
       expect(skyPagesConfigUtil.spaPath).toHaveBeenCalledWith('dist');
@@ -64,7 +65,7 @@ describe('cli build-public-library', () => {
 
   it('should write a tsconfig.json file', (done) => {
     const cliCommand = require(requirePath);
-    cliCommand().then(() => {
+    cliCommand({}, mockWebpack).then(() => {
       const firstArg = fs.writeJSONSync.calls.argsFor(0)[0];
       expect(firstArg).toEqual('tsconfig.json');
       done();
@@ -73,7 +74,7 @@ describe('cli build-public-library', () => {
 
   it('should pass config to webpack', (done) => {
     const cliCommand = require(requirePath);
-    cliCommand().then(() => {
+    cliCommand({}, mockWebpack).then(() => {
       expect(webpackConfig).toEqual(jasmine.any(Object));
       expect(webpackConfig.entry).toEqual(jasmine.any(String));
       done();
@@ -83,58 +84,14 @@ describe('cli build-public-library', () => {
   it('should handle errors thrown by webpack', (done) => {
     const errorMessage = 'Something bad happened.';
     spyOn(logger, 'error');
-    mock.stop('webpack');
-    mock('webpack', () => {
+    mockWebpack = () => {
       return {
         run: (cb) => cb(errorMessage)
       };
-    });
+    };
     const cliCommand = mock.reRequire(requirePath);
-    cliCommand().then(() => {
+    cliCommand({}, mockWebpack).then(() => {
       expect(logger.error).toHaveBeenCalledWith(errorMessage);
-      done();
-    });
-  });
-
-  it('should handle stats errors and warnings', (done) => {
-    const errs = ['custom-error2'];
-    const wrns = ['custom-warning1'];
-
-    spyOn(logger, 'error');
-    spyOn(logger, 'warn');
-    spyOn(logger, 'info');
-
-    mock('webpack', () => {
-      return {
-        run: (cb) => cb(null, {
-          toJson: () => ({
-            errors: errs,
-            warnings: wrns
-          })
-        })
-      };
-    });
-
-    const cliCommand = mock.reRequire(requirePath);
-
-    cliCommand().then(() => {
-      expect(logger.error).toHaveBeenCalledWith(errs);
-      expect(logger.warn).toHaveBeenCalledWith(wrns);
-      expect(logger.info).toHaveBeenCalled();
-      done();
-    });
-  });
-
-  it('should handle no stats errors and warnings', (done) => {
-    spyOn(logger, 'error');
-    spyOn(logger, 'warn');
-    spyOn(logger, 'info');
-
-    const cliCommand = mock.reRequire(requirePath);
-
-    cliCommand().then(() => {
-      expect(logger.error).not.toHaveBeenCalled();
-      expect(logger.warn).not.toHaveBeenCalled();
       done();
     });
   });
