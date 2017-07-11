@@ -2,14 +2,13 @@
 'use strict';
 
 const fs = require('fs-extra');
-const logger = require('winston');
 const rimraf = require('rimraf');
-const webpack = require('webpack');
 
 const stageTypeScriptFiles = require('./utils/stage-library-ts');
 const preparePackage = require('./utils/prepare-library-package');
 const webpackConfig = require('../config/webpack/build-public-library.webpack.config.js');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+const runCompiler = require('./utils/run-compiler');
 
 function cleanTemp() {
   rimraf.sync(skyPagesConfigUtil.spaPathTemp());
@@ -56,44 +55,17 @@ function writeTSConfig() {
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);
 }
 
-function transpile(skyPagesConfig) {
+function transpile(skyPagesConfig, webpack) {
   const config = webpackConfig.getWebpackConfig(skyPagesConfig);
-  const compiler = webpack(config);
-
-  return new Promise((resolve, reject) => {
-    compiler.run((err, stats) => {
-      if (err) {
-        logger.error(err);
-        reject(err);
-        return;
-      }
-
-      const jsonStats = stats.toJson();
-
-      if (jsonStats.errors.length) {
-        logger.error(jsonStats.errors);
-      }
-
-      if (jsonStats.warnings.length) {
-        logger.warn(jsonStats.warnings);
-      }
-
-      logger.info(stats.toString({
-        chunks: false,
-        colors: false
-      }));
-
-      resolve(stats);
-    });
-  });
+  return runCompiler(webpack, config);
 }
 
-module.exports = (skyPagesConfig) => {
+module.exports = (skyPagesConfig, webpack) => {
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();
 
-  return transpile(skyPagesConfig)
+  return transpile(skyPagesConfig, webpack)
     .then(() => {
       preparePackage();
       cleanTemp();
