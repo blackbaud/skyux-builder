@@ -136,7 +136,8 @@ describe('cli build', () => {
       },
       () => ({
         run: (cb) => {
-          cb(null,
+          cb(
+            null,
             {
               toJson: () => ({
                 errors: [],
@@ -152,6 +153,7 @@ describe('cli build', () => {
         skyPagesConfigUtil.spaPathTemp()
       );
       expect(passedConfig.hasOwnProperty('skyuxPathAlias')).toBe(false);
+
       done();
     });
 

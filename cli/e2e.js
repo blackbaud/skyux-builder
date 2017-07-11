@@ -188,10 +188,10 @@ function spawnServer() {
 /**
  * Spawns the build process.  Captures the config used.
  */
-function spawnBuild(argv, skyPagesConfig) {
+function spawnBuild(argv, skyPagesConfig, webpack) {
   return new Promise((resolve, reject) => {
     logger.info('Running build...');
-    build(argv, skyPagesConfig)
+    build(argv, skyPagesConfig, webpack)
       .then(stats => {
         logger.info('Build complete.');
         resolve(stats.toJson().chunks);
@@ -205,13 +205,13 @@ function spawnBuild(argv, skyPagesConfig) {
  * Assumes build was ran.
  * @name e2e
  */
-function e2e(argv, skyPagesConfig) {
+function e2e(argv, skyPagesConfig, webpack) {
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
   Promise
     .all([
-      spawnBuild(argv, skyPagesConfig),
+      spawnBuild(argv, skyPagesConfig, webpack),
       spawnServer(),
       spawnSelenium()
     ])
