@@ -145,17 +145,17 @@ describe('cli build', () => {
               })
             }
           );
-
-          // The temp folder should be deleted after the build is complete.
-          expect(removeSpy).toHaveBeenCalledWith(
-            skyPagesConfigUtil.spaPathTemp()
-          );
-          expect(passedConfig.hasOwnProperty('skyuxPathAlias')).toBe(false);
-
-          done();
         }
       })
-    );
+    ).then(() => {
+      // The temp folder should be deleted after the build is complete.
+      expect(removeSpy).toHaveBeenCalledWith(
+        skyPagesConfigUtil.spaPathTemp()
+      );
+      expect(passedConfig.hasOwnProperty('skyuxPathAlias')).toBe(false);
+
+      done();
+    });
 
     // The default SKY UX Builder source files should be written first.
     expect(copySpy.calls.argsFor(1)).toEqual([
