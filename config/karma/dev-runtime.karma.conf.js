@@ -1,6 +1,10 @@
 /*jshint node: true*/
 'use strict';
 
+function addRuntimeAlias(webpackConfig, runtimePath, path) {
+  webpackConfig.resolve.alias['@blackbaud/skyux-builder/runtime' + path] = runtimePath + path;
+}
+
 /**
  * Requires the shared karma config and sets any local properties.
  * @name getConfig
@@ -34,7 +38,8 @@ function getConfig(config) {
 
   // This is needed exclusively for internal runtime unit tests,
   // which is why it's here instead of alias-builder or the shared test.webpack.config.js
-  webpackConfig.resolve.alias['@blackbaud/skyux-builder/runtime'] = '.';
+  addRuntimeAlias(webpackConfig, runtimePath, '');
+  addRuntimeAlias(webpackConfig, runtimePath, '/i18n');
 
   // Remove sky-style-loader
   delete config.preprocessors['../../utils/spec-styles.js'];
@@ -42,6 +47,8 @@ function getConfig(config) {
 
   config.set({
     webpack: webpackConfig,
+    autoWatch: true,
+    singleRun: false,
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage', 'runtime')
     }
