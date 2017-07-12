@@ -47,8 +47,6 @@ function getConfig(config) {
 
   config.set({
     webpack: webpackConfig,
-    autoWatch: true,
-    singleRun: false,
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage', 'runtime')
     }
