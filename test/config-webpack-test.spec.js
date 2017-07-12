@@ -3,7 +3,7 @@
 
 const runtimeUtils = require('../utils/runtime-test-utils');
 
-describe('config webpack common', () => {
+describe('config webpack test', () => {
   let argv;
   let skyPagesConfig;
 
