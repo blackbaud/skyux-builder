@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "coverage": "npm run coverage:builder && npm run coverage:runtime && npm run coverage:src-app",
-    "coverage:builder": "istanbul cover --report=html --dir=./coverage/builder jasmine JASMINE_CONFIG_PATH=jasmine.json",
+    "coverage:builder": "istanbul cover --report=html --dir=./coverage/builder ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
     "coverage:runtime": "node ./utils/cli-test.js dev-runtime",
     "coverage:src-app": "node ./utils/cli-test.js dev-src-app",
     "e2e": "webdriver-manager update && protractor ./config/protractor/protractor-dev.conf.js",
@@ -96,11 +96,13 @@
     "zone.js": "0.8.10"
   },
   "devDependencies": {
+    "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
     "jasmine": "2.6.0",
     "jscs": "3.0.7",
     "jshint": "2.9.4",
     "mock-require": "2.0.2",
-    "proxyquire": "1.8.0"
+    "proxyquire": "1.8.0",
+    "rimraf": "2.6.1"
   }
 }

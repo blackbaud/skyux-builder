@@ -101,7 +101,7 @@ describe('SKY UX Builder route generator', () => {
       }
     });
 
-    expect(suppliedPattern).toEqual('my-custom-src/my-custom-pattern');
+    expect(suppliedPattern).toEqual(path.join('my-custom-src', 'my-custom-pattern'));
   });
 
   it('should handle windows guard paths correctly', () => {
@@ -180,7 +180,7 @@ describe('SKY UX Builder route generator', () => {
       @Injectable() export class Guard2 {}
     `);
 
-    let file = 'my-custom-src/my-custom-route/index.guard.ts';
+    let file = path.join('my-custom-src', 'my-custom-route', 'index.guard.ts');
     expect(() => generator.getRoutes({
       runtime: {
         srcPath: 'my-custom-src/',
