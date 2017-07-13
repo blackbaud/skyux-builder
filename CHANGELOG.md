@@ -1,4 +1,4 @@
-# 1.0.0-rc.6 (2017-07-13)
+# 1.0.0-rc.7 (2017-07-13)
 
 - Added ability to configure route redirects in `skyuxconfig.json`. [#217](https://github.com/blackbaud/skyux-builder/pull/217)
 - Added a new CLI command, `skyux build-public-library`, which bundles Angular component libraries into a consumable module for NPM. [#198](https://github.com/blackbaud/skyux-builder/pull/198)
