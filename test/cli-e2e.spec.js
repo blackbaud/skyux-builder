@@ -44,30 +44,24 @@ describe('cli e2e', () => {
   beforeEach(() => {
     EXIT_CODE = 0;
 
-    mock('../cli/build', () => {
-      return new Promise(resolve => {
-        resolve({
-          toJson: () => ({
-            chunks: CHUNKS
-          })
-        });
+    mock('../cli/build', () => new Promise(resolve => {
+      resolve({
+        toJson: () => ({
+          chunks: CHUNKS
+        })
       });
-    });
+    }));
 
     mock('cross-spawn', {
-      spawn: () => {
-        return {
-          on: (evt, cb) => {
-            if (evt === 'exit') {
-              PROTRACTOR_CB = cb;
-              cb(EXIT_CODE);
-            }
+      spawn: () => ({
+        on: (evt, cb) => {
+          if (evt === 'exit') {
+            PROTRACTOR_CB = cb;
+            cb(EXIT_CODE);
           }
-        };
-      },
-      sync: () => {
-        return { };
-      }
+        }
+      }),
+      sync: () => ({ })
     });
 
     mock('portfinder', {
@@ -76,7 +70,10 @@ describe('cli e2e', () => {
 
     mock('http-server', {
       createServer: () => ({
-        close: () => {},
+        close: () => {
+          console.log('INNER 2');
+        },
+
         listen: (port, host, cb) => {
           cb();
         }
@@ -99,7 +96,7 @@ describe('cli e2e', () => {
     });
 
     EXIT_CODE = 1;
-    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should catch protractor kitchen sink error', (done) => {
@@ -111,10 +108,10 @@ describe('cli e2e', () => {
     });
 
     EXIT_CODE = 199;
-    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('should install and start selenium only if a seleniumAddress is specified', (done) => {
+  it('should install, start, and kill selenium only if a seleniumAddress is specified', (done) => {
     let killCalled = false;
 
     mock(configPath, {
@@ -140,64 +137,11 @@ describe('cli e2e', () => {
       done();
     });
 
-    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
-  });
-
-  it('should only kill servers that exist', (done) => {
-    let called = false;
-    spyOn(logger, 'warn');
-    spyOn(process, 'exit').and.callFake(() => {
-      // Stop the infinite loop
-      if (!called) {
-        called = true;
-        expect(infoCalledWith('Closing http server')).toEqual(true);
-        logger.info.calls.reset();
-        PROTRACTOR_CB();
-        expect(infoCalledWith('Closing http server')).toEqual(false);
-        done();
-      }
-    });
-
-    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should catch build failures', (done) => {
     mock('../cli/build', () => Promise.reject(new Error('Build failed.')));
-
-    spyOn(process, 'exit').and.callFake(exitCode => {
-      expect(exitCode).toEqual(1);
-      done();
-    });
-
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
-  });
-
-  it('should catch http-server failures', (done) => {
-    mock('http-server', {
-      createServer: (opts) => ({
-        close: () => {},
-        listen: () => {
-          // Log a message.
-          opts.logFn.call({}, null, null, null);
-
-          // Log an error.
-          opts.logFn.call({}, null, null, new Error('Server failed.'));
-        }
-      })
-    });
-
-    spyOn(process, 'exit').and.callFake(exitCode => {
-      expect(exitCode).toEqual(1);
-      done();
-    });
-
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
-  });
-
-  it('should catch portfinder failures', (done) => {
-    mock('portfinder', {
-      getPortPromise: () => Promise.reject(new Error('Portfinder failed.'))
-    });
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(1);
@@ -228,7 +172,7 @@ describe('cli e2e', () => {
       done();
     });
 
-    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should catch protractor\'s selenium failures', (done) => {

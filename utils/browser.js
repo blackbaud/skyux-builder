@@ -1,0 +1,75 @@
+/*jslint node: true */
+'use strict';
+
+const util = require('util');
+const open = require('open');
+const logger = require('winston');
+const hostUtils = require('./host-utils');
+const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+
+/**
+ * Returns the querystring base for parameters allowed to be passed through.
+ * PLEASE NOTE: The method is nearly duplicated in `runtime/params.ts`.
+ * @name getQueryStringFromArgv
+ * @param {Object} argv
+ * @param {SkyPagesConfig} skyPagesConfig
+ * @returns {string}
+ */
+function getQueryStringFromArgv(argv, skyPagesConfig) {
+
+  let found = [];
+  skyPagesConfig.skyux.params.forEach(param => {
+    if (argv[param]) {
+      found.push(`${param}=${encodeURIComponent(argv[param])}`);
+    }
+  });
+
+  if (found.length) {
+    return `?${found.join('&')}`;
+  }
+
+  return '';
+}
+
+function browser(argv, skyPagesConfig, stats, port) {
+
+  const queryStringBase = getQueryStringFromArgv(argv, skyPagesConfig);
+  let localUrl = util.format(
+    'https://localhost:%s%s',
+    port,
+    skyPagesConfigUtil.getAppBase(skyPagesConfig)
+  );
+
+  let hostUrl = hostUtils.resolve(
+    queryStringBase,
+    localUrl,
+    stats.toJson().chunks,
+    skyPagesConfig
+  );
+
+  // Edge uses a different technique (protocol vs executable)
+  if (argv.browser === 'edge') {
+    const edge = 'microsoft-edge:';
+    argv.browser = undefined;
+    hostUrl = edge + hostUrl;
+    localUrl = edge + localUrl;
+  }
+
+  switch (argv.launch) {
+    case 'local':
+
+      // Only adding queryStringBase to the message + local url opened,
+      // Meaning doesn't need those to communicate back to localhost
+      localUrl += queryStringBase;
+
+      logger.info(`Launching Local URL: ${localUrl}`);
+      open(localUrl, argv.browser);
+    break;
+    case 'host':
+      logger.info(`Launching Host URL: ${hostUrl}`);
+      open(hostUrl, argv.browser);
+    break;
+  }
+}
+
+module.exports = browser;

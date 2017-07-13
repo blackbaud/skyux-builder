@@ -4,10 +4,13 @@
 const logger = require('winston');
 const fs = require('fs-extra');
 const merge = require('merge');
+
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 const assetsConfig = require('../lib/assets-configuration');
 const pluginFileProcessor = require('../lib/plugin-file-processor');
+const server = require('../utils/server');
+const browser = require('../utils/browser');
 
 function writeTSConfig() {
   var config = {
@@ -157,7 +160,19 @@ function build(argv, skyPagesConfig, webpack) {
         cleanupAot();
       }
 
-      resolve(stats);
+      // Serve build files
+      switch (argv.launch) {
+        case 'host':
+        case 'local':
+          server.start().then(port => {
+            browser(argv, skyPagesConfig, stats, port);
+          });
+        break;
+        default:
+          resolve(stats);
+        break;
+      }
+
     });
   });
 }

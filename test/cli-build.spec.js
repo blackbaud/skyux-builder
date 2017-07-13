@@ -15,8 +15,7 @@ describe('cli build', () => {
   });
 
   afterEach(() => {
-    mock.stop('../config/webpack/build.webpack.config');
-    mock.stop('../lib/source-files-walker');
+    mock.stopAll();
   });
 
   it('should call getWebpackConfig', () => {
@@ -286,5 +285,41 @@ describe('cli build', () => {
       })
     );
 
+  });
+
+  function testBuildAndServe(launch, done) {
+    const argv = {
+      launch: launch
+    };
+
+    mock('../utils/server', {
+      start: () => Promise.resolve()
+    });
+    mock('../utils/browser', (argv) => {
+      expect(argv.launch).toBe(launch);
+      done();
+    });
+
+    mock.reRequire('../cli/build')(argv, runtimeUtils.getDefault(), () => ({
+      run: (cb) => {
+        cb(
+          null,
+          {
+            toJson: () => ({
+              errors: [],
+              warnings: []
+            })
+          }
+        );
+      }
+    }));
+  }
+
+  it('should serve and browse to the built files if launch flag is host', (done) => {
+    testBuildAndServe('host', done);
+  });
+
+  it('should serve and browse to the built files if launch flag is local', (done) => {
+    testBuildAndServe('local', done);
   });
 });

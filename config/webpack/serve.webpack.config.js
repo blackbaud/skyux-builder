@@ -3,39 +3,13 @@
 
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
-const open = require('open');
 const logger = require('winston');
 const webpackMerge = require('webpack-merge');
 const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
-const hostUtils = require('../../utils/host-utils');
-
-/**
- * Returns the querystring base for parameters allowed to be passed through.
- * PLEASE NOTE: The method is nearly duplicated in `runtime/params.ts`.
- * @name getQueryStringFromArgv
- * @param {Object} argv
- * @param {SkyPagesConfig} skyPagesConfig
- * @returns {string}
- */
-function getQueryStringFromArgv(argv, skyPagesConfig) {
-
-  let found = [];
-  skyPagesConfig.skyux.params.forEach(param => {
-    if (argv[param]) {
-      found.push(`${param}=${encodeURIComponent(argv[param])}`);
-    }
-  });
-
-  if (found.length) {
-    return `?${found.join('&')}`;
-  }
-
-  return '';
-}
+const browser = require('../../utils/browser');
 
 /**
  * Returns the default webpackConfig.
@@ -49,66 +23,17 @@ function getWebpackConfig(argv, skyPagesConfig) {
    * @name WebpackPluginDone
    */
   function WebpackPluginDone() {
-    const shorthand = {
-      l: 'launch',
-      b: 'browser'
-    };
 
     let launched = false;
     this.plugin('done', (stats) => {
       if (!launched) {
-
-        const queryStringBase = getQueryStringFromArgv(argv, skyPagesConfig);
-        let localUrl = util.format(
-          'https://localhost:%s%s',
-          this.options.devServer.port,
-          this.options.devServer.publicPath
-        );
-
-        let hostUrl = hostUtils.resolve(
-          queryStringBase,
-          localUrl,
-          stats.toJson().chunks,
-          skyPagesConfig
-        );
-
         logger.info('SKY UX builder is ready.');
         launched = true;
 
-        // Process shorthand flags
-        Object.keys(shorthand).forEach(key => {
-          if (argv[key]) {
-            argv[shorthand[key]] = argv[key];
-          }
-        });
-
-        // Edge uses a different technique (protocol vs executable)
-        if (argv.browser === 'edge') {
-          const edge = 'microsoft-edge:';
-          argv.browser = undefined;
-          hostUrl = edge + hostUrl;
-          localUrl = edge + localUrl;
-        }
-
-        switch (argv.launch) {
-          case 'none':
-            break;
-          case 'local':
-
-            // Only adding queryStringBase to the message + local url opened,
-            // Meaning doesn't need those to communicate back to localhost
-            localUrl += queryStringBase;
-
-            logger.info(`Launching Local URL: ${localUrl}`);
-            open(localUrl, argv.browser);
-            break;
-          default:
-            logger.info(`Launching Host URL: ${hostUrl}`);
-            open(hostUrl, argv.browser);
-            break;
-        }
+        // Host is default launch
+        argv.launch = argv.launch || 'host';
+        browser(argv, skyPagesConfig, stats, this.options.devServer.port);
       }
-
     });
   }
 

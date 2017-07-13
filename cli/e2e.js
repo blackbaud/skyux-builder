@@ -4,15 +4,14 @@
 const path = require('path');
 const spawn = require('cross-spawn');
 const logger = require('winston');
-const portfinder = require('portfinder');
-const HttpServer = require('http-server');
 const selenium = require('selenium-standalone');
+
 const build = require('./build');
+const server = require('../utils/server');
 
 // Disable this to quiet the output
 const spawnOptions = { stdio: 'inherit' };
 
-let httpServer;
 let seleniumServer;
 let start;
 
@@ -44,18 +43,13 @@ function killServers(exitCode) {
     seleniumServer = null;
   }
 
-  if (httpServer) {
-    logger.info('Closing http server');
-    httpServer.close();
-    httpServer = null;
-  }
-
   // Catch protractor's "Kitchen Sink" error.
   if (exitCode === 199) {
     logger.warn('Supressing protractor\'s "kitchen sink" error 199');
     exitCode = 0;
   }
 
+  server.stop();
   logger.info(`Execution Time: ${(new Date().getTime() - start) / 1000} seconds`);
   logger.info(`Exiting process with ${exitCode}`);
   process.exit(exitCode || 0);
@@ -150,42 +144,6 @@ function spawnSelenium() {
 }
 
 /**
- * Spawns the httpServer
- */
-function spawnServer() {
-  return new Promise((resolve, reject) => {
-    logger.info('Requesting open port...');
-
-    httpServer = HttpServer.createServer({
-      root: 'dist/',
-      cors: true,
-      https: {
-        cert: path.resolve(__dirname, '../', 'ssl', 'server.crt'),
-        key: path.resolve(__dirname, '../', 'ssl', 'server.key')
-      },
-      logFn: (req, res, err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-      }
-    });
-
-    portfinder
-      .getPortPromise()
-      .then(port => {
-        logger.info(`Open port found: ${port}`);
-        logger.info('Starting web server...');
-        httpServer.listen(port, 'localhost', () => {
-          logger.info('Web server running.');
-          resolve(port);
-        });
-      })
-      .catch(reject);
-  });
-}
-
-/**
  * Spawns the build process.  Captures the config used.
  */
 function spawnBuild(argv, skyPagesConfig, webpack) {
@@ -212,7 +170,7 @@ function e2e(argv, skyPagesConfig, webpack) {
   Promise
     .all([
       spawnBuild(argv, skyPagesConfig, webpack),
-      spawnServer(),
+      server.start(),
       spawnSelenium()
     ])
     .then(values => {

@@ -1,362 +1,100 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const mock = require('mock-require');
 const logger = require('winston');
-const urlLibrary = require('url');
+const mock = require('mock-require');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack serve', () => {
 
-  const skyuxConfig = {
-    runtime: runtimeUtils.getDefaultRuntime(),
-    skyux: runtimeUtils.getDefaultSkyux({
-      app: {
-        externals: {
-          test: true
-        }
-      },
-      host: {
-        url: 'https://my-host-server.url'
-      }
-    })
-  };
+  let paramArgv;
 
-  let lib;
-  let called;
-  let openParamUrl;
-  let openParamBrowser;
-  let config;
-  let argv = {};
-
-  function getPluginOptions() {
-    return {
-      appConfig: {
-        base: 'my-custom-base'
-      },
-      devServer: {
-        port: 1234
-      }
-    };
-  }
-
-  beforeEach(() => {
-    called = false;
-    openParamUrl = '';
-    openParamBrowser = undefined;
-
-    argv = {};
-
-    spyOn(logger, 'info');
-    mock('open', (url, browser) => {
-      called = true;
-      openParamUrl = url;
-      openParamBrowser = browser;
+  beforeAll(() => {
+    mock('../utils/browser', (argv) => {
+      paramArgv = argv;
     });
-
-    lib = require('../config/webpack/serve.webpack.config');
-    config = lib.getWebpackConfig(argv, skyuxConfig);
   });
 
   afterEach(() => {
-    mock.stop('open');
-    lib = null;
-    config = null;
+    paramArgv = undefined;
+    mock.stop('../utils/browser');
   });
 
-  function bindToDone() {
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-            }
-          }
-        });
-      }
-    });
-  }
-
   it('should expose a getWebpackConfig method', () => {
+    const lib = require('../config/webpack/serve.webpack.config');
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
+  it('should set default `launch` to `host', () => {
+    spyOn(logger, 'info');
+    const lib = require('../config/webpack/serve.webpack.config');
+    const config = lib.getWebpackConfig({}, runtimeUtils.getDefault());
+
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'WebpackPluginDone') {
+        plugin.apply({
+          options: {
+            appConfig: {
+              base: 'my-custom-base'
+            },
+            devServer: {
+              port: 1234
+            }
+          },
+          plugin: (evt, cb) => {
+            if (evt === 'done') {
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
+            }
+          }
+        });
+      }
+    });
+
+    expect(paramArgv.launch).toEqual('host');
+  });
+
   it('should only log the ready message once during multiple dones', () => {
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-            }
-          }
-        });
-      }
-    });
 
-    // Once for ready and once for default launching host
-    expect(logger.info).toHaveBeenCalledTimes(2);
-  });
-
-  it('should log the host url and launch it when launch flag is not present', () => {
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-            }
-          }
-        });
-      }
-    });
-
-    const url = 'https://my-host-server.url/@blackbaud/skyux-builder/?local=true&_cfg=';
-    expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openParamUrl.indexOf(url)).toBe(0);
-  });
-
-  it('should log the host url and launch it when --launch host', () => {
-    argv.launch = 'host';
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-            }
-          }
-        });
-      }
-    });
-
-    const url = 'https://my-host-server.url';
-    expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openParamUrl.indexOf(url)).toBe(0);
-  });
-
-  it('should log the local url and launch it when --launch local', () => {
-    argv.launch = 'local';
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-            }
-          }
-        });
-      }
-    });
-
-    const url = 'https://localhost:1234';
-    expect(logger.info).toHaveBeenCalledTimes(2);
-    expect(openParamUrl.indexOf(url)).toBe(0);
-  });
-
-  it('should log a done message and not launch it when --launch none', () => {
-    argv.launch = 'none';
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-            }
-          }
-        });
-      }
-    });
-
-    expect(logger.info).toHaveBeenCalledTimes(1);
-    expect(called).toEqual(false);
-  });
-
-  it('should pass shorthand -l as --launch flag', () => {
-    argv.l = 'none';
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-            }
-          }
-        });
-      }
-    });
-
-    expect(logger.info).toHaveBeenCalledTimes(1);
-    expect(called).toEqual(false);
-  });
-
-
-
-  it('host querystring should not contain externals if they do not exist', () => {
-    const localConfig = lib.getWebpackConfig(argv, {
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: runtimeUtils.getDefaultSkyux()
-    });
-
-    localConfig.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'emit') {
-              const done = () => {};
-              const compilation = {};
-
-              cb(compilation, done);
-            }
-
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-              const urlParsed = urlLibrary.parse(openParamUrl, true);
-              const configString = new Buffer.from(urlParsed.query._cfg, 'base64').toString();
-              const configObject = JSON.parse(configString);
-
-              expect(urlParsed.query._cfg).toBeDefined();
-              expect(configObject.externals).not.toBeDefined();
-            }
-          }
-        });
-      }
-    });
-  });
-
-  it('host querystring should contain externals (if they exist), scripts, and localUrl', () => {
+    spyOn(logger, 'info');
+    const lib = require('../config/webpack/serve.webpack.config');
+    const config = lib.getWebpackConfig({}, runtimeUtils.getDefault());
 
     config.plugins.forEach(plugin => {
       if (plugin.name === 'WebpackPluginDone') {
         plugin.apply({
-          options: getPluginOptions(),
-          plugin: (evt, cb) => {
-            if (evt === 'emit') {
-              const done = () => {};
-              const compilation = {};
-
-              cb(compilation, done);
+          options: {
+            appConfig: {
+              base: 'my-custom-base'
+            },
+            devServer: {
+              port: 1234
             }
-
+          },
+          plugin: (evt, cb) => {
             if (evt === 'done') {
+
+              // Simulating a save by calling callback twice
               cb({
                 toJson: () => ({
-                  chunks: [
-                    { files: ['a.js'] },
-                    { files: ['b.js'] }
-                  ]
+                  chunks: []
                 })
               });
-              const urlParsed = urlLibrary.parse(openParamUrl, true);
-              const configString = new Buffer.from(urlParsed.query._cfg, 'base64').toString();
-              const configObject = JSON.parse(configString);
-              const url = 'https://localhost:1234';
-
-              expect(urlParsed.query._cfg).toBeDefined();
-              expect(configObject.externals).toEqual(skyuxConfig.skyux.app.externals);
-              expect(configObject.localUrl.indexOf(url)).toBe(0);
-              expect(configObject.scripts).toEqual([
-                { name: 'a.js' },
-                { name: 'b.js' }
-              ]);
+              cb({
+                toJson: () => ({
+                  chunks: []
+                })
+              });
             }
           }
         });
       }
     });
-  });
 
-  it('should pass through envid from the command line', () => {
-    argv.envid = 'asdf';
-
-    bindToDone();
-    expect(openParamUrl).toContain(`?envid=asdf`);
-  });
-
-  it('should pass through svcid from the command line', () => {
-    argv.svcid = 'asdf';
-
-    bindToDone();
-    expect(openParamUrl).toContain(`?svcid=asdf`);
-  });
-
-  it('should run envid and svcid through encodeURIComponent', () => {
-    argv.envid = '&=$';
-    argv.svcid = '^%';
-
-    bindToDone();
-    expect(openParamUrl).toContain(
-      `?envid=${encodeURIComponent(argv.envid)}&svcid=${encodeURIComponent(argv.svcid)}`
-    );
-  });
-
-  it('should pass through envid and svcid, but not other flags from the command line', () => {
-    argv.envid = 'asdf1';
-    argv.svcid = 'asdf2';
-    argv.myid = 'asdf3';
-
-    bindToDone();
-    expect(openParamUrl).toContain(`?envid=asdf1&svcid=asdf2`);
-    expect(openParamUrl).not.toContain(`myid=asdf3`);
-  });
-
-  it('should pass --browser flag to open', () => {
-    argv.browser = 'custom-browser';
-    bindToDone();
-    expect(openParamBrowser).toEqual(argv.browser);
-  });
-
-  it('should handle --browser edge different syntax', () => {
-    argv.browser = 'edge';
-    bindToDone();
-    expect(openParamBrowser).not.toBeDefined();
-    expect(openParamUrl.indexOf('microsoft-edge')).toBe(0);
+    expect(logger.info).toHaveBeenCalledWith(`SKY UX builder is ready.`);
   });
 
 });

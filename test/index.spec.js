@@ -44,7 +44,7 @@ describe('@blackbaud/skyux-builder', () => {
       mock('../cli/' + cmds[key].lib, () => {
         cmds[key].called = true;
       });
-      lib.runCommand(cmds[key].cmd);
+      lib.runCommand(cmds[key].cmd, {});
       expect(cmds[key].called).toEqual(true);
     });
   });
@@ -53,11 +53,25 @@ describe('@blackbaud/skyux-builder', () => {
     spyOn(logger, 'info');
     const cmd = 'junk-command-that-does-not-exist';
     const lib = require('../index');
-    lib.runCommand(cmd);
+    lib.runCommand(cmd, {});
     expect(logger.info).toHaveBeenCalledWith(
       '@blackbaud/skyux-builder: Unknown command %s',
       cmd
     );
+  });
+
+  it('should process shorthand tags', (done) => {
+    const argv = {
+      l: 'showForLaunch',
+      b: 'showForBrowser'
+    };
+    mock('../cli/test', (c, a) => {
+      expect(a.launch).toEqual(argv.l);
+      expect(a.browser).toEqual(argv.b);
+      done();
+    });
+    const lib = require('../index');
+    lib.runCommand('test', argv);
   });
 
 });
