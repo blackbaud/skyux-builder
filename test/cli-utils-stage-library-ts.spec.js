@@ -28,7 +28,7 @@ describe('cli utils prepare-library-package', () => {
     expect(typeof util).toEqual('function');
   });
 
-  it('should copy source files from the public folder', () => {
+  it('should copy source files from the _public folder', () => {
     spyOn(glob, 'sync').and.returnValue([]);
     util();
     expect(fs.copySync).toHaveBeenCalled();
