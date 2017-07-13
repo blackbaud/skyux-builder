@@ -123,6 +123,25 @@ describe('Resources service', () => {
       });
     });
 
+    it('should fall back to the resource name if parsing the resource file fails', (done) => {
+      backend.connections.subscribe((connection) => {
+        const response = new Response(
+          new ResponseOptions({
+            body: testResources
+          })
+        );
+
+        spyOn(response, 'json').and.throwError('Error parsing document');
+
+        connection.mockRespond(response);
+      });
+
+      resources.getString('hi').subscribe((value) => {
+        expect(value).toBe('hi');
+        done();
+      });
+    });
+
     it('only request the resource file once per instance', (done) => {
       let requestCount = 0;
 
@@ -210,7 +229,7 @@ describe('Resources service', () => {
     );
 
     it(
-      'should fall back to the resource key if the specified locale is the default locale and ' +
+      'should fall back to the resource name if the specified locale is the default locale and ' +
       'the locale resource file fails to load',
       (done) => {
         backend.connections.subscribe((connection) => {
@@ -227,7 +246,7 @@ describe('Resources service', () => {
     );
 
     it(
-      'should fall back to the resource key if the locale provider throws an error',
+      'should fall back to the resource name if the locale provider throws an error',
       (done) => {
         addTestResourceResponse();
 

@@ -15,10 +15,12 @@ import { SkyAppLocaleInfo } from '@blackbaud/skyux-builder/runtime/i18n/locale-i
 
 const DEFAULT_LOCALE = 'en-US';
 
+const defaultResources: {[key: string]: {message: string}} = {};
+
 function getDefaultObs() {
   return Observable.of({
     json: (): any => {
-      return {};
+      return defaultResources;
     }
   });
 }
@@ -94,7 +96,14 @@ export class SkyAppResourcesService {
     }
 
     return this.resourcesObs.map((result): string => {
-      const resources = result.json();
+      let resources: {[key: string]: {message: string}};
+
+      try {
+        // This can fail if the server returns a 200 but the file is invalid.
+        resources = result.json();
+      } catch (err) {
+        resources = defaultResources;
+      }
 
       if (name in resources) {
         return resources[name].message;
