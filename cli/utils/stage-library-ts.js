@@ -10,7 +10,7 @@ const spaPathTempSrc = skyPagesConfigUtil.spaPathTempSrc();
 
 function copySource() {
   fs.copySync(
-    skyPagesConfigUtil.spaPath('src', 'app', 'public'),
+    skyPagesConfigUtil.spaPath('src', 'app', '_public'),
     skyPagesConfigUtil.spaPathTemp()
   );
 }
