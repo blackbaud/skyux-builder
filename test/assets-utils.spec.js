@@ -22,7 +22,7 @@ describe('Assets utilities', () => {
   });
 
   it('should provide a method for appending a hash to the name of a file', () => {
-    const assets = require('../utils/assets-utils');
+    const assets = mock.reRequire('../utils/assets-utils');
 
     const filePathWithHash = assets.getFilePathWithHash('/root/a/b/c.jpg');
 
@@ -30,7 +30,7 @@ describe('Assets utilities', () => {
   });
 
   it('should provide a method for retrieving an asset URL', () => {
-    const assets = require('../utils/assets-utils');
+    const assets = mock.reRequire('../utils/assets-utils');
 
     const filePathWithHash = assets.getUrl('https://example.com', '/root/a/b/c.jpg');
 
