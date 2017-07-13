@@ -3,7 +3,7 @@
 
 const mock = require('mock-require');
 const logger = require('winston');
-const assetsConfig = require('../lib/assets-configuration');
+const assetsProcessor = require('../lib/assets-processor');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('cli build', () => {
@@ -246,7 +246,7 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
-    const setSkyAssetsLoaderUrlSpy = spyOn(assetsConfig, 'setSkyAssetsLoaderUrl');
+    const setSkyAssetsLoaderUrlSpy = spyOn(assetsProcessor, 'setSkyAssetsLoaderUrl');
 
     require('../cli/build')(
       {
