@@ -18,6 +18,10 @@ describe('@blackbaud/skyux-builder', () => {
         cmd: 'build',
         lib: 'build'
       },
+      'build-public-library': {
+        cmd: 'build-public-library',
+        lib: 'build-public-library'
+      },
       'e2e': {
         cmd: 'e2e',
         lib: 'e2e'

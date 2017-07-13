@@ -1,7 +1,6 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('winston');
 const fs = require('fs-extra');
 const merge = require('merge');
 
@@ -9,8 +8,12 @@ const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 const assetsConfig = require('../lib/assets-configuration');
 const pluginFileProcessor = require('../lib/plugin-file-processor');
+<<<<<<< HEAD
 const server = require('../utils/server');
 const browser = require('../utils/browser');
+=======
+const runCompiler = require('./utils/run-compiler');
+>>>>>>> master
 
 function writeTSConfig() {
   var config = {
@@ -131,31 +134,8 @@ function build(argv, skyPagesConfig, webpack) {
 
   assetsConfig.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl);
 
-  const compiler = webpack(config);
-
-  return new Promise((resolve, reject) => {
-    compiler.run((err, stats) => {
-      if (err) {
-        logger.error(err);
-        reject(err);
-        return;
-      }
-
-      const jsonStats = stats.toJson();
-
-      if (jsonStats.errors.length) {
-        logger.error(jsonStats.errors);
-      }
-
-      if (jsonStats.warnings.length) {
-        logger.warn(jsonStats.warnings);
-      }
-
-      logger.info(stats.toString({
-        chunks: false,
-        colors: false
-      }));
-
+  return runCompiler(webpack, config)
+    .then(stats => {
       if (compileModeIsAoT) {
         cleanupAot();
       }
@@ -169,12 +149,11 @@ function build(argv, skyPagesConfig, webpack) {
           });
         break;
         default:
-          resolve(stats);
+          Promise.resolve(stats);
         break;
       }
 
     });
-  });
 }
 
 module.exports = build;

@@ -101,7 +101,7 @@ describe('SKY UX Builder route generator', () => {
       }
     });
 
-    expect(suppliedPattern).toEqual('my-custom-src/my-custom-pattern');
+    expect(suppliedPattern).toEqual(path.join('my-custom-src', 'my-custom-pattern'));
   });
 
   it('should handle windows guard paths correctly', () => {
@@ -180,7 +180,7 @@ describe('SKY UX Builder route generator', () => {
       @Injectable() export class Guard2 {}
     `);
 
-    let file = 'my-custom-src/my-custom-route/index.guard.ts';
+    let file = path.join('my-custom-src', 'my-custom-route', 'index.guard.ts');
     expect(() => generator.getRoutes({
       runtime: {
         srcPath: 'my-custom-src/',
@@ -296,5 +296,30 @@ describe('SKY UX Builder route generator', () => {
       }
     });
     expect(routes.definitions).toContain('public config: SkyAppConfig');
+  });
+
+  it('should prepend any redirects to the route declarations', () => {
+    spyOn(glob, 'sync').and.returnValue(['custom/nested/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    spyOn(fs, 'readFileSync').and.returnValue('');
+
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      },
+      skyux: {
+        redirects: {
+          'old': 'new'
+        }
+      }
+    });
+
+    const rootIndex = routes.declarations.indexOf(`path: ''`);
+    const redirectIndex = routes.declarations.indexOf(`{
+  path: 'old',
+  redirectTo: 'new'
+}`);
+
+    expect(redirectIndex).toBeLessThan(rootIndex);
   });
 });

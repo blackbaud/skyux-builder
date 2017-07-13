@@ -1,3 +1,7 @@
+# 1.0.0-rc.6 (2017-07-05)
+
+  - Updated the auth client library to pick up logic for showing the search button based on whether search has been implemented by the SPA author. [#214](https://github.com/blackbaud/skyux-builder/pull/214)
+  
 # 1.0.0-rc.5 (2017-07-03)
 
   - Added web-animations polyfill to support Angular animations in more browsers. [#204](https://github.com/blackbaud/skyux-builder/pull/204)
