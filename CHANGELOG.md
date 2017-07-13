@@ -1,3 +1,9 @@
+# 1.0.0-rc.6 (2017-07-13)
+
+- Added ability to configure route redirects in `skyuxconfig.json`. [#217](https://github.com/blackbaud/skyux-builder/pull/217)
+- Added a new CLI command, `skyux build-public-library`, which bundles Angular component libraries into a consumable module for NPM. [#198](https://github.com/blackbaud/skyux-builder/pull/198)
+- Fixed various issues with Builder development in a Windows environment. [#185](https://github.com/blackbaud/skyux-builder/pull/185)
+
 # 1.0.0-rc.6 (2017-07-05)
 
   - Updated the auth client library to pick up logic for showing the search button based on whether search has been implemented by the SPA author. [#214](https://github.com/blackbaud/skyux-builder/pull/214)
