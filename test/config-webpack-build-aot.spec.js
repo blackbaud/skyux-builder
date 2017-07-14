@@ -18,7 +18,7 @@ describe('config webpack build-aot', () => {
   });
 
   afterEach(() => {
-    mock.stop(ngtoolsWebpackPath);
+    mock.stopAll();
   });
 
   it('should expose a getWebpackConfig method', () => {
@@ -191,6 +191,42 @@ describe('config webpack build-aot', () => {
         });
       }
     });
+  });
+
+  it('should remove the sky-processor loader from the rules array', () => {
+    const f = './common.webpack.config';
+    mock(f, {
+      getWebpackConfig: () => ({
+        module: {
+          rules: [
+            {
+              loader: '/sky-processor/'
+            }
+          ]
+        }
+      })
+    });
+
+    const lib = require('../config/webpack/build-aot.webpack.config');
+
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    };
+
+    const config = lib.getWebpackConfig(skyPagesConfig);
+
+    let found = false;
+
+    config.module.rules.forEach((rule) => {
+      if (found) {
+        return;
+      }
+
+      found = /\/sky-processor\//.test(rule.loader);
+    });
+
+    expect(found).toEqual(false);
   });
 
 });
