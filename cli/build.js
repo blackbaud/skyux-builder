@@ -156,8 +156,7 @@ function build(argv, skyPagesConfig, webpack) {
           });
         break;
         default:
-          Promise.resolve(stats);
-        break;
+          return Promise.resolve(stats);
       }
 
     });

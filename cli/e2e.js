@@ -84,6 +84,7 @@ function spawnProtractor(chunks, port, skyPagesConfig) {
     protractorPath,
     [
       getProtractorConfigPath(),
+      `--disableChecks`,
       `--baseUrl ${skyPagesConfig.skyux.host.url}`,
       `--params.localUrl=https://localhost:${port}`,
       `--params.chunks=${JSON.stringify(chunks)}`,
