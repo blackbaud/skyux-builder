@@ -1,43 +1,43 @@
 /*jslint node: true */
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const logger = require('winston');
 const portfinder = require('portfinder');
-const HttpServer = require('http-server');
+const express = require('express');
+const https = require('https');
+const cors = require('cors');
+const app = express();
 
-let httpServer;
+let server;
 
 /**
  * Starts the httpServer
  * @name start
  */
-function start() {
+function start(root) {
   return new Promise((resolve, reject) => {
+
+    const options = {
+      cert: fs.readFileSync(path.resolve(__dirname, '../../ssl/server.crt')),
+      key: fs.readFileSync(path.resolve(__dirname, '../../ssl/server.key'))
+    };
+
+    logger.info('Creating web server');
+    app.use(cors());
+    app.use(root || '/dist', express.static('dist'));
+
+    server = https.createServer(options, app);
+    server.on('error', reject);
+
     logger.info('Requesting open port...');
-
-    httpServer = HttpServer.createServer({
-      root: 'dist/',
-      cors: true,
-      cache: -1,
-      https: {
-        cert: path.resolve(__dirname, '../../ssl/server.crt'),
-        key: path.resolve(__dirname, '../../ssl/server.key')
-      },
-      logFn: (req, res, err) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-      }
-    });
-
     portfinder
       .getPortPromise()
       .then(port => {
         logger.info(`Open port found: ${port}`);
         logger.info('Starting web server...');
-        httpServer.listen(port, 'localhost', () => {
+        server.listen(port, 'localhost', () => {
           logger.info('Web server running.');
           resolve(port);
         });
@@ -51,10 +51,10 @@ function start() {
  * @name kill
  */
 function stop() {
-  if (httpServer) {
+  if (server) {
     logger.info('Stopping http server');
-    httpServer.close();
-    httpServer = null;
+    server.close();
+    server = null;
   }
 }
 

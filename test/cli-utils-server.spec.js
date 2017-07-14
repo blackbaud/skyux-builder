@@ -7,6 +7,7 @@ const mock = require('mock-require');
 describe('server utils', () => {
 
   let closeCalled = false;
+  let onErrorCB;
   let customServerError;
   let customPortError;
   let customPortNumber;
@@ -17,6 +18,7 @@ describe('server utils', () => {
 
   afterEach(() => {
     closeCalled = false;
+    onErrorCB = undefined;
     customServerError = undefined;
     customPortError = undefined;
     customPortNumber = undefined;
@@ -24,24 +26,17 @@ describe('server utils', () => {
   });
 
   function bind() {
-    mock('http-server', {
-      createServer: (settings) => {
-
-        if (customServerError) {
-          settings.logFn({}, {}, customServerError);
-        }
-
-        if (customPortNumber) {
-          settings.logFn({}, {});
-        }
-
-        return {
-          close: () => closeCalled = true,
-          listen: (port, host, cb) => {
-            cb();
+    mock('https', {
+      createServer: () => ({
+        on: (err, cb) => onErrorCB = cb,
+        close: () => closeCalled = true,
+        listen: (port, host, cb) => {
+          if (customServerError) {
+            onErrorCB(customServerError);
           }
-        };
-      }
+          cb(port);
+        }
+      })
     });
 
     mock('portfinder', {
@@ -63,7 +58,7 @@ describe('server utils', () => {
     expect(server.stop).toBeDefined();
   });
 
-  it('should close the http-server if it exists', (done) => {
+  it('should close the http server if it exists', (done) => {
     const server = bind();
 
     server.stop();
@@ -78,7 +73,7 @@ describe('server utils', () => {
     });
   });
 
-  it('should catch http-server failures', (done) => {
+  it('should catch http server failures', (done) => {
 
     customServerError = 'custom-error';
     const server = bind();
@@ -102,15 +97,9 @@ describe('server utils', () => {
   it('should catch portfinder failures', (done) => {
 
     customPortError = 'custom-portfinder-error';
-    mock('portfinder', {
-      getPortPromise: () => {
-        Promise.reject(customPortError);
-      }
-    });
 
     const server = bind();
     server.start().catch(err => {
-      mock.stop('portfinder');
       expect(err).toBe(customPortError);
       done();
     });
