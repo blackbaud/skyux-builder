@@ -45,7 +45,7 @@ describe('browser utils', () => {
       port: ''
     }, settings);
 
-    mock.reRequire('../utils/browser')(
+    mock.reRequire('../cli/utils/browser')(
       merged.argv,
       merged.skyPagesConfig,
       merged.stats,

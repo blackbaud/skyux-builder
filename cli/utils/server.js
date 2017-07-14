@@ -17,12 +17,12 @@ function start() {
     logger.info('Requesting open port...');
 
     httpServer = HttpServer.createServer({
-      // root: 'dist/',
+      root: 'dist/',
       cors: true,
       cache: -1,
       https: {
-        cert: path.resolve(__dirname, '../ssl/server.crt'),
-        key: path.resolve(__dirname, '../ssl/server.key')
+        cert: path.resolve(__dirname, '../../ssl/server.crt'),
+        key: path.resolve(__dirname, '../../ssl/server.key')
       },
       logFn: (req, res, err) => {
         if (err) {

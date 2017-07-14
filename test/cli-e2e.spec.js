@@ -64,20 +64,9 @@ describe('cli e2e', () => {
       sync: () => ({ })
     });
 
-    mock('portfinder', {
-      getPortPromise: () => new Promise(resolve => resolve(PORT))
-    });
-
-    mock('http-server', {
-      createServer: () => ({
-        close: () => {
-          console.log('INNER 2');
-        },
-
-        listen: (port, host, cb) => {
-          cb();
-        }
-      })
+    mock('../cli/utils/server', {
+      start: () => PORT,
+      stop: () => {}
     });
 
     spyOn(logger, 'info');

@@ -10,14 +10,14 @@ describe('config webpack serve', () => {
   let paramArgv;
 
   beforeAll(() => {
-    mock('../utils/browser', (argv) => {
+    mock('../cli/utils/browser', (argv) => {
       paramArgv = argv;
     });
   });
 
   afterEach(() => {
     paramArgv = undefined;
-    mock.stop('../utils/browser');
+    mock.stop('../cli/utils/browser');
   });
 
   it('should expose a getWebpackConfig method', () => {

@@ -7,7 +7,7 @@ const logger = require('winston');
 const selenium = require('selenium-standalone');
 
 const build = require('./build');
-const server = require('../utils/server');
+const server = require('./utils/server');
 
 // Disable this to quiet the output
 const spawnOptions = { stdio: 'inherit' };

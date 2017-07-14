@@ -54,7 +54,7 @@ describe('server utils', () => {
       }
     });
 
-    return mock.reRequire('../utils/server');
+    return mock.reRequire('../cli/utils/server');
   }
 
   it('should expose start and stop methods', () => {

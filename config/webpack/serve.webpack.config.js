@@ -9,7 +9,7 @@ const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
-const browser = require('../../utils/browser');
+const browser = require('../../cli/utils/browser');
 
 /**
  * Returns the default webpackConfig.

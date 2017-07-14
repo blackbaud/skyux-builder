@@ -292,10 +292,10 @@ describe('cli build', () => {
       launch: launch
     };
 
-    mock('../utils/server', {
+    mock('../cli/utils/server', {
       start: () => Promise.resolve()
     });
-    mock('../utils/browser', (argv) => {
+    mock('../cli/utils/browser', (argv) => {
       expect(argv.launch).toBe(launch);
       done();
     });

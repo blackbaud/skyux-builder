@@ -4,8 +4,8 @@
 const util = require('util');
 const open = require('open');
 const logger = require('winston');
-const hostUtils = require('./host-utils');
-const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+const hostUtils = require('../../utils/host-utils');
+const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
 /**
  * Returns the querystring base for parameters allowed to be passed through.

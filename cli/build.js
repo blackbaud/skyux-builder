@@ -9,8 +9,8 @@ const generator = require('../lib/sky-pages-module-generator');
 const assetsProcessor = require('../lib/assets-processor');
 const pluginFileProcessor = require('../lib/plugin-file-processor');
 
-const server = require('../utils/server');
-const browser = require('../utils/browser');
+const server = require('./utils/server');
+const browser = require('./utils/browser');
 const runCompiler = require('./utils/run-compiler');
 
 function writeTSConfig() {
