@@ -77,6 +77,11 @@ export class SkyAppResourcesService {
           if (resourcesUrl) {
             obs = this.httpObs[resourcesUrl] || this.http
               .get(resourcesUrl)
+              /* tslint:disable max-line-length */
+              // publishReplay(1).refCount() will ensure future subscribers to
+              // this observable will use a cached result.
+              // https://stackoverflow.com/documentation/rxjs/8247/common-recipes/26490/caching-http-responses#t=201612161544428695958
+              /* tslint:enable max-line-length */
               .publishReplay(1)
               .refCount()
               .catch(() => {
