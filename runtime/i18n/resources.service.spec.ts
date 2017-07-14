@@ -33,7 +33,7 @@ describe('Resources service', () => {
       }
     };
 
-    const providers = [
+    const providers: any[] = [
       SkyAppAssetsService,
       SkyAppResourcesService,
       {
@@ -44,7 +44,7 @@ describe('Resources service', () => {
         provide: SkyAppAssetsService,
         useValue: {
           getUrl: (path) => {
-            if (path.indexOf('en_AU') >= 0) {
+            if (path.indexOf('en_AU') >= 0 || path.indexOf('es_MX') >= 0) {
               return undefined;
             }
 
@@ -188,6 +188,33 @@ describe('Resources service', () => {
     });
 
     beforeEach(injectServices());
+
+    it('should fall back to the default locale if a blank locale is specified', (done) => {
+      addTestResourceResponse();
+
+      currentLocale = '';
+
+      resources.getString('hi').subscribe((value) => {
+        expect(value).toBe('hello');
+        done();
+      });
+    });
+
+    it(
+      'should fall back to the non-region-specific locale if the specified locale does not have ' +
+      'corresponding resource file',
+      (done) => {
+
+        backend.connections.subscribe((connection) => {
+          expect(connection.request.url).toBe('https://example.com/locales/resources_es.json');
+          done();
+        });
+
+        currentLocale = 'es-MX';
+
+        resources.getString('hi').subscribe((value) => { });
+      }
+    );
 
     it(
       'should fall back to the default locale if the specified locale does not have a ' +
