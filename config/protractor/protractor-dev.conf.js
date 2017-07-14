@@ -7,6 +7,7 @@ const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
 const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
+
 let config = {
   specs: [
     path.join(process.cwd(), 'e2e', '**', '*.e2e-spec.js')
@@ -19,9 +20,9 @@ let config = {
 
     return new Promise((resolve, reject) => {
       const url = 'https://github.com/blackbaud/skyux-template';
-      const branch = 'update-angular425';
-      common.exec(`rm`, [`-rf`, `${common.tmp}`])
+      const branch = 'master';
 
+      common.rimrafPromise(common.tmp)
         .then(() => common.exec(`git`, [
           `clone`,
           `-b`,
@@ -30,7 +31,6 @@ let config = {
           url,
           common.tmp
         ]))
-
         .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
         .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
         .then(resolve)
@@ -44,7 +44,7 @@ let config = {
     common.afterAll();
 
     return new Promise((resolve, reject) => {
-      common.exec(`rm`, [`-rf`, `${common.tmp}`])
+      common.rimrafPromise(common.tmp)
         .then(resolve)
         .catch(reject);
     });

@@ -28,7 +28,8 @@ describe('SKY UX assets Webpack loader', () => {
       }
     });
 
-    loader = require('../loader/sky-assets/index');
+    mock.reRequire('../lib/assets-processor');
+    loader = mock.reRequire('../loader/sky-assets/index');
   });
 
   afterEach(() => {
