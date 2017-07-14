@@ -18,7 +18,7 @@ describe('config webpack build-aot', () => {
   });
 
   afterEach(() => {
-    mock.stop(ngtoolsWebpackPath);
+    mock.stopAll();
   });
 
   it('should expose a getWebpackConfig method', () => {
