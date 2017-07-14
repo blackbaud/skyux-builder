@@ -4,7 +4,8 @@
   - `npm run coverage:builder` which tests the nodejs/builder code and places coverage in `coverage/builder`.
   - `npm run coverage:runtime` which tests the `runtime` components and places coverage in `coverage/runtime`.
   - `npm run coverage:src-app` which tests the `src/app` components and places coverage in `coverage/src-app`.
+- `npm run e2e` Runs the defined end-to-end tests.
 - `npm run jscs`  Runs this code against the jscs linter.
 - `npm run jshint` Runs this code against the jshint linter.
 - `npm run lint` Runs the `jscs` and `jshint` commands.
-- `npm run test` Runs ALL test commands combined.
+- `npm run test` Runs ALL test commands: `lint`, `coverage`, and `e2e`.
