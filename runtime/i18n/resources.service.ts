@@ -60,15 +60,30 @@ export class SkyAppResourcesService {
       this.resourcesObs = localeObs
         .switchMap((localeInfo) => {
           let obs: Observable<any>;
+          let resourcesUrl: string;
 
-          const resourcesUrl =
-            this.getUrlForLocale(localeInfo.locale) ||
-            this.getUrlForLocale(DEFAULT_LOCALE);
+          const locale = localeInfo.locale;
+
+          if (locale) {
+            resourcesUrl =
+              this.getUrlForLocale(locale) ||
+              // Try falling back to the non-region-specific language.
+              this.getUrlForLocale(locale.substr(0, 2));
+          }
+
+          // Finally fall back to the default locale.
+          resourcesUrl = resourcesUrl || this.getUrlForLocale(DEFAULT_LOCALE);
 
           if (resourcesUrl) {
             obs = this.httpObs[resourcesUrl] || this.http
               .get(resourcesUrl)
-              .share()
+              /* tslint:disable max-line-length */
+              // publishReplay(1).refCount() will ensure future subscribers to
+              // this observable will use a cached result.
+              // https://stackoverflow.com/documentation/rxjs/8247/common-recipes/26490/caching-http-responses#t=201612161544428695958
+              /* tslint:enable max-line-length */
+              .publishReplay(1)
+              .refCount()
               .catch(() => {
                 // The resource file for the specified locale failed to load;
                 // fall back to the default locale if it differs from the specified
