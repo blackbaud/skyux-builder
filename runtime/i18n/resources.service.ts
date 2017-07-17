@@ -25,6 +25,12 @@ function getDefaultObs() {
   });
 }
 
+function formatText(format: string, ...args: any[]) {
+  return String(format).replace(/\{(\d+)\}/g, (match, capture) => {
+    return args[parseInt(capture, 10)];
+  });
+}
+
 /**
  * An Angular service for interacting with resource strings.
  */
@@ -45,7 +51,7 @@ export class SkyAppResourcesService {
    * Gets a resource string based on its name.
    * @param name The name of the resource string.
    */
-  public getString(name: string): Observable<string> {
+  public getString(name: string, ...args: any[]): Observable<string> {
     if (!this.resourcesObs) {
       let localeObs: Observable<SkyAppLocaleInfo>;
 
@@ -121,7 +127,7 @@ export class SkyAppResourcesService {
       }
 
       if (name in resources) {
-        return resources[name].message;
+        return formatText(resources[name].message, ...args);
       }
 
       return name;
