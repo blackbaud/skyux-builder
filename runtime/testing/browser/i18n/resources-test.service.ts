@@ -18,10 +18,10 @@ export class SkyAppResourcesTestService {
       }
 
       // A normal require where no resource file exists would cause an error even if this
-      // method is never called since it's evaluated at build tiem.
+      // method is never called since it's evaluated at build time.
       // Requiring through context allows for an "optional" require, which keeps an app
-      // that has no resource files from erroring unless it explicitly tries to reference
-      // a resource string.
+      // that has no resource files from erroring during a unit test run unless it
+      // explicitly tries to reference a resource string.
       const resourcesContext = require.context(
         'json-loader!' + ROOT_DIR + '/..', true, /\.\/assets\/locales\/resources_en_US\.json$/
       );
