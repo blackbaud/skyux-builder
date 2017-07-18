@@ -51,7 +51,7 @@ function writeTSConfig() {
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'), config);
 }
 
-function stageAot(skyPagesConfig, assetsBaseUrl) {
+function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
   let skyPagesConfigOverrides = {
     runtime: {
       spaPathAlias: '../..',
@@ -84,7 +84,7 @@ function stageAot(skyPagesConfig, assetsBaseUrl) {
   // before writing the file to disk.
   skyPagesModuleSource = assetsProcessor.processAssets(
     skyPagesModuleSource,
-    assetsProcessor.getAssetsUrl(skyPagesConfig, assetsBaseUrl)
+    assetsProcessor.getAssetsUrl(skyPagesConfig, assetsBaseUrl, assetsRel)
   );
 
   fs.copySync(
@@ -125,9 +125,10 @@ function build(argv, skyPagesConfig, webpack) {
   let buildConfig;
 
   const assetsBaseUrl = argv.assets || '';
+  const assetsRel = argv.assetsrel;
 
   if (compileModeIsAoT) {
-    stageAot(skyPagesConfig, assetsBaseUrl);
+    stageAot(skyPagesConfig, assetsBaseUrl, assetsRel);
     buildConfig = require('../config/webpack/build-aot.webpack.config');
   } else {
     buildConfig = require('../config/webpack/build.webpack.config');
@@ -135,7 +136,7 @@ function build(argv, skyPagesConfig, webpack) {
 
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
 
-  assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl);
+  assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
 
   return runCompiler(webpack, config)
     .then(stats => {
