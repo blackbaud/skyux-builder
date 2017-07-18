@@ -54,7 +54,12 @@ describe('AppComponent', () => {
           events: {
             subscribe: handler => subscribeHandler = handler
           },
-          navigateByUrl: url => navigateByUrlParams = url
+          navigateByUrl: url => navigateByUrlParams = url,
+          parseUrl: url =>   {
+            return {
+              fragment: (url === '') ? undefined  : 'scroll-here'
+            };
+          }
         }
       },
       {
@@ -103,9 +108,10 @@ describe('AppComponent', () => {
     });
   }
 
-  // Reset skyAppConfig
+  // Reset skyAppConfig and scrollCalled
   beforeEach(() => {
     skyAppConfig = defaultSkyAppConfig;
+    scrollCalled = false;
   });
 
   it('should create component', async(() => {
@@ -122,6 +128,14 @@ describe('AppComponent', () => {
 
       subscribeHandler(new NavigationEnd(0, '', ''));
       expect(scrollCalled).toBe(true);
+    });
+  }));
+
+  it('should not call scroll on NavigationEnd when a url fragment is present', async(() => {
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      subscribeHandler(new NavigationEnd(0, '/#scroll-here', '/#scroll-here'));
+      expect(scrollCalled).toBe(false);
     });
   }));
 
