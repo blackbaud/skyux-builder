@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/blackbaud/skyux-builder#readme",
   "peerDependencies": {
-    "@blackbaud/skyux": ">=1.0.0-rc.0 <1.0.0"
+    "@blackbaud/skyux": ">=2.0.0-rc.0 <2.0.0"
   },
   "dependencies": {
     "@angular/common": "4.2.5",
@@ -96,7 +96,7 @@
     "zone.js": "0.8.10"
   },
   "devDependencies": {
-    "@blackbaud/skyux": ">=1.0.0-rc.0 <1.0.0",
+    "@blackbaud/skyux": ">=2.0.0-rc.0 <2.0.0",
     "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
     "jasmine": "2.6.0",
