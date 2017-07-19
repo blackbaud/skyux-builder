@@ -1,3 +1,10 @@
+# 1.0.0-rc.9 (2017-07-19)
+
+- Added ability to format a templated resource string. [#231](https://github.com/blackbaud/skyux-builder/pull/231)
+- Added version range to install latest `rc-x` branch from SKY UX. [#233](https://github.com/blackbaud/skyux-builder/pull/233)
+- Fixed bug with static assets URL in e2e tests. [#234](https://github.com/blackbaud/skyux-builder/pull/234)
+- Fixed `redirects` type in `SkyAppConfig`. [#229](https://github.com/blackbaud/skyux-builder/pull/229)
+
 # 1.0.0-rc.8 (2017-07-14)
 
 - Bugfix to allow `redirects` property in `skyuxconfig.json`. [#224](https://github.com/blackbaud/skyux-builder/pull/224)
