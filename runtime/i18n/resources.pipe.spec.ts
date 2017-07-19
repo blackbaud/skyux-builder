@@ -8,8 +8,16 @@ describe('Resources pipe', () => {
 
   beforeEach(() => {
     resources = {
-      getString: (name: string) => {
-        return Observable.of('hello');
+      getString: (name: string, ...args) => {
+        let value: string;
+
+        if (args.length > 0) {
+          value = 'format me ' + args[0];
+        } else {
+          value = 'hello';
+        }
+
+        return Observable.of(value);
       }
     };
   });
@@ -18,6 +26,12 @@ describe('Resources pipe', () => {
     let pipe = new SkyAppResourcesPipe(resources);
 
     expect(pipe.transform('hi')).toBe('hello');
+  });
+
+  it('should return the expected string formatted with the specified parameters', () => {
+    let pipe = new SkyAppResourcesPipe(resources);
+
+    expect(pipe.transform('hi', 'abc')).toBe('format me abc');
   });
 
   it('should cache strings that have been retrieved via the resource service', () => {
@@ -30,6 +44,21 @@ describe('Resources pipe', () => {
     pipe.transform('hi');
 
     expect(getStringSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('should consider format args as part of the cache key', () => {
+    let pipe = new SkyAppResourcesPipe(resources);
+
+    const getStringSpy = spyOn(resources, 'getString').and.callThrough();
+
+    expect(pipe.transform('hi')).toBe('hello');
+    expect(pipe.transform('hi', 'abc')).toBe('format me abc');
+    expect(pipe.transform('hi')).toBe('hello');
+    expect(pipe.transform('hi', 'abc')).toBe('format me abc');
+    expect(pipe.transform('hi')).toBe('hello');
+    expect(pipe.transform('hi', 'abc')).toBe('format me abc');
+
+    expect(getStringSpy).toHaveBeenCalledTimes(2);
   });
 
 });
