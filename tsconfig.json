@@ -8,14 +8,16 @@
     "sourceMap": true,
     "noEmitHelpers": true,
     "noEmitOnError": true,
-    "noResolve": true,
+    "noResolve": false,
     "lib": [
       "dom",
       "es6"
     ],
     "types": [
+      "core-js",
+      "node",
       "jasmine",
-      "node"
+      "fontfaceobserver"
     ]
   },
   "compileOnSave": false,

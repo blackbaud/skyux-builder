@@ -1,6 +1,8 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const codegen = require('../utils/codegen-utils');
+
 describe('SKY UX Builder module generator', () => {
 
   const runtimeUtils = require('../utils/runtime-test-utils.js');
@@ -102,7 +104,7 @@ describe('SKY UX Builder module generator', () => {
 
   it('should not include routing in the module if includeRouteModule is false', () => {
 
-    let expectedRouting = 'AppExtrasModule,routing';
+    let expectedRouting = `AppExtrasModule,\n${codegen.indent(2)}routing`;
     let sourceWithRouting = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
@@ -169,5 +171,72 @@ BBAuth.mock = true;`);
 
     const source = generator.getSource(config);
     expect(source).toContain(JSON.stringify(config));
+  });
+
+  it('should add assets to skyPagesConfig.runtime', () => {
+    const assetsGenerator = require('../lib/sky-pages-assets-generator');
+    const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+    const config = {
+      runtime: runtimeUtils.getDefaultRuntime({
+        routes: [{
+          routePath: 'fake-path',
+          routeParams: [
+            'fake-param'
+          ]
+        }]
+      }),
+      skyux: {}
+    };
+
+    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((path1, path2) => {
+      let spaPath = '/root/src';
+
+      if (path2) {
+        spaPath += '/assets';
+      }
+
+      return spaPath;
+    });
+
+    const glob = require('glob');
+
+    spyOn(glob, 'sync').and.callFake((path) => {
+      if (path.indexOf('assets') >= 0) {
+        return [
+          '/root/src/assets/a/b/c/d.jpg',
+          '/root/src/assets/e/f.jpg'
+        ];
+      }
+
+      return [];
+    });
+
+    const assetsSource = assetsGenerator.getSource();
+    const source = generator.getSource(config);
+
+    expect(source).toContain(assetsSource);
+
+    expect(source).toContain(`{
+      provide: SkyAppAssetsService,
+      useClass: SkyAppAssetsImplService
+    }`);
+  });
+
+  it('should use Hash routing if specified in the skyuxconfig', () => {
+    const source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: { useHashRouting: true }
+    });
+
+    expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: true });');
+  });
+
+  it('should not use Hash routing if option is not specified in the skyuxconfig', () => {
+    const source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: false });');
   });
 });

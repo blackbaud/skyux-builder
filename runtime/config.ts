@@ -11,6 +11,7 @@ export interface RuntimeConfig {
   app: RuntimeConfigApp;
   command?: string;  // Dynamically added in "higher up" webpacks
   componentsPattern: string;
+  componentsIgnorePattern: string;
   handle404?: boolean;  // Dynamically added in sky-pages-module-generator.js
   includeRouteModule: boolean;
   params: SkyAppRuntimeConfigParams;
@@ -48,11 +49,13 @@ export interface SkyuxConfig {
   name?: string;
   params?: string[]; // Array of allowed params
   plugins?: string[];
+  redirects?: string[];
   routes?: {
     public: any[],
     referenced: any[]
   };
   omnibar?: any;
+  useHashRouting?: boolean;
 }
 
 @Injectable()

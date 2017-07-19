@@ -3,7 +3,7 @@
 
 const mock = require('mock-require');
 const logger = require('winston');
-const assetsConfig = require('../lib/assets-configuration');
+const assetsProcessor = require('../lib/assets-processor');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('cli build', () => {
@@ -145,17 +145,17 @@ describe('cli build', () => {
               })
             }
           );
-
-          // The temp folder should be deleted after the build is complete.
-          expect(removeSpy).toHaveBeenCalledWith(
-            skyPagesConfigUtil.spaPathTemp()
-          );
-          expect(passedConfig.hasOwnProperty('skyuxPathAlias')).toBe(false);
-
-          done();
         }
       })
-    );
+    ).then(() => {
+      // The temp folder should be deleted after the build is complete.
+      expect(removeSpy).toHaveBeenCalledWith(
+        skyPagesConfigUtil.spaPathTemp()
+      );
+      expect(passedConfig.hasOwnProperty('skyuxPathAlias')).toBe(false);
+
+      done();
+    });
 
     // The default SKY UX Builder source files should be written first.
     expect(copySpy.calls.argsFor(1)).toEqual([
@@ -247,7 +247,7 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
-    const setSkyAssetsLoaderUrlSpy = spyOn(assetsConfig, 'setSkyAssetsLoaderUrl');
+    const setSkyAssetsLoaderUrlSpy = spyOn(assetsProcessor, 'setSkyAssetsLoaderUrl');
 
     require('../cli/build')(
       {

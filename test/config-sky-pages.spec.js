@@ -25,7 +25,7 @@ describe('config sky-pages', () => {
 
   it('should load the config files that exist in order', () => {
     const tempSpaReference = 'SPA_REFERENCE';
-    const readFileSync = fs.readJsonSync;
+    const readJsonSync = fs.readJsonSync;
     const existsSync = fs.existsSync;
 
     spyOn(logger, 'info');

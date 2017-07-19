@@ -7,7 +7,6 @@ const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const ProcessExitCode = require('../../plugin/process-exit-code');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
@@ -80,7 +79,10 @@ function getWebpackConfig(skyPagesConfig) {
         },
         {
           enforce: 'pre',
-          test: /\.(html|s?css)$/,
+          test: [
+            /\.(html|s?css)$/,
+            /sky-pages\.module\.ts/
+          ],
           loader: outPath('loader', 'sky-assets')
         },
         {
@@ -107,8 +109,6 @@ function getWebpackConfig(skyPagesConfig) {
       ]
     },
     plugins: [
-      new ForkCheckerPlugin(),
-
       // Some properties are required on the root object passed to HtmlWebpackPlugin
       new HtmlWebpackPlugin({
         template: skyPagesConfig.runtime.app.template,
@@ -136,8 +136,8 @@ function getWebpackConfig(skyPagesConfig) {
 
       new ContextReplacementPlugin(
         // The (\\|\/) piece accounts for path separators in *nix and Windows
-        /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
-        spaPath('src'), // location of your src
+        /angular(\\|\/)core(\\|\/)@angular/,
+        spaPath('src'),
         {}
       ),
 

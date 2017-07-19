@@ -1,3 +1,53 @@
+# 1.0.0-rc.8 (2017-07-14)
+
+- Bugfix to allow `redirects` property in `skyuxconfig.json`. [#224](https://github.com/blackbaud/skyux-builder/pull/224)
+- Bugfix that caused plugins to process files twice during AOT compilation.  [#225](https://github.com/blackbaud/skyux-builder/pull/225)
+- Implemented a better caching strategy and fallback to non-region-specific languages.  [#226](https://github.com/blackbaud/skyux-builder/pull/226) 
+- Upgraded `@blackbaud/auth-client` to 1.9.1. [#227](https://github.com/blackbaud/skyux-builder/pull/227)
+
+# 1.0.0-rc.7 (2017-07-13)
+
+- Added ability to configure route redirects in `skyuxconfig.json`. [#217](https://github.com/blackbaud/skyux-builder/pull/217)
+- Added a new CLI command, `skyux build-public-library`, which bundles Angular component libraries into a consumable module for NPM. [#198](https://github.com/blackbaud/skyux-builder/pull/198)
+- Fixed various issues with Builder development in a Windows environment. [#185](https://github.com/blackbaud/skyux-builder/pull/185)
+- Added `SkyAppResourcesService` and `skyAppResources` pipe for retrieving and displaying strings in the `assets/locale` folder. [#552](https://github.com/blackbaud/skyux2/issues/552)
+- Added `SkyAppAssetsService` for getting a URL for an asset file. [#766](https://github.com/blackbaud/skyux2/issues/766)
+
+# 1.0.0-rc.6 (2017-07-05)
+
+  - Updated the auth client library to pick up logic for showing the search button based on whether search has been implemented by the SPA author. [#214](https://github.com/blackbaud/skyux-builder/pull/214)
+  
+# 1.0.0-rc.5 (2017-07-03)
+
+  - Added web-animations polyfill to support Angular animations in more browsers. [#204](https://github.com/blackbaud/skyux-builder/pull/204)
+  - Added support for Angular v4.2.5 and SKY UX 2.0.0-rc.4. [#208](https://github.com/blackbaud/skyux-builder/pull/208)
+  - Added support for `useHashRouting` in `skyuxconfig.json`. [#206](https://github.com/blackbaud/skyux-builder/pull/206)
+
+# 1.0.0-rc.4 (2017-06-29)
+
+- Added support for SKY UX 2.0.0-rc.2.
+- Fixed typo when passing `svcid` to `auth-client`. [#201](https://github.com/blackbaud/skyux-builder/pull/201)
+- Improved execution time for `skyux test` and `skyux watch`. [#202](https://github.com/blackbaud/skyux-builder/pull/202)
+
+# 1.0.0-rc.3 (2017-06-23)
+
+- Added support for SKY UX 2.0.0-rc.1.
+- Fixed a typings bug with `SkyAuthHttp`.
+
+# 1.0.0-rc.2 (2017-06-21)
+
+- Fixed invalid glob pattern (and unit tests) for ignored auto-generated components.
+
+# 1.0.0-rc.1 (2017-06-20)
+
+- Ignoring `src/app/public` directory when auto-generating components. [#187](https://github.com/blackbaud/skyux-builder/pull/187)
+- Updated path and rules related to Codelyzer. [#192](https://github.com/blackbaud/skyux-builder/pull/192)
+- Correctly setting `envId` and `svcId` for `auth-client`. [#193](https://github.com/blackbaud/skyux-builder/pull/193)
+
+# 1.0.0-rc.0 (2017-06-16)
+
+- Added support for Angular v4.1.3 and SKY UX 2.0.0-rc.0. 
+
 # 1.0.0-beta.33 (2017-06-15)
 
 - Bugfix to stop `SkyAuthHttp` from adding duplicate `envid` or `svcid` params. [#182](https://github.com/blackbaud/skyux-builder/pull/182)

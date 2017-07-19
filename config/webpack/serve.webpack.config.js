@@ -13,8 +13,6 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const hostUtils = require('../../utils/host-utils');
 
-const moduleLoader = skyPagesConfigUtil.outPath('loader', 'sky-pages-module');
-
 /**
  * Returns the querystring base for parameters allowed to be passed through.
  * PLEASE NOTE: The method is nearly duplicated in `runtime/params.ts`.
@@ -121,11 +119,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
     module: {
       rules: [
         {
-          enforce: 'pre',
-          test: /sky-pages\.module\.ts$/,
-          loader: moduleLoader
-        },
-        {
           test: /\.ts$/,
           use: [
             {
@@ -134,15 +127,17 @@ function getWebpackConfig(argv, skyPagesConfig) {
                 // Ignore the "Cannot find module" error that occurs when referencing
                 // an aliased file.  Webpack will still throw an error when a module
                 // cannot be resolved via a file path or alias.
-                ignoreDiagnostics: [2307]
+                ignoreDiagnostics: [2307],
+                transpileOnly: true
               }
             },
             {
               loader: 'angular2-template-loader'
             }
-          ]
+          ],
+          exclude: [/\.e2e\.ts$/]
         }
-      ],
+      ]
     },
     devServer: {
       compress: true,

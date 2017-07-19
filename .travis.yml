@@ -1,9 +1,18 @@
 language: node_js
 sudo: required
+dist: trusty
+
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
 
 branches:
   only:
     - master
+    - /^rc-.*$/
     - /^[0-9]+\.[0-9]+\.[0-9]+.*/
 
 before_install:
