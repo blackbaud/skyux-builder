@@ -208,6 +208,7 @@ describe('cli e2e', () => {
   });
 
   it('should catch selenium failures', (done) => {
+    debugger;
     mock(configPath, {
       config: {
         seleniumAddress: 'asdf'
@@ -228,7 +229,7 @@ describe('cli e2e', () => {
       done();
     });
 
-    require('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should catch protractor\'s selenium failures', (done) => {

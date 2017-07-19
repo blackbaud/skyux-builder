@@ -209,18 +209,29 @@ function e2e(argv, skyPagesConfig, webpack) {
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  Promise
-    .all([
-      spawnBuild(argv, skyPagesConfig, webpack),
-      spawnServer(),
-      spawnSelenium()
-    ])
-    .then(values => {
-      spawnProtractor(
-        values[0],
-        values[1],
-        skyPagesConfig
-      );
+  spawnServer()
+    .then((port) => {
+      argv.assets = 'https://localhost:' + port;
+
+      // The assets URL is built by combining the assets URL above with
+      // the app's root directory, but in e2e tests the assets files
+      // are served directly from the root.  This will back up a directory
+      // so that asset URLs are built relative to the root rather than
+      // the app's root directory.
+      argv.assetsrel = '../';
+
+      return Promise
+        .all([
+          spawnBuild(argv, skyPagesConfig, webpack),
+          spawnSelenium()
+        ])
+        .then(values => {
+          spawnProtractor(
+            values[0],
+            port,
+            skyPagesConfig
+          );
+        });
     })
     .catch(err => {
       logger.warn(`ERROR [skyux e2e]: ${err.message}`);

@@ -6,6 +6,9 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { SkyPagesModule } from '../../../src/app/sky-pages.module';
 
+import { SkyAppResourcesService } from '../../../runtime/i18n';
+import { SkyAppResourcesTestService } from './i18n/resources-test.service';
+
 @NgModule({
   imports: [
     RouterTestingModule,
@@ -15,6 +18,10 @@ import { SkyPagesModule } from '../../../src/app/sky-pages.module';
     {
       provide: APP_BASE_HREF,
       useValue : '/'
+    },
+    {
+      provide: SkyAppResourcesService,
+      useClass: SkyAppResourcesTestService
     }
   ]
 })
