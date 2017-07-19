@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.0.0-rc.8",
+  "version": "1.0.0-rc.9",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "url": "git+https://github.com/blackbaud/skyux-builder.git"
   },
   "engines": {
-    "node": ">= 6.9.1"
+    "node": ">= 6.11.1"
   },
   "keywords": [],
   "author": "Blackbaud",
@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/blackbaud/skyux-builder#readme",
   "peerDependencies": {
-    "@blackbaud/skyux": "2.0.0-rc.4"
+    "@blackbaud/skyux": ">=2.0.0-rc.0 <2.0.0"
   },
   "dependencies": {
     "@angular/common": "4.2.5",
@@ -98,6 +98,7 @@
     "zone.js": "0.8.10"
   },
   "devDependencies": {
+    "@blackbaud/skyux": ">=2.0.0-rc.0 <2.0.0",
     "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
     "jasmine": "2.6.0",

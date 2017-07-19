@@ -30,6 +30,9 @@ describe('Resources service', () => {
     testResources = {
       'hi': {
         'message': 'hello'
+      },
+      'template': {
+        'message': 'format {0} me {1} {0}'
       }
     };
 
@@ -106,6 +109,15 @@ describe('Resources service', () => {
 
       resources.getString('hi').subscribe((value) => {
         expect(value).toBe('hello');
+        done();
+      });
+    });
+
+    it('should return the specified string formatted with the specified parameters', (done) => {
+      addTestResourceResponse();
+
+      resources.getString('template', 'a', 'b').subscribe((value) => {
+        expect(value).toBe('format a me b a');
         done();
       });
     });
