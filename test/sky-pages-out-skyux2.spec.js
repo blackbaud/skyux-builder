@@ -30,6 +30,10 @@ describe('@blackbaud/skyux-builder', () => {
         cmd: 'serve',
         lib: 'serve'
       },
+      'lint': {
+        cmd: 'lint',
+        lib: 'lint'
+      },
       'test': {
         cmd: 'test',
         lib: 'test'

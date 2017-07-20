@@ -9,10 +9,9 @@ const runtimeUtils = require('../utils/runtime-test-utils');
 describe('cli build', () => {
 
   beforeEach(() => {
+    spyOn(process, 'exit').and.callFake(() => {});
     mock('../cli/utils/ts-linter', {
-      lintSync: () => {
-        return 0;
-      }
+      lintSync: () => 0
     });
     mock('../lib/plugin-file-processor', {
       processFiles: () => {}
@@ -32,7 +31,7 @@ describe('cli build', () => {
       }
     });
 
-    require('../cli/build')({}, {}, () => ({
+    mock.reRequire('../cli/build')({}, {}, () => ({
       run: () => {}
     }));
     expect(called).toEqual(true);
@@ -45,7 +44,7 @@ describe('cli build', () => {
     });
 
     const customError = 'custom-error1';
-    require('../cli/build')({}, {}, () => ({
+    mock.reRequire('../cli/build')({}, {}, () => ({
       run: (cb) => {
         cb(customError);
         expect(logger.error).toHaveBeenCalledWith(customError);
@@ -68,7 +67,7 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
-    require('../cli/build')({}, {}, () => ({
+    mock.reRequire('../cli/build')({}, {}, () => ({
       run: (cb) => {
         cb(null, {
           toJson: () => ({
@@ -93,7 +92,7 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
-    require('../cli/build')({}, {}, () => ({
+    mock.reRequire('../cli/build')({}, {}, () => ({
       run: (cb) => {
         cb(null, {
           toJson: () => ({
@@ -130,7 +129,7 @@ describe('cli build', () => {
       return 'TESTSOURCE';
     });
 
-    require('../cli/build')(
+    mock.reRequire('../cli/build')(
       {},
       {
         runtime: runtimeUtils.getDefaultRuntime(),
@@ -212,7 +211,7 @@ describe('cli build', () => {
       return 'TESTSOURCE';
     });
 
-    require('../cli/build')(
+    mock.reRequire('../cli/build')(
       {},
       {
         runtime: runtimeUtils.getDefaultRuntime(),
@@ -253,7 +252,7 @@ describe('cli build', () => {
 
     const setSkyAssetsLoaderUrlSpy = spyOn(assetsProcessor, 'setSkyAssetsLoaderUrl');
 
-    require('../cli/build')(
+    mock.reRequire('../cli/build')(
       {
         assets: 'https://example.com/'
       },
@@ -291,5 +290,17 @@ describe('cli build', () => {
       })
     );
 
+  });
+
+  it('should fail the build if linting errors are found', () => {
+    mock.stop('../cli/utils/ts-linter');
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => 1
+    });
+    mock.reRequire('../cli/build')({}, {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+    expect(process.exit).toHaveBeenCalledWith(1);
   });
 });

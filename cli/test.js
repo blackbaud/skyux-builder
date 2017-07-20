@@ -5,11 +5,14 @@
  * Spawns the karma test command.
  * @name test
  */
-function test(command) {
+function test(command, argv) {
   const logger = require('winston');
   const Server = require('karma').Server;
   const tsLinter = require('./utils/ts-linter');
   const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+
+  argv = argv || process.argv;
+  argv.command = command;
 
   const karmaConfigUtil = require('karma').config;
   const karmaConfigPath = skyPagesConfigUtil.outPath(`config/karma/${command}.karma.conf.js`);
