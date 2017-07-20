@@ -11,9 +11,7 @@ const flags = [
   '--project',
   skyPagesConfigUtil.spaPath('tsconfig.json'),
   '--config',
-  skyPagesConfigUtil.spaPath('tslint.json'),
-  '--exclude',
-  '**/node_modules/**/*.ts'
+  skyPagesConfigUtil.spaPath('tslint.json')
 ];
 
 function lintSync() {

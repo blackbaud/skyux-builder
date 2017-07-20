@@ -2,126 +2,54 @@
 'use strict';
 
 const mock = require('mock-require');
+const logger = require('winston');
 
 describe('cli test', () => {
 
-  it('should load the test config when running test command', () => {
+  function MockServer(config, onExit) {
+    return {
+      on: () => {},
+      start: () => {}
+    };
+  }
 
-    const cmd = 'test';
-    let found = false;
-
-    mock('cross-spawn', (node, flags) => {
-      flags.forEach(flag => {
-        if (flag.indexOf(cmd + '.karma.conf') > -1) {
-          found = true;
-        }
-      });
-
-      return {
-        on: () => {}
-      };
-    });
-
-    require('../cli/test')(cmd);
-    expect(found).toEqual(true);
-    mock.stop('cross-spawn');
-
-  });
-
-  it('should load the watch config when running watch command', () => {
-
-    const cmd = 'watch';
-    let found = false;
-
-    mock('cross-spawn', (node, flags) => {
-      flags.forEach(flag => {
-        if (flag.indexOf(cmd + '.karma.conf') > -1) {
-          found = true;
-        }
-      });
-
-      return {
-        on: () => {}
-      };
-    });
-
-    require('../cli/test')(cmd);
-    expect(found).toEqual(true);
-    mock.stop('cross-spawn');
-
-  });
-
-  it('should pass the current command to karma', () => {
-
-    const cmd = 'CUSTOM_CMD';
-    let argv;
-
-    const minimist = require('minimist');
-    mock('cross-spawn', (node, flags) => {
-      argv = minimist(flags);
-
-      return {
-        on: () => {}
-      };
-    });
-
-    require('../cli/test')(cmd);
-    expect(argv.command).toEqual(cmd);
-    mock.stop('cross-spawn');
-
-  });
-
-  it('should pass the --coverage flag to karma by default', () => {
-    const cmd = 'CUSTOM_CMD';
-    let found = false;
-
-    mock('cross-spawn', (node, flags) => {
-      found = flags.includes('--coverage');
-      return {
-        on: () => {}
-      };
-    });
-
-    require('../cli/test')(cmd);
-    expect(found).toEqual(true);
-    mock.stop('cross-spawn');
-  });
-
-  it('should pass the --no-coverage flag to karma', () => {
-    const cmd = 'CUSTOM_CMD';
-    let found = false;
-
-    mock('cross-spawn', (node, flags) => {
-      found = flags.includes('--no-coverage');
-      return {
-        on: () => {}
-      };
-    });
-
-    require('../cli/test')(cmd, { coverage: false });
-    expect(found).toEqual(true);
-    mock.stop('cross-spawn');
-  });
-
-  it('should pass the exitCode', (done) => {
-    const EXIT_CODE = 1337;
-
-    spyOn(process, 'exit').and.callFake(exitCode => {
-      expect(exitCode).toEqual(EXIT_CODE);
-      done();
-    });
-
-    mock('cross-spawn', () => ({
-      on: (cmd, callback) => {
-        if (cmd === 'exit') {
-          callback(EXIT_CODE);
-        }
+  beforeEach(() => {
+    spyOn(logger, 'info').and.returnValue();
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => {
+        return 0;
       }
-    }));
-
-    require('../cli/test')('test');
-    mock.stop('cross-spawn');
-
+    });
+    mock('../config/sky-pages/sky-pages.config', {
+      outPath: (path) => path
+    });
   });
+
+  afterEach(() => {
+    mock.stopAll();
+  });
+
+  it('should load the test config when running test command', () => {
+    let _configPath;
+    mock('karma', {
+      config: {
+        parseConfig: (configPath) => _configPath = configPath
+      },
+      Server: MockServer
+    });
+    const test = require('../cli/test');
+    test('test');
+    expect(_configPath.indexOf('/test.karma.conf.js') > -1).toEqual(true);
+  });
+
+  it('should load the watch config when running watch command', () => {});
+
+  it('should pass the current command to karma', () => {});
+
+  it('should pass the --coverage flag to karma by default', () => {});
+
+  it('should pass the --no-coverage flag to karma', () => {});
+
+  it('should pass the exitCode', () => {});
 
 });

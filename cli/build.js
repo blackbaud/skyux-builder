@@ -8,6 +8,7 @@ const generator = require('../lib/sky-pages-module-generator');
 const assetsProcessor = require('../lib/assets-processor');
 const pluginFileProcessor = require('../lib/plugin-file-processor');
 const runCompiler = require('./utils/run-compiler');
+const tsLinter = require('./utils/ts-linter');
 
 function writeTSConfig() {
   var config = {
@@ -126,6 +127,12 @@ function build(argv, skyPagesConfig, webpack) {
 
   const assetsBaseUrl = argv.assets || '';
   const assetsRel = argv.assetsrel;
+
+  const status = tsLinter.lintSync();
+  if (status > 0) {
+    process.exit(status);
+    return;
+  }
 
   if (compileModeIsAoT) {
     stageAot(skyPagesConfig, assetsBaseUrl, assetsRel);

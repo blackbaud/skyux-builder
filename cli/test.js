@@ -5,9 +5,9 @@
  * Spawns the karma test command.
  * @name test
  */
-function test(command, argv) {
+function test(command) {
   const logger = require('winston');
-  const Server = require('karma').Server
+  const Server = require('karma').Server;
   const tsLinter = require('./utils/ts-linter');
   const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
