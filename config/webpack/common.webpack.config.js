@@ -79,7 +79,10 @@ function getWebpackConfig(skyPagesConfig) {
         },
         {
           enforce: 'pre',
-          test: /\.(html|s?css)$/,
+          test: [
+            /\.(html|s?css)$/,
+            /sky-pages\.module\.ts/
+          ],
           loader: outPath('loader', 'sky-assets')
         },
         {

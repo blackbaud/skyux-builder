@@ -1,13 +1,13 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('winston');
 const fs = require('fs-extra');
 const merge = require('merge');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
-const assetsConfig = require('../lib/assets-configuration');
+const assetsProcessor = require('../lib/assets-processor');
 const pluginFileProcessor = require('../lib/plugin-file-processor');
+const runCompiler = require('./utils/run-compiler');
 
 function writeTSConfig() {
   var config = {
@@ -51,7 +51,7 @@ function writeTSConfig() {
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'), config);
 }
 
-function stageAot(skyPagesConfig) {
+function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
   let skyPagesConfigOverrides = {
     runtime: {
       spaPathAlias: '../..',
@@ -76,7 +76,16 @@ function stageAot(skyPagesConfig) {
   fs.emptyDirSync(spaPathTempSrc);
 
   merge.recursive(skyPagesConfig, skyPagesConfigOverrides);
-  const skyPagesModuleSource = generator.getSource(skyPagesConfig);
+  let skyPagesModuleSource = generator.getSource(skyPagesConfig);
+
+  // The Webpack loader that processes referenced asset files will have run and emitted
+  // the appropriate files, but the AoT compiler will not pick up changes to the contents
+  // of the sky-pages.module.ts file.  Process the file again to do the replacements
+  // before writing the file to disk.
+  skyPagesModuleSource = assetsProcessor.processAssets(
+    skyPagesModuleSource,
+    assetsProcessor.getAssetsUrl(skyPagesConfig, assetsBaseUrl, assetsRel)
+  );
 
   fs.copySync(
     skyPagesConfigUtil.outPath('src'),
@@ -115,8 +124,11 @@ function build(argv, skyPagesConfig, webpack) {
 
   let buildConfig;
 
+  const assetsBaseUrl = argv.assets || '';
+  const assetsRel = argv.assetsrel;
+
   if (compileModeIsAoT) {
-    stageAot(skyPagesConfig);
+    stageAot(skyPagesConfig, assetsBaseUrl, assetsRel);
     buildConfig = require('../config/webpack/build-aot.webpack.config');
   } else {
     buildConfig = require('../config/webpack/build.webpack.config');
@@ -124,42 +136,16 @@ function build(argv, skyPagesConfig, webpack) {
 
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
 
-  const assetsBaseUrl = argv.assets || '';
+  assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
 
-  assetsConfig.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl);
-
-  const compiler = webpack(config);
-
-  return new Promise((resolve, reject) => {
-    compiler.run((err, stats) => {
-      if (err) {
-        logger.error(err);
-        reject(err);
-        return;
-      }
-
-      const jsonStats = stats.toJson();
-
-      if (jsonStats.errors.length) {
-        logger.error(jsonStats.errors);
-      }
-
-      if (jsonStats.warnings.length) {
-        logger.warn(jsonStats.warnings);
-      }
-
-      logger.info(stats.toString({
-        chunks: false,
-        colors: false
-      }));
-
+  return runCompiler(webpack, config)
+    .then(stats => {
       if (compileModeIsAoT) {
         cleanupAot();
       }
 
-      resolve(stats);
+      return Promise.resolve(stats);
     });
-  });
 }
 
 module.exports = build;
