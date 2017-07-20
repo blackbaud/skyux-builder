@@ -6,7 +6,6 @@ const DefinePlugin = require('webpack/lib/DefinePlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const ProcessExitCode = require('../../plugin/process-exit-code');
-const SkyTsLintCheckerPlugin = require('../../loader/sky-tslint/checker-plugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
 
@@ -78,12 +77,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
           exclude: excludes
         },
         {
-          enforce: 'pre',
-          test: /\.ts$/,
-          loader: outPath('loader', 'sky-tslint'),
-          exclude: excludes
-        },
-        {
           test: /\.ts$/,
           use: [
             {
@@ -141,9 +134,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
         skyPagesConfigUtil.spaPath('src'),
         {}
       ),
-
-      // Handles watch-mode maintenance for TSLint.
-      new SkyTsLintCheckerPlugin(),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
       new ProcessExitCode()

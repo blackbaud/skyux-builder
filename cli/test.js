@@ -2,41 +2,37 @@
 'use strict';
 
 /**
- * Spawns the karam start command.
+ * Spawns the karma test command.
  * @name test
  */
 function test(command, argv) {
-  const path = require('path');
-  const spawn = require('cross-spawn');
+  const logger = require('winston');
+  const Server = require('karma').Server
+  const tsLinter = require('./utils/ts-linter');
+  const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
-  const karmaConfigPath = path.resolve(
-    __dirname,
-    '..',
-    'config/karma/' + command + '.karma.conf.js'
-  );
+  const karmaConfigUtil = require('karma').config;
+  const karmaConfigPath = skyPagesConfigUtil.outPath(`config/karma/${command}.karma.conf.js`);
+  const karmaConfig = karmaConfigUtil.parseConfig(karmaConfigPath);
 
-  const flags = [
-    '--max-old-space-size=4096',
-    'node_modules/karma/bin/karma',
-    'start',
-    karmaConfigPath,
-    '--command',
-    command
-  ];
+  let _exitCode = 0;
+  const onExit = (exitCode) => {
+    // Only set exit code if it's a failure.
+    if (exitCode === 0) {
+      exitCode = _exitCode;
+    }
 
-  if (argv && argv.coverage === false) {
-    flags.push('--no-coverage');
-  } else {
-    flags.push('--coverage');
-  }
-
-  const options = {
-    stdio: 'inherit'
+    logger.info(`Karma has exited with ${exitCode}.`);
+    process.exit(exitCode);
   };
 
-  // Pass our exitCode up
-  const test = spawn('node', flags, options);
-  test.on('exit', exitCode => process.exit(exitCode));
+  const onRunStart = () => {
+    _exitCode = tsLinter.lintSync();
+  };
+
+  const server = new Server(karmaConfig, onExit);
+  server.on('run_start', onRunStart);
+  server.start();
 }
 
 module.exports = test;
