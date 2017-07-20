@@ -33,7 +33,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class AboutGuard {
-  canActivate(next: any, state: any) {
+  public canActivate(next: any, state: any): boolean {
     return false;
   }
 }
