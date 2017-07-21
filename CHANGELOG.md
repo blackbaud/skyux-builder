@@ -1,3 +1,8 @@
+# 1.0.0-rc.10 (2017-07-21)
+
+- Fixed bug around Font Face Observer to allow compatibility with SKY UX 2.0.0-rc.7 and above.
+- Upgraded rxjs to 5.4.2
+
 # 1.0.0-rc.9 (2017-07-19)
 
 - Added ability to format a templated resource string. [#231](https://github.com/blackbaud/skyux-builder/pull/231)
