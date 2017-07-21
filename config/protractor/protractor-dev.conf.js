@@ -20,7 +20,7 @@ let config = {
 
     return new Promise((resolve, reject) => {
       const url = 'https://github.com/blackbaud/skyux-template';
-      const branch = 'master';
+      const branch = 'builder-dev';
 
       common.rimrafPromise(common.tmp)
         .then(() => common.exec(`git`, [

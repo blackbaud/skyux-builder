@@ -276,7 +276,8 @@ describe('cli build', () => {
             expect(setSkyAssetsLoaderUrlSpy).toHaveBeenCalledWith(
               jasmine.any(Object),
               jasmine.any(Object),
-              'https://example.com/'
+              'https://example.com/',
+              undefined
             );
           } finally {
             mock.stop(f);
