@@ -55,9 +55,9 @@ describe('AppComponent', () => {
             subscribe: handler => subscribeHandler = handler
           },
           navigateByUrl: url => navigateByUrlParams = url,
-          parseUrl: url =>   {
+          parseUrl: url => {
             return {
-              fragment: (url === '') ? undefined  : 'scroll-here'
+              fragment: (url === '') ? undefined : 'scroll-here'
             };
           }
         }
