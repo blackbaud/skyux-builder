@@ -62,7 +62,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class RootGuard {
-  canActivateChild(next: any, state: any) {
+  public canActivateChild(next: any, state: any): boolean {
     return false;
   }
 }
