@@ -5,11 +5,17 @@ import { SkyAppResources } from '../../../i18n/resources';
 declare const ROOT_DIR: string;
 declare const require: {context: any};
 
+function formatText(format: string, ...args: any[]) {
+  return String(format).replace(/\{(\d+)\}/g, (match, capture) => {
+    return args[parseInt(capture, 10)];
+  });
+}
+
 /**
  * Provides a replacement for the SkyAppResourcesService to use in unit tests.
  */
 export class SkyAppResourcesTestService {
-    public getString(name: string): Observable<string> {
+    public getString(name: string, ...args: any[]): Observable<string> {
       function throwMissingResourceError(message: string) {
         throw new Error(
           'No matching string for the resource name "' + name + '" ' +
@@ -43,6 +49,6 @@ export class SkyAppResourcesTestService {
         );
       }
 
-      return Observable.of(resource.message);
+      return Observable.of(formatText(resources[name].message, ...args));
     }
 }
