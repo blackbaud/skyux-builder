@@ -1,6 +1,6 @@
 # 1.0.0-rc.11 (2017-07-24)
 
-- Fixed transient dependency of `enhanced-resolve` created by `@ngtools/webpack`, which was breaking `skyux build` and `skyux e2e`. (#241)[https://github.com/blackbaud/skyux-builder/pull/241]
+- Fixed transient dependency of `enhanced-resolve` created by `@ngtools/webpack`, which was breaking `skyux build` and `skyux e2e`. [#241](https://github.com/blackbaud/skyux-builder/pull/241)
 
 # 1.0.0-rc.10 (2017-07-21)
 
