@@ -18,17 +18,19 @@ function lintSync() {
   logger.info('Starting TSLint...');
 
   const spawnResult = spawn.sync('./node_modules/.bin/tslint', flags);
-  let lintResult = {};
+  const errorString = spawnResult.stderr.toString().trim();
 
-  if (spawnResult.status > 0) {
-    lintResult.errors = spawnResult.stderr.toString().trim().split(/\r?\n/);
+  let errors = [];
+  if (errorString) {
+    errors = errorString.split(/\r?\n/);
   }
 
-  const plural = (lintResult.errors.length === 1) ? '' : 's';
-  lintResult.message = `TSLint finished with (${lintResult.errors.length}) linting error${plural}.`;
-  lintResult.exitCode = spawnResult.status;
+  // Print linting results to console.
+  errors.forEach(error => logger.error(error));
+  const plural = (errors.length === 1) ? '' : 's';
+  logger.info(`TSLint finished with ${errors.length} error${plural}.`);
 
-  return lintResult;
+  return spawnResult.status;
 }
 
 module.exports = {

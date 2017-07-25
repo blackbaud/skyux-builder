@@ -18,30 +18,29 @@ function test(command, argv) {
   const karmaConfigPath = skyPagesConfigUtil.outPath(`config/karma/${command}.karma.conf.js`);
   const karmaConfig = karmaConfigUtil.parseConfig(karmaConfigPath);
 
-  let lintResult;
+  let lintExitCode = 0;
+
+  const onRunStart = () => {
+    lintExitCode = tsLinter.lintSync();
+  };
+
+  const onRunComplete = () => {
+    if (lintExitCode > 0) {
+      // Pull the logger out of the execution stream to let it print
+      // after karma's coverage reporter.
+      setTimeout(() => {
+        logger.error(`Process failed due to linting errors.`);
+      }, 10);
+    }
+  };
 
   const onExit = (exitCode) => {
-    // Only set exit code if it's a failure.
     if (exitCode === 0) {
-      exitCode = lintResult.exitCode;
+      exitCode = lintExitCode;
     }
 
     logger.info(`Karma has exited with ${exitCode}.`);
     process.exit(exitCode);
-  };
-
-  const onRunStart = () => {
-    lintResult = tsLinter.lintSync();
-    logger.info(lintResult.message);
-    if (lintResult.errors) {
-      lintResult.errors.forEach(error => logger.error(error));
-    }
-  };
-
-  const onRunComplete = () => {
-    if (lintResult.errorCode > 0) {
-      logger.error(lintResult.message);
-    }
   };
 
   const server = new Server(karmaConfig, onExit);

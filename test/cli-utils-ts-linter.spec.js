@@ -2,7 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('winston');
+const logger = require('../utils/logger');
 
 describe('cli util ts-linter', () => {
   afterEach(() => {
@@ -28,7 +28,8 @@ describe('cli util ts-linter', () => {
       sync: () => {
         _executed = true;
         return {
-          status: 0
+          status: 0,
+          stderr: new Buffer('')
         };
       }
     });
@@ -47,7 +48,8 @@ describe('cli util ts-linter', () => {
     mock('cross-spawn', {
       sync: () => {
         return {
-          status: 1
+          status: 1,
+          stderr: new Buffer('Error: something bad happened.')
         };
       }
     });

@@ -2,7 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('winston');
+const logger = require('../utils/logger');
 
 describe('cli test', () => {
   let originalArgv = process.argv;
@@ -112,7 +112,7 @@ describe('cli test', () => {
   });
 
   it('should execute tslint before each karma run and pass the exit code', () => {
-    let _hook;
+    let _hooks = [];
     let _exitCode;
     let _onExit;
     mock.stop('../cli/utils/ts-linter');
@@ -129,7 +129,7 @@ describe('cli test', () => {
       Server: function (config, onExit) {
         _onExit = onExit;
         this.on = (hook, callback) => {
-          _hook = hook;
+          _hooks.push(hook);
           callback();
         };
         this.start = () => {};
@@ -138,8 +138,35 @@ describe('cli test', () => {
     const test = mock.reRequire('../cli/test');
     test('test');
     _onExit(0);
-    expect(_hook).toEqual('run_start');
+    expect(_hooks[0]).toEqual('run_start');
     expect(_exitCode).toEqual(1);
     expect(process.exit).toHaveBeenCalledWith(1);
+  });
+
+  it('should not output a tslint error message if tslint passes', () => {
+    let _hooks = [];
+    let _onExit;
+    mock.stop('../cli/utils/ts-linter');
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => 0
+    });
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, onExit) {
+        _onExit = onExit;
+        this.on = (hook, callback) => {
+          _hooks.push(hook);
+          callback();
+        };
+        this.start = () => {};
+      }
+    });
+    const test = mock.reRequire('../cli/test');
+    test('test');
+    _onExit(0);
+    expect(_hooks[1]).toEqual('run_complete');
+    expect(process.exit).toHaveBeenCalledWith(0);
   });
 });
