@@ -1,5 +1,10 @@
+import {
+  ChangeDetectorRef,
+  Pipe,
+  PipeTransform
+} from '@angular/core';
+
 import { SkyAppResourcesService } from './resources.service';
-import { Pipe, PipeTransform } from '@angular/core';
 
 /**
  * An Angular pipe for displaying a resource string.
@@ -12,6 +17,7 @@ export class SkyAppResourcesPipe implements PipeTransform {
   private resourceCache: {[key: string]: any} = {};
 
   constructor(
+    private changeDetector: ChangeDetectorRef,
     private resourcesSvc: SkyAppResourcesService
   ) { }
 
@@ -25,7 +31,10 @@ export class SkyAppResourcesPipe implements PipeTransform {
     if (!(cacheKey in this.resourceCache)) {
       this.resourcesSvc
         .getString(name, ...args)
-        .subscribe(result => this.resourceCache[cacheKey] = result);
+        .subscribe((result) => {
+          this.resourceCache[cacheKey] = result;
+          this.changeDetector.markForCheck();
+        });
     }
 
     return this.resourceCache[cacheKey];
