@@ -11,7 +11,11 @@ declare const require: { context: any };
  */
 export class SkyAppResourcesTestService {
 
-  constructor(private skyAppFormat: SkyAppFormat) {}
+  private skyAppFormat: SkyAppFormat;
+
+  constructor() {
+    this.skyAppFormat = new SkyAppFormat();
+  }
 
   public getString(name: string, ...args: any[]): Observable<string> {
     function throwMissingResourceError(message: string) {

@@ -32,6 +32,7 @@ function getDefaultObs() {
 @Injectable()
 export class SkyAppResourcesService {
   private resourcesObs: Observable<any>;
+  private skyAppFormat: SkyAppFormat;
 
   private httpObs: {[key: string]: Observable<any>} = {};
 
@@ -39,9 +40,10 @@ export class SkyAppResourcesService {
     private http: Http,
     /* tslint:disable-next-line no-forward-ref */
     @Inject(forwardRef(() => SkyAppAssetsService)) private assets: SkyAppAssetsService,
-    @Optional() private localeProvider: SkyAppLocaleProvider,
-    private skyAppFormat: SkyAppFormat
-  ) { }
+    @Optional() private localeProvider: SkyAppLocaleProvider
+  ) {
+    this.skyAppFormat = new SkyAppFormat();
+  }
 
   /**
    * Gets a resource string based on its name.
