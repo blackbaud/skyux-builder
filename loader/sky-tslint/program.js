@@ -2,7 +2,7 @@
 'use strict';
 
 const tslint = require('tslint');
-const logger = require('winston');
+const logger = require('../../utils/logger');
 let _program;
 
 const getProgram = (tsconfigPath) => {

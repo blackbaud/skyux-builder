@@ -3,7 +3,7 @@
 
 const path = require('path');
 const proxyquire = require('proxyquire');
-const logger = require('winston');
+const logger = require('../utils/logger');
 
 describe('cli version', () => {
   it('should return the version from package.json', () => {

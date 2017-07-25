@@ -3,7 +3,7 @@
 
 const path = require('path');
 const spawn = require('cross-spawn');
-const logger = require('winston');
+const logger = require('../utils/logger');
 const portfinder = require('portfinder');
 const HttpServer = require('http-server');
 const selenium = require('selenium-standalone');
