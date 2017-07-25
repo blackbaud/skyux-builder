@@ -1,11 +1,11 @@
 /*jshint node: true */
 'use strict';
 
-const Winston = require('winston');
+const winston = require('winston');
 
-const logger = new Winston.Logger({
+const logger = new winston.Logger({
   transports: [
-    new Winston.transports.Console({
+    new winston.transports.Console({
       level: 'debug',
       handleExceptions: true,
       json: false,
