@@ -1,9 +1,9 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('winston');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
+const logger = require('./utils/logger');
 const config = require('./config/sky-pages/sky-pages.config');
 
 module.exports = {

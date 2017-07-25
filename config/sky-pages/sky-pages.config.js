@@ -4,7 +4,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const merge = require('merge');
-const logger = require('winston');
+const logger = require('../../utils/logger');
 
 /**
  * Resolves a path given a root path and an array-like arguments object.

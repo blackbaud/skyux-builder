@@ -2,8 +2,8 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('winston');
 const urlLibrary = require('url');
+const logger = require('../utils/logger');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack serve', () => {

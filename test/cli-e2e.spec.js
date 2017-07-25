@@ -3,8 +3,8 @@
 
 const path = require('path');
 const mock = require('mock-require');
-const logger = require('winston');
 const selenium = require('selenium-standalone');
+const logger = require('../utils/logger');
 
 describe('cli e2e', () => {
   const PORT = 1234;
