@@ -2,7 +2,7 @@
 'use strict';
 
 const path = require('path');
-const logger = require('winston');
+const logger = require('../utils/logger');
 
 /**
  * Returns the version from package.json.
