@@ -1,9 +1,9 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('winston');
 const portfinder = require('portfinder');
 
+const logger = require('../utils/logger');
 const assetsProcessor = require('../lib/assets-processor');
 
 /**

@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('winston');
+const logger = require('../../utils/logger');
 
 const runCompiler = (webpack, config) => {
   const compiler = webpack(config);
