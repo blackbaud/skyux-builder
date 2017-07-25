@@ -2,7 +2,7 @@
 'use strict';
 
 const fs = require('fs-extra');
-const logger = require('winston');
+const logger = require('../utils/logger');
 
 describe('config sky-pages', () => {
 

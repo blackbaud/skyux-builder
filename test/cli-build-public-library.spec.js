@@ -4,7 +4,7 @@
 const mock = require('mock-require');
 const fs = require('fs-extra');
 const rimraf = require('rimraf');
-const logger = require('winston');
+const logger = require('../utils/logger');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 describe('cli build-public-library', () => {
