@@ -29,7 +29,7 @@ function test(command, argv) {
       // Pull the logger out of the execution stream to let it print
       // after karma's coverage reporter.
       setTimeout(() => {
-        logger.error(`Process failed due to linting errors.`);
+        logger.error('Process failed due to linting errors.');
       }, 10);
     }
   };
