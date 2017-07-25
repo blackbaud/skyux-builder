@@ -12,6 +12,7 @@ import { Observable } from 'rxjs/Observable';
 import { SkyAppAssetsService } from '@blackbaud/skyux-builder/runtime/assets.service';
 import { SkyAppLocaleProvider } from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';
 import { SkyAppLocaleInfo } from '@blackbaud/skyux-builder/runtime/i18n/locale-info';
+import { SkyAppFormat } from '@blackbaud/skyux-builder/runtime/format';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -22,12 +23,6 @@ function getDefaultObs() {
     json: (): any => {
       return defaultResources;
     }
-  });
-}
-
-function formatText(format: string, ...args: any[]) {
-  return String(format).replace(/\{(\d+)\}/g, (match, capture) => {
-    return args[parseInt(capture, 10)];
   });
 }
 
@@ -44,7 +39,8 @@ export class SkyAppResourcesService {
     private http: Http,
     /* tslint:disable-next-line no-forward-ref */
     @Inject(forwardRef(() => SkyAppAssetsService)) private assets: SkyAppAssetsService,
-    @Optional() private localeProvider: SkyAppLocaleProvider
+    @Optional() private localeProvider: SkyAppLocaleProvider,
+    private skyAppFormat: SkyAppFormat
   ) { }
 
   /**
@@ -127,7 +123,7 @@ export class SkyAppResourcesService {
       }
 
       if (name in resources) {
-        return formatText(resources[name].message, ...args);
+        return this.skyAppFormat.formatText(resources[name].message, ...args);
       }
 
       return name;
