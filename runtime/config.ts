@@ -51,8 +51,8 @@ export interface SkyuxConfig {
   plugins?: string[];
   redirects?: any;
   routes?: {
-    public: any[],
-    referenced: any[]
+    public?: any[],
+    referenced?: any[]
   };
   omnibar?: any;
   useHashRouting?: boolean;
