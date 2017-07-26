@@ -140,4 +140,19 @@ describe('SkyAuthHttp', () => {
     expect(skyAuthHttp).toBeDefined();
   });
 
+  it('should request a token with the specified permission scope', () => {
+    const search = '?envid=1234';
+    const getTokenSpy = spyOn(BBAuth, 'getToken');
+
+    setupInjector(search);
+    skyAuthHttp
+      .withScope('abc')
+      .get('example.com');
+
+    expect(getTokenSpy).toHaveBeenCalledWith({
+      envId: '1234',
+      permissionScope: 'abc'
+    });
+  });
+
 });
