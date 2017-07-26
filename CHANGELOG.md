@@ -1,3 +1,13 @@
+# 1.0.0-rc.12 (2017-07-26)
+
+- Added ability to specify a permission scope with `SkyAuthHttp`. [#245](https://github.com/blackbaud/skyux-builder/pull/245)
+- Added string formatting method to `SkyAppResourcesTestService`. [#239](https://github.com/blackbaud/skyux-builder/pull/239)
+- Added `skyux lint` command and fixed TSLint rules (that require type checking) not failing the build. [#205](https://github.com/blackbaud/skyux-builder/pull/205)
+- Added check to prevent window scroll if a route fragment exists. [#232](https://github.com/blackbaud/skyux-builder/pull/232)
+- Added colors to console logs. [#244](https://github.com/blackbaud/skyux-builder/pull/244)
+- Made public and referenced route properties optional. [#240](https://github.com/blackbaud/skyux-builder/pull/240)
+- Fixed bug with change detection when a resource string is loaded asynchronously. [#243](https://github.com/blackbaud/skyux-builder/pull/243)
+
 # 1.0.0-rc.11 (2017-07-24)
 
 - Fixed transient dependency of `enhanced-resolve` created by `@ngtools/webpack`, which was breaking `skyux build` and `skyux e2e`. [#241](https://github.com/blackbaud/skyux-builder/pull/241)
