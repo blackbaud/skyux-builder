@@ -11,7 +11,11 @@ describe('cli lint', () => {
   it('should run the linter', () => {
     spyOn(process, 'exit').and.returnValue();
     mock('../cli/utils/ts-linter', {
-      lintSync: () => 0
+      lintSync: () => {
+        return {
+          exitCode: 0
+        };
+      }
     });
     const lint = mock.reRequire('../cli/lint');
     lint();
@@ -21,7 +25,11 @@ describe('cli lint', () => {
   it('should process the exit code', () => {
     spyOn(process, 'exit').and.returnValue();
     mock('../cli/utils/ts-linter', {
-      lintSync: () => 1
+      lintSync: () => {
+        return {
+          exitCode: 1
+        };
+      }
     });
     const lint = mock.reRequire('../cli/lint');
     lint();

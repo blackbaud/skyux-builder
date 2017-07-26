@@ -36,7 +36,7 @@ describe('cli util ts-linter', () => {
     const tsLinter = mock.reRequire('../cli/utils/ts-linter');
     const result = tsLinter.lintSync();
     expect(_executed).toEqual(true);
-    expect(result).toEqual(0);
+    expect(result.exitCode).toEqual(0);
   });
 
   it('should log an error if linting errors found', () => {
@@ -55,7 +55,7 @@ describe('cli util ts-linter', () => {
     });
     const tsLinter = mock.reRequire('../cli/utils/ts-linter');
     const result = tsLinter.lintSync();
-    expect(result).toEqual(1);
+    expect(result.exitCode).toEqual(1);
     expect(logger.error).toHaveBeenCalled();
   });
 });

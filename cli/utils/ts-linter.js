@@ -30,7 +30,10 @@ function lintSync() {
   const plural = (errors.length === 1) ? '' : 's';
   logger.info(`TSLint finished with ${errors.length} error${plural}.`);
 
-  return spawnResult.status;
+  return {
+    exitCode: spawnResult.status,
+    errors: errors
+  };
 }
 
 module.exports = {

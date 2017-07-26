@@ -128,9 +128,9 @@ function build(argv, skyPagesConfig, webpack) {
   const assetsBaseUrl = argv.assets || '';
   const assetsRel = argv.assetsrel;
 
-  const lintExitCode = tsLinter.lintSync();
-  if (lintExitCode > 0) {
-    process.exit(lintExitCode);
+  const lintResult = tsLinter.lintSync();
+  if (lintResult.exitCode > 0) {
+    process.exit(lintResult.exitCode);
     return;
   }
 

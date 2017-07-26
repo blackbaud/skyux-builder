@@ -11,7 +11,11 @@ describe('cli build', () => {
   beforeEach(() => {
     spyOn(process, 'exit').and.callFake(() => {});
     mock('../cli/utils/ts-linter', {
-      lintSync: () => 0
+      lintSync: () => {
+        return {
+          exitCode: 0
+        };
+      }
     });
     mock('../lib/plugin-file-processor', {
       processFiles: () => {}
@@ -295,7 +299,11 @@ describe('cli build', () => {
   it('should fail the build if linting errors are found', () => {
     mock.stop('../cli/utils/ts-linter');
     mock('../cli/utils/ts-linter', {
-      lintSync: () => 1
+      lintSync: () => {
+        return {
+          exitCode: 1
+        };
+      }
     });
     mock.reRequire('../cli/build')({}, {
       runtime: runtimeUtils.getDefaultRuntime(),

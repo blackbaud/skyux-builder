@@ -3,9 +3,9 @@
 
 function lint() {
   const tsLinter = require('./utils/ts-linter');
-  const exitCode = tsLinter.lintSync();
+  const result = tsLinter.lintSync();
 
-  process.exit(exitCode);
+  process.exit(result.exitCode);
 }
 
 module.exports = lint;

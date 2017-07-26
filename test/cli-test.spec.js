@@ -12,10 +12,17 @@ describe('cli test', () => {
   MockServer.prototype.start = function () {};
 
   beforeEach(() => {
+    spyOn(global, 'setTimeout').and.callFake(cb => cb());
     spyOn(process, 'exit').and.returnValue();
     spyOn(logger, 'info').and.returnValue();
+    spyOn(logger, 'error').and.returnValue();
     mock('../cli/utils/ts-linter', {
-      lintSync: () => 0
+      lintSync: () => {
+        return {
+          exitCode: 0,
+          errors: []
+        };
+      }
     });
     mock('../config/sky-pages/sky-pages.config', {
       outPath: (path) => path
@@ -80,18 +87,26 @@ describe('cli test', () => {
   });
 
   it('should process the exit code from karma server', () => {
+    let _onExit;
     mock('karma', {
       config: {
         parseConfig: () => {}
       },
-      Server: function (config, callback) {
-        callback(0);
-        this.on = () => {};
+      Server: function (config, onExit) {
+        this.on = (hook, callback) => {
+          if (hook === 'run_start') {
+            _onExit = () => {
+              onExit(0);
+            };
+            callback();
+          }
+        };
         this.start = () => {};
       }
     });
     const test = mock.reRequire('../cli/test');
     test('test');
+    _onExit();
     expect(process.exit).toHaveBeenCalledWith(0);
   });
 
@@ -119,7 +134,10 @@ describe('cli test', () => {
     mock('../cli/utils/ts-linter', {
       lintSync: () => {
         _exitCode = 1;
-        return 1;
+        return {
+          exitCode: 1,
+          errors: ['foo']
+        };
       }
     });
     mock('karma', {
@@ -148,7 +166,11 @@ describe('cli test', () => {
     let _onExit;
     mock.stop('../cli/utils/ts-linter');
     mock('../cli/utils/ts-linter', {
-      lintSync: () => 0
+      lintSync: () => {
+        return {
+          exitCode: 0
+        };
+      }
     });
     mock('karma', {
       config: {
