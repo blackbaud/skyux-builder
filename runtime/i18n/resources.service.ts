@@ -8,6 +8,11 @@ import {
 import { Http } from '@angular/http';
 
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/publishReplay';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/observable/of';
 
 import { SkyAppAssetsService } from '@blackbaud/skyux-builder/runtime/assets.service';
 import { SkyAppLocaleProvider } from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';

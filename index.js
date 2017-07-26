@@ -22,6 +22,9 @@ module.exports = {
       case 'serve':
         require('./cli/serve')(argv, skyPagesConfig, webpack, WebpackDevServer);
         break;
+      case 'lint':
+        require('./cli/lint')();
+        break;
       case 'test':
       case 'watch':
         require('./cli/test')(command, argv);

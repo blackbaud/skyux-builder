@@ -24,7 +24,7 @@ describe('Resources pipe', () => {
 
         return Observable.of(value);
       }
-    };
+    } as SkyAppResourcesService;
   });
 
   it('should return the expected string', () => {
