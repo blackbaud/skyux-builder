@@ -17,6 +17,7 @@ import 'rxjs/add/observable/of';
 import { SkyAppAssetsService } from '@blackbaud/skyux-builder/runtime/assets.service';
 import { SkyAppLocaleProvider } from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';
 import { SkyAppLocaleInfo } from '@blackbaud/skyux-builder/runtime/i18n/locale-info';
+import { SkyAppFormat } from '@blackbaud/skyux-builder/runtime/format';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -30,18 +31,13 @@ function getDefaultObs() {
   });
 }
 
-function formatText(format: string, ...args: any[]) {
-  return String(format).replace(/\{(\d+)\}/g, (match, capture) => {
-    return args[parseInt(capture, 10)];
-  });
-}
-
 /**
  * An Angular service for interacting with resource strings.
  */
 @Injectable()
 export class SkyAppResourcesService {
   private resourcesObs: Observable<any>;
+  private skyAppFormat: SkyAppFormat;
 
   private httpObs: {[key: string]: Observable<any>} = {};
 
@@ -50,7 +46,9 @@ export class SkyAppResourcesService {
     /* tslint:disable-next-line no-forward-ref */
     @Inject(forwardRef(() => SkyAppAssetsService)) private assets: SkyAppAssetsService,
     @Optional() private localeProvider: SkyAppLocaleProvider
-  ) { }
+  ) {
+    this.skyAppFormat = new SkyAppFormat();
+  }
 
   /**
    * Gets a resource string based on its name.
@@ -132,7 +130,7 @@ export class SkyAppResourcesService {
       }
 
       if (name in resources) {
-        return formatText(resources[name].message, ...args);
+        return this.skyAppFormat.formatText(resources[name].message, ...args);
       }
 
       return name;

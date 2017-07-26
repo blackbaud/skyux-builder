@@ -19,6 +19,7 @@ import { Observable } from 'rxjs/Observable';
 import { SkyAppResourcesService } from '@blackbaud/skyux-builder/runtime/i18n/resources.service';
 import { SkyAppAssetsService } from '@blackbaud/skyux-builder/runtime/assets.service';
 import { SkyAppLocaleProvider } from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';
+import { SkyAppFormat } from '@blackbaud/skyux-builder/runtime/format';
 
 describe('Resources service', () => {
   let resources: SkyAppResourcesService;
@@ -39,6 +40,7 @@ describe('Resources service', () => {
     const providers: any[] = [
       SkyAppAssetsService,
       SkyAppResourcesService,
+      SkyAppFormat,
       {
         provide: XHRBackend,
         useClass: MockBackend
