@@ -11,19 +11,34 @@ const flags = [
   '--project',
   skyPagesConfigUtil.spaPath('tsconfig.json'),
   '--config',
-  skyPagesConfigUtil.spaPath('tslint.json')
+  skyPagesConfigUtil.spaPath('tslint.json'),
+  '--exclude',
+  '**/node_modules/**/*.ts'
 ];
 
 function lintSync() {
   logger.info('Starting TSLint...');
 
   const spawnResult = spawn.sync('./node_modules/.bin/tslint', flags);
-  const errorString = spawnResult.stderr.toString().trim();
 
+  // Convert buffers to strings.
+  let output = [];
+  spawnResult.output.forEach((buffer) => {
+    if (buffer === null) {
+      return;
+    }
+
+    const str = buffer.toString().trim();
+    if (str) {
+      output.push(str);
+    }
+  });
+
+  // Convert multi-line errors into single errors.
   let errors = [];
-  if (errorString) {
-    errors = errorString.split(/\r?\n/);
-  }
+  output.forEach((str) => {
+    errors = errors.concat(str.split(/\r?\n/));
+  });
 
   // Print linting results to console.
   errors.forEach(error => logger.error(error));

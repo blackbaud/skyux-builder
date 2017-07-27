@@ -29,7 +29,7 @@ describe('cli util ts-linter', () => {
         _executed = true;
         return {
           status: 0,
-          stderr: new Buffer('')
+          output: [new Buffer('some error')]
         };
       }
     });
@@ -49,7 +49,7 @@ describe('cli util ts-linter', () => {
       sync: () => {
         return {
           status: 1,
-          stderr: new Buffer('Error: something bad happened.')
+          output: [new Buffer('some error'), new Buffer('another error')]
         };
       }
     });
@@ -57,5 +57,25 @@ describe('cli util ts-linter', () => {
     const result = tsLinter.lintSync();
     expect(result.exitCode).toEqual(1);
     expect(logger.error).toHaveBeenCalled();
+  });
+
+  it('should not log an error if linting errors are not found', () => {
+    spyOn(logger, 'info').and.returnValue();
+    spyOn(logger, 'error').and.returnValue();
+    mock('../config/sky-pages/sky-pages.config', {
+      spaPath: (filePath) => filePath
+    });
+    mock('cross-spawn', {
+      sync: () => {
+        return {
+          status: 0,
+          output: [null, new Buffer('')]
+        };
+      }
+    });
+    const tsLinter = mock.reRequire('../cli/utils/ts-linter');
+    const result = tsLinter.lintSync();
+    expect(result.exitCode).toEqual(0);
+    expect(logger.error).not.toHaveBeenCalled();
   });
 });
