@@ -5,8 +5,13 @@ import { SkyAppResourcesPipe } from '@blackbaud/skyux-builder/runtime/i18n/resou
 
 describe('Resources pipe', () => {
   let resources: SkyAppResourcesService;
+  let changeDetector: any;
 
   beforeEach(() => {
+    changeDetector = {
+      markForCheck: jasmine.createSpy('markForCheck')
+    };
+
     resources = {
       getString: (name: string, ...args) => {
         let value: string;
@@ -19,23 +24,23 @@ describe('Resources pipe', () => {
 
         return Observable.of(value);
       }
-    };
+    } as SkyAppResourcesService;
   });
 
   it('should return the expected string', () => {
-    let pipe = new SkyAppResourcesPipe(resources);
+    let pipe = new SkyAppResourcesPipe(changeDetector, resources);
 
     expect(pipe.transform('hi')).toBe('hello');
   });
 
   it('should return the expected string formatted with the specified parameters', () => {
-    let pipe = new SkyAppResourcesPipe(resources);
+    let pipe = new SkyAppResourcesPipe(changeDetector, resources);
 
     expect(pipe.transform('hi', 'abc')).toBe('format me abc');
   });
 
   it('should cache strings that have been retrieved via the resource service', () => {
-    let pipe = new SkyAppResourcesPipe(resources);
+    let pipe = new SkyAppResourcesPipe(changeDetector, resources);
 
     const getStringSpy = spyOn(resources, 'getString').and.callThrough();
 
@@ -47,7 +52,7 @@ describe('Resources pipe', () => {
   });
 
   it('should consider format args as part of the cache key', () => {
-    let pipe = new SkyAppResourcesPipe(resources);
+    let pipe = new SkyAppResourcesPipe(changeDetector, resources);
 
     const getStringSpy = spyOn(resources, 'getString').and.callThrough();
 
@@ -59,6 +64,16 @@ describe('Resources pipe', () => {
     expect(pipe.transform('hi', 'abc')).toBe('format me abc');
 
     expect(getStringSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should mark the change detector for check when the string is loaded asynchronously', () => {
+    let pipe = new SkyAppResourcesPipe(changeDetector, resources);
+
+    pipe.transform('hi');
+    pipe.transform('hi');
+    pipe.transform('hi');
+
+    expect(changeDetector.markForCheck).toHaveBeenCalledTimes(1);
   });
 
 });

@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('winston');
+const logger = require('../../utils/logger');
 let plugins;
 
 const getPluginContents = (skyPagesConfig) => {
