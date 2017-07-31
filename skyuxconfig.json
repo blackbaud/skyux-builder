@@ -34,6 +34,7 @@
           "dlitem": { "enabled": true },
           "definition-list": { "enabled": true },
           "dlitem": { "enabled": true },
+          "empty-heading": { "enabled": true },
           "layout-table": { "enabled": true },
           "list": { "enabled": true },
           "listitem": { "enabled": true },
@@ -66,10 +67,6 @@
           "bypass": { "enabled": true },
           "tabindex": { "enabled": true },
 
-          "button-name": { "enabled": true },
-          "empty-heading": { "enabled": true },
-          "link-name": { "enabled": true },
-
           "aria-allowed-attr": { "enabled": true },
           "aria-required-attr": { "enabled": true },
           "aria-required-children": { "enabled": true },
@@ -77,6 +74,8 @@
           "aria-roles": { "enabled": true },
           "aria-valid-attr": { "enabled": true },
           "aria-valid-attr-value": { "enabled": true },
+          "button-name": { "enabled": true },
+          "link-name": { "enabled": true },
 
           "blink": { "enabled": true },
           "color-contrast": { "enabled": true },
