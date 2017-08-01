@@ -1,3 +1,7 @@
+# 1.0.0-rc.13 (2017-07-27)
+
+- Fixed TSLint checking node_modules [#247](https://github.com/blackbaud/skyux-builder/pull/247)
+
 # 1.0.0-rc.12 (2017-07-26)
 
 - Added ability to specify a permission scope with `SkyAuthHttp`. [#245](https://github.com/blackbaud/skyux-builder/pull/245)
