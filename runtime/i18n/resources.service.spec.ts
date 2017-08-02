@@ -19,6 +19,7 @@ import { Observable } from 'rxjs/Observable';
 import { SkyAppResourcesService } from '@blackbaud/skyux-builder/runtime/i18n/resources.service';
 import { SkyAppAssetsService } from '@blackbaud/skyux-builder/runtime/assets.service';
 import { SkyAppLocaleProvider } from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';
+import { SkyAppFormat } from '@blackbaud/skyux-builder/runtime/format';
 
 describe('Resources service', () => {
   let resources: SkyAppResourcesService;
@@ -30,12 +31,16 @@ describe('Resources service', () => {
     testResources = {
       'hi': {
         'message': 'hello'
+      },
+      'template': {
+        'message': 'format {0} me {1} {0}'
       }
     };
 
-    const providers = [
+    const providers: any[] = [
       SkyAppAssetsService,
       SkyAppResourcesService,
+      SkyAppFormat,
       {
         provide: XHRBackend,
         useClass: MockBackend
@@ -44,7 +49,7 @@ describe('Resources service', () => {
         provide: SkyAppAssetsService,
         useValue: {
           getUrl: (path) => {
-            if (path.indexOf('en_AU') >= 0) {
+            if (path.indexOf('en_AU') >= 0 || path.indexOf('es_MX') >= 0) {
               return undefined;
             }
 
@@ -106,6 +111,15 @@ describe('Resources service', () => {
 
       resources.getString('hi').subscribe((value) => {
         expect(value).toBe('hello');
+        done();
+      });
+    });
+
+    it('should return the specified string formatted with the specified parameters', (done) => {
+      addTestResourceResponse();
+
+      resources.getString('template', 'a', 'b').subscribe((value) => {
+        expect(value).toBe('format a me b a');
         done();
       });
     });
@@ -188,6 +202,33 @@ describe('Resources service', () => {
     });
 
     beforeEach(injectServices());
+
+    it('should fall back to the default locale if a blank locale is specified', (done) => {
+      addTestResourceResponse();
+
+      currentLocale = '';
+
+      resources.getString('hi').subscribe((value) => {
+        expect(value).toBe('hello');
+        done();
+      });
+    });
+
+    it(
+      'should fall back to the non-region-specific locale if the specified locale does not have ' +
+      'corresponding resource file',
+      (done) => {
+
+        backend.connections.subscribe((connection) => {
+          expect(connection.request.url).toBe('https://example.com/locales/resources_es.json');
+          done();
+        });
+
+        currentLocale = 'es-MX';
+
+        resources.getString('hi').subscribe((value) => { });
+      }
+    );
 
     it(
       'should fall back to the default locale if the specified locale does not have a ' +

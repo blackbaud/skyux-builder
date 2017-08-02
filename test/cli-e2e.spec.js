@@ -3,8 +3,8 @@
 
 const path = require('path');
 const mock = require('mock-require');
-const logger = require('winston');
 const selenium = require('selenium-standalone');
+const logger = require('../utils/logger');
 
 describe('cli e2e', () => {
   const PORT = 1234;
@@ -141,6 +141,7 @@ describe('cli e2e', () => {
   });
 
   it('should catch selenium failures', (done) => {
+    debugger;
     mock(configPath, {
       config: {
         seleniumAddress: 'asdf'

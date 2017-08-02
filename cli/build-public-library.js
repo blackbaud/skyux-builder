@@ -9,6 +9,14 @@ const preparePackage = require('./utils/prepare-library-package');
 const webpackConfig = require('../config/webpack/build-public-library.webpack.config.js');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const runCompiler = require('./utils/run-compiler');
+const tsLinter = require('./utils/ts-linter');
+
+function runLinter() {
+  const lintResult = tsLinter.lintSync();
+  if (lintResult.exitCode > 0) {
+    process.exit(lintResult.exitCode);
+  }
+}
 
 function cleanTemp() {
   rimraf.sync(skyPagesConfigUtil.spaPathTemp());
@@ -61,6 +69,7 @@ function transpile(skyPagesConfig, webpack) {
 }
 
 module.exports = (skyPagesConfig, webpack) => {
+  runLinter();
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();

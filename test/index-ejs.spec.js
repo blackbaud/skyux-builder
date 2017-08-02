@@ -64,6 +64,10 @@ describe('index.ejs template', () => {
       })
     });
 
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => 0
+    });
+
     let config = skyPagesConfigUtil.getSkyPagesConfig('build');
     config.skyux = {
       app: {
@@ -102,7 +106,8 @@ describe('index.ejs template', () => {
         }
       }
     };
-    require('../cli/build')({}, config, webpack);
+    spyOn(process, 'exit').and.callFake(() => {});
+    mock.reRequire('../cli/build')({}, config, webpack);
 
   });
 

@@ -4,7 +4,7 @@
 const mock = require('mock-require');
 const fs = require('fs-extra');
 const rimraf = require('rimraf');
-const logger = require('winston');
+const logger = require('../utils/logger');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 describe('cli build-public-library', () => {
@@ -25,6 +25,13 @@ describe('cli build-public-library', () => {
         }
       };
     };
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => {
+        return {
+          exitCode: 0
+        };
+      }
+    });
     mock('../cli/utils/stage-library-ts', () => {});
     mock('../cli/utils/prepare-library-package', () => {});
     mock('../config/webpack/build-public-library.webpack.config.js', {
@@ -49,12 +56,12 @@ describe('cli build-public-library', () => {
   });
 
   it('should return a function', () => {
-    const cliCommand = require(requirePath);
+    const cliCommand = mock.reRequire(requirePath);
     expect(cliCommand).toEqual(jasmine.any(Function));
   });
 
   it('should clean the dist and temp directories', (done) => {
-    const cliCommand = require(requirePath);
+    const cliCommand = mock.reRequire(requirePath);
     cliCommand({}, mockWebpack).then(() => {
       expect(rimraf.sync).toHaveBeenCalled();
       expect(skyPagesConfigUtil.spaPathTemp).toHaveBeenCalled();
@@ -64,7 +71,7 @@ describe('cli build-public-library', () => {
   });
 
   it('should write a tsconfig.json file', (done) => {
-    const cliCommand = require(requirePath);
+    const cliCommand = mock.reRequire(requirePath);
     cliCommand({}, mockWebpack).then(() => {
       const firstArg = fs.writeJSONSync.calls.argsFor(0)[0];
       expect(firstArg).toEqual('tsconfig.json');
@@ -73,7 +80,7 @@ describe('cli build-public-library', () => {
   });
 
   it('should pass config to webpack', (done) => {
-    const cliCommand = require(requirePath);
+    const cliCommand = mock.reRequire(requirePath);
     cliCommand({}, mockWebpack).then(() => {
       expect(webpackConfig).toEqual(jasmine.any(Object));
       expect(webpackConfig.entry).toEqual(jasmine.any(String));
@@ -83,7 +90,7 @@ describe('cli build-public-library', () => {
 
   it('should handle errors thrown by webpack', (done) => {
     const errorMessage = 'Something bad happened.';
-    spyOn(logger, 'error');
+    spyOn(logger, 'error').and.returnValue();
     mockWebpack = () => {
       return {
         run: (cb) => cb(errorMessage)
@@ -92,6 +99,22 @@ describe('cli build-public-library', () => {
     const cliCommand = mock.reRequire(requirePath);
     cliCommand({}, mockWebpack).then(() => {
       expect(logger.error).toHaveBeenCalledWith(errorMessage);
+      done();
+    });
+  });
+
+  it('should fail the build if linting errors are found', (done) => {
+    mock.stop('../cli/utils/ts-linter');
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => {
+        return {
+          exitCode: 1
+        };
+      }
+    });
+    const cliCommand = mock.reRequire(requirePath);
+    cliCommand({}, mockWebpack).then(() => {
+      expect(process.exit).toHaveBeenCalledWith(1);
       done();
     });
   });
