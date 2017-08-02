@@ -79,6 +79,14 @@ module.exports = {
       config.rules = Object.assign({}, defaults.rules, skyPagesConfig.skyux.accessibility.rules);
     }
 
+    // The consuming SPA wishes to disable all rules.
+    if (skyPagesConfig.skyux.accessibility === false) {
+      config.rules = Object.assign({}, defaults.rules);
+      Object.keys(config.rules).forEach((key) => {
+        config.rules[key].enabled = false;
+      });
+    }
+
     if (!config.rules) {
       return defaults;
     }

@@ -23,6 +23,7 @@ describe('config axe', () => {
     const lib = mock.reRequire('../config/axe/axe.config');
     const config = lib.getConfig();
     expect(config).toBeDefined();
+    expect(config.rules.label.enabled).toEqual(true);
   });
 
   it('should merge config from a consuming SPA', () => {
@@ -49,9 +50,7 @@ describe('config axe', () => {
       getSkyPagesConfig: () => {
         return {
           skyux: {
-            accessibility: {
-              rules: false
-            }
+            accessibility: {}
           }
         };
       }
@@ -59,5 +58,20 @@ describe('config axe', () => {
     const lib = mock.reRequire('../config/axe/axe.config');
     const config = lib.getConfig();
     expect(config.rules.label.enabled).toEqual(true);
+  });
+
+  it('should disabled all rules if accessibility is set to false', () => {
+    mock('../config/sky-pages/sky-pages.config', {
+      getSkyPagesConfig: () => {
+        return {
+          skyux: {
+            accessibility: false
+          }
+        };
+      }
+    });
+    const lib = mock.reRequire('../config/axe/axe.config');
+    const config = lib.getConfig();
+    expect(config.rules.label.enabled).toEqual(false);
   });
 });
