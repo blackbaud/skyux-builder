@@ -36,6 +36,7 @@ exports.config = {
   beforeLaunch: function () {
     require('ts-node').register({ ignore: false });
   },
+
   onPrepare: function () {
     jasmine.getEnv().addReporter(new SpecReporter());
   }

@@ -1,3 +1,6 @@
+/*jshint node: true*/
+'use strict';
+
 // Defaults derived from: https://github.com/dequelabs/axe-core
 const defaults = {
   rules: {
@@ -19,12 +22,6 @@ const defaults = {
 
     'definition-list': { 'enabled': true },
     'dlitem': { 'enabled': true },
-    'definition-list': { 'enabled': true },
-    'dlitem': { 'enabled': true },
-    'layout-table': { 'enabled': true },
-    'list': { 'enabled': true },
-    'listitem': { 'enabled': true },
-    'p-as-heading': { 'enabled': true},
     'heading-order': { 'enabled': true },
     'href-no-hash': { 'enabled': true },
     'layout-table': { 'enabled': true },
@@ -52,10 +49,6 @@ const defaults = {
     'accesskeys': { 'enabled': true },
     'bypass': { 'enabled': true },
     'tabindex': { 'enabled': true },
-
-    'button-name': { 'enabled': true },
-    'empty-heading': { 'enabled': true },
-    'link-name': { 'enabled': true },
 
     'aria-allowed-attr': { 'enabled': true },
     'aria-required-attr': { 'enabled': true },
