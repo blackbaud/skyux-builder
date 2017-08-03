@@ -1,48 +1,47 @@
 const axeBuilder = require('axe-webdriverjs');
 const logger = require('../../../utils/logger');
 
-function postTest(passed, testInfo) {
+function onPageStable(browser) {
   const context = this;
 
-  logger.info('passed?', passed);
-  logger.info('testInfo?', testInfo);
+  return browser.getCurrentUrl().then((url) => {
+    logger.info(`Starting accessibility checks for ${url}...`);
 
-  return new Promise((resolve) => {
-    axeBuilder(browser.driver)
-      .options(context.config.axe)
-      .analyze((results) => {
-        const numViolations = results.violations.length;
-        const subject = (numViolations === 1) ? 'failure' : 'failures';
-        logger.info(`${numViolations} accessibility ${subject} found for: ${results.url}\n`);
+    return new Promise((resolve) => {
+      axeBuilder(browser.driver)
+        .options(context.config.axe)
+        .analyze((results) => {
+          const numViolations = results.violations.length;
+          const subject = (numViolations === 1) ? 'failure' : 'failures';
 
-        if (numViolations > 0) {
-          logViolations(results);
-        }
+          logger.info(`Accessibility checks finished with ${numViolations} ${subject}.\n`);
 
-        resolve();
-      });
+          if (numViolations > 0) {
+            logViolations(results);
+          }
+
+          resolve();
+        });
+    });
   });
 }
 
 function logViolations(results) {
-  results.violations.forEach((result) => {
-    const label = result.nodes.length === 1 ? 'element' : 'elements';
-    const wcagTags = result.tags.filter((tags) => {
+  results.violations.forEach((violation) => {
+    const label = violation.nodes.length === 1 ? 'element' : 'elements';
+
+    const wcagTags = violation.tags.filter((tags) => {
       return tags.match(/wcag\d{3}|^best*/gi);
     }).join(', ');
 
-    const message = result.nodes.reduce((msg, node) => {
-      return [
-        `    Location: ${node.target[0]}`,
-        `    ${node.html}`
-      ].join('\n');
-    }, '');
+    const message = violation.nodes.reduce((accumulator, node) => {
+      return `${accumulator}\n${node.html}\n`;
+    }, '       Elements:\n');
 
     const error = [
-      `${result.nodes.length} ${label} failed '${result.id}'`,
-      `    Rule: ${result.help} - WCAG: ${wcagTags}`,
-      `${message}`,
-      `    Get help at: ${result.helpUrl}\n`
+      `aXe - [Rule: ${violation.id}] ${violation.help} - WCAG: ${wcagTags}`,
+      `       Get help at: ${violation.helpUrl}\n`,
+      `${message}\n\n`
     ].join('\n');
 
     logger.error(error);
@@ -50,5 +49,6 @@ function logViolations(results) {
 }
 
 module.exports = {
-  postTest
+  onPageStable,
+  name: 'SkyAccessibility'
 };
