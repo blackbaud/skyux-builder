@@ -27,9 +27,9 @@ describe('config webpack build-aot', () => {
   });
 
   it('should merge the common webpack config with overrides', () => {
-    const f = './common.webpack.config';
+    const f = '../config/webpack/common.webpack.config';
     mock(f, {
-      getWebpackConfig: () => ({})
+      getWebpackConfig: () => ({ module: { rules: [] } })
     });
 
     const lib = require('../config/webpack/build-aot.webpack.config');
@@ -54,9 +54,9 @@ describe('config webpack build-aot', () => {
   });
 
   it('should use the AoT entry module', () => {
-    const f = './common.webpack.config';
+    const f = '../config/webpack/common.webpack.config';
     mock(f, {
-      getWebpackConfig: () => ({})
+      getWebpackConfig: () => ({ module: { rules: [] } })
     });
 
     const lib = require('../config/webpack/build-aot.webpack.config');
@@ -194,13 +194,17 @@ describe('config webpack build-aot', () => {
   });
 
   it('should remove the sky-processor loader from the rules array', () => {
-    const f = './common.webpack.config';
+    const f = '../config/webpack/common.webpack.config';
+    const loaderName = '/sky-processor/';
     mock(f, {
       getWebpackConfig: () => ({
         module: {
           rules: [
             {
-              loader: '/sky-processor/'
+              loader: 'test-loader'
+            },
+            {
+              loader: loaderName
             }
           ]
         }
@@ -223,10 +227,52 @@ describe('config webpack build-aot', () => {
         return;
       }
 
-      found = /\/sky-processor\//.test(rule.loader);
+      found = (rule.loader && rule.loader.indexOf(loaderName) > -1);
     });
 
     expect(found).toEqual(false);
+    expect(config.module.rules.length).toEqual(2);
+  });
+
+  it('should remove the sky-processor loader from the rules array (on Windows)', () => {
+    const f = '../config/webpack/common.webpack.config';
+    const loaderName = '\\sky-processor\\';
+    mock(f, {
+      getWebpackConfig: () => ({
+        module: {
+          rules: [
+            {
+              loader: 'test-loader'
+            },
+            {
+              loader: loaderName
+            }
+          ]
+        }
+      })
+    });
+
+    const lib = require('../config/webpack/build-aot.webpack.config');
+
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    };
+
+    const config = lib.getWebpackConfig(skyPagesConfig);
+
+    let found = false;
+
+    config.module.rules.forEach((rule) => {
+      if (found) {
+        return;
+      }
+
+      found = (rule.loader && rule.loader.indexOf(loaderName) > -1);
+    });
+
+    expect(found).toEqual(false);
+    expect(config.module.rules.length).toEqual(2);
   });
 
 });
