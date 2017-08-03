@@ -195,12 +195,13 @@ describe('config webpack build-aot', () => {
 
   it('should remove the sky-processor loader from the rules array', () => {
     const f = './common.webpack.config';
+    const loaderName = '/sky-processor/';
     mock(f, {
       getWebpackConfig: () => ({
         module: {
           rules: [
             {
-              loader: '/sky-processor/'
+              loader: loaderName
             }
           ]
         }
@@ -223,7 +224,44 @@ describe('config webpack build-aot', () => {
         return;
       }
 
-      found = /\/sky-processor\//.test(rule.loader);
+      found = (rule.loader && rule.loader.indexOf(loaderName) > -1);
+    });
+
+    expect(found).toEqual(false);
+  });
+
+  it('should remove the sky-processor loader from the rules array (on Windows)', () => {
+    const f = './common.webpack.config';
+    const loaderName = '\\sky-processor\\';
+    mock(f, {
+      getWebpackConfig: () => ({
+        module: {
+          rules: [
+            {
+              loader: loaderName
+            }
+          ]
+        }
+      })
+    });
+
+    const lib = require('../config/webpack/build-aot.webpack.config');
+
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    };
+
+    const config = lib.getWebpackConfig(skyPagesConfig);
+
+    let found = false;
+
+    config.module.rules.forEach((rule) => {
+      if (found) {
+        return;
+      }
+
+      found = (rule.loader && rule.loader.indexOf(loaderName) > -1);
     });
 
     expect(found).toEqual(false);
