@@ -26,7 +26,7 @@ export interface RuntimeConfig {
 }
 
 export interface SkyuxConfigAccessibility {
-  rules: any;
+  rules?: any;
 }
 
 export interface SkyuxConfigApp {
@@ -40,7 +40,7 @@ export interface SkyuxConfigHost {
 }
 
 export interface SkyuxConfig {
-  accessibility?: SkyuxConfigAccessibility;
+  accessibility?: SkyuxConfigAccessibility|boolean;
   app?: SkyuxConfigApp;
   appSettings?: any;
   auth?: boolean;

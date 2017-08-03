@@ -31,7 +31,7 @@ exports.config = {
   useAllAngular2AppRoots: true,
   plugins: [{
     axe: axeConfig.getConfig(),
-    package: 'protractor-accessibility-plugin'
+    path: 'plugins/sky-accessibility'
   }],
   beforeLaunch: function () {
     require('ts-node').register({ ignore: false });
