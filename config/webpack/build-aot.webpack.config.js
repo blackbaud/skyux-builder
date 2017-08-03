@@ -23,7 +23,7 @@ function getWebpackConfig(skyPagesConfig) {
   // we need to remove it from the webpack config, otherwise it will get executed twice.
   commonConfig.module.rules = commonConfig.module.rules
     .filter((rule) => {
-      const isPreloader = /\/|\\sky-processor\/|\\/.test(rule.loader);
+      const isPreloader = /(\/|\\)sky-processor(\/|\\)/.test(rule.loader);
       return (!isPreloader);
     });
 
