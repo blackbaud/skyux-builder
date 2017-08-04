@@ -1,3 +1,7 @@
+# 1.0.0-rc.15 (2017-08-04)
+
+- Fixed issue where the default port for local files during `skyux serve` could not be manually overridden in `skyuxconfig.json`. [#254](https://github.com/blackbaud/skyux-builder/pull/254)
+
 # 1.0.0-rc.14 (2017-08-03)
 
 - Added support for `@blackbaud/auth-client@1.11.0`. [#251](https://github.com/blackbaud/skyux-builder/pull/251)
