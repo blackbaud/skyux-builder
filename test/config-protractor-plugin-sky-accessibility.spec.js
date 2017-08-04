@@ -64,7 +64,41 @@ describe('config protractor plugin sky accessibility', () => {
       };
     });
 
-    spyOn(logger, 'info').and.callThrough();
+    spyOn(logger, 'info').and.returnValue();
+    spyOn(logger, 'error').and.returnValue();
+
+    const plugin = mock.reRequire('../config/protractor/plugins/sky-accessibility');
+    const result = plugin.onPageStable.call(context, browser);
+  });
+
+  it('should log violations', (done) => {
+    mock('axe-webdriverjs', function MockAxeBuilder() {
+      return {
+        options: () => {
+          return {
+            analyze: (callback) => {
+              callback({
+                violations: [{
+                  id: 'label',
+                  help: 'Description here.',
+                  helpUrl: 'https://foo.bar',
+                  nodes: [{ html: '<p></p>' }],
+                  tags: ['cat.forms', 'wcag2a', 'wcag332', 'wcag131']
+                }]
+              });
+              expect(logger.info.calls.argsFor(1)[0])
+                .toContain(`Accessibility checks finished with 1 violation.`);
+              expect(logger.error.calls.argsFor(0)[0])
+                .toContain('aXe - [Rule: label] Description here. - WCAG: wcag332, wcag131');
+              done();
+              return Promise.resolve();
+            }
+          };
+        }
+      };
+    });
+
+    spyOn(logger, 'info').and.returnValue();
     spyOn(logger, 'error').and.returnValue();
 
     const plugin = mock.reRequire('../config/protractor/plugins/sky-accessibility');

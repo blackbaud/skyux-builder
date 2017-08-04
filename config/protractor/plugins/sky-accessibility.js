@@ -1,8 +1,12 @@
+/*jshint node: true */
+'use strict';
+
 const axeBuilder = require('axe-webdriverjs');
 const logger = require('../../../utils/logger');
 
 function onPageStable(browser) {
-  const context = this;
+  /* jshint validthis: true */
+  const _this = this;
 
   return browser
     .getCurrentUrl()
@@ -12,7 +16,7 @@ function onPageStable(browser) {
 
       return new Promise((resolve) => {
         axeBuilder(browser.driver)
-          .options(context.config.axe)
+          .options(_this.config.axe)
           .analyze((results) => {
             const numViolations = results.violations.length;
             const subject = (numViolations === 1) ? 'violation' : 'violations';
@@ -26,20 +30,20 @@ function onPageStable(browser) {
             resolve();
           });
       });
-  });
+    });
 }
 
 function logViolations(results) {
   results.violations.forEach((violation) => {
-    const label = violation.nodes.length === 1 ? 'element' : 'elements';
+    const wcagTags = violation.tags
+      .filter((tag) => tag.match(/wcag\d{3}|^best*/gi))
+      .join(', ');
 
-    const wcagTags = violation.tags.filter((tags) => {
-      return tags.match(/wcag\d{3}|^best*/gi);
-    }).join(', ');
-
-    const html = violation.nodes.reduce((accumulator, node) => {
-      return `${accumulator}\n${node.html}\n`;
-    }, '       Elements:\n');
+    const html = violation.nodes
+      .reduce(
+        (accumulator, node) => `${accumulator}\n${node.html}\n`,
+        '       Elements:\n'
+      );
 
     const error = [
       `aXe - [Rule: ${violation.id}] ${violation.help} - WCAG: ${wcagTags}`,
