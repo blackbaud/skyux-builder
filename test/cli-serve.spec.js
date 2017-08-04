@@ -114,8 +114,10 @@ describe('cli serve', () => {
     const f = '../config/webpack/serve.webpack.config';
     const port = 'skyux-config.json-port';
     const skyPagesConfig = {
-      app: {
-        port: port
+      skyux: {
+        app: {
+          port: port
+        }
       }
     };
 

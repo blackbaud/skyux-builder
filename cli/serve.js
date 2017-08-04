@@ -15,8 +15,13 @@ const assetsProcessor = require('../lib/assets-processor');
  */
 function getPort(config, skyPagesConfig) {
   return new Promise((resolve, reject) => {
-    if (skyPagesConfig.app && skyPagesConfig.app.port) {
-      resolve(skyPagesConfig.app.port);
+    const configPort = skyPagesConfig &&
+      skyPagesConfig.skyux &&
+      skyPagesConfig.skyux.app &&
+      skyPagesConfig.skyux.app.port;
+
+    if (configPort) {
+      resolve(configPort);
     } else if (config.devServer && config.devServer.port) {
       resolve(config.devServer.port);
     } else {
