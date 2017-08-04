@@ -48,7 +48,7 @@ describe('Resources service', () => {
       {
         provide: SkyAppAssetsService,
         useValue: {
-          getUrl: (path) => {
+          getUrl: (path: string) => {
             if (path.indexOf('en_AU') >= 0 || path.indexOf('es_MX') >= 0) {
               return undefined;
             }
@@ -92,7 +92,7 @@ describe('Resources service', () => {
   }
 
   function addTestResourceResponse() {
-    backend.connections.subscribe((connection) => {
+    backend.connections.subscribe((connection: any) => {
       connection.mockRespond(new Response(
         new ResponseOptions({
           body: testResources
@@ -127,7 +127,7 @@ describe('Resources service', () => {
     it('should fall back to the resource name if no resource file exists', (done) => {
       addTestResourceResponse();
 
-      mockAssetsService.getUrl = () => {
+      mockAssetsService.getUrl = (): any => {
         return undefined;
       };
 
@@ -138,7 +138,7 @@ describe('Resources service', () => {
     });
 
     it('should fall back to the resource name if parsing the resource file fails', (done) => {
-      backend.connections.subscribe((connection) => {
+      backend.connections.subscribe((connection: any) => {
         const response = new Response(
           new ResponseOptions({
             body: testResources
@@ -159,7 +159,7 @@ describe('Resources service', () => {
     it('only request the resource file once per instance', (done) => {
       let requestCount = 0;
 
-      backend.connections.subscribe((connection) => {
+      backend.connections.subscribe((connection: any) => {
         requestCount++;
         connection.mockRespond(new Response(
           new ResponseOptions({
@@ -219,7 +219,7 @@ describe('Resources service', () => {
       'corresponding resource file',
       (done) => {
 
-        backend.connections.subscribe((connection) => {
+        backend.connections.subscribe((connection: any) => {
           expect(connection.request.url).toBe('https://example.com/locales/resources_es.json');
           done();
         });
@@ -248,7 +248,7 @@ describe('Resources service', () => {
     it(
       'should fall back to the default locale if the specified locale file cannot be loaded',
       (done) => {
-        backend.connections.subscribe((connection) => {
+        backend.connections.subscribe((connection: any) => {
           if (connection.request.url.indexOf('en_GB') >= 0) {
             connection.mockError(new Error());
           } else {
@@ -273,7 +273,7 @@ describe('Resources service', () => {
       'should fall back to the resource name if the specified locale is the default locale and ' +
       'the locale resource file fails to load',
       (done) => {
-        backend.connections.subscribe((connection) => {
+        backend.connections.subscribe((connection: any) => {
           connection.mockError(new Error());
         });
 
