@@ -9,9 +9,6 @@ describe('config protractor test', () => {
   let config;
 
   beforeEach(() => {
-    mock('../config/axe/axe.config', {
-      getConfig: () => true
-    });
     lib = mock.reRequire('../config/protractor/protractor.conf.js');
     config = lib.config;
   });
