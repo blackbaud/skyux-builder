@@ -3,7 +3,6 @@
 
 const path = require('path');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
-const axeConfig = require('../axe/axe.config.js');
 
 exports.config = {
   allScriptsTimeout: 11000,
@@ -29,10 +28,6 @@ exports.config = {
     defaultTimeoutInterval: 30000
   },
   useAllAngular2AppRoots: true,
-  plugins: [{
-    axe: axeConfig.getConfig(),
-    path: 'plugins/sky-accessibility'
-  }],
   beforeLaunch: function () {
     require('ts-node').register({ ignore: false });
   },

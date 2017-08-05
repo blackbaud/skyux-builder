@@ -4,11 +4,23 @@
 const mock = require('mock-require');
 const logger = require('../utils/logger');
 
-describe('config protractor plugin sky accessibility', () => {
+describe('SkyA11y', () => {
   let browser;
   let context;
 
   beforeEach(() => {
+    mock('protractor', {
+      browser: {
+        getCurrentUrl: () => Promise.resolve('')
+      }
+    });
+
+    mock('../config/axe/axe.config', {
+      getConfig: () => {
+        return {};
+      }
+    });
+
     context = {
       config: {
         axe: {}
@@ -40,9 +52,28 @@ describe('config protractor plugin sky accessibility', () => {
     spyOn(logger, 'info').and.returnValue();
     spyOn(logger, 'error').and.returnValue();
 
-    const plugin = mock.reRequire('../config/protractor/plugins/sky-accessibility');
-    const result = plugin.onPageStable.call(context, browser);
+    const plugin = mock.reRequire('../lib/a11y-analyzer');
+    const result = plugin.run();
     expect(typeof result.then).toEqual('function');
+  });
+
+  it('should return a class', () => {
+    mock('axe-webdriverjs', function MockAxeBuilder() {
+      return {
+        options: () => {
+          return {
+            analyze: (callback) => Promise.resolve()
+          };
+        }
+      };
+    });
+
+    spyOn(logger, 'info').and.returnValue();
+    spyOn(logger, 'error').and.returnValue();
+
+    const plugin = mock.reRequire('../lib/a11y-analyzer');
+    const result = new plugin();
+    expect(typeof result).toBeDefined();
   });
 
   it('should print a message to the console', (done) => {
@@ -67,8 +98,8 @@ describe('config protractor plugin sky accessibility', () => {
     spyOn(logger, 'info').and.returnValue();
     spyOn(logger, 'error').and.returnValue();
 
-    const plugin = mock.reRequire('../config/protractor/plugins/sky-accessibility');
-    const result = plugin.onPageStable.call(context, browser);
+    const plugin = mock.reRequire('../lib/a11y-analyzer');
+    const result = plugin.run();
   });
 
   it('should log violations', (done) => {
@@ -89,7 +120,7 @@ describe('config protractor plugin sky accessibility', () => {
               expect(logger.info.calls.argsFor(1)[0])
                 .toContain(`Accessibility checks finished with 1 violation.`);
               expect(logger.error.calls.argsFor(0)[0])
-                .toContain('aXe - [Rule: label] Description here. - WCAG: wcag332, wcag131');
+                .toContain('aXe - [Rule: \'label\'] Description here. - WCAG: wcag332, wcag131');
               done();
               return Promise.resolve();
             }
@@ -101,7 +132,7 @@ describe('config protractor plugin sky accessibility', () => {
     spyOn(logger, 'info').and.returnValue();
     spyOn(logger, 'error').and.returnValue();
 
-    const plugin = mock.reRequire('../config/protractor/plugins/sky-accessibility');
-    const result = plugin.onPageStable.call(context, browser);
+    const plugin = mock.reRequire('../lib/a11y-analyzer');
+    const result = plugin.run();
   });
 });
