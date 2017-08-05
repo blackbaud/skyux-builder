@@ -31,7 +31,7 @@ describe('config axe', () => {
       getSkyPagesConfig: () => {
         return {
           skyux: {
-            accessibility: {
+            a11y: {
               rules: {
                 label: { enabled: false }
               }
@@ -50,7 +50,7 @@ describe('config axe', () => {
       getSkyPagesConfig: () => {
         return {
           skyux: {
-            accessibility: {}
+            a11y: {}
           }
         };
       }
@@ -65,7 +65,7 @@ describe('config axe', () => {
       getSkyPagesConfig: () => {
         return {
           skyux: {
-            accessibility: false
+            a11y: false
           }
         };
       }

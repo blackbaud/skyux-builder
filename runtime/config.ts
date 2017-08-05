@@ -25,7 +25,7 @@ export interface RuntimeConfig {
   useTemplateUrl: boolean;
 }
 
-export interface SkyuxConfigAccessibility {
+export interface SkyuxConfigA11y {
   rules?: any;
 }
 
@@ -40,7 +40,7 @@ export interface SkyuxConfigHost {
 }
 
 export interface SkyuxConfig {
-  accessibility?: SkyuxConfigAccessibility|boolean;
+  a11y?: SkyuxConfigA11y|boolean;
   app?: SkyuxConfigApp;
   appSettings?: any;
   auth?: boolean;

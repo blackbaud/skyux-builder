@@ -75,12 +75,12 @@ module.exports = {
     let config = {};
 
     // Merge rules from skyux config.
-    if (skyPagesConfig.skyux.accessibility && skyPagesConfig.skyux.accessibility.rules) {
-      config.rules = Object.assign({}, defaults.rules, skyPagesConfig.skyux.accessibility.rules);
+    if (skyPagesConfig.skyux.a11y && skyPagesConfig.skyux.a11y.rules) {
+      config.rules = Object.assign({}, defaults.rules, skyPagesConfig.skyux.a11y.rules);
     }
 
     // The consuming SPA wishes to disable all rules.
-    if (skyPagesConfig.skyux.accessibility === false) {
+    if (skyPagesConfig.skyux.a11y === false) {
       config.rules = Object.assign({}, defaults.rules);
       Object.keys(config.rules).forEach((key) => {
         config.rules[key].enabled = false;
