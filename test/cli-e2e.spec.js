@@ -2,7 +2,6 @@
 'use strict';
 
 const glob = require('glob');
-const fs = require('fs');
 const path = require('path');
 const mock = require('mock-require');
 const selenium = require('selenium-standalone');
