@@ -1,6 +1,7 @@
 /*jslint node: true */
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const spawn = require('cross-spawn');
 const logger = require('../utils/logger');
@@ -15,6 +16,27 @@ const spawnOptions = { stdio: 'inherit' };
 let httpServer;
 let seleniumServer;
 let start;
+
+function checke2eFiles() {
+  let e2eDir = path.join(process.cwd(), 'e2e');
+  return new Promise((resolve) => {
+    fs.readdir(e2eDir, (err, files) => {
+      if (err) {
+        logger.info('No e2e directory found');
+        process.exit(0);
+        return;
+      }
+
+      if (files.length === 0) {
+        logger.info('No e2e spec files found');
+        process.exit(0);
+        return;
+      }
+
+      resolve(files);
+    });
+  });
+}
 
 /**
  * Function to get the protractorConfigPath
@@ -209,7 +231,8 @@ function e2e(argv, skyPagesConfig, webpack) {
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  spawnServer()
+  checke2eFiles()
+    .then(() => spawnServer())
     .then((port) => {
       argv.assets = 'https://localhost:' + port;
 
@@ -223,15 +246,16 @@ function e2e(argv, skyPagesConfig, webpack) {
       return Promise
         .all([
           spawnBuild(argv, skyPagesConfig, webpack),
+          port,
           spawnSelenium()
-        ])
-        .then(values => {
-          spawnProtractor(
-            values[0],
-            port,
-            skyPagesConfig
-          );
-        });
+        ]);
+    })
+    .then(values => {
+      spawnProtractor(
+        values[0],
+        values[1],
+        skyPagesConfig
+      );
     })
     .catch(err => {
       logger.warn(`ERROR [skyux e2e]: ${err.message}`);

@@ -1,6 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const mock = require('mock-require');
 const selenium = require('selenium-standalone');
@@ -252,6 +253,35 @@ describe('cli e2e', () => {
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(1);
+      done();
+    });
+
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should not continue if no e2e directory exists', (done) => {
+    mock('fs', {
+      readdir: (dir, cb) => { cb(true, null) }
+    });
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+
+      expect(exitCode).toEqual(0);
+      expect(logger.info).toHaveBeenCalledWith('No e2e directory found');
+      done();
+    });
+
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should not continue if no e2e spec files exist', (done) => {
+    mock('fs', {
+      readdir: (dir, cb) => { cb(null, []) }
+    });
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(0);
+      expect(logger.info).toHaveBeenCalledWith('No e2e spec files found');
       done();
     });
 
