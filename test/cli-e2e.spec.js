@@ -1,6 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const glob = require('glob');
 const fs = require('fs');
 const path = require('path');
 const mock = require('mock-require');
@@ -82,6 +83,10 @@ describe('cli e2e', () => {
           cb();
         }
       })
+    });
+
+    mock('glob', {
+      sync: path => ['test.e2e-spec.ts']
     });
 
     spyOn(logger, 'info');
@@ -259,29 +264,14 @@ describe('cli e2e', () => {
     mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('should not continue if no e2e directory exists', (done) => {
-    mock('fs', {
-      readdir: (dir, cb) => { cb(true, null) }
-    });
-
-    spyOn(process, 'exit').and.callFake(exitCode => {
-
-      expect(exitCode).toEqual(0);
-      expect(logger.info).toHaveBeenCalledWith('No e2e directory found');
-      done();
-    });
-
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
-  });
-
   it('should not continue if no e2e spec files exist', (done) => {
-    mock('fs', {
-      readdir: (dir, cb) => { cb(null, []) }
+    mock('glob', {
+      sync: path => []
     });
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(0);
-      expect(logger.info).toHaveBeenCalledWith('No e2e spec files found');
+      expect(logger.info).toHaveBeenCalledWith('No spec files located. Stopping command from running.');
       done();
     });
 

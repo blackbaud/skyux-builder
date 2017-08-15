@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
 
-const fs = require('fs');
+const glob = require('glob');
 const path = require('path');
 const spawn = require('cross-spawn');
 const logger = require('../utils/logger');
@@ -16,27 +16,6 @@ const spawnOptions = { stdio: 'inherit' };
 let httpServer;
 let seleniumServer;
 let start;
-
-function checke2eFiles() {
-  let e2eDir = path.join(process.cwd(), 'e2e');
-  return new Promise((resolve) => {
-    fs.readdir(e2eDir, (err, files) => {
-      if (err) {
-        logger.info('No e2e directory found');
-        process.exit(0);
-        return;
-      }
-
-      if (files.length === 0) {
-        logger.info('No e2e spec files found');
-        process.exit(0);
-        return;
-      }
-
-      resolve(files);
-    });
-  });
-}
 
 /**
  * Function to get the protractorConfigPath
@@ -228,11 +207,18 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
  * @name e2e
  */
 function e2e(argv, skyPagesConfig, webpack) {
+  const specsPath = path.resolve(process.cwd(), 'e2e/**/*.spec.ts */');
+  const specsGlob = glob.sync(specsPath);
+
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  checke2eFiles()
-    .then(() => spawnServer())
+  if (specsGlob.length === 0) {
+    logger.info('No spec files located. Stopping command from running.');
+    return killServers(0);
+  }
+
+  spawnServer()
     .then((port) => {
       argv.assets = 'https://localhost:' + port;
 
