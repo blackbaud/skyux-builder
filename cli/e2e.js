@@ -33,7 +33,7 @@ function checke2eFiles() {
         return;
       }
 
-      resolve(files);
+      resolve();
     });
   });
 }
