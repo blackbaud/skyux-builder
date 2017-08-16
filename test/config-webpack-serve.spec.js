@@ -1,8 +1,10 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const logger = require('winston');
 const mock = require('mock-require');
+const urlLibrary = require('url');
+
+const logger = require('../utils/logger');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack serve', () => {

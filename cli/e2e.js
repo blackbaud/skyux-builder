@@ -1,13 +1,16 @@
 /*jslint node: true */
 'use strict';
 
+const glob = require('glob');
 const path = require('path');
 const spawn = require('cross-spawn');
-const logger = require('winston');
+const portfinder = require('portfinder');
+const HttpServer = require('http-server');
 const selenium = require('selenium-standalone');
 
 const build = require('./build');
 const server = require('./utils/server');
+const logger = require('../utils/logger');
 
 // Disable this to quiet the output
 const spawnOptions = { stdio: 'inherit' };
@@ -168,12 +171,32 @@ function e2e(argv, skyPagesConfig, webpack) {
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  Promise
-    .all([
-      spawnBuild(argv, skyPagesConfig, webpack),
-      server.start(),
-      spawnSelenium()
-    ])
+  const specsPath = path.resolve(process.cwd(), 'e2e/**/*.e2e-spec.ts');
+  const specsGlob = glob.sync(specsPath);
+
+  if (specsGlob.length === 0) {
+    logger.info('No spec files located. Stopping command from running.');
+    return killServers(0);
+  }
+
+  server.start()
+    .then((port) => {
+      argv.assets = 'https://localhost:' + port;
+
+      // The assets URL is built by combining the assets URL above with
+      // the app's root directory, but in e2e tests the assets files
+      // are served directly from the root.  This will back up a directory
+      // so that asset URLs are built relative to the root rather than
+      // the app's root directory.
+      argv.assetsrel = '../';
+
+      return Promise
+        .all([
+          spawnBuild(argv, skyPagesConfig, webpack),
+          port,
+          spawnSelenium()
+        ]);
+    })
     .then(values => {
       spawnProtractor(
         values[0],

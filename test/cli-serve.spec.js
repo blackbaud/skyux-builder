@@ -2,8 +2,8 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('winston');
 const portfinder = require('portfinder');
+const logger = require('../utils/logger');
 
 describe('cli serve', () => {
 
@@ -114,8 +114,10 @@ describe('cli serve', () => {
     const f = '../config/webpack/serve.webpack.config';
     const port = 'skyux-config.json-port';
     const skyPagesConfig = {
-      app: {
-        port: port
+      skyux: {
+        app: {
+          port: port
+        }
       }
     };
 

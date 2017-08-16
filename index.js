@@ -1,9 +1,9 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('winston');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
+const logger = require('./utils/logger');
 const config = require('./config/sky-pages/sky-pages.config');
 
 module.exports = {
@@ -33,6 +33,9 @@ module.exports = {
         break;
       case 'serve':
         require('./cli/serve')(argv, skyPagesConfig, webpack, WebpackDevServer);
+        break;
+      case 'lint':
+        require('./cli/lint')();
         break;
       case 'test':
       case 'watch':

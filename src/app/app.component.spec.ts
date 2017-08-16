@@ -31,8 +31,8 @@ describe('AppComponent', () => {
         base: 'app-base'
       },
       params: {
-        has: (key) => false,
-        parse: (p) => parseParams = p
+        has: (key: any) => false,
+        parse: (p: any) => parseParams = p
       }
     },
     skyux: {
@@ -52,9 +52,14 @@ describe('AppComponent', () => {
         provide: Router,
         useValue: {
           events: {
-            subscribe: handler => subscribeHandler = handler
+            subscribe: (handler: any) => subscribeHandler = handler
           },
-          navigateByUrl: url => navigateByUrlParams = url
+          navigateByUrl: (url: string) => navigateByUrlParams = url,
+          parseUrl: (url: string) => {
+            return {
+              fragment: (url === '') ? undefined : 'scroll-here'
+            };
+          }
         }
       },
       {
@@ -82,7 +87,7 @@ describe('AppComponent', () => {
       providers.push({
         provide: SkyAppSearchResultsProvider,
         useValue: {
-          getSearchResults: sa => searchArgs = sa
+          getSearchResults: (sa: any) => searchArgs = sa
         }
       });
     }
@@ -103,9 +108,10 @@ describe('AppComponent', () => {
     });
   }
 
-  // Reset skyAppConfig
+  // Reset skyAppConfig and scrollCalled
   beforeEach(() => {
     skyAppConfig = defaultSkyAppConfig;
+    scrollCalled = false;
   });
 
   it('should create component', async(() => {
@@ -122,6 +128,14 @@ describe('AppComponent', () => {
 
       subscribeHandler(new NavigationEnd(0, '', ''));
       expect(scrollCalled).toBe(true);
+    });
+  }));
+
+  it('should not call scroll on NavigationEnd when a url fragment is present', async(() => {
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      subscribeHandler(new NavigationEnd(0, '/#scroll-here', '/#scroll-here'));
+      expect(scrollCalled).toBe(false);
     });
   }));
 
@@ -171,8 +185,8 @@ describe('AppComponent', () => {
     skyAppConfig.skyux.omnibar = {};
 
     skyAppConfig.skyux.params = ['envid', 'svcid'];
-    skyAppConfig.runtime.params.has = (key) => true;
-    skyAppConfig.runtime.params.get = (key) => key + 'Value';
+    skyAppConfig.runtime.params.has = (key: any) => true;
+    skyAppConfig.runtime.params.get = (key: any) => key + 'Value';
     setup(skyAppConfig, true).then(() => {
       fixture.detectChanges();
 

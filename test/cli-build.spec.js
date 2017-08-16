@@ -2,13 +2,50 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('winston');
+const logger = require('../utils/logger');
 const assetsProcessor = require('../lib/assets-processor');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('cli build', () => {
 
+  function testBuildAndServe(launch, done) {
+    const argv = {
+      launch: launch
+    };
+
+    mock('../cli/utils/server', {
+      start: () => Promise.resolve()
+    });
+
+    mock('../cli/utils/browser', (argv) => {
+      expect(argv.launch).toBe(launch);
+      done();
+    });
+
+    mock.reRequire('../cli/build')(argv, runtimeUtils.getDefault(), () => ({
+      run: (cb) => {
+        cb(
+          null,
+          {
+            toJson: () => ({
+              errors: [],
+              warnings: []
+            })
+          }
+        );
+      }
+    }));
+  }
+
   beforeEach(() => {
+    spyOn(process, 'exit').and.callFake(() => {});
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => {
+        return {
+          exitCode: 0
+        };
+      }
+    });
     mock('../lib/plugin-file-processor', {
       processFiles: () => {}
     });
@@ -27,7 +64,7 @@ describe('cli build', () => {
       }
     });
 
-    require('../cli/build')({}, {}, () => ({
+    mock.reRequire('../cli/build')({}, {}, () => ({
       run: () => {}
     }));
     expect(called).toEqual(true);
@@ -40,7 +77,7 @@ describe('cli build', () => {
     });
 
     const customError = 'custom-error1';
-    require('../cli/build')({}, {}, () => ({
+    mock.reRequire('../cli/build')({}, {}, () => ({
       run: (cb) => {
         cb(customError);
         expect(logger.error).toHaveBeenCalledWith(customError);
@@ -63,7 +100,7 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
-    require('../cli/build')({}, {}, () => ({
+    mock.reRequire('../cli/build')({}, {}, () => ({
       run: (cb) => {
         cb(null, {
           toJson: () => ({
@@ -88,7 +125,7 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
-    require('../cli/build')({}, {}, () => ({
+    mock.reRequire('../cli/build')({}, {}, () => ({
       run: (cb) => {
         cb(null, {
           toJson: () => ({
@@ -125,7 +162,7 @@ describe('cli build', () => {
       return 'TESTSOURCE';
     });
 
-    require('../cli/build')(
+    mock.reRequire('../cli/build')(
       {},
       {
         runtime: runtimeUtils.getDefaultRuntime(),
@@ -207,7 +244,7 @@ describe('cli build', () => {
       return 'TESTSOURCE';
     });
 
-    require('../cli/build')(
+    mock.reRequire('../cli/build')(
       {},
       {
         runtime: runtimeUtils.getDefaultRuntime(),
@@ -248,7 +285,7 @@ describe('cli build', () => {
 
     const setSkyAssetsLoaderUrlSpy = spyOn(assetsProcessor, 'setSkyAssetsLoaderUrl');
 
-    require('../cli/build')(
+    mock.reRequire('../cli/build')(
       {
         assets: 'https://example.com/'
       },
@@ -275,7 +312,8 @@ describe('cli build', () => {
             expect(setSkyAssetsLoaderUrlSpy).toHaveBeenCalledWith(
               jasmine.any(Object),
               jasmine.any(Object),
-              'https://example.com/'
+              'https://example.com/',
+              undefined
             );
           } finally {
             mock.stop(f);
@@ -287,33 +325,21 @@ describe('cli build', () => {
 
   });
 
-  function testBuildAndServe(launch, done) {
-    const argv = {
-      launch: launch
-    };
-
-    mock('../cli/utils/server', {
-      start: () => Promise.resolve()
-    });
-    mock('../cli/utils/browser', (argv) => {
-      expect(argv.launch).toBe(launch);
-      done();
-    });
-
-    mock.reRequire('../cli/build')(argv, runtimeUtils.getDefault(), () => ({
-      run: (cb) => {
-        cb(
-          null,
-          {
-            toJson: () => ({
-              errors: [],
-              warnings: []
-            })
-          }
-        );
+  it('should fail the build if linting errors are found', () => {
+    mock.stop('../cli/utils/ts-linter');
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => {
+        return {
+          exitCode: 1
+        };
       }
-    }));
-  }
+    });
+    mock.reRequire('../cli/build')({}, {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+    expect(process.exit).toHaveBeenCalledWith(1);
+  });
 
   it('should serve and browse to the built files if launch flag is host', (done) => {
     testBuildAndServe('host', done);

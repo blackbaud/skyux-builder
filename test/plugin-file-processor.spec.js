@@ -34,19 +34,18 @@ describe('SKY UX plugin file processor', () => {
   });
 
   afterEach(() => {
-    mock.stop('../config/sky-pages/sky-pages.config');
-    mock.stop('../loader/sky-processor');
+    mock.stopAll();
   });
 
   it('should return a method', () => {
-    const processor = require(processorPath);
+    const processor = mock.reRequire(processorPath);
     expect(typeof processor.processFiles).toEqual('function');
   });
 
   it('should generate an array of file paths and contents for the SPA\'s source', () => {
     spyOn(glob, 'sync').and.returnValue([ 'my-file.js' ]);
     spyOn(fs, 'readFileSync').and.returnValue('');
-    const processor = require(processorPath);
+    const processor = mock.reRequire(processorPath);
     processor.processFiles(config);
     expect(glob.sync).toHaveBeenCalled();
     expect(fs.readFileSync).toHaveBeenCalled();
@@ -54,7 +53,7 @@ describe('SKY UX plugin file processor', () => {
 
   it('should handle an invalid root directory', () => {
     spyOn(glob, 'sync').and.callThrough();
-    const processor = require(processorPath);
+    const processor = mock.reRequire(processorPath);
     processor.processFiles(config);
     expect(fs.readdirSync).toThrow();
   });
@@ -62,7 +61,7 @@ describe('SKY UX plugin file processor', () => {
   it('should allow plugin preload hooks to alter the content', () => {
     spyOn(glob, 'sync').and.returnValue([ 'my-file.js' ]);
     spyOn(fs, 'readFileSync').and.returnValue('');
-    const processor = require(processorPath);
+    const processor = mock.reRequire(processorPath);
     processor.processFiles(config);
     expect(fs.writeFileSync).toHaveBeenCalled();
   });
@@ -70,7 +69,7 @@ describe('SKY UX plugin file processor', () => {
   it('should not alter the content of a file if nothing has changed', () => {
     spyOn(glob, 'sync').and.returnValue([ 'my-file.js' ]);
     spyOn(fs, 'readFileSync').and.returnValue('changed content');
-    const processor = require(processorPath);
+    const processor = mock.reRequire(processorPath);
     processor.processFiles(config);
     expect(fs.writeFileSync).not.toHaveBeenCalled();
   });

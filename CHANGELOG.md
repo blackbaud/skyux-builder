@@ -1,3 +1,49 @@
+# 1.0.0-rc.15 (2017-08-04)
+
+- Fixed issue where the default port for local files during `skyux serve` could not be manually overridden in `skyuxconfig.json`. [#254](https://github.com/blackbaud/skyux-builder/pull/254)
+
+# 1.0.0-rc.14 (2017-08-03)
+
+- Added support for `@blackbaud/auth-client@1.11.0`. [#251](https://github.com/blackbaud/skyux-builder/pull/251)
+- Fixed bug where files were being processed twice by plugins during AoT compilation (Windows only). [#252](https://github.com/blackbaud/skyux-builder/pull/252)
+
+# 1.0.0-rc.13 (2017-07-27)
+
+- Fixed TSLint checking node_modules [#247](https://github.com/blackbaud/skyux-builder/pull/247)
+
+# 1.0.0-rc.12 (2017-07-26)
+
+- Added ability to specify a permission scope with `SkyAuthHttp`. [#245](https://github.com/blackbaud/skyux-builder/pull/245)
+- Added string formatting method to `SkyAppResourcesTestService`. [#239](https://github.com/blackbaud/skyux-builder/pull/239)
+- Added `skyux lint` command and fixed TSLint rules (that require type checking) not failing the build. [#205](https://github.com/blackbaud/skyux-builder/pull/205)
+- Added check to prevent window scroll if a route fragment exists. [#232](https://github.com/blackbaud/skyux-builder/pull/232)
+- Added colors to console logs. [#244](https://github.com/blackbaud/skyux-builder/pull/244)
+- Made public and referenced route properties optional. [#240](https://github.com/blackbaud/skyux-builder/pull/240)
+- Fixed bug with change detection when a resource string is loaded asynchronously. [#243](https://github.com/blackbaud/skyux-builder/pull/243)
+
+# 1.0.0-rc.11 (2017-07-24)
+
+- Fixed transient dependency of `enhanced-resolve` created by `@ngtools/webpack`, which was breaking `skyux build` and `skyux e2e`. [#241](https://github.com/blackbaud/skyux-builder/pull/241)
+
+# 1.0.0-rc.10 (2017-07-21)
+
+- Fixed bug around Font Face Observer to allow compatibility with SKY UX 2.0.0-rc.7 and above.
+- Upgraded rxjs to 5.4.2
+
+# 1.0.0-rc.9 (2017-07-19)
+
+- Added ability to format a templated resource string. [#231](https://github.com/blackbaud/skyux-builder/pull/231)
+- Added version range to install latest `rc-x` branch from SKY UX. [#233](https://github.com/blackbaud/skyux-builder/pull/233)
+- Fixed bug with static assets URL in e2e tests. [#234](https://github.com/blackbaud/skyux-builder/pull/234)
+- Fixed `redirects` type in `SkyAppConfig`. [#229](https://github.com/blackbaud/skyux-builder/pull/229)
+
+# 1.0.0-rc.8 (2017-07-14)
+
+- Bugfix to allow `redirects` property in `skyuxconfig.json`. [#224](https://github.com/blackbaud/skyux-builder/pull/224)
+- Bugfix that caused plugins to process files twice during AOT compilation.  [#225](https://github.com/blackbaud/skyux-builder/pull/225)
+- Implemented a better caching strategy and fallback to non-region-specific languages.  [#226](https://github.com/blackbaud/skyux-builder/pull/226) 
+- Upgraded `@blackbaud/auth-client` to 1.9.1. [#227](https://github.com/blackbaud/skyux-builder/pull/227)
+
 # 1.0.0-rc.7 (2017-07-13)
 
 - Added ability to configure route redirects in `skyuxconfig.json`. [#217](https://github.com/blackbaud/skyux-builder/pull/217)

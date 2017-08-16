@@ -3,12 +3,14 @@
 
 const fs = require('fs');
 const path = require('path');
-const logger = require('winston');
+const util = require('util');
+const open = require('open');
 const webpackMerge = require('webpack-merge');
 const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
+const logger = require('../../utils/logger');
 const browser = require('../../cli/utils/browser');
 
 /**

@@ -18,7 +18,7 @@ describe('SkyAppLink Directive', () => {
   let fixture: ComponentFixture<SkyAppLinkTestComponent>;
   let debugElement: DebugElement;
 
-  function setup(params) {
+  function setup(params: any) {
     TestBed.configureTestingModule({
       schemas: [
         NO_ERRORS_SCHEMA

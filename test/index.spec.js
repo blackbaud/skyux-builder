@@ -2,7 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('winston');
+const logger = require('../utils/logger');
 
 describe('@blackbaud/skyux-builder', () => {
 
@@ -29,6 +29,10 @@ describe('@blackbaud/skyux-builder', () => {
       'serve': {
         cmd: 'serve',
         lib: 'serve'
+      },
+      'lint': {
+        cmd: 'lint',
+        lib: 'lint'
       },
       'test': {
         cmd: 'test',

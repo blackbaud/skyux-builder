@@ -9,8 +9,7 @@ export class SkyAppStyleLoader {
 
   public loadStyles(): Promise<any> {
     const fontAwesome = new FontFaceObserver('FontAwesome');
-    const openSans = new FontFaceObserver('Open Sans');
-    const oswald = new FontFaceObserver('Oswald');
+    const blackbaudSans = new FontFaceObserver('Blackbaud Sans');
 
     return Promise
       .all([
@@ -18,8 +17,7 @@ export class SkyAppStyleLoader {
         // when the font is loaded unless a known character with a different width
         // than the default is not specified.
         fontAwesome.load('\uf0fc', SkyAppStyleLoader.LOAD_TIMEOUT),
-        openSans.load(undefined, SkyAppStyleLoader.LOAD_TIMEOUT),
-        oswald.load(undefined, SkyAppStyleLoader.LOAD_TIMEOUT)
+        blackbaudSans.load(undefined, SkyAppStyleLoader.LOAD_TIMEOUT)
       ])
       .then(() => {
         this.isLoaded = true;

@@ -142,9 +142,9 @@ describe('SKY UX Builder route generator', () => {
   it('should support guards with custom routesPattern', () => {
     spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/my-custom-route/index.html']);
     spyOn(fs, 'readFileSync').and.returnValue(`@Injectable() export class Guard {
-      canActivate() {}
-      canDeactivate() {}
-      canActivateChild() {}
+      public canActivate() {}
+      public canDeactivate() {}
+      public canActivateChild() {}
     }`);
     spyOn(fs, 'existsSync').and.returnValue(true);
 
@@ -246,9 +246,9 @@ describe('SKY UX Builder route generator', () => {
       ''
     ]);
     spyOn(fs, 'readFileSync').and.returnValue(`@Injectable() export class Guard {
-      canActivate() {}
-      canDeactivate() {}
-      canActivateChild() {}
+      public canActivate() {}
+      public canDeactivate() {}
+      public canActivateChild() {}
     }`);
     spyOn(fs, 'existsSync').and.returnValue(true);
     spyOn(path, 'join').and.returnValue('');

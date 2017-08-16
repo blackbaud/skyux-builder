@@ -1,10 +1,11 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const glob = require('glob');
 const path = require('path');
 const mock = require('mock-require');
-const logger = require('winston');
 const selenium = require('selenium-standalone');
+const logger = require('../utils/logger');
 
 describe('cli e2e', () => {
   const PORT = 1234;
@@ -67,6 +68,10 @@ describe('cli e2e', () => {
     mock('../cli/utils/server', {
       start: () => PORT,
       stop: () => {}
+    });
+
+    mock('glob', {
+      sync: path => ['test.e2e-spec.ts']
     });
 
     spyOn(logger, 'info');
@@ -141,6 +146,7 @@ describe('cli e2e', () => {
   });
 
   it('should catch selenium failures', (done) => {
+    debugger;
     mock(configPath, {
       config: {
         seleniumAddress: 'asdf'
@@ -184,6 +190,20 @@ describe('cli e2e', () => {
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(1);
+      done();
+    });
+
+    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should not continue if no e2e spec files exist', (done) => {
+    mock('glob', {
+      sync: path => []
+    });
+
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(exitCode).toEqual(0);
+      expect(logger.info).toHaveBeenCalledWith('No spec files located. Stopping command from running.');
       done();
     });
 

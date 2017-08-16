@@ -2,126 +2,193 @@
 'use strict';
 
 const mock = require('mock-require');
+const logger = require('../utils/logger');
 
 describe('cli test', () => {
+  let originalArgv = process.argv;
+
+  function MockServer(config, onExit) {}
+  MockServer.prototype.on = function () {};
+  MockServer.prototype.start = function () {};
+
+  beforeEach(() => {
+    spyOn(global, 'setTimeout').and.callFake(cb => cb());
+    spyOn(process, 'exit').and.returnValue();
+    spyOn(logger, 'info').and.returnValue();
+    spyOn(logger, 'error').and.returnValue();
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => {
+        return {
+          exitCode: 0,
+          errors: []
+        };
+      }
+    });
+    mock('../config/sky-pages/sky-pages.config', {
+      outPath: (path) => path
+    });
+  });
+
+  afterEach(() => {
+    mock.stopAll();
+    process.argv = originalArgv;
+  });
 
   it('should load the test config when running test command', () => {
-
-    const cmd = 'test';
-    let found = false;
-
-    mock('cross-spawn', (node, flags) => {
-      flags.forEach(flag => {
-        if (flag.indexOf(cmd + '.karma.conf') > -1) {
-          found = true;
-        }
-      });
-
-      return {
-        on: () => {}
-      };
+    let _configPath;
+    mock('karma', {
+      config: {
+        parseConfig: (configPath) => _configPath = configPath
+      },
+      Server: MockServer
     });
-
-    require('../cli/test')(cmd);
-    expect(found).toEqual(true);
-    mock.stop('cross-spawn');
-
+    const test = mock.reRequire('../cli/test');
+    test('test', {});
+    expect(_configPath.indexOf('/test.karma.conf.js') > -1).toEqual(true);
   });
 
   it('should load the watch config when running watch command', () => {
-
-    const cmd = 'watch';
-    let found = false;
-
-    mock('cross-spawn', (node, flags) => {
-      flags.forEach(flag => {
-        if (flag.indexOf(cmd + '.karma.conf') > -1) {
-          found = true;
-        }
-      });
-
-      return {
-        on: () => {}
-      };
+    let _configPath;
+    mock('karma', {
+      config: {
+        parseConfig: (configPath) => _configPath = configPath
+      },
+      Server: MockServer
     });
-
-    require('../cli/test')(cmd);
-    expect(found).toEqual(true);
-    mock.stop('cross-spawn');
-
+    const test = mock.reRequire('../cli/test');
+    test('watch');
+    expect(_configPath.indexOf('/watch.karma.conf.js') > -1).toEqual(true);
   });
 
-  it('should pass the current command to karma', () => {
-
-    const cmd = 'CUSTOM_CMD';
-    let argv;
-
-    const minimist = require('minimist');
-    mock('cross-spawn', (node, flags) => {
-      argv = minimist(flags);
-
-      return {
-        on: () => {}
-      };
+  it('should save the current command to argv', () => {
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: MockServer
     });
-
-    require('../cli/test')(cmd);
-    expect(argv.command).toEqual(cmd);
-    mock.stop('cross-spawn');
-
+    const test = mock.reRequire('../cli/test');
+    const argv = {};
+    test('watch', argv);
+    expect(argv.command).toEqual('watch');
   });
 
-  it('should pass the --coverage flag to karma by default', () => {
-    const cmd = 'CUSTOM_CMD';
-    let found = false;
-
-    mock('cross-spawn', (node, flags) => {
-      found = flags.includes('--coverage');
-      return {
-        on: () => {}
-      };
+  it('should start a karma server', () => {
+    spyOn(MockServer.prototype, 'start').and.returnValue();
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: MockServer
     });
-
-    require('../cli/test')(cmd);
-    expect(found).toEqual(true);
-    mock.stop('cross-spawn');
+    const test = mock.reRequire('../cli/test');
+    test('test');
+    expect(MockServer.prototype.start).toHaveBeenCalled();
   });
 
-  it('should pass the --no-coverage flag to karma', () => {
-    const cmd = 'CUSTOM_CMD';
-    let found = false;
-
-    mock('cross-spawn', (node, flags) => {
-      found = flags.includes('--no-coverage');
-      return {
-        on: () => {}
-      };
-    });
-
-    require('../cli/test')(cmd, { coverage: false });
-    expect(found).toEqual(true);
-    mock.stop('cross-spawn');
-  });
-
-  it('should pass the exitCode', (done) => {
-    const EXIT_CODE = 1337;
-
-    spyOn(process, 'exit').and.callFake(exitCode => {
-      expect(exitCode).toEqual(EXIT_CODE);
-      done();
-    });
-
-    mock('cross-spawn', () => ({
-      on: (cmd, callback) => {
-        if (cmd === 'exit') {
-          callback(EXIT_CODE);
-        }
+  it('should process the exit code from karma server', () => {
+    let _onExit;
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, onExit) {
+        this.on = (hook, callback) => {
+          if (hook === 'run_start') {
+            _onExit = () => {
+              onExit(0);
+            };
+            callback();
+          }
+        };
+        this.start = () => {};
       }
-    }));
-
-    require('../cli/test')('test');
-    mock.stop('cross-spawn');
-
+    });
+    const test = mock.reRequire('../cli/test');
+    test('test');
+    _onExit();
+    expect(process.exit).toHaveBeenCalledWith(0);
   });
 
+  it('should not change the exit code if the server has already failed', () => {
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, callback) {
+        callback(1);
+        this.on = () => {};
+        this.start = () => {};
+      }
+    });
+    const test = mock.reRequire('../cli/test');
+    test('test');
+    expect(process.exit).toHaveBeenCalledWith(1);
+  });
+
+  it('should execute tslint before each karma run and pass the exit code', () => {
+    let _hooks = [];
+    let _exitCode;
+    let _onExit;
+    mock.stop('../cli/utils/ts-linter');
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => {
+        _exitCode = 1;
+        return {
+          exitCode: 1,
+          errors: ['foo']
+        };
+      }
+    });
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, onExit) {
+        _onExit = onExit;
+        this.on = (hook, callback) => {
+          _hooks.push(hook);
+          callback();
+        };
+        this.start = () => {};
+      }
+    });
+    const test = mock.reRequire('../cli/test');
+    test('test');
+    _onExit(0);
+    expect(_hooks[0]).toEqual('run_start');
+    expect(_exitCode).toEqual(1);
+    expect(process.exit).toHaveBeenCalledWith(1);
+  });
+
+  it('should not output a tslint error message if tslint passes', () => {
+    let _hooks = [];
+    let _onExit;
+    mock.stop('../cli/utils/ts-linter');
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => {
+        return {
+          exitCode: 0
+        };
+      }
+    });
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, onExit) {
+        _onExit = onExit;
+        this.on = (hook, callback) => {
+          _hooks.push(hook);
+          callback();
+        };
+        this.start = () => {};
+      }
+    });
+    const test = mock.reRequire('../cli/test');
+    test('test');
+    _onExit(0);
+    expect(_hooks[1]).toEqual('run_complete');
+    expect(process.exit).toHaveBeenCalledWith(0);
+  });
 });
