@@ -1,6 +1,7 @@
 /*jslint node: true */
 'use strict';
 
+const glob = require('glob');
 const path = require('path');
 const spawn = require('cross-spawn');
 const logger = require('../utils/logger');
@@ -209,6 +210,14 @@ function e2e(argv, skyPagesConfig, webpack) {
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
+  const specsPath = path.resolve(process.cwd(), 'e2e/**/*.e2e-spec.ts');
+  const specsGlob = glob.sync(specsPath);
+
+  if (specsGlob.length === 0) {
+    logger.info('No spec files located. Stopping command from running.');
+    return killServers(0);
+  }
+
   spawnServer()
     .then((port) => {
       argv.assets = 'https://localhost:' + port;
@@ -223,15 +232,16 @@ function e2e(argv, skyPagesConfig, webpack) {
       return Promise
         .all([
           spawnBuild(argv, skyPagesConfig, webpack),
+          port,
           spawnSelenium()
-        ])
-        .then(values => {
-          spawnProtractor(
-            values[0],
-            port,
-            skyPagesConfig
-          );
-        });
+        ]);
+    })
+    .then(values => {
+      spawnProtractor(
+        values[0],
+        values[1],
+        skyPagesConfig
+      );
     })
     .catch(err => {
       logger.warn(`ERROR [skyux e2e]: ${err.message}`);
