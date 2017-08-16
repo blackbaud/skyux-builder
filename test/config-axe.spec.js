@@ -4,10 +4,6 @@
 const mock = require('mock-require');
 
 describe('config axe', () => {
-  beforeEach(() => {
-
-  });
-
   afterEach(() => {
     mock.stopAll();
   });
