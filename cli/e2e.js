@@ -207,11 +207,11 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
  * @name e2e
  */
 function e2e(argv, skyPagesConfig, webpack) {
-  const specsPath = path.resolve(process.cwd(), 'e2e/**/*.spec.ts */');
-  const specsGlob = glob.sync(specsPath);
-
   start = new Date().getTime();
   process.on('SIGINT', killServers);
+
+  const specsPath = path.resolve(process.cwd(), 'e2e/**/*.e2e-spec.ts');
+  const specsGlob = glob.sync(specsPath);
 
   if (specsGlob.length === 0) {
     logger.info('No spec files located. Stopping command from running.');
