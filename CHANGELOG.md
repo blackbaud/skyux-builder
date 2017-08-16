@@ -1,3 +1,12 @@
+# 1.0.0-rc.15 (2017-08-04)
+
+- Fixed issue where the default port for local files during `skyux serve` could not be manually overridden in `skyuxconfig.json`. [#254](https://github.com/blackbaud/skyux-builder/pull/254)
+
+# 1.0.0-rc.14 (2017-08-03)
+
+- Added support for `@blackbaud/auth-client@1.11.0`. [#251](https://github.com/blackbaud/skyux-builder/pull/251)
+- Fixed bug where files were being processed twice by plugins during AoT compilation (Windows only). [#252](https://github.com/blackbaud/skyux-builder/pull/252)
+
 # 1.0.0-rc.13 (2017-07-27)
 
 - Fixed TSLint checking node_modules [#247](https://github.com/blackbaud/skyux-builder/pull/247)
