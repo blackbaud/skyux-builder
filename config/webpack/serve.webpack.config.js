@@ -3,8 +3,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
-const open = require('open');
 const webpackMerge = require('webpack-merge');
 const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');

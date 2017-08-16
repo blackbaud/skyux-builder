@@ -4,8 +4,6 @@
 const glob = require('glob');
 const path = require('path');
 const spawn = require('cross-spawn');
-const portfinder = require('portfinder');
-const HttpServer = require('http-server');
 const selenium = require('selenium-standalone');
 
 const build = require('./build');
