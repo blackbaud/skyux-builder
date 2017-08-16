@@ -66,7 +66,7 @@ describe('cli e2e', () => {
     });
 
     mock('../cli/utils/server', {
-      start: () => PORT,
+      start: () => Promise.resolve(PORT),
       stop: () => {}
     });
 
