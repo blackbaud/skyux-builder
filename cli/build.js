@@ -137,13 +137,6 @@ function build(argv, skyPagesConfig, webpack) {
     buildConfig = require('../config/webpack/build.webpack.config');
   }
 
-  // If we're going to launch the files, change the app name to dist
-  // This is easier than moving the dist/ folder around on disk.
-  // if (argv.launch) {
-  //   skyPagesConfig.skyux.name = 'dist';
-  //   skyPagesConfig.runtime.app.base = '/dist/';
-  // }
-
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
   assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl);
 
@@ -157,7 +150,8 @@ function build(argv, skyPagesConfig, webpack) {
       switch (argv.launch) {
         case 'host':
         case 'local':
-          server.start().then(port => {
+          const appBase = skyPagesConfigUtil.getAppBase(skyPagesConfig);
+          server.start(appBase).then(port => {
             browser(argv, skyPagesConfig, stats, port);
           });
         break;

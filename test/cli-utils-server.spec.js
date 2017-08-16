@@ -58,6 +58,14 @@ describe('server utils', () => {
     expect(server.stop).toBeDefined();
   });
 
+  it('should accept a root', () => {
+    const server = bind();
+    const root = 'custom-root';
+    server.start(root).then(() =>{
+
+    });
+  });
+
   it('should close the http server if it exists', (done) => {
     const server = bind();
 

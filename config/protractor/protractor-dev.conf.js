@@ -1,6 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const fs = require('fs-extra');
 const path = require('path');
 const merge = require('merge');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
@@ -19,36 +20,44 @@ let config = {
     jasmine.getEnv().addReporter(new SpecReporter());
 
     return new Promise((resolve, reject) => {
-      const url = 'https://github.com/blackbaud/skyux-template';
-      const branch = 'master';
 
-      common.rimrafPromise(common.tmp)
-        .then(() => common.exec(`git`, [
-          `clone`,
-          `-b`,
-          branch,
-          `--single-branch`,
-          url,
-          common.tmp
-        ]))
-        .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
-        .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
-        .then(resolve)
-        .catch(reject);
+      if (fs.existsSync(common.tmp) && !process.argv.includes('--clean')) {
+
+        console.log('');
+        console.log('*********');
+        console.log('Running fast e2e tests');
+        console.log(`Delete ${common.tmp} to have the install steps run.`);
+        console.log('*********');
+        console.log('');
+
+        resolve();
+
+      } else {
+
+        const url = 'https://github.com/blackbaud/skyux-template';
+        const branch = 'master';
+
+        console.log('Running command using full install.');
+        common.rimrafPromise(common.tmp)
+          .then(() => common.exec(`git`, [
+            `clone`,
+            `-b`,
+            branch,
+            `--single-branch`,
+            url,
+            common.tmp
+          ]))
+          .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
+          .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
+          .then(resolve)
+          .catch(reject);
+
+      }
     });
   },
 
-  onComplete: () => {
-
-    // Catch any rogue servers
-    common.afterAll();
-
-    return new Promise((resolve, reject) => {
-      common.rimrafPromise(common.tmp)
-        .then(resolve)
-        .catch(reject);
-    });
-  }
+  // Catch any rogue servers
+  onComplete: () => common.afterAll
 };
 
 // In CI, use firefox
