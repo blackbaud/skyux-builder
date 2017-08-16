@@ -74,7 +74,7 @@ describe('cli serve', () => {
 
     function webpackDevServer() {
       return {
-        listen: (port, cb) => {
+        listen: (port, host, cb) => {
           cb(err);
           expect(logger.error).toHaveBeenCalledWith(err);
           mock.stop(f);
@@ -98,7 +98,7 @@ describe('cli serve', () => {
 
     function webpackDevServer() {
       return {
-        listen: (port, cb) => {
+        listen: (port, host, cb) => {
           cb();
           expect(logger.error).not.toHaveBeenCalled();
           mock.stop(f);
