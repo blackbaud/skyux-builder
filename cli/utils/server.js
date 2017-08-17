@@ -8,6 +8,7 @@ const portfinder = require('portfinder');
 const express = require('express');
 const https = require('https');
 const cors = require('cors');
+
 const app = express();
 
 let server;
@@ -19,13 +20,16 @@ let server;
 function start(root) {
   return new Promise((resolve, reject) => {
 
+    const dist = path.resolve(process.cwd(), 'dist');
+
     logger.info('Creating web server');
     app.use(cors());
 
-    app.use(express.static('/dist'));
+    logger.info('Exposing static directory: ${dist}');
+    app.use(express.static(dist));
     if (root) {
-      console.log(`Mapping server requests from ${root} to 'dist'`);
-      app.use(root, express.static('dist'));
+      logger.info(`Mapping server requests from ${root} to ${dist}`);
+      app.use('/' + root, express.static(dist));
     }
 
     const options = {
