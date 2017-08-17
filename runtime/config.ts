@@ -25,6 +25,10 @@ export interface RuntimeConfig {
   useTemplateUrl: boolean;
 }
 
+export interface SkyuxConfigA11y {
+  rules?: any;
+}
+
 export interface SkyuxConfigApp {
   externals?: Object;
   port?: string;
@@ -36,6 +40,7 @@ export interface SkyuxConfigHost {
 }
 
 export interface SkyuxConfig {
+  a11y?: SkyuxConfigA11y|boolean;
   app?: SkyuxConfigApp;
   appSettings?: any;
   auth?: boolean;

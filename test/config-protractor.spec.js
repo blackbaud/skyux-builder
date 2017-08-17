@@ -9,8 +9,12 @@ describe('config protractor test', () => {
   let config;
 
   beforeEach(() => {
-    lib = require('../config/protractor/protractor.conf.js');
+    lib = mock.reRequire('../config/protractor/protractor.conf.js');
     config = lib.config;
+  });
+
+  afterEach(() => {
+    mock.stopAll();
   });
 
   it('should return a config object', () => {
@@ -28,9 +32,6 @@ describe('config protractor test', () => {
     expect(config.beforeLaunch).toBeDefined();
     config.beforeLaunch();
     expect(called).toBe(true);
-    
-    mock.stop('ts-node');
-
   });
 
   it('should provide a method for onPrepare', () => {
