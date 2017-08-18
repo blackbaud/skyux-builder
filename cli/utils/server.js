@@ -25,11 +25,11 @@ function start(root) {
     logger.info('Creating web server');
     app.use(cors());
 
-    logger.info('Exposing static directory: ${dist}');
+    logger.info(`Exposing static directory: ${dist}`);
     app.use(express.static(dist));
     if (root) {
       logger.info(`Mapping server requests from ${root} to ${dist}`);
-      app.use('/' + root, express.static(dist));
+      app.use(root, express.static(dist));
     }
 
     const options = {
