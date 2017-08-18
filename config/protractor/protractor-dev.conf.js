@@ -31,8 +31,7 @@ let config = {
           url,
           common.tmp
         ]))
-        .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
-        .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
+        .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
         .then(resolve)
         .catch(reject);
     });
