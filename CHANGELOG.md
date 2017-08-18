@@ -1,3 +1,9 @@
+# 1.0.0-rc.16 (2017-08-18)
+
+- Created `SkyA11y` class.  It's available during `skyux e2e` and aids in testing accessibility guidelines. [#250](https://github.com/blackbaud/skyux-builder/pull/250)
+- Bugfix when running `skyux serve` more than once at the same time on Windows. [#257](https://github.com/blackbaud/skyux-builder/pull/257)
+- Made `skyux e2e` more efficient by checking for spec files before performing a build. [#256](https://github.com/blackbaud/skyux-builder/pull/256) Thanks [@blackbaud-brandonhare](https://github.com/blackbaud-brandonhare)!
+
 # 1.0.0-rc.15 (2017-08-04)
 
 - Fixed issue where the default port for local files during `skyux serve` could not be manually overridden in `skyuxconfig.json`. [#254](https://github.com/blackbaud/skyux-builder/pull/254)
