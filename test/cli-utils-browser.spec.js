@@ -55,6 +55,34 @@ describe('browser utils', () => {
     return merged;
   }
 
+  function testLaunchHost(argv) {
+    const port = 1234;
+    const appBase = 'app-base';
+
+    const settings = bind({
+      argv: argv,
+      port: port,
+      skyPagesConfig: {
+        runtime: runtimeUtils.getDefaultRuntime,
+        skyux: runtimeUtils.getDefaultSkyux({
+          name: appBase
+        })
+      }
+    });
+
+    const localUrl = `https://localhost:${port}/${appBase}/`;
+    const hostUrl = hostUtils.resolve(
+      '',
+      localUrl,
+      [],
+      settings.skyPagesConfig
+    );
+
+    expect(logger.info).toHaveBeenCalledWith(`Launching Host URL: ${hostUrl}`);
+    expect(openCalled).toBe(true);
+    expect(openParamUrl).toBe(hostUrl);
+  }
+
   it('should run envid and svcid through encodeURIComponent', () => {
     const s = bind({
       argv: {
@@ -85,34 +113,12 @@ describe('browser utils', () => {
     expect(parsed.query.noid).not.toBeDefined();
   });
 
+  it('should default --launch to host', () => {
+    testLaunchHost({});
+  });
+
   it('should log the host url and launch it when --launch host', () => {
-    const port = 1234;
-    const appBase = 'app-base';
-
-    const settings = bind({
-      argv: {
-        launch: 'host'
-      },
-      port: port,
-      skyPagesConfig: {
-        runtime: runtimeUtils.getDefaultRuntime,
-        skyux: runtimeUtils.getDefaultSkyux({
-          name: appBase
-        })
-      }
-    });
-
-    const localUrl = `https://localhost:${port}/${appBase}/`;
-    const hostUrl = hostUtils.resolve(
-      '',
-      localUrl,
-      [],
-      settings.skyPagesConfig
-    );
-
-    expect(logger.info).toHaveBeenCalledWith(`Launching Host URL: ${hostUrl}`);
-    expect(openCalled).toBe(true);
-    expect(openParamUrl).toBe(hostUrl);
+    testLaunchHost({ launch: 'host' });
   });
 
   it('should log the local url and launch it when --launch local', () => {

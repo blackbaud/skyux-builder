@@ -55,6 +55,9 @@ function browser(argv, skyPagesConfig, stats, port) {
     localUrl = edge + localUrl;
   }
 
+  // Browser defaults to launching host
+  argv.launch = argv.launch || 'host';
+
   switch (argv.launch) {
     case 'local':
 

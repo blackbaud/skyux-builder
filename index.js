@@ -11,7 +11,8 @@ module.exports = {
     const skyPagesConfig = config.getSkyPagesConfig(command);
     const shorthand = {
       l: 'launch',
-      b: 'browser'
+      b: 'browser',
+      s: 'serve'
     };
 
     // Process shorthand flags

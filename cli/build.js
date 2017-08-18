@@ -118,6 +118,20 @@ function cleanupAot() {
   fs.removeSync(skyPagesConfigUtil.spaPathTemp());
 }
 
+function compile(webpack, config, compileModeIsAoT) {
+  return new Promise((resolve, reject) => {
+    runCompiler(webpack, config)
+      .then(stats => {
+        if (compileModeIsAoT) {
+          cleanupAot();
+        }
+
+        resolve(stats);
+      })
+      .catch(reject);
+  });
+}
+
 /**
  * Executes the build command.
  * @name build
@@ -148,26 +162,17 @@ function build(argv, skyPagesConfig, webpack) {
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
   assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
 
-  return runCompiler(webpack, config)
-    .then(stats => {
-      if (compileModeIsAoT) {
-        cleanupAot();
-      }
+  if (!argv.serve) {
+    return compile(webpack, config, compileModeIsAoT);
+  }
 
-      // Serve build files
-      switch (argv.launch) {
-        case 'host':
-        case 'local':
-          const appBase = skyPagesConfigUtil.getAppBase(skyPagesConfig);
-          server.start(appBase).then(port => {
-            browser(argv, skyPagesConfig, stats, port);
-          });
-        break;
-        default:
-          return Promise.resolve(stats);
-      }
-
+  // We need port from server, to configure assets url, which must be set before building.
+  server.start(skyPagesConfigUtil.getAppBase(skyPagesConfig)).then(port => {
+    argv.assets = 'https://localhost:' + port;
+    compile(webpack, config, compileModeIsAoT).then(stats => {
+      browser(argv, skyPagesConfig, stats, port);
     });
+  });
 }
 
 module.exports = build;

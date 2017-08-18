@@ -27,38 +27,6 @@ describe('config webpack serve', () => {
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
-  it('should set default `launch` to `host', () => {
-    spyOn(logger, 'info');
-    const lib = require('../config/webpack/serve.webpack.config');
-    const config = lib.getWebpackConfig({}, runtimeUtils.getDefault());
-
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'WebpackPluginDone') {
-        plugin.apply({
-          options: {
-            appConfig: {
-              base: 'my-custom-base'
-            },
-            devServer: {
-              port: 1234
-            }
-          },
-          plugin: (evt, cb) => {
-            if (evt === 'done') {
-              cb({
-                toJson: () => ({
-                  chunks: []
-                })
-              });
-            }
-          }
-        });
-      }
-    });
-
-    expect(paramArgv.launch).toEqual('host');
-  });
-
   it('should only log the ready message once during multiple dones', () => {
 
     spyOn(logger, 'info');

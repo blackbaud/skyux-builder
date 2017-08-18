@@ -8,35 +8,6 @@ const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('cli build', () => {
 
-  function testBuildAndServe(launch, done) {
-    const argv = {
-      launch: launch
-    };
-
-    mock('../cli/utils/server', {
-      start: () => Promise.resolve()
-    });
-
-    mock('../cli/utils/browser', (argv) => {
-      expect(argv.launch).toBe(launch);
-      done();
-    });
-
-    mock.reRequire('../cli/build')(argv, runtimeUtils.getDefault(), () => ({
-      run: (cb) => {
-        cb(
-          null,
-          {
-            toJson: () => ({
-              errors: [],
-              warnings: []
-            })
-          }
-        );
-      }
-    }));
-  }
-
   beforeEach(() => {
     spyOn(process, 'exit').and.callFake(() => {});
     mock('../cli/utils/ts-linter', {
@@ -341,11 +312,32 @@ describe('cli build', () => {
     expect(process.exit).toHaveBeenCalledWith(1);
   });
 
-  it('should serve and browse to the built files if launch flag is host', (done) => {
-    testBuildAndServe('host', done);
+  it('should serve and browse to the built files if serve flag is present', (done) => {
+    const port = 1234;
+
+    mock('../cli/utils/server', {
+      start: () => Promise.resolve(port)
+    });
+
+    mock('../cli/utils/browser', (argv, c, s, p) => {
+      expect(argv.serve).toBe(true);
+      expect(p).toBe(port);
+      done();
+    });
+
+    mock.reRequire('../cli/build')({ serve: true }, runtimeUtils.getDefault(), () => ({
+      run: (cb) => {
+        cb(
+          null,
+          {
+            toJson: () => ({
+              errors: [],
+              warnings: []
+            })
+          }
+        );
+      }
+    }));
   });
 
-  it('should serve and browse to the built files if launch flag is local', (done) => {
-    testBuildAndServe('local', done);
-  });
 });

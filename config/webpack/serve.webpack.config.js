@@ -29,9 +29,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
       if (!launched) {
         logger.info('SKY UX builder is ready.');
         launched = true;
-
-        // Host is default launch
-        argv.launch = argv.launch || 'host';
         browser(argv, skyPagesConfig, stats, this.options.devServer.port);
       }
     });
