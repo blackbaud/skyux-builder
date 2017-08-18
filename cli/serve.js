@@ -64,7 +64,7 @@ function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
 
     const compiler = webpack(config);
     const server = new WebpackDevServer(compiler, config.devServer);
-    server.listen(config.devServer.port, (err) => {
+    server.listen(config.devServer.port, 'localhost', (err) => {
       if (err) {
         logger.error(err);
       }
