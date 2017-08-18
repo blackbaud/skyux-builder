@@ -118,11 +118,35 @@ function cleanupAot() {
   fs.removeSync(skyPagesConfigUtil.spaPathTemp());
 }
 
-function compile(webpack, config, compileModeIsAoT) {
+function buildServe(argv, skyPagesConfig, webpack, isAot) {
+  server.start(skyPagesConfigUtil.getAppBase(skyPagesConfig))
+    .then(port => {
+      argv.assets = argv.assets || `https://localhost:${port}`;
+      buildPromise(argv, skyPagesConfig, webpack, isAot)
+        .then(stats => browser(argv, skyPagesConfig, stats, port));
+    });
+}
+
+function buildPromise(argv, skyPagesConfig, webpack, isAot) {
+  const assetsBaseUrl = argv.assets || '';
+  const assetsRel = argv.assetsrel;
+
+  let buildConfig;
+
+  if (isAot) {
+    stageAot(skyPagesConfig, assetsBaseUrl, assetsRel);
+    buildConfig = require('../config/webpack/build-aot.webpack.config');
+  } else {
+    buildConfig = require('../config/webpack/build.webpack.config');
+  }
+
   return new Promise((resolve, reject) => {
-    runCompiler(webpack, config)
+    const config = buildConfig.getWebpackConfig(skyPagesConfig);
+    assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
+
+    runCompiler(webpack, config, isAot)
       .then(stats => {
-        if (compileModeIsAoT) {
+        if (isAot) {
           cleanupAot();
         }
 
@@ -135,44 +159,24 @@ function compile(webpack, config, compileModeIsAoT) {
 /**
  * Executes the build command.
  * @name build
+ * @param {*} skyPagesConfig
+ * @param {*} webpack
+ * @param {*} isAot
  */
 function build(argv, skyPagesConfig, webpack) {
-  const compileModeIsAoT = skyPagesConfig &&
+
+  const lintResult = tsLinter.lintSync();
+  const isAot = skyPagesConfig &&
     skyPagesConfig.skyux &&
     skyPagesConfig.skyux.compileMode === 'aot';
 
-  let buildConfig;
-
-  const assetsBaseUrl = argv.assets || '';
-  const assetsRel = argv.assetsrel;
-
-  const lintResult = tsLinter.lintSync();
   if (lintResult.exitCode > 0) {
     process.exit(lintResult.exitCode);
-    return;
-  }
-
-  if (compileModeIsAoT) {
-    stageAot(skyPagesConfig, assetsBaseUrl, assetsRel);
-    buildConfig = require('../config/webpack/build-aot.webpack.config');
+  } else if (argv.serve) {
+    buildServe(argv, skyPagesConfig, webpack, isAot);
   } else {
-    buildConfig = require('../config/webpack/build.webpack.config');
+    return buildPromise(argv, skyPagesConfig, webpack, isAot);
   }
-
-  const config = buildConfig.getWebpackConfig(skyPagesConfig);
-  assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
-
-  if (!argv.serve) {
-    return compile(webpack, config, compileModeIsAoT);
-  }
-
-  // We need port from server, to configure assets url, which must be set before building.
-  server.start(skyPagesConfigUtil.getAppBase(skyPagesConfig)).then(port => {
-    argv.assets = 'https://localhost:' + port;
-    compile(webpack, config, compileModeIsAoT).then(stats => {
-      browser(argv, skyPagesConfig, stats, port);
-    });
-  });
 }
 
 module.exports = build;
