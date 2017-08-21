@@ -119,19 +119,17 @@ function cleanupAot() {
 }
 
 function buildServe(argv, skyPagesConfig, webpack, isAot) {
-  return new Promise((resolve, reject) => {
-    server.start(skyPagesConfigUtil.getAppBase(skyPagesConfig))
+  const base = skyPagesConfigUtil.getAppBase(skyPagesConfig);
+  return server
+    .start(base)
     .then(port => {
       argv.assets = argv.assets || `https://localhost:${port}`;
-      buildCompiler(argv, skyPagesConfig, webpack, isAot)
+      return buildCompiler(argv, skyPagesConfig, webpack, isAot)
         .then(stats => {
           browser(argv, skyPagesConfig, stats, port);
-          resolve();
-        })
-        .catch(reject);
-    })
-    .catch(reject);
-  });
+          return stats;
+        });
+    });
 }
 
 function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
@@ -147,20 +145,17 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
     buildConfig = require('../config/webpack/build.webpack.config');
   }
 
-  return new Promise((resolve, reject) => {
-    const config = buildConfig.getWebpackConfig(skyPagesConfig);
-    assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
+  const config = buildConfig.getWebpackConfig(skyPagesConfig);
+  assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
 
-    runCompiler(webpack, config, isAot)
-      .then(stats => {
-        if (isAot) {
-          cleanupAot();
-        }
+  return runCompiler(webpack, config, isAot)
+    .then(stats => {
+      if (isAot) {
+        cleanupAot();
+      }
 
-        resolve(stats);
-      })
-      .catch(reject);
-  });
+      return stats;
+    });
 }
 
 /**
@@ -180,12 +175,8 @@ function build(argv, skyPagesConfig, webpack) {
   if (lintResult.exitCode > 0) {
     process.exit(lintResult.exitCode);
   } else {
-    return new Promise((resolve, reject) => {
-      const name = argv.serve ? buildServe : buildCompiler;
-      name(argv, skyPagesConfig, webpack, isAot)
-        .then(resolve)
-        .catch(reject);
-    });
+    const name = argv.serve ? buildServe : buildCompiler;
+    return name(argv, skyPagesConfig, webpack, isAot);
   }
 }
 
