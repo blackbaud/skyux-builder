@@ -119,15 +119,22 @@ function cleanupAot() {
 }
 
 function buildServe(argv, skyPagesConfig, webpack, isAot) {
-  server.start(skyPagesConfigUtil.getAppBase(skyPagesConfig))
+  return new Promise((resolve, reject) => {
+    server.start(skyPagesConfigUtil.getAppBase(skyPagesConfig))
     .then(port => {
       argv.assets = argv.assets || `https://localhost:${port}`;
-      buildPromise(argv, skyPagesConfig, webpack, isAot)
-        .then(stats => browser(argv, skyPagesConfig, stats, port));
-    });
+      buildCompiler(argv, skyPagesConfig, webpack, isAot)
+        .then(stats => {
+          browser(argv, skyPagesConfig, stats, port);
+          resolve();
+        })
+        .catch(reject);
+    })
+    .catch(reject);
+  });
 }
 
-function buildPromise(argv, skyPagesConfig, webpack, isAot) {
+function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
   const assetsBaseUrl = argv.assets || '';
   const assetsRel = argv.assetsrel;
 
@@ -172,10 +179,13 @@ function build(argv, skyPagesConfig, webpack) {
 
   if (lintResult.exitCode > 0) {
     process.exit(lintResult.exitCode);
-  } else if (argv.serve) {
-    buildServe(argv, skyPagesConfig, webpack, isAot);
   } else {
-    return buildPromise(argv, skyPagesConfig, webpack, isAot);
+    return new Promise((resolve, reject) => {
+      const name = argv.serve ? buildServe : buildCompiler;
+      name(argv, skyPagesConfig, webpack, isAot)
+        .then(resolve)
+        .catch(reject);
+    });
   }
 }
 
