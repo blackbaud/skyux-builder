@@ -56,7 +56,7 @@ let config = {
       })
 
       // Install!
-      .then(() => common.exec('npm', ['install'], common.cwdOpts))
+      .then(() => common.exec('npm', ['install'], common.cwdOpts));
   },
 
   onComplete: () => {
