@@ -1,6 +1,6 @@
 # 1.0.0-rc.17 (2017-08-23)
 
-- Created `--serve`/`-s` flag for `skyux build` to easily allow a built SPA to be accessed.  Can be used in conjunction with the `--launch` and `--browser` flags. [#219](https://github.com/blackbaud/skyux-builder/pull/219)
+- Created the `--serve`/`-s` flag for `skyux build` to serve the SPA locally after it builds.  Can use in conjunction with the `--launch` and `--browser` flags. [#219](https://github.com/blackbaud/skyux-builder/pull/219)
 - Upgraded `@blackbaud/auth-client` to 1.12.0. [#259](https://github.com/blackbaud/skyux-builder/pull/259)
 
 # 1.0.0-rc.16 (2017-08-18)
