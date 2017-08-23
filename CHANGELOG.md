@@ -1,3 +1,8 @@
+# 1.0.0-rc.17 (2017-08-23)
+
+- Created `--serve`/`-s` flag for `skyux build` to easily allow a built SPA to be accessed.  Can be used in conjunction with the `--launch` and `--browser` flags. [#219](https://github.com/blackbaud/skyux-builder/pull/219)
+- Upgraded `@blackbaud/auth-client` to 1.12.0. [#259](https://github.com/blackbaud/skyux-builder/pull/259)
+
 # 1.0.0-rc.16 (2017-08-18)
 
 - Created `SkyA11y` class.  It's available during `skyux e2e` and aids in testing accessibility guidelines. [#250](https://github.com/blackbaud/skyux-builder/pull/250)
