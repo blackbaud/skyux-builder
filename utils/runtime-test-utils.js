@@ -4,6 +4,13 @@
 const merge = require('merge');
 
 module.exports = {
+  getDefault: function (runtime, skyux) {
+    return {
+      runtime: this.getDefaultRuntime(runtime),
+      skyux: this.getDefaultSkyux(skyux)
+    };
+  },
+
   getDefaultRuntime: function (runtime) {
     return merge.recursive({
       app: {

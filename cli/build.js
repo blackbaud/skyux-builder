@@ -3,10 +3,14 @@
 
 const fs = require('fs-extra');
 const merge = require('merge');
+
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 const assetsProcessor = require('../lib/assets-processor');
 const pluginFileProcessor = require('../lib/plugin-file-processor');
+
+const server = require('./utils/server');
+const browser = require('./utils/browser');
 const runCompiler = require('./utils/run-compiler');
 const tsLinter = require('./utils/ts-linter');
 
@@ -114,27 +118,27 @@ function cleanupAot() {
   fs.removeSync(skyPagesConfigUtil.spaPathTemp());
 }
 
-/**
- * Executes the build command.
- * @name build
- */
-function build(argv, skyPagesConfig, webpack) {
-  const compileModeIsAoT = skyPagesConfig &&
-    skyPagesConfig.skyux &&
-    skyPagesConfig.skyux.compileMode === 'aot';
+function buildServe(argv, skyPagesConfig, webpack, isAot) {
+  const base = skyPagesConfigUtil.getAppBase(skyPagesConfig);
+  return server
+    .start(base)
+    .then(port => {
+      argv.assets = argv.assets || `https://localhost:${port}`;
+      return buildCompiler(argv, skyPagesConfig, webpack, isAot)
+        .then(stats => {
+          browser(argv, skyPagesConfig, stats, port);
+          return stats;
+        });
+    });
+}
 
-  let buildConfig;
-
+function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
   const assetsBaseUrl = argv.assets || '';
   const assetsRel = argv.assetsrel;
 
-  const lintResult = tsLinter.lintSync();
-  if (lintResult.exitCode > 0) {
-    process.exit(lintResult.exitCode);
-    return;
-  }
+  let buildConfig;
 
-  if (compileModeIsAoT) {
+  if (isAot) {
     stageAot(skyPagesConfig, assetsBaseUrl, assetsRel);
     buildConfig = require('../config/webpack/build-aot.webpack.config');
   } else {
@@ -142,17 +146,38 @@ function build(argv, skyPagesConfig, webpack) {
   }
 
   const config = buildConfig.getWebpackConfig(skyPagesConfig);
-
   assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
 
-  return runCompiler(webpack, config)
+  return runCompiler(webpack, config, isAot)
     .then(stats => {
-      if (compileModeIsAoT) {
+      if (isAot) {
         cleanupAot();
       }
 
-      return Promise.resolve(stats);
+      return stats;
     });
+}
+
+/**
+ * Executes the build command.
+ * @name build
+ * @param {*} skyPagesConfig
+ * @param {*} webpack
+ * @param {*} isAot
+ */
+function build(argv, skyPagesConfig, webpack) {
+
+  const lintResult = tsLinter.lintSync();
+  const isAot = skyPagesConfig &&
+    skyPagesConfig.skyux &&
+    skyPagesConfig.skyux.compileMode === 'aot';
+
+  if (lintResult.exitCode > 0) {
+    process.exit(lintResult.exitCode);
+  } else {
+    const name = argv.serve ? buildServe : buildCompiler;
+    return name(argv, skyPagesConfig, webpack, isAot);
+  }
 }
 
 module.exports = build;

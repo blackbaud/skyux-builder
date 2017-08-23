@@ -9,6 +9,19 @@ const config = require('./config/sky-pages/sky-pages.config');
 module.exports = {
   runCommand: (command, argv) => {
     const skyPagesConfig = config.getSkyPagesConfig(command);
+    const shorthand = {
+      l: 'launch',
+      b: 'browser',
+      s: 'serve'
+    };
+
+    // Process shorthand flags
+    Object.keys(shorthand).forEach(key => {
+      if (argv[key]) {
+        argv[shorthand[key]] = argv[key];
+      }
+    });
+
     switch (command) {
       case 'build':
         require('./cli/build')(argv, skyPagesConfig, webpack);
