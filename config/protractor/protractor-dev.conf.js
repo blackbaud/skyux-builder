@@ -24,7 +24,9 @@ let config = {
     const branch = 'builder-dev';
 
     return common.rimrafPromise(common.tmp)
-      .then(() => common.exec('git', ['clone', url, '-b', branch, common.tmp]))
+      .then(() => common.exec('git', [
+        'clone', '--depth', '1', url, '--branch', branch, common.tmp
+      ]))
 
       // Get the current git branch.
       .then(() => {
