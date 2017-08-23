@@ -30,14 +30,22 @@ let config = {
 
       // Get the current git branch.
       .then(() => {
-        const result = spawn.sync('git', ['branch']);
-        const output = result.stdout.toString();
+        let branch;
 
-        const branch = output
-          .split('\n')
-          .filter(name => (name.trim().indexOf('*') === 0))[0]
-          .trim()
-          .replace('* ', '');
+        branch = process.env['$TRAVIS_PULL_REQUEST_BRANCH'];
+
+        if (branch) {
+          console.log('$TRAVIS_PULL_REQUEST_BRANCH:', branch);
+        } else {
+          const result = spawn.sync('git', ['branch']);
+          const output = result.stdout.toString();
+
+          branch = output
+            .split('\n')
+            .filter(name => (name.trim().indexOf('*') === 0))[0]
+            .trim()
+            .replace('* ', '');
+        }
 
         return branch;
       })
