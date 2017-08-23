@@ -18,6 +18,8 @@ branches:
 before_install:
  - sudo cp ./ssl/skyux-ca.crt /usr/local/share/ca-certificates/skyux-ca.crt
  - sudo update-ca-certificates
+ - if [[ `npm -v` != 5* ]]; then npm i -g npm@latest; fi
+ - npm -v
 
 before_script:
   - "export CHROME_BIN=chromium-browser"

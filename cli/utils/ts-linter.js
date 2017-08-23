@@ -6,7 +6,6 @@ const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 const logger = require('../../utils/logger');
 
 const flags = [
-  '--max-old-space-size=4096',
   '--type-check',
   '--project',
   skyPagesConfigUtil.spaPath('tsconfig.json'),
@@ -20,6 +19,10 @@ function lintSync() {
   logger.info('Starting TSLint...');
 
   const spawnResult = spawn.sync('./node_modules/.bin/tslint', flags);
+  if (spawnResult.error) {
+    logger.error(spawnResult.error.message);
+    process.exit(1);
+  }
 
   // Convert buffers to strings.
   let output = [];

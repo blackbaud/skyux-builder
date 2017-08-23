@@ -3,6 +3,8 @@
 
 const path = require('path');
 const merge = require('merge');
+const fs = require('fs-extra');
+const spawn = require('cross-spawn');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
 const common = require('../../e2e/shared/common');
@@ -18,36 +20,53 @@ let config = {
   onPrepare: () => {
     jasmine.getEnv().addReporter(new SpecReporter());
 
-    return new Promise((resolve, reject) => {
-      const url = 'https://github.com/blackbaud/skyux-template';
-      const branch = 'builder-dev';
+    const url = 'https://github.com/blackbaud/skyux-template';
+    const branch = 'builder-dev';
 
-      common.rimrafPromise(common.tmp)
-        .then(() => common.exec(`git`, [
-          `clone`,
-          `-b`,
-          branch,
-          `--single-branch`,
-          url,
-          common.tmp
-        ]))
-        .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
-        .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
-        .then(resolve)
-        .catch(reject);
-    });
+    return common.rimrafPromise(common.tmp)
+      .then(() => common.exec('git', [
+        'clone', '--depth', '1', url, '--branch', branch, common.tmp
+      ]))
+
+      // Get the current git branch.
+      .then(() => {
+        let branch;
+
+        branch = process.env.$TRAVIS_PULL_REQUEST_BRANCH;
+
+        if (branch) {
+          console.log('$TRAVIS_PULL_REQUEST_BRANCH:', branch);
+        } else {
+          const result = spawn.sync('git', ['branch']);
+          const output = result.stdout.toString();
+
+          branch = output
+            .split('\n')
+            .filter(name => (name.trim().indexOf('*') === 0))[0]
+            .trim()
+            .replace('* ', '');
+        }
+
+        return branch;
+      })
+
+      // Link builder version to current git branch.
+      .then((branch) => {
+        const json = fs.readJSONSync(`${common.tmp}package.json`);
+        json.devDependencies['@blackbaud/skyux-builder'] = `blackbaud/skyux-builder#${branch}`;
+        fs.writeJSONSync(`${common.tmp}package.json`, json);
+        return Promise.resolve();
+      })
+
+      // Install!
+      .then(() => common.exec('npm', ['install'], common.cwdOpts));
   },
 
   onComplete: () => {
-
     // Catch any rogue servers
     common.afterAll();
 
-    return new Promise((resolve, reject) => {
-      common.rimrafPromise(common.tmp)
-        .then(resolve)
-        .catch(reject);
-    });
+    return common.rimrafPromise(common.tmp);
   }
 };
 
