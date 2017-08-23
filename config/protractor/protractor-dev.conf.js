@@ -32,7 +32,7 @@ let config = {
       .then(() => {
         let branch;
 
-        branch = process.env['$TRAVIS_PULL_REQUEST_BRANCH'];
+        branch = process.env.$TRAVIS_PULL_REQUEST_BRANCH;
 
         if (branch) {
           console.log('$TRAVIS_PULL_REQUEST_BRANCH:', branch);
