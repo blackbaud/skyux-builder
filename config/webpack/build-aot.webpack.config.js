@@ -31,7 +31,9 @@ function getWebpackConfig(skyPagesConfig) {
       rules: [
         {
           test: /\.ts$/,
-          loader: '@ngtools/webpack'
+          // Allows skyux commands to run with `npm link`
+          // https://github.com/angular/angular-cli/issues/3781#issuecomment-272284110
+          loader: require.resolve('@ngtools/webpack')
         }
       ]
     },

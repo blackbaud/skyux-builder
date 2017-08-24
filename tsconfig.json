@@ -16,7 +16,16 @@
     "types": [
       "jasmine",
       "node"
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@angular/*": [
+        "../../node_modules/@angular/*"
+      ],
+      "rxjs/*": [
+        "../../node_modules/rxjs/*"
+      ]
+    }
   },
   "compileOnSave": false,
   "buildOnSave": false

@@ -88,11 +88,11 @@ function getWebpackConfig(skyPagesConfig) {
           test: /sky-pages\.module\.ts$/,
           loader: outPath('loader', 'sky-pages-module')
         },
-        {
-          enforce: 'pre',
-          loader: outPath('loader', 'sky-processor', 'preload'),
-          exclude: /node_modules/
-        },
+        // {
+        //   enforce: 'pre',
+        //   loader: outPath('loader', 'sky-processor', 'preload'),
+        //   exclude: /node_modules/
+        // },
         {
           test: /\.s?css$/,
           use: [

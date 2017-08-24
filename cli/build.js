@@ -31,7 +31,16 @@ function writeTSConfig() {
       'types': [
         'jasmine',
         'node'
-      ]
+      ],
+      'baseUrl': '.',
+      'paths': {
+        '@angular/*': [
+          '../../node_modules/@angular/*'
+        ],
+        'rxjs/*': [
+          '../../node_modules/rxjs/*'
+        ]
+      }
     },
     'files': [
       './app/app.module.ts'
