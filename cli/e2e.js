@@ -1,6 +1,7 @@
 /*jslint node: true */
 'use strict';
 
+const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
 const spawn = require('cross-spawn');
@@ -150,10 +151,19 @@ function spawnSelenium() {
  */
 function spawnBuild(argv, skyPagesConfig, webpack) {
   return new Promise((resolve, reject) => {
+
+    if (argv.build === false) {
+      logger.info('Skipping build step');
+      return resolve({
+        metadata: fs.readJsonSync('dist/metadata.json')
+      });
+    }
+
     logger.info('Running build...');
     build(argv, skyPagesConfig, webpack)
       .then(stats => {
         logger.info('Build complete.');
+        console.log(stats.toJson().chunks);
         resolve(stats.toJson().chunks);
       })
       .catch(reject);

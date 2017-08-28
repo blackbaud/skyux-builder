@@ -47,6 +47,11 @@ function resolve(url, localUrl, chunks, skyPagesConfig) {
 function getScripts(chunks) {
   let scripts = [];
 
+  // Used when skipping the build, short-circuit to return metadata
+  if (chunks.metadata) {
+    return chunks.metadata;
+  }
+
   sorter.dependency(chunks).forEach((chunk) => {
     scripts.push({
       name: chunk.files[0]
