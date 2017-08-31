@@ -51,7 +51,7 @@ module.exports = {
         filePath: this.spaPath(`skyuxconfig.json`)
       },
       {
-        fileName: 'SPA skyuxconfig.${command}.json',
+        fileName: `SPA skyuxconfig.${command}.json`,
         filePath: this.spaPath(`skyuxconfig.${command}.json`)
       }
     ];
