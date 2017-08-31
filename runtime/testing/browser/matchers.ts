@@ -43,7 +43,8 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
 
         result.message = result.pass ?
           'Expected element\'s inner text not to be ' + expectedText :
-          'Expected element\'s inner text to be ' + expectedText;
+          `Expected element's inner text to be:\t${expectedText}\n` +
+          `Actual element's inner text was:    \t${actualText}`;
 
         return result;
       }
