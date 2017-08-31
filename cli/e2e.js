@@ -154,16 +154,21 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
 
     if (argv.build === false) {
       logger.info('Skipping build step');
-      return resolve({
-        metadata: fs.readJsonSync('dist/metadata.json')
-      });
+
+      const file = 'dist/metadata.json';
+      if (!fs.existsSync(file)) {
+        logger.info(`Unable to skip build step.  "${file}" not found.`);
+      } else {
+        return resolve({
+          metadata: fs.readJsonSync(file)
+        });
+      }
     }
 
     logger.info('Running build...');
     build(argv, skyPagesConfig, webpack)
       .then(stats => {
         logger.info('Build complete.');
-        console.log(stats.toJson().chunks);
         resolve(stats.toJson().chunks);
       })
       .catch(reject);

@@ -218,12 +218,27 @@ describe('cli e2e', () => {
     mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('should accept the --no-build flag', (done) => {
+  it('should accept the --no-build flag and handle errors', (done) => {
+
+    spyOn(fs, 'existsSync').and.returnValue(false);
+
+    mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(() => {
+      const calls = logger.info.calls.allArgs();
+      const message = `Unable to skip build step.  "dist/metadata.json" not found.`;
+      expect(calls).toContain([message]);
+      done();
+    });
+
+  });
+
+  it('should accept the --no-build flag and handle errors', (done) => {
     const metadata = [{ name: 'file1.js' }];
     const json = JSON.stringify({ metadata: metadata });
     const param = `--params.chunks=${json}`;
 
-    const fsSpy = spyOn(fs, 'readJsonSync').and.returnValue(metadata);;
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    const fsSpy = spyOn(fs, 'readJsonSync').and.returnValue(metadata);
 
     mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
     spyOn(process, 'exit').and.callFake(exitCode => {
