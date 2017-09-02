@@ -6,7 +6,6 @@ const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 const logger = require('../../utils/logger');
 
 const flags = [
-  '--max-old-space-size=4096',
   '--type-check',
   '--project',
   skyPagesConfigUtil.spaPath('tsconfig.json'),
