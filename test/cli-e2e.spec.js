@@ -1,9 +1,11 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
 const mock = require('mock-require');
+const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const logger = require('../utils/logger');
 
@@ -41,6 +43,8 @@ describe('cli e2e', () => {
 
   let EXIT_CODE;
   let PROTRACTOR_CB;
+  let PROTRACTOR_CONFIG_FILE;
+  let PROTRACTOR_CONFIG_ARGS;
 
   beforeEach(() => {
     EXIT_CODE = 0;
@@ -67,7 +71,10 @@ describe('cli e2e', () => {
     });
 
     mock('protractor/built/launcher', {
-      init: () => {}
+      init: (file, args) => {
+        PROTRACTOR_CONFIG_FILE = file;
+        PROTRACTOR_CONFIG_ARGS = args;
+      }
     });
 
     spyOn(process, 'on').and.callFake((evt, cb) => {
@@ -149,7 +156,6 @@ describe('cli e2e', () => {
   });
 
   it('should catch selenium failures', (done) => {
-    debugger;
     mock(configPath, {
       config: {
         seleniumAddress: 'asdf'
@@ -211,5 +217,37 @@ describe('cli e2e', () => {
     });
 
     mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should accept the --no-build flag and handle errors', (done) => {
+
+    spyOn(fs, 'existsSync').and.returnValue(false);
+
+    mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(() => {
+      const calls = logger.info.calls.allArgs();
+      const message = `Unable to skip build step.  "dist/metadata.json" not found.`;
+      expect(calls).toContain([message]);
+      done();
+    });
+
+  });
+
+  it('should accept the --no-build flag and handle errors', (done) => {
+    const metadata = [{ name: 'file1.js' }];
+
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    const fsSpy = spyOn(fs, 'readJsonSync').and.returnValue(metadata);
+
+    mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(fsSpy).toHaveBeenCalledWith('dist/metadata.json');
+      expect(PROTRACTOR_CONFIG_ARGS.params.chunks).toEqual({
+        metadata: metadata
+      });
+      expect(exitCode).toBe(0);
+      done();
+    });
+
   });
 });
