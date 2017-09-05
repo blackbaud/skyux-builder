@@ -63,6 +63,19 @@ describe('host-utils', () => {
     expect(decoded.scripts).toEqual([{ name: 'test.js' }]);
   });
 
+  it('should return metadata if provided chunks contain metadata property', () => {
+    const json = {
+      metadata: [{
+        name: 'file1.js'
+      }]
+    };
+
+    const resolved = utils.resolve('/url', '', json, skyPagesConfig);
+    const decoded = decode(resolved);
+
+    expect(decoded.scripts).toEqual(json.metadata);
+  });
+
   it('should add externals, trim slash from host, and read name from package.json', () => {
 
     const readJsonSync = fs.readJsonSync;
