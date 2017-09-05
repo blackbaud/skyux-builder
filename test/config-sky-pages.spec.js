@@ -106,6 +106,13 @@ describe('config sky-pages', () => {
     expect(config.x).toEqual(7);
     expect(config.y).toEqual(8);
     expect(config.z).toEqual(9);
+
+    expect(logger.info.calls.allArgs()).toEqual([
+      ['Merging App Builder skyuxconfig.json'],
+      ['Merging App Builder skyuxconfig.build.json'],
+      ['Merging SPA skyuxconfig.json'],
+      ['Merging SPA skyuxconfig.build.json']
+    ]);
   });
 
   it('should handle config files that do not exist', () => {
