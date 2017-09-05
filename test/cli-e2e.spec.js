@@ -1,9 +1,11 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
 const mock = require('mock-require');
+const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const logger = require('../utils/logger');
 
@@ -41,6 +43,8 @@ describe('cli e2e', () => {
 
   let EXIT_CODE;
   let PROTRACTOR_CB;
+  let CROSS_SPAWN_COMMAND;
+  let CROSS_SPAWN_OPTIONS;
 
   beforeEach(() => {
     EXIT_CODE = 0;
@@ -54,14 +58,19 @@ describe('cli e2e', () => {
     }));
 
     mock('cross-spawn', {
-      spawn: () => ({
-        on: (evt, cb) => {
-          if (evt === 'exit') {
-            PROTRACTOR_CB = cb;
-            cb(EXIT_CODE);
+      spawn: (command, options) => {
+        CROSS_SPAWN_COMMAND = command;
+        CROSS_SPAWN_OPTIONS = options;
+
+        return {
+          on: (evt, cb) => {
+            if (evt === 'exit') {
+              PROTRACTOR_CB = cb;
+              cb(EXIT_CODE);
+            }
           }
-        }
-      }),
+        };
+      },
       sync: () => ({ })
     });
 
@@ -146,7 +155,6 @@ describe('cli e2e', () => {
   });
 
   it('should catch selenium failures', (done) => {
-    debugger;
     mock(configPath, {
       config: {
         seleniumAddress: 'asdf'
@@ -208,5 +216,37 @@ describe('cli e2e', () => {
     });
 
     mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  it('should accept the --no-build flag and handle errors', (done) => {
+
+    spyOn(fs, 'existsSync').and.returnValue(false);
+
+    mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(() => {
+      const calls = logger.info.calls.allArgs();
+      const message = `Unable to skip build step.  "dist/metadata.json" not found.`;
+      expect(calls).toContain([message]);
+      done();
+    });
+
+  });
+
+  it('should accept the --no-build flag and handle errors', (done) => {
+    const metadata = [{ name: 'file1.js' }];
+    const json = JSON.stringify({ metadata: metadata });
+    const param = `--params.chunks=${json}`;
+
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    const fsSpy = spyOn(fs, 'readJsonSync').and.returnValue(metadata);
+
+    mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(fsSpy).toHaveBeenCalledWith('dist/metadata.json');
+      expect(CROSS_SPAWN_OPTIONS.includes(param)).toBe(true);
+      expect(exitCode).toBe(0);
+      done();
+    });
+
   });
 });
