@@ -1,3 +1,9 @@
+# 1.0.0-rc.17 (2017-09-03)
+
+- Created the `--no-build` flag for `skyux e2e`, which will skip the build step before running end-to-end tests. [#262](https://github.com/blackbaud/skyux-builder/pull/262)
+- Disabled downloading Gecko driver when running `skyux e2e`. [#263](https://github.com/blackbaud/skyux-builder/pull/263)
+- More verbose messages when using `toHaveText` helper in `skyux test`. [#264](https://github.com/blackbaud/skyux-builder/pull/264) Thanks [@Blackbaud-BryonWilkins](https://github.com/Blackbaud-BryonWilkins)!
+
 # 1.0.0-rc.17 (2017-08-23)
 
 - Created the `--serve`/`-s` flag for `skyux build` to serve the SPA locally after it builds.  Can use in conjunction with the `--launch` and `--browser` flags. [#219](https://github.com/blackbaud/skyux-builder/pull/219)
