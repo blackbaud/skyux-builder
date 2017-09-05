@@ -54,14 +54,6 @@ describe('cli e2e', () => {
     }));
 
     mock('cross-spawn', {
-      spawn: () => ({
-        on: (evt, cb) => {
-          if (evt === 'exit') {
-            PROTRACTOR_CB = cb;
-            cb(EXIT_CODE);
-          }
-        }
-      }),
       sync: () => ({ })
     });
 
@@ -72,6 +64,17 @@ describe('cli e2e', () => {
 
     mock('glob', {
       sync: path => ['test.e2e-spec.ts']
+    });
+
+    mock('protractor/built/launcher', {
+      init: () => {}
+    });
+
+    spyOn(process, 'on').and.callFake((evt, cb) => {
+      if (evt === 'exit') {
+        PROTRACTOR_CB = cb;
+        cb(EXIT_CODE);
+      }
     });
 
     spyOn(logger, 'info');
