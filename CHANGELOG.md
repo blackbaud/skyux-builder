@@ -1,6 +1,6 @@
-# 1.0.0-rc.18 (2017-09-03)
+# 1.0.0-rc.18 (2017-09-06)
 
-- Created the `--no-build` flag for `skyux e2e`, which will skip the build step before running end-to-end tests. [#262](https://github.com/blackbaud/skyux-builder/pull/262)
+- Created the `--no-build` flag for `skyux e2e` to skip the build step before running end-to-end tests. [#262](https://github.com/blackbaud/skyux-builder/pull/262)
 - Disabled downloading Gecko driver when running `skyux e2e`. [#263](https://github.com/blackbaud/skyux-builder/pull/263)
 - More verbose messages when using `toHaveText` helper in `skyux test`. [#264](https://github.com/blackbaud/skyux-builder/pull/264) Thanks [@Blackbaud-BryonWilkins](https://github.com/Blackbaud-BryonWilkins)!
 
