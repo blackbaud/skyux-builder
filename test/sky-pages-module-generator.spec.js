@@ -102,6 +102,19 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(expectedProvider);
   });
 
+  it('should only add BBHelp Module to imports if config.skyux.help is defined', () => {
+    const expectedImport = `import { BBHelpModule } from '@blackbaud/skyux-lib-help'`;
+
+    let source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        help: {}
+      }
+    });
+
+    expect(source).toContain(expectedImport);
+  });
+
   it('should not include routing in the module if includeRouteModule is false', () => {
 
     let expectedRouting = `AppExtrasModule,\n${codegen.indent(2)}routing`;
