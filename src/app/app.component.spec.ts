@@ -395,7 +395,7 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should if svcid exists, it should assign it to the help config extends key', async(() => {
+  it('should assign help config extends key to the svcid if one exists', async(() => {
     let spyHelp = spyOn(mockHelpInitService, 'load');
     const expectedCall = { productId: 'test-config', extends: 'help-extend' };
     skyAppConfig.skyux.help = { productId: 'test-config' };
