@@ -376,8 +376,7 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should not call HelpInitializationService.load if config.skyux.help does not exist',
-    async(() => {
+  it('should not call HelpInitializationService.load if help config does not exist', async(() => {
       let spyHelp = spyOn(mockHelpInitService, 'load');
       setup(skyAppConfig).then(() => {
         fixture.detectChanges();
