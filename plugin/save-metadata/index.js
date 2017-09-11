@@ -9,7 +9,7 @@ const hostUtils = require('../../utils/host-utils');
 module.exports = function SaveMetadata() {
 
   function getFallbackName(name) {
-    return util.format('SKY_PAGES_READY_%s', name.toUpperCase());
+    return util.format('SKY_PAGES_READY_%s', name.toUpperCase().replace(/\./g, '_'));
   }
 
   this.plugin('emit', (compilation, done) => {
