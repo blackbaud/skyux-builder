@@ -49,7 +49,7 @@ let config = {
           ]))
           .then(() => {
             const builderJson = fs.readJSONSync('package.json');
-            const templateFilename = path.resolve('.e2e-tmp/package.json');
+            const templateFilename = path.resolve(common.tmp, 'package.json');
             const templateJson = fs.readJSONSync(templateFilename);
 
             for (let key in builderJson.dependencies) {
@@ -59,21 +59,24 @@ let config = {
             }
 
             console.log('Copying over npm-shrinkwrap.json');
-            fs.copySync('npm-shrinkwrap.json', '.e2e-tmp/npm-shrinkwrap.json');
+            fs.copySync('npm-shrinkwrap.json', `${common.tmp}npm-shrinkwrap.json`);
 
             console.log('Merging current builder deps into template');
-            fs.writeJSONSync(templateFilename, builderJson, { spaces: 2 });
+            fs.writeJSONSync(templateFilename, templateJson, { spaces: 2 });
             return Promise.resolve();
           })
-          .then(() => common.exec(`npm`, [`install`], common.cwdOpts))
+          .then(() => common.exec(`npm`, [`install`, '--only=prod'], common.cwdOpts))
           .then(() => {
 
             function filter(src) {
-              return src.indexOf('node_modules') === -1 && src.indexOf('.e2e-tmp') === -1;
+              return src.indexOf('node_modules') === -1 && src.indexOf(common.tmp) === -1;
             }
 
             console.log('Copying current builder');
-            fs.copySync('.', '.e2e-tmp/node_modules/@blackbaud/skyux-builder', { filter: filter });
+            fs.copySync('.', `${common.tmp}node_modules/@blackbaud/skyux-builder`, {
+              filter: filter
+            });
+
             return Promise.resolve();
           })
           .then(resolve)
