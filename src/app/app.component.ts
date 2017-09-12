@@ -16,7 +16,7 @@ import {
   BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
 
-import { BBHelp } from '@blackbaud/help-client';
+import { BBHelpClient } from '@blackbaud/help-client';
 
 import {
   SkyAppConfig,
@@ -194,7 +194,7 @@ export class AppComponent implements OnInit {
     }
 
     if (helpConfig) {
-      BBHelp.load(helpConfig);
+      BBHelpClient.load(helpConfig);
     }
   }
 }

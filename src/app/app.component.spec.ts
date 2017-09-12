@@ -8,7 +8,7 @@ import {
   SkyAppStyleLoader,
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
-import { BBHelp } from '@blackbaud/help-client';
+import { BBHelpClient } from '@blackbaud/help-client';
 import { BBOmnibar, BBOmnibarSearchArgs } from '@blackbaud/auth-client';
 
 import { AppComponent } from './app.component';
@@ -364,16 +364,16 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should not call BBHelp.load if config.skyux.help does not exist', async(() => {
-    let spyHelp = spyOn(BBHelp, 'load');
+  it('should not call BBHelpClient.load if config.skyux.help does not exist', async(() => {
+    let spyHelp = spyOn(BBHelpClient, 'load');
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyHelp).not.toHaveBeenCalled();
     });
   }));
 
-  it('should pass help config to BBHelp.load', async(() => {
-    let spyHelp = spyOn(BBHelp, 'load');
+  it('should pass help config to BBHelpClient.load', async(() => {
+    let spyHelp = spyOn(BBHelpClient, 'load');
     skyAppConfig.skyux.help = 'help-config';
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
