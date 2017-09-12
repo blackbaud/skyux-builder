@@ -150,7 +150,7 @@ describe('config webpack build-aot', () => {
     expect(json[2].name).toEqual('test2.js');
   });
 
-  it('should add the SKY_PAGES_READY_X variable to each entry', () => {
+  it('should add the SKY_PAGES_READY_X variable to each entry, replacing periods', () => {
     const lib = require('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -166,7 +166,7 @@ describe('config webpack build-aot', () => {
             switch (evt) {
               case 'emit':
                 let assets = {
-                  'test.js': {
+                  'a.b.c.js': {
                     source: () => '// My Source'
                   }
                 };
@@ -176,15 +176,15 @@ describe('config webpack build-aot', () => {
                   getStats: () => ({
                     toJson: () => ({
                       chunks: [
-                        { id: 1, entry: true, names: ['test'], files: ['test.js'] }
+                        { id: 1, entry: true, names: ['a.b.c'], files: ['a.b.c.js'] }
                       ]
                     })
                   })
                 }, () => {});
 
-                const source = assets['test.js'].source();
+                const source = assets['a.b.c.js'].source();
                 expect(source).toContain('// My Source');
-                expect(source).toContain('var SKY_PAGES_READY_TEST = true;');
+                expect(source).toContain('var SKY_PAGES_READY_A_B_C = true;');
               break;
             }
           }
