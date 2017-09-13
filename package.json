@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.0.0-rc.17",
+  "version": "1.0.0-rc.18",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
@@ -41,7 +41,7 @@
     "@angular/platform-browser": "4.3.6",
     "@angular/platform-browser-dynamic": "4.3.6",
     "@angular/router": "4.3.6",
-    "@blackbaud/auth-client": "1.13.0",
+    "@blackbaud/auth-client": "1.15.0",
     "@blackbaud/help-client": "1.0.1",
     "@ngtools/webpack": "1.6.2",
     "@types/core-js": "0.9.43",
