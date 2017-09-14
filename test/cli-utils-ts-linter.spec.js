@@ -39,6 +39,28 @@ describe('cli util ts-linter', () => {
     expect(result.exitCode).toEqual(0);
   });
 
+  it('should handle an error when spawning', () => {
+    let spyLogger = spyOn(logger, 'error');
+    let spyProcess = spyOn(process, 'exit');
+
+    const error = 'custom-error';
+    mock('cross-spawn', {
+      sync: () => {
+        return {
+          error: {
+            message: error
+          }
+        };
+      }
+    });
+
+    const tsLinter = mock.reRequire('../cli/utils/ts-linter');
+    tsLinter.lintSync();
+
+    expect(spyLogger).toHaveBeenCalledWith(error);
+    expect(spyProcess).toHaveBeenCalledWith(1);
+  })
+
   it('should log an error if linting errors found', () => {
     spyOn(logger, 'info').and.returnValue();
     spyOn(logger, 'error').and.returnValue();
