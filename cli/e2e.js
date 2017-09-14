@@ -6,6 +6,7 @@ const glob = require('glob');
 const path = require('path');
 const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
+const protractorLauncher = require('protractor/built/launcher');
 
 const build = require('./build');
 const server = require('./utils/server');
@@ -64,38 +65,14 @@ function killServers(exitCode) {
  */
 function spawnProtractor(chunks, port, skyPagesConfig) {
   logger.info('Running Protractor');
-
-  const protractorPath = path.resolve(
-    'node_modules',
-    '.bin',
-    'protractor'
-  );
-
-  // Generate a trimmed-down version of skyPagesConfig to pass to host-utils.js
-  let trimmedConfig = {
-    skyux: {
-      host: {},
-      app: {}
+  protractorLauncher.init(getProtractorConfigPath(), {
+    params: {
+      localUrl: `https://localhost:${port}`,
+      chunks: chunks,
+      skyPagesConfig: skyPagesConfig
     }
-  };
-  trimmedConfig.skyux.name = skyPagesConfig.skyux.name;
-  trimmedConfig.skyux.host.url = skyPagesConfig.skyux.host.url;
-  trimmedConfig.skyux.app.externals = skyPagesConfig.skyux.app.externals;
-
-  const protractor = spawn.spawn(
-    protractorPath,
-    [
-      getProtractorConfigPath(),
-      `--disableChecks`,
-      `--baseUrl ${skyPagesConfig.skyux.host.url}`,
-      `--params.localUrl=https://localhost:${port}`,
-      `--params.chunks=${JSON.stringify(chunks)}`,
-      `--params.skyPagesConfig=${JSON.stringify(trimmedConfig)}`
-    ],
-    spawnOptions
-  );
-
-  protractor.on('exit', killServers);
+  });
+  process.on('exit', killServers);
 }
 
 /**
