@@ -10,8 +10,8 @@ export class SkyHostBrowser {
     const destination = hostUtils.resolve(
       url,
       browser.params.localUrl,
-      JSON.parse(browser.params.chunks),
-      JSON.parse(browser.params.skyPagesConfig)
+      browser.params.chunks,
+      browser.params.skyPagesConfig
     );
 
     return browser.get(destination, timeout);
