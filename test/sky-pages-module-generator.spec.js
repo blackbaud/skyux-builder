@@ -3,6 +3,12 @@
 
 const codegen = require('../utils/codegen-utils');
 
+const getModuleList = (listName, content) => {
+  const listRegExp = new RegExp(`${listName}:\\s\\[([\\s\\S]*?).*?\\]`, 'g');
+  let list = content.match(listRegExp);
+  return list ? list[0] : [];
+}
+
 describe('SKY UX Builder module generator', () => {
 
   const runtimeUtils = require('../utils/runtime-test-utils.js');
@@ -88,6 +94,7 @@ describe('SKY UX Builder module generator', () => {
       skyux: {}
     });
 
+
     expect(source).not.toContain(expectedImport);
     expect(source).not.toContain(expectedProvider);
 
@@ -115,15 +122,32 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(expectedImport);
   });
 
+  it('should export modules from the runtimeModuleExports', () => {
+    const expectedExport = 'BBHelpModule';
+
+    let source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        help: {}
+      }
+    });
+
+    let moduleExports = getModuleList('exports', source);
+
+    expect(moduleExports).toContain(expectedExport);
+  });
+
   it('should not include routing in the module if includeRouteModule is false', () => {
 
-    let expectedRouting = `AppExtrasModule,\n${codegen.indent(2)}routing`;
+    let expectedRouting = `routing`;
     let sourceWithRouting = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
     });
 
-    expect(sourceWithRouting).toContain(expectedRouting);
+    let moduleImports = getModuleList('imports', sourceWithRouting);
+
+    expect(moduleImports).toContain(expectedRouting);
 
     let sourceWithoutRouting = generator.getSource(
       {
@@ -133,7 +157,9 @@ describe('SKY UX Builder module generator', () => {
         skyux: {}
       });
 
-    expect(sourceWithoutRouting).not.toContain(expectedRouting);
+    moduleImports = getModuleList('imports', sourceWithoutRouting);
+
+    expect(moduleImports).not.toContain(expectedRouting);
   });
 
   it('should call `enableProdMode` if the command is build', () => {
