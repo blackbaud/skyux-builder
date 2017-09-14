@@ -1,3 +1,8 @@
+# 1.0.0-rc.19 (2017-09-13)
+
+- Upgraded `@blackbaud/auth-client` to 1.15.0. [#268](https://github.com/blackbaud/skyux-builder/pull/268)
+- Bugfix to allow periods in the filenames of JavaScript assets. [#271](https://github.com/blackbaud/skyux-builder/pull/271)
+
 # 1.0.0-rc.18 (2017-09-06)
 
 - Created the `--no-build` flag for `skyux e2e` to skip the build step before running end-to-end tests. [#262](https://github.com/blackbaud/skyux-builder/pull/262)
