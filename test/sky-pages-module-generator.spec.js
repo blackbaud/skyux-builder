@@ -102,7 +102,7 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(expectedProvider);
   });
 
-  it('should add BBHelpModule to imports if config.skyux.help is defined', () => {
+  it('should import modules from the nodeModuleImports', () => {
     const expectedImport = `import { BBHelpModule } from '@blackbaud/skyux-lib-help'`;
 
     let source = generator.getSource({
@@ -113,17 +113,6 @@ describe('SKY UX Builder module generator', () => {
     });
 
     expect(source).toContain(expectedImport);
-  });
-
-  it('should not add BBHelpModule to imports if config.skyux.help is undefined', () => {
-    const expectedImport = `import { BBHelpModule } from '@blackbaud/skyux-lib-help'`;
-
-    let source = generator.getSource({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    });
-
-    expect(source).not.toContain(expectedImport);
   });
 
   it('should not include routing in the module if includeRouteModule is false', () => {
