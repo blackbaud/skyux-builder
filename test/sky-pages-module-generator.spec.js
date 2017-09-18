@@ -5,7 +5,7 @@ const codegen = require('../utils/codegen-utils');
 
 const getModuleList = (listName, content) => {
   const listRegExp = new RegExp(`${listName}:\\s\\[([\\s\\S]*?).*?\\]`, 'g');
-  let list = content.match(listRegExp);
+  const list = content.match(listRegExp);
   return list ? list[0] : [];
 }
 
@@ -94,7 +94,6 @@ describe('SKY UX Builder module generator', () => {
       skyux: {}
     });
 
-
     expect(source).not.toContain(expectedImport);
     expect(source).not.toContain(expectedProvider);
 
@@ -137,9 +136,9 @@ describe('SKY UX Builder module generator', () => {
     expect(moduleExports).toContain(expectedExport);
   });
 
-  it('should not include routing in the module if includeRouteModule is false', () => {
+  it('should not include routing in the module imports if includeRouteModule is false', () => {
 
-    let expectedRouting = `routing`;
+    const expectedImport = `routing`;
     let sourceWithRouting = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
@@ -147,7 +146,7 @@ describe('SKY UX Builder module generator', () => {
 
     let moduleImports = getModuleList('imports', sourceWithRouting);
 
-    expect(moduleImports).toContain(expectedRouting);
+    expect(moduleImports).toContain(expectedImport);
 
     let sourceWithoutRouting = generator.getSource(
       {
@@ -159,7 +158,7 @@ describe('SKY UX Builder module generator', () => {
 
     moduleImports = getModuleList('imports', sourceWithoutRouting);
 
-    expect(moduleImports).not.toContain(expectedRouting);
+    expect(moduleImports).not.toContain(expectedImport);
   });
 
   it('should call `enableProdMode` if the command is build', () => {
