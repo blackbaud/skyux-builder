@@ -377,11 +377,11 @@ describe('AppComponent', () => {
   }));
 
   it('should not call HelpInitializationService.load if help config does not exist', async(() => {
-      let spyHelp = spyOn(mockHelpInitService, 'load');
-      setup(skyAppConfig).then(() => {
-        fixture.detectChanges();
-        expect(spyHelp).not.toHaveBeenCalled();
-      });
+    let spyHelp = spyOn(mockHelpInitService, 'load');
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      expect(spyHelp).not.toHaveBeenCalled();
+    });
   }));
 
   it('should pass help config to HelpInitializationService.load', async(() => {
