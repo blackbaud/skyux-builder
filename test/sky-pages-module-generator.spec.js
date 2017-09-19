@@ -26,6 +26,43 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toBeDefined();
   });
 
+  it('should import modules from the nodeModuleImports', () => {
+    const expectedImport = `import { CommonModule } from '@angular/common';`;
+
+    let source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    expect(source).toContain(expectedImport);
+  });
+
+  it('should export modules from the runtimeModuleExports', () => {
+    const expectedExport = 'AppComponent';
+
+    let source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    let moduleExports = getModuleList('exports', source);
+
+    expect(moduleExports).toContain(expectedExport);
+  });
+
+  it('should import modules from the runtimeModuleImports', () => {
+    const expectedImport = 'CommonModule';
+
+    let source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    });
+
+    let moduleImports = getModuleList('imports', source);
+
+    expect(moduleImports).toContain(expectedImport);
+  });
+
   it('should add the NotFoundComponent if it does not exist', () => {
     const source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -108,32 +145,40 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(expectedProvider);
   });
 
-  it('should import modules from the nodeModuleImports', () => {
-    const expectedImport = `import { BBHelpModule } from '@blackbaud/skyux-lib-help'`;
+  it('should not add BBHelpModule if the help config does not exists.', () => {
+    const expectedModule = 'BBHelpModule';
+    const expectedNodeModule = `import { BBHelpModule } from '@blackbaud/skyux-lib-help';`;
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {
-        help: {}
-      }
+      skyux: {}
     });
 
-    expect(source).toContain(expectedImport);
-  });
-
-  it('should export modules from the runtimeModuleExports', () => {
-    const expectedExport = 'BBHelpModule';
-
-    let source = generator.getSource({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {
-        help: {}
-      }
-    });
-
+    let moduleImports = getModuleList('imports', source);
     let moduleExports = getModuleList('exports', source);
 
-    expect(moduleExports).toContain(expectedExport);
+    expect(source).not.toContain(expectedNodeModule);
+    expect(moduleImports).not.toContain(expectedModule);
+    expect(moduleExports).not.toContain(expectedModule);
+  });
+
+  it('should add BBHelpModule if the help config exists.', () => {
+    const expectedModule = 'BBHelpModule';
+    const expectedNodeModule = `import { BBHelpModule } from '@blackbaud/skyux-lib-help';`;
+
+    let source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        help: {}
+      }
+    });
+
+    let moduleImports = getModuleList('imports', source);
+    let moduleExports = getModuleList('exports', source);
+
+    expect(source).toContain(expectedNodeModule);
+    expect(moduleImports).toContain(expectedModule);
+    expect(moduleExports).toContain(expectedModule);
   });
 
   it('should not include routing in the module imports if includeRouteModule is false', () => {

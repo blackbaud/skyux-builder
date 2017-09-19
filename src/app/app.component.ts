@@ -74,7 +74,7 @@ export class AppComponent implements OnInit {
     private windowRef: SkyAppWindowRef,
     private config: SkyAppConfig,
     private styleLoader: SkyAppStyleLoader,
-    private helpInitService: HelpInitializationService,
+    @Optional() private helpInitService?: HelpInitializationService,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) {
     this.styleLoader.loadStyles()
@@ -194,7 +194,7 @@ export class AppComponent implements OnInit {
       BBOmnibar.load(omnibarConfig);
     }
 
-    if (helpConfig) {
+    if (helpConfig && this.helpInitService) {
 
       if (this.config.runtime.params.has('svcid')) {
         helpConfig.extends = this.config.runtime.params.get('svcid');

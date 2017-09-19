@@ -25,25 +25,6 @@ export interface RuntimeConfig {
   useTemplateUrl: boolean;
 }
 
-export interface HelpWidgetConfig {
-  extends?: string;
-  productId?: string;
-  defaultHelpKey?: string;
-  locale?: string;
-  helpBaseUrl?: string;
-  customLocales?: string[];
-  headerColor?: string;
-  headerTextColor?: string;
-  trainingCentralUrl?: string;
-  knowledgeBaseUrl?: string;
-  caseCentralUrl?: string;
-  helpCentralUrl?: string;
-  hideUndock?: boolean;
-  hideWidgetOnMobile?: boolean;
-  hideHelpChat?: boolean;
-  useFlareSearch?: boolean;
-}
-
 export interface SkyuxConfigA11y {
   rules?: any;
 }
@@ -66,7 +47,7 @@ export interface SkyuxConfig {
   cssPath?: string;
   command?: string;
   compileMode?: string;
-  help?: HelpWidgetConfig;
+  help?: any;
   host?: SkyuxConfigHost;
   importPath?: string;
   mode?: string;
