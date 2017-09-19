@@ -241,7 +241,7 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should not markt he first service as select if another one is already marked', async(() => {
+  it('should not mark the first service as select if another one is already marked', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
       nav: {
