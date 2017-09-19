@@ -150,5 +150,4 @@ describe('SKY UX Builder component generator', () => {
     });
     expect(components.names.length).toEqual(0);
   });
-
 });

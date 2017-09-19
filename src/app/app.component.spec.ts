@@ -8,7 +8,9 @@ import {
   SkyAppStyleLoader,
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
-import { BBHelp } from '@blackbaud/help-client';
+
+import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
+
 import { BBOmnibar, BBOmnibarSearchArgs } from '@blackbaud/auth-client';
 
 import { AppComponent } from './app.component';
@@ -41,6 +43,12 @@ describe('AppComponent', () => {
       }
     }
   };
+
+  class MockHelpInitService {
+    public load() { }
+  }
+
+  const mockHelpInitService = new MockHelpInitService();
 
   function setup(
     config: any,
@@ -80,6 +88,10 @@ describe('AppComponent', () => {
         useValue: {
           loadStyles: () => Promise.resolve(styleLoadError)
         }
+      },
+      {
+        provide: HelpInitializationService,
+        useValue: mockHelpInitService
       }
     ];
 
@@ -229,7 +241,7 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should not markt he first service as select if another one is already marked', async(() => {
+  it('should not mark the first service as select if another one is already marked', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
       nav: {
@@ -364,20 +376,37 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should not call BBHelp.load if config.skyux.help does not exist', async(() => {
-    let spyHelp = spyOn(BBHelp, 'load');
+  it('should not call HelpInitializationService.load if help config does not exist', async(() => {
+    let spyHelp = spyOn(mockHelpInitService, 'load');
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyHelp).not.toHaveBeenCalled();
     });
   }));
 
-  it('should pass help config to BBHelp.load', async(() => {
-    let spyHelp = spyOn(BBHelp, 'load');
-    skyAppConfig.skyux.help = 'help-config';
+  it('should pass help config to HelpInitializationService.load', async(() => {
+    let spyHelp = spyOn(mockHelpInitService, 'load');
+    skyAppConfig.skyux.help = { productId: 'test-config' };
+    skyAppConfig.runtime.params.has = (key: any) => false;
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyHelp).toHaveBeenCalledWith(skyAppConfig.skyux.help);
+    });
+  }));
+
+  it('should assign help config extends key to the svcid if one exists', async(() => {
+    let spyHelp = spyOn(mockHelpInitService, 'load');
+    const expectedCall = { productId: 'test-config', extends: 'help-extend' };
+    skyAppConfig.skyux.help = { productId: 'test-config' };
+
+    skyAppConfig.skyux.params = ['svcid'];
+    skyAppConfig.runtime.params.has = (key: any) => key === 'svcid';
+    skyAppConfig.runtime.params.get = (key: any) => key === 'svcid' ? 'help-extend' : false;
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      expect(spyHelp).not.toHaveBeenCalledWith(skyAppConfig.skyux.help);
+      expect(spyHelp).toHaveBeenCalledWith(expectedCall);
     });
   }));
 

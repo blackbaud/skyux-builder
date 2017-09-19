@@ -16,7 +16,7 @@ import {
   BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
 
-import { BBHelp } from '@blackbaud/help-client';
+import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
 
 import {
   SkyAppConfig,
@@ -74,6 +74,7 @@ export class AppComponent implements OnInit {
     private windowRef: SkyAppWindowRef,
     private config: SkyAppConfig,
     private styleLoader: SkyAppStyleLoader,
+    @Optional() private helpInitService?: HelpInitializationService,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider
   ) {
     this.styleLoader.loadStyles()
@@ -193,8 +194,13 @@ export class AppComponent implements OnInit {
       BBOmnibar.load(omnibarConfig);
     }
 
-    if (helpConfig) {
-      BBHelp.load(helpConfig);
+    if (helpConfig && this.helpInitService) {
+
+      if (this.config.runtime.params.has('svcid')) {
+        helpConfig.extends = this.config.runtime.params.get('svcid');
+      }
+
+      this.helpInitService.load(helpConfig);
     }
   }
 }
