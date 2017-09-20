@@ -1,3 +1,9 @@
+# 1.0.0 (2017-09-20)
+
+- Updated reference to new `@blackbaud/skyux-lib-help`. [#270](https://github.com/blackbaud/skyux-builder/pull/270) Thanks [@Blackbaud-BrandonJones](https://github.com/Blackbaud-BrandonJones)!
+- Increased linter line-length to 140. [#275](https://github.com/blackbaud/skyux-builder/pull/275) Thanks [@Blackbaud-BrandonHare](https://github.com/Blackbaud-BrandonHare)!
+- Upgraded dependency versions and internally changed how `skyux e2e` launches Protractor. [#266](https://github.com/blackbaud/skyux-builder/pull/266)
+
 # 1.0.0-rc.19 (2017-09-13)
 
 - Upgraded `@blackbaud/auth-client` to 1.15.0. [#268](https://github.com/blackbaud/skyux-builder/pull/268)
