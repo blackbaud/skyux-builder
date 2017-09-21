@@ -57,7 +57,7 @@ describe('@blackbaud/skyux-builder', () => {
     });
   });
 
-  it('should return false unknown command', () => {
+  it('should return false for unknown command', () => {
     spyOn(logger, 'info');
     const cmd = 'junk-command-that-does-not-exist';
     const lib = require('../index');
