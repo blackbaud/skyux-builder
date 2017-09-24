@@ -23,14 +23,18 @@ let start;
  * @name getProtractorConfigPath
  * @returns {string} protractorConfigPath
  */
-function getProtractorConfigPath() {
-  return path.resolve(
-    __dirname,
-    '..',
-    'config',
-    'protractor',
-    'protractor.conf.js'
-  );
+function getProtractorConfigPath(argv) {
+  if (argv.config) {
+    return path.resolve(argv.config);
+  } else {
+    return path.resolve(
+      __dirname,
+      '..',
+      'config',
+      'protractor',
+      'protractor.conf.js'
+    );
+  }
 }
 
 /**
@@ -63,9 +67,9 @@ function killServers(exitCode) {
  * Perhaps this should be API driven?
  * @name spawnProtractor
  */
-function spawnProtractor(chunks, port, skyPagesConfig) {
+function spawnProtractor(argv, chunks, port, skyPagesConfig) {
   logger.info('Running Protractor');
-  protractorLauncher.init(getProtractorConfigPath(), {
+  protractorLauncher.init(getProtractorConfigPath(argv), {
     params: {
       localUrl: `https://localhost:${port}`,
       chunks: chunks,
@@ -79,14 +83,24 @@ function spawnProtractor(chunks, port, skyPagesConfig) {
  * Spawns the selenium server if directConnect is not enabled.
  * @name spawnSelenium
  */
-function spawnSelenium() {
-  const config = require(getProtractorConfigPath()).config;
+function spawnSelenium(argv) {
+  const configPath = getProtractorConfigPath(argv);
+  let configFile;
 
   return new Promise((resolve, reject) => {
     logger.info('Spawning selenium...');
 
+    if (!fs.existsSync(configPath)) {
+      return reject(`Unable to locate config file ${configPath}`);
+    }
+
+    configFile = require(configPath);
+    if (!configFile.hasOwnProperty('config')) {
+      return reject(`Invalid config file ${configPath}`);
+    }
+
     // Assumes we're running selenium ourselves, so we should prep it
-    if (config.seleniumAddress) {
+    if (configFile.config.seleniumAddress) {
       logger.info('Installing Selenium...');
       selenium.install({ logger: logger.info }, () => {
         logger.info('Selenium installed. Starting...');
@@ -184,18 +198,19 @@ function e2e(argv, skyPagesConfig, webpack) {
         .all([
           spawnBuild(argv, skyPagesConfig, webpack),
           port,
-          spawnSelenium()
+          spawnSelenium(argv)
         ]);
     })
     .then(values => {
       spawnProtractor(
+        argv,
         values[0],
         values[1],
         skyPagesConfig
       );
     })
     .catch(err => {
-      logger.warn(`ERROR [skyux e2e]: ${err.message}`);
+      logger.error(`ERROR [skyux e2e]: ${err}`);
       killServers(1);
     });
 }

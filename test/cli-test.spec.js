@@ -1,6 +1,8 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const fs = require('fs-extra');
+const path = require('path');
 const mock = require('mock-require');
 const logger = require('../utils/logger');
 
@@ -191,4 +193,52 @@ describe('cli test', () => {
     expect(_hooks[1]).toEqual('run_complete');
     expect(process.exit).toHaveBeenCalledWith(0);
   });
+
+  it('should show an error for a missing config file', () => {
+
+    const config = 'does-not-exist.js';
+    const resolved = path.resolve(config);
+
+    mock('karma', {
+      config: {
+        parseConfig: (c) => {}
+      },
+      Server: function () {
+        this.on = () => {};
+        this.start = () => {};
+      }
+    });
+
+    spyOn(fs, 'existsSync').and.returnValue(false);
+
+    const test = mock.reRequire('../cli/test');
+    test('test', { config: config });
+
+    expect(logger.error).toHaveBeenCalledWith(`Error loading config file ${resolved}`);
+    expect(process.exit.calls.mostRecent().args[0]).toBe(1);
+  });
+
+  it('should accept the config flag', (done) => {
+    const config = 'custom-file1.js';
+
+    mock('karma', {
+      config: {
+        parseConfig: (c) => {
+          expect(c).toEqual(path.resolve(config));
+          done();
+        }
+      },
+      Server: function () {
+        this.on = () => {};
+        this.start = () => {};
+      }
+    });
+
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    const test = mock.reRequire('../cli/test');
+    test('test', { config: config });
+
+  });
+
 });

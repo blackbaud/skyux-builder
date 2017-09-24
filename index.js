@@ -12,7 +12,8 @@ module.exports = {
     const shorthand = {
       l: 'launch',
       b: 'browser',
-      s: 'serve'
+      s: 'serve',
+      c: 'config'
     };
 
     // Process shorthand flags
