@@ -1,3 +1,7 @@
+# 1.0.1 (2017-09-26)
+
+- Bugfix: Reverted some dependencies to fix `@angular/animations` errors. [#281](https://github.com/blackbaud/skyux-builder/pull/281)
+
 # 1.0.0 (2017-09-20)
 
 - Updated reference to new `@blackbaud/skyux-lib-help`. [#270](https://github.com/blackbaud/skyux-builder/pull/270) Thanks [@Blackbaud-BrandonJones](https://github.com/Blackbaud-BrandonJones)!
