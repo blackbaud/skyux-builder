@@ -29,9 +29,10 @@
   },
   "homepage": "https://github.com/blackbaud/skyux-builder#readme",
   "peerDependencies": {
-    "@blackbaud/skyux": "~2.0.0"
+    "@blackbaud/skyux": "^2.0.0"
   },
   "dependencies": {
+    "@angular/animations": "4.3.6",
     "@angular/common": "4.3.6",
     "@angular/compiler": "4.3.6",
     "@angular/compiler-cli": "4.3.6",
@@ -101,7 +102,7 @@
     "zone.js": "0.8.17"
   },
   "devDependencies": {
-    "@blackbaud/skyux": "~2.0.0",
+    "@blackbaud/skyux": "^2.0.0",
     "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
     "jasmine": "2.8.0",
