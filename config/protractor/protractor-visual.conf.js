@@ -1,4 +1,4 @@
-/*jshint node: true */
+/*global browser */
 'use strict';
 
 const merge = require('merge');
