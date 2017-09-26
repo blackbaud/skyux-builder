@@ -1,3 +1,4 @@
+/*jshint jasmine: true, node: true */
 /*global browser */
 'use strict';
 

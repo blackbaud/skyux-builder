@@ -9,7 +9,5 @@
   "nonew": true,
   "strict": true,
   "undef": true,
-  "unused": true,
-  "node": true,
-  "jasmine": true
+  "unused": true
 }
