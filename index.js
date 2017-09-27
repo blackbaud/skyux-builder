@@ -45,6 +45,9 @@ module.exports = {
       case 'version':
         require('./cli/version')();
         break;
+      case 'visual':
+        require('./cli/visual')(argv, skyPagesConfig, webpack);
+        break;
       default:
         logger.info('@blackbaud/skyux-builder: Unknown command %s', command);
         break;
