@@ -161,7 +161,8 @@ function e2e(argv, skyPagesConfig, webpack) {
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  const specsPath = path.resolve(process.cwd(), 'e2e/**/*.e2e-spec.ts');
+  const specsPattern = (argv.specs) ? argv.specs : 'e2e/**/*.e2e-spec.ts';
+  const specsPath = path.resolve(process.cwd(), specsPattern);
   const specsGlob = glob.sync(specsPath);
 
   if (specsGlob.length === 0) {
