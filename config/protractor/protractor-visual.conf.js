@@ -13,18 +13,22 @@ function onPrepare() {
 
   jasmine.getEnv().addReporter(new SpecReporter());
 
-  browser.pixDiff = new PixDiff({
-    basePath: path.join(process.cwd(), 'screenshots-baseline-local'),
-    diffPath: path.join(process.cwd(), 'screenshots-diff-local'),
-    baseline: true,
-    width: 1000,
-    height: 800
-  });
-
-  browser.skyVisualTestOptions = {
-    createdPath: path.join(process.cwd(), 'screenshots-created-local'),
-    createdPathDiff: path.join(process.cwd(), 'screenshots-created-diff-local')
+  browser.skyVisualTestConfig = {
+    baseline: {
+      basePath: path.join(process.cwd(), 'screenshots-baseline-local'),
+      diffPath: path.join(process.cwd(), 'screenshots-diff-local'),
+      baseline: true,
+      width: 1000,
+      height: 800
+    },
+    created: {
+      basePath: path.join(process.cwd(), 'screenshots-created-local'),
+      diffPath: path.join(process.cwd(), 'screenshots-created-diff-local'),
+      baseline: true
+    }
   };
+
+  browser.pixDiff = new PixDiff(browser.skyVisualTestConfig.baseline);
 
   const destination = builderUtils.resolve(
     '/',
