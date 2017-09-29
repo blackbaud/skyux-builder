@@ -5,6 +5,7 @@
 const merge = require('merge');
 const path = require('path');
 const commonConfig = require('./protractor.conf');
+const { spaPath } = require('../sky-pages/sky-pages.config');
 
 function onPrepare() {
   const builderUtils = require('../../utils/host-utils');
@@ -15,15 +16,15 @@ function onPrepare() {
 
   browser.skyVisualTestConfig = {
     baseline: {
-      basePath: path.join(process.cwd(), 'screenshots-baseline-local'),
-      diffPath: path.join(process.cwd(), 'screenshots-diff-local'),
+      basePath: spaPath('screenshots-baseline-local'),
+      diffPath: spaPath('screenshots-diff-local'),
       baseline: true,
       width: 1000,
       height: 800
     },
     created: {
-      basePath: path.join(process.cwd(), 'screenshots-created-local'),
-      diffPath: path.join(process.cwd(), 'screenshots-created-diff-local'),
+      basePath: spaPath('screenshots-created-local'),
+      diffPath: spaPath('screenshots-created-diff-local'),
       baseline: true
     }
   };

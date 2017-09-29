@@ -1,11 +1,12 @@
 import { element, by, browser } from 'protractor';
-import * as pixDiff from 'pix-diff';
+const pixDiff = require('pix-diff');
 
 import { SkyHostBrowser } from './host-browser';
 
 export interface SkyCompareScreenshotConfig {
   screenshotName: string;
   selector: string;
+  breakpoint?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export abstract class SkyVisualTest {
@@ -20,6 +21,8 @@ export abstract class SkyVisualTest {
       thresholdType: pixDiff.THRESHOLD_PERCENT,
       threshold: SkyVisualTest.THRESHOLD_PERCENT
     };
+
+    SkyVisualTest.resizeWindow(config.breakpoint);
 
     return browser.pixDiff
       .checkRegion(
@@ -37,11 +40,15 @@ export abstract class SkyVisualTest {
 
         return SkyVisualTest.generateDiffScreenshot(config, results);
       })
-      .then(() => {
-        SkyHostBrowser.resizeWindow(
-          browser.skyVisualTestConfig.baseline.width,
-          browser.skyVisualTestConfig.baseline.height
-        );
+      .then((mismatchMessage: string) => {
+        expect(true).toBe(false, mismatchMessage);
+      })
+      .catch((error: any) => {
+        if (error.message.indexOf('saving current image') === -1) {
+          throw error;
+        }
+
+        return Promise.resolve();
       });
   }
 
@@ -56,9 +63,34 @@ export abstract class SkyVisualTest {
       .saveRegion(subject, config.screenshotName)
       .then(() => {
         const mismatchPercentage = (results.differences / results.dimension * 100).toFixed(2);
-        const mismatchMessage
-          = `Screenshots have mismatch percentage of ${mismatchPercentage} percent!`;
-        return Promise.reject(new Error(mismatchMessage));
+        return `Screenshots have mismatch percentage of ${mismatchPercentage} percent!`;
       });
+  }
+
+  private static resizeWindow(breakpoint: string): void {
+    let width: number;
+    let height: number;
+
+    switch (breakpoint) {
+      case 'xs':
+        width = 480;
+        height = 800;
+        break;
+      case 'sm':
+        width = 768;
+        height = 800;
+        break;
+      default:
+      case 'md':
+        width = 920;
+        height = 800;
+        break;
+      case 'lg':
+        width = 1200;
+        height = 800;
+        break;
+    }
+
+    SkyHostBrowser.resizeWindow(width, height);
   }
 }
