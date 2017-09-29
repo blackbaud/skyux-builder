@@ -1,22 +1,40 @@
 /*jslint node: true */
 'use strict';
 
+const fs = require('fs-extra');
+const path = require('path');
+const logger = require('../utils/logger');
+
+function getConfigPath(command, argv) {
+  const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+
+  if (argv.config) {
+    const resolved = path.resolve(argv.config);
+
+    if (!fs.existsSync(resolved)) {
+      logger.error(`Error loading config file ${resolved}`);
+      process.exit(1);
+    }
+
+    return resolved;
+  } else {
+    return skyPagesConfigUtil.outPath(`config/karma/${command}.karma.conf.js`);
+  }
+}
+
 /**
  * Spawns the karma test command.
  * @name test
  */
 function test(command, argv) {
-  const logger = require('../utils/logger');
-  const Server = require('karma').Server;
+  const karma = require('karma');
   const tsLinter = require('./utils/ts-linter');
-  const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
   argv = argv || process.argv;
   argv.command = command;
 
-  const karmaConfigUtil = require('karma').config;
-  const karmaConfigPath = skyPagesConfigUtil.outPath(`config/karma/${command}.karma.conf.js`);
-  const karmaConfig = karmaConfigUtil.parseConfig(karmaConfigPath);
+  const karmaConfigPath = getConfigPath(command, argv);
+  const karmaConfig = karma.config.parseConfig(karmaConfigPath);
 
   let lintResult;
 
@@ -44,7 +62,7 @@ function test(command, argv) {
     process.exit(exitCode);
   };
 
-  const server = new Server(karmaConfig, onExit);
+  const server = new karma.Server(karmaConfig, onExit);
   server.on('run_start', onRunStart);
   server.on('run_complete', onRunComplete);
   server.start();

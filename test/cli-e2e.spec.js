@@ -233,7 +233,7 @@ describe('cli e2e', () => {
 
   });
 
-  it('should accept the --no-build flag and handle errors', (done) => {
+  it('should accept the --no-build flag without errors', (done) => {
     const metadata = [{ name: 'file1.js' }];
 
     spyOn(fs, 'existsSync').and.returnValue(true);
@@ -248,6 +248,63 @@ describe('cli e2e', () => {
       expect(exitCode).toBe(0);
       done();
     });
-
   });
+
+  it('should accept the config flag', (done) => {
+    const config = 'custom-file1.js';
+    const configResolve = path.resolve(config);
+
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    spyOn(fs, 'readJsonSync').and.returnValue([]);
+
+    mock(configResolve, {
+      config: {
+        custom: true
+      }
+    });
+
+    mock.reRequire('../cli/e2e')({ build: false, config: config }, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(() => {
+      expect(PROTRACTOR_CONFIG_FILE).toBe(configResolve);
+      done();
+    });
+  });
+
+  it('should show an error for a missing config file', (done) => {
+    const config = 'custom-file2.js';
+    const configResolve = path.resolve(config);
+
+    spyOn(logger, 'error');
+    spyOn(fs, 'existsSync').and.returnValue(false);
+
+    mock.reRequire('../cli/e2e')({ build: false, config: config }, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(() => {
+      expect(logger.error).toHaveBeenCalledWith(
+        `ERROR [skyux e2e]: Unable to locate config file ${configResolve}`
+      );
+      done();
+    });
+  });
+
+  it('should show an error for an invalid config file', (done) => {
+    const config = 'custom-file2.js';
+    const configResolve = path.resolve(config);
+
+    spyOn(logger, 'error');
+    spyOn(fs, 'existsSync').and.returnValue(true);
+    spyOn(fs, 'readJsonSync').and.returnValue([]);
+
+    mock(configResolve, {
+      configInvalid: true
+    });
+
+    mock.reRequire('../cli/e2e')({ build: false, config: config }, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(() => {
+      expect(logger.error).toHaveBeenCalledWith(
+        `ERROR [skyux e2e]: Invalid config file ${configResolve}`
+      );
+      done();
+    });
+  });
+
 });
