@@ -76,6 +76,7 @@ describe('config sky-pages', () => {
           config.n = {
             toDelete: true
           }; // Testing merge override
+          config.arr = ['stringOne', 'stringTwo'] // Testing array values not concatenated
 
         // Asking for builder's skyuxconfig.build.json
         } else if (!isSpaDirectory && isCommandConfig) {
@@ -103,6 +104,7 @@ describe('config sky-pages', () => {
             }
           };
           config.n = null;
+          config.arr = ['stringOne', 'stringThree'];
         }
 
         return config;
@@ -125,6 +127,8 @@ describe('config sky-pages', () => {
     expect(config.o.keyOne).toEqual('changed');
     expect(config.o.keyTwo.nestedTwo).toEqual('changed');
     expect(config.n).toEqual(null);
+    expect(config.arr.length).toBe(2);
+    expect(config.arr).not.toContain('stringTwo');
 
     expect(logger.info.calls.allArgs()).toEqual([
       ['Merging App Builder skyuxconfig.json'],
