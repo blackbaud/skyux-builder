@@ -59,13 +59,9 @@ module.exports = {
     hierarchy.forEach(file => {
       if (fs.existsSync(file.filePath)) {
         logger.info(`Merging ${file.fileName}`);
-        console.log('original', skyuxConfig);
-        console.log('changes', readConfig(file.filePath));
         skyuxConfig = merge(skyuxConfig, readConfig(file.filePath));
       }
     });
-
-    console.log('final config', skyuxConfig);
 
     let config = {
       runtime: {
