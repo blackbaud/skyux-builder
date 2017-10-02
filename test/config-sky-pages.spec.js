@@ -67,6 +67,15 @@ describe('config sky-pages', () => {
         if (!isSpaDirectory && isDefaultConfig) {
           config.a = 1; // Merged through entire process
           config.z = 9; // Unique to this file
+          config.o = {
+            keyOne: 'keyOne',
+            keyTwo: {
+              nestedTwo: 'nestedTwo'
+            }
+          }; // Testing recursive merge
+          config.n = {
+            toDelete: true
+          }; // Testing merge override
 
         // Asking for builder's skyuxconfig.build.json
         } else if (!isSpaDirectory && isCommandConfig) {
@@ -87,6 +96,13 @@ describe('config sky-pages', () => {
           config.b = 3;
           config.c = 2;
           config.w = 6; // Unique to this file
+          config.o = {
+            keyOne: 'changed',
+            keyTwo: {
+              nestedTwo: 'changed'
+            }
+          };
+          config.n = null;
         }
 
         return config;
@@ -106,6 +122,9 @@ describe('config sky-pages', () => {
     expect(config.x).toEqual(7);
     expect(config.y).toEqual(8);
     expect(config.z).toEqual(9);
+    expect(config.o.keyOne).toEqual('changed');
+    expect(config.o.keyTwo.nestedTwo).toEqual('changed');
+    expect(config.n).toEqual(null);
 
     expect(logger.info.calls.allArgs()).toEqual([
       ['Merging App Builder skyuxconfig.json'],

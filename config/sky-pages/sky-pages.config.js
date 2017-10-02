@@ -3,7 +3,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('merge');
+const merge = require('webpack-merge');
 const logger = require('../../utils/logger');
 
 /**
@@ -59,9 +59,13 @@ module.exports = {
     hierarchy.forEach(file => {
       if (fs.existsSync(file.filePath)) {
         logger.info(`Merging ${file.fileName}`);
-        merge.recursive(skyuxConfig, readConfig(file.filePath));
+        console.log('original', skyuxConfig);
+        console.log('changes', readConfig(file.filePath));
+        skyuxConfig = merge(skyuxConfig, readConfig(file.filePath));
       }
     });
+
+    console.log('final config', skyuxConfig);
 
     let config = {
       runtime: {
