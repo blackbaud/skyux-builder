@@ -31,16 +31,9 @@ export abstract class SkyVisualTest {
         const code = results.code;
         const isSimilar = (code === pixDiff.RESULT_SIMILAR || code === pixDiff.RESULT_IDENTICAL);
         const mismatchPercentage = (results.differences / results.dimension * 100).toFixed(2);
+        const message = `Screenshots have mismatch of ${mismatchPercentage} percent!`;
 
-        return {
-          isSimilar,
-          mismatchPercentage
-        };
-      })
-      .then((results: any) => {
-        const message = `Screenshots have mismatch of ${results.mismatchPercentage} percent!`;
-        expect(results.isSimilar)
-          .toBe(true, message);
+        expect(isSimilar).toBe(true, message);
       });
   }
 
