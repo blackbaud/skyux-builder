@@ -21,11 +21,6 @@ function onPrepare() {
       baseline: true,
       width: 1000,
       height: 800
-    },
-    created: {
-      basePath: spaPath('screenshots-created-local'),
-      diffPath: spaPath('screenshots-created-diff-local'),
-      baseline: true
     }
   };
 
@@ -43,7 +38,7 @@ function onPrepare() {
 
 const visualConfig = {
   specs: [
-    path.join(process.cwd(), 'src', 'app', '**', '*.visual-spec.ts')
+    spaPath('src', 'app', '**', '*.visual-spec.ts')
   ],
   onPrepare
 };

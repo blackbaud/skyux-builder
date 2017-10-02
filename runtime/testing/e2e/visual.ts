@@ -13,9 +13,6 @@ export abstract class SkyVisualTest {
   public static readonly THRESHOLD_PERCENT = .02;
 
   public static compareScreenshot(config: SkyCompareScreenshotConfig): any {
-    // Needed?
-    // browser.sleep(1000);
-
     const subject = element(by.css(config.selector));
     const checkRegionConfig = {
       thresholdType: pixDiff.THRESHOLD_PERCENT,
@@ -33,37 +30,17 @@ export abstract class SkyVisualTest {
       .then((results: any) => {
         const code = results.code;
         const isSimilar = (code === pixDiff.RESULT_SIMILAR || code === pixDiff.RESULT_IDENTICAL);
-
-        if (isSimilar) {
-          return Promise.resolve();
-        }
-
-        return SkyVisualTest.generateDiffScreenshot(config, results);
-      })
-      .then((mismatchMessage: string) => {
-        expect(true).toBe(false, mismatchMessage);
-      })
-      .catch((error: any) => {
-        if (error.message.indexOf('saving current image') === -1) {
-          throw error;
-        }
-
-        return Promise.resolve();
-      });
-  }
-
-  private static generateDiffScreenshot(
-    config: SkyCompareScreenshotConfig,
-    results: any
-  ): Promise<any> {
-    const comparator = new pixDiff(browser.skyVisualTestConfig.created);
-    const subject = element(by.css(config.selector));
-
-    return comparator
-      .saveRegion(subject, config.screenshotName)
-      .then(() => {
         const mismatchPercentage = (results.differences / results.dimension * 100).toFixed(2);
-        return `Screenshots have mismatch percentage of ${mismatchPercentage} percent!`;
+
+        return {
+          isSimilar,
+          mismatchPercentage
+        };
+      })
+      .then((results: any) => {
+        const message = `Screenshots have mismatch of ${results.mismatchPercentage} percent!`;
+        expect(results.isSimilar)
+          .toBe(true, message);
       });
   }
 
