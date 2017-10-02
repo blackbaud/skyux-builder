@@ -3,7 +3,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('webpack-merge');
+const merge = require('lodash.merge');
 const logger = require('../../utils/logger');
 
 /**
