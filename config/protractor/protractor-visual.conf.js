@@ -1,10 +1,7 @@
-/*jshint jasmine: true, node: true */
-/*global browser */
+/* jshint jasmine: true, node: true */
+/* global browser */
 'use strict';
 
-const merge = require('merge');
-const path = require('path');
-const commonConfig = require('./protractor.conf');
 const { spaPath } = require('../sky-pages/sky-pages.config');
 
 function onPrepare() {
@@ -36,15 +33,27 @@ function onPrepare() {
   return browser.get(destination);
 }
 
-const visualConfig = {
+const config = {
+  useAllAngular2AppRoots: true,
+  onPrepare,
+  beforeLaunch: function () {
+    require('ts-node').register({ ignore: false });
+  },
+  jasmineNodeOpts: {
+    showColors: true,
+    defaultTimeoutInterval: 90000
+  },
+  allScriptsTimeout: 30000,
   specs: [
     spaPath('src', 'app', '**', '*.visual-spec.ts')
   ],
-  onPrepare
+  capabilities: {
+    'browserName': 'chrome',
+    'chromeOptions': {
+      'args': ['--ignore-certificate-errors']
+    }
+  },
+  directConnect: true
 };
 
-const config = merge(commonConfig, visualConfig);
-
-module.exports = {
-  config
-};
+exports.config = config;
