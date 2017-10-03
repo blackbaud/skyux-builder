@@ -83,7 +83,7 @@
     "raw-loader": "0.5.1",
     "reflect-metadata": "0.1.10",
     "remap-istanbul": "0.9.5",
-    "rxjs": "5.4.2",
+    "rxjs": "5.4.3",
     "sass-loader": "6.0.5",
     "selenium-standalone": "6.4.1",
     "selenium-webdriver": "3.5.0",
