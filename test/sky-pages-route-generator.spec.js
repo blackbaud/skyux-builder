@@ -271,6 +271,24 @@ describe('SKY UX Builder route generator', () => {
     );
   });
 
+  it('should handle child routes with parameter', () => {
+    spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/#my-custom-route/_custom/index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    spyOn(fs, 'readFileSync').and.returnValue('');
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: ''
+      }
+    });
+
+    expect(routes.declarations).toContain(`path: 'my-custom-src'`);
+    expect(routes.declarations).toContain(`path: 'my-custom-route'`);
+    expect(routes.declarations).toContain(`path: ':custom'`);
+    expect(routes.definitions).toContain(`this.custom = params['custom'];`);
+  });
+
   it('should handle top-level routes within a child route', () => {
     spyOn(glob, 'sync').and.callFake(() => ['my-custom-src/#my-custom-route/top-level/index.html']);
     spyOn(path, 'join').and.returnValue('');
