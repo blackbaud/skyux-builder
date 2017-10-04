@@ -3,7 +3,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('merge');
+const merge = require('lodash.merge');
 const logger = require('../../utils/logger');
 
 /**
@@ -59,7 +59,7 @@ module.exports = {
     hierarchy.forEach(file => {
       if (fs.existsSync(file.filePath)) {
         logger.info(`Merging ${file.fileName}`);
-        merge.recursive(skyuxConfig, readConfig(file.filePath));
+        skyuxConfig = merge(skyuxConfig, readConfig(file.filePath));
       }
     });
 
