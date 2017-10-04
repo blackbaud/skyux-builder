@@ -2,10 +2,8 @@
 'use strict';
 
 const fs = require('fs-extra');
-const glob = require('glob');
 const path = require('path');
 const mock = require('mock-require');
-const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const logger = require('../utils/logger');
 
@@ -30,6 +28,13 @@ describe('cli e2e', () => {
     'protractor',
     'protractor.conf.js'
   );
+
+  const updateConfigJson = {
+    chrome: { last: 'last-chrome-driver' },
+    gecko: { last: 'last-gecko-driver' }
+  };
+
+  const metadataJson = [{ name: 'file1.js' }];
 
   function infoCalledWith(msg) {
     let r = false;
@@ -57,8 +62,10 @@ describe('cli e2e', () => {
       });
     }));
 
-    mock('cross-spawn', {
-      sync: () => ({ })
+    mock('webdriver-manager/built/lib/cmds/update', {
+      program: {
+        run: () => Promise.resolve(updateConfigJson)
+      }
     });
 
     mock('../cli/utils/server', {
@@ -74,6 +81,20 @@ describe('cli e2e', () => {
       init: (file, args) => {
         PROTRACTOR_CONFIG_FILE = file;
         PROTRACTOR_CONFIG_ARGS = args;
+      }
+    });
+
+    mock('fs-extra', {
+      existsSync: filename => {
+        return true;
+      },
+
+      readJsonSync: filename => {
+        if (filename.indexOf('metadata.json') > -1) {
+          return metadataJson;
+        } else if (filename.indexOf('update-config.json') > -1) {
+          return updateConfigJson;
+        }
       }
     });
 
@@ -184,16 +205,9 @@ describe('cli e2e', () => {
       config: {}
     });
 
-    mock('cross-spawn', {
-      spawn: () => {
-        return {
-          on: () => { }
-        };
-      },
-      sync: () => {
-        return {
-          error: new Error('Webdriver update failed.')
-        };
+    mock('webdriver-manager/built/lib/cmds/update', {
+      program: {
+        run: () => Promise.reject('custom-error')
       }
     });
 
@@ -219,9 +233,11 @@ describe('cli e2e', () => {
     mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('should accept the --no-build flag and handle errors', (done) => {
-
-    spyOn(fs, 'existsSync').and.returnValue(false);
+  it('should accept the --no-build flag if errors', (done) => {
+    mock.stop('fs-extra');
+    mock('fs-extra', {
+      existsSync: () => false
+    });
 
     mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
     spyOn(process, 'exit').and.callFake(() => {
@@ -233,17 +249,11 @@ describe('cli e2e', () => {
 
   });
 
-  it('should accept the --no-build flag and handle errors', (done) => {
-    const metadata = [{ name: 'file1.js' }];
-
-    spyOn(fs, 'existsSync').and.returnValue(true);
-    const fsSpy = spyOn(fs, 'readJsonSync').and.returnValue(metadata);
-
+  it('should accept the --no-build flag if errors', (done) => {
     mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
     spyOn(process, 'exit').and.callFake(exitCode => {
-      expect(fsSpy).toHaveBeenCalledWith('dist/metadata.json');
       expect(PROTRACTOR_CONFIG_ARGS.params.chunks).toEqual({
-        metadata: metadata
+        metadata: metadataJson
       });
       expect(exitCode).toBe(0);
       done();

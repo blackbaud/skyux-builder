@@ -1,55 +1,55 @@
 /*jslint node: true */
 'use strict';
 
-const spawn = require('cross-spawn');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 const logger = require('../../utils/logger');
+const tslint = require('tslint');
 
-const flags = [
-  '--type-check',
-  '--project',
-  skyPagesConfigUtil.spaPath('tsconfig.json'),
-  '--config',
-  skyPagesConfigUtil.spaPath('tslint.json'),
-  '--exclude',
-  '**/node_modules/**/*.ts'
-];
+function lintSync2() {
 
-function lintSync() {
-  logger.info('Starting TSLint...');
+  const Linter = tslint.Linter;
+  const tsconfigPath = skyPagesConfigUtil.spaPath('tsconfig.json');
+  const tslintPath = skyPagesConfigUtil.spaPath('tslint.json');
 
-  const spawnResult = spawn.sync('./node_modules/.bin/tslint', flags);
+  const options = {
+    project: tsconfigPath,
+    config: tslintPath,
+    exclude: '**/node_modules/**/*.ts',
+    typeCheck: true
+  };
 
-  // Convert buffers to strings.
-  let output = [];
-  spawnResult.output.forEach((buffer) => {
-    if (buffer === null) {
-      return;
-    }
+  const config = tslint.Configuration.loadConfigurationFromPath(
+    tslintPath,
+    process.cwd()
+  );
 
-    const str = buffer.toString().trim();
-    if (str) {
-      output.push(str);
-    }
-  });
-
-  // Convert multi-line errors into single errors.
+  const program = Linter.createProgram(tsconfigPath);
+  const files = Linter.getFileNames(program);
   let errors = [];
-  output.forEach((str) => {
-    errors = errors.concat(str.split(/\r?\n/));
+
+  files.forEach(file => {
+    const fileContents = program.getSourceFile(file).getFullText();
+    const linter = new Linter(options, program);
+
+    linter.lint(file, fileContents, config);
+    const result = linter.getResult();
+
+    if (result.errorCount) {
+      const output = result.output.trim();
+      errors.push(output);
+      logger.error(output);
+    }
   });
 
-  // Print linting results to console.
-  errors.forEach(error => logger.error(error));
   const plural = (errors.length === 1) ? '' : 's';
   logger.info(`TSLint finished with ${errors.length} error${plural}.`);
 
   return {
-    exitCode: spawnResult.status,
+    exitCode: errors.length === 0 ? 0 : 1,
     errors: errors
   };
 }
 
 module.exports = {
-  lintSync
+  lintSync: lintSync2
 };

@@ -192,22 +192,6 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should set the allow anonymous flag based on the app\'s auth configuration', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
-    skyAppConfig.skyux.omnibar = {};
-    skyAppConfig.skyux.auth = true;
-
-    setup(skyAppConfig, true).then(() => {
-      fixture.detectChanges();
-
-      expect(spyOmnibar).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          allowAnonymous: false
-        })
-      );
-    });
-  }));
-
   it('should set the known params on the omnibar config if they exist', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {};

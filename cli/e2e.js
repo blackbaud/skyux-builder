@@ -4,16 +4,16 @@
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
-const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const protractorLauncher = require('protractor/built/launcher');
+const webdriverManager = require('webdriver-manager/built/lib/cmds/update');
 
 const build = require('./build');
 const server = require('./utils/server');
 const logger = require('../utils/logger');
 
-// Disable this to quiet the output
-const spawnOptions = { stdio: 'inherit' };
+// Needed since we're manually executing webdriver-manager outside context of protractor
+const seleniumDriverPath = path.resolve(__dirname + '/selenium-drivers');
 
 let seleniumServer;
 let start;
@@ -63,15 +63,26 @@ function killServers(exitCode) {
  * Perhaps this should be API driven?
  * @name spawnProtractor
  */
-function spawnProtractor(chunks, port, skyPagesConfig) {
+function spawnProtractor(chunks, port, skyPagesConfig, webdriverConfig) {
   logger.info('Running Protractor');
-  protractorLauncher.init(getProtractorConfigPath(), {
+
+  let config = {
     params: {
       localUrl: `https://localhost:${port}`,
       chunks: chunks,
       skyPagesConfig: skyPagesConfig
     }
-  });
+  };
+
+  if (webdriverConfig && webdriverConfig.chrome && webdriverConfig.chrome.last) {
+    config.chromeDriver = webdriverConfig.chrome.last;
+  }
+
+  if (webdriverConfig && webdriverConfig.gecko && webdriverConfig.gecko.last) {
+    config.geckoDriver = webdriverConfig.gecko.last;
+  }
+
+  protractorLauncher.init(getProtractorConfigPath(), config);
   process.on('exit', killServers);
 }
 
@@ -104,21 +115,21 @@ function spawnSelenium() {
 
     // Otherwise we need to prep protractor's selenium
     } else {
-      const webdriverManagerPath = path.resolve(
-        'node_modules',
-        '.bin',
-        'webdriver-manager'
-      );
+      webdriverManager.program
+        .run({
+          out_dir: seleniumDriverPath
+        })
+        .then(() => {
+          const updateConfigPath = path.resolve(seleniumDriverPath + '/update-config.json');
+          const updateConfig = fs.readJsonSync(updateConfigPath);
 
-      let results = spawn.sync(webdriverManagerPath, ['update', '--gecko', 'false'], spawnOptions);
+          logger.info(`Webdriver Manager has been updated.`);
+          logger.info(`Reading drivers from ${updateConfigPath}`);
+          logger.info(updateConfig);
 
-      if (results.error) {
-        reject(results.error);
-        return;
-      }
-
-      logger.info('Selenium server is ready.');
-      resolve();
+          resolve(updateConfig);
+        })
+        .catch(reject);
     }
   });
 }
@@ -191,7 +202,8 @@ function e2e(argv, skyPagesConfig, webpack) {
       spawnProtractor(
         values[0],
         values[1],
-        skyPagesConfig
+        skyPagesConfig,
+        values[2]
       );
     })
     .catch(err => {

@@ -57,18 +57,15 @@ describe('@blackbaud/skyux-builder', () => {
     });
   });
 
-  it('should return false for unknown command', () => {
+  it('should handle unknown command', () => {
     spyOn(logger, 'info');
     const cmd = 'junk-command-that-does-not-exist';
     const lib = require('../index');
-    expect(lib.runCommand(cmd, {})).toBe(false);
-  });
-
-  it('should return true for known command', () => {
-    spyOn(logger, 'info');
-    const cmd = 'version';
-    const lib = require('../index');
-    expect(lib.runCommand(cmd, {})).toBe(true);
+    lib.runCommand(cmd, {});
+    expect(logger.info).toHaveBeenCalledWith(
+      '@blackbaud/skyux-builder: Unknown command %s',
+      cmd
+    );
   });
 
   it('should process shorthand tags', (done) => {

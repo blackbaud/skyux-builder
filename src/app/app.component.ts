@@ -191,8 +191,6 @@ export class AppComponent implements OnInit {
         omnibarConfig.enableHelp = true;
       }
 
-      omnibarConfig.allowAnonymous = !this.config.skyux.auth;
-
       BBOmnibar.load(omnibarConfig);
     }
 

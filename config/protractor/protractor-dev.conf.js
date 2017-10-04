@@ -9,6 +9,80 @@ const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
 
+/**
+ * Clones the skyux-template from a specific branch.
+ */
+function cloneTemplate() {
+  const url = 'https://github.com/blackbaud/skyux-template';
+  const branch = 'builder-dev';
+
+  return common.exec(`git`, [
+    `clone`,
+    `-b`,
+    branch,
+    `--single-branch`,
+    url,
+    common.tmp
+  ]);
+}
+
+/**
+ * Copies current builder dependencies to cloned template.
+ */
+function mergeDependencies() {
+  const builderJson = fs.readJSONSync('package.json');
+  const templateFilename = path.resolve(common.tmp, 'package.json');
+  const templateJson = fs.readJSONSync(templateFilename);
+
+  Object.keys(builderJson.dependencies).forEach(key => {
+    templateJson.dependencies[key] = builderJson.dependencies[key];
+  });
+
+  console.log('Merging current builder deps into template');
+  fs.writeJSONSync(templateFilename, templateJson, { spaces: 2 });
+  return Promise.resolve();
+}
+
+/**
+ * Copies the npm-shrinkwrap or package-lock files if they exist.
+ */
+function copyLocks() {
+  const locks = [
+    'npm-shrinkwrap.json',
+    'package-lock.json'
+  ];
+
+  locks.forEach(file => {
+    if (fs.existsSync(file)) {
+      console.log(`Copying ${file} into cloned template.`);
+      fs.copySync(file, `${common.tmp}${file}`);
+    } else {
+      console.log(`Skipping ${file} as it does not exist.`);
+    }
+  });
+
+  return Promise.resolve();
+}
+
+/**
+ * Copies current builder src into cloned template
+ */
+function copyBuilder() {
+  function filter(src) {
+    return src.indexOf('node_modules') === -1 && src.indexOf(common.tmp) === -1;
+  }
+
+  console.log('Copying current builder');
+  fs.copySync('.', `${common.tmp}node_modules/@blackbaud/skyux-builder`, {
+    filter: filter
+  });
+
+  return Promise.resolve();
+}
+
+/**
+ * Create the local dev version of our config
+ */
 let config = {
   specs: [
     path.join(process.cwd(), 'e2e', '**', '*.e2e-spec.js')
@@ -23,32 +97,27 @@ let config = {
 
       if (fs.existsSync(common.tmp) && !process.argv.includes('--clean')) {
 
-        console.log('');
-        console.log('*********');
-        console.log('Running fast e2e tests');
-        console.log(`Delete ${common.tmp} to have the install steps run.`);
-        console.log('*********');
-        console.log('');
+        console.log(``);
+        console.log(`*********`);
+        console.log(`Running fast e2e tests`);
+        console.log(`Use one of the following to do a full install:`);
+        console.log(` - Use npm run e2e -- --clean`);
+        console.log(` - Delete ${common.tmp}`);
+        console.log(`*********`);
+        console.log(``);
 
         resolve();
 
       } else {
 
-        const url = 'https://github.com/blackbaud/skyux-template';
-        const branch = 'builder-dev';
-
+        // The --only=prod below is important in order to skip installing builder
         console.log('Running command using full install.');
         common.rimrafPromise(common.tmp)
-          .then(() => common.exec(`git`, [
-            `clone`,
-            `-b`,
-            branch,
-            `--single-branch`,
-            url,
-            common.tmp
-          ]))
-          .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
-          .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
+          .then(cloneTemplate)
+          .then(mergeDependencies)
+          .then(copyLocks)
+          .then(() => common.exec(`npm`, [`install`, '--only=prod'], common.cwdOpts))
+          .then(copyBuilder)
           .then(resolve)
           .catch(reject);
 

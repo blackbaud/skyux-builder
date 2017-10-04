@@ -46,9 +46,8 @@ module.exports = {
         require('./cli/version')();
         break;
       default:
-        return false;
+        logger.info('@blackbaud/skyux-builder: Unknown command %s', command);
+        break;
     }
-
-    return true;
   }
 };
