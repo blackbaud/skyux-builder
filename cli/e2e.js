@@ -104,21 +104,21 @@ function spawnSelenium() {
 
     // Otherwise we need to prep protractor's selenium
     } else {
-      const webdriverManagerPath = path.resolve(
-        'node_modules',
-        '.bin',
-        'webdriver-manager'
-      );
+      webdriverManager.program
+        .run({
+          out_dir: seleniumDriverPath
+        })
+        .then(() => {
+          const updateConfigPath = path.resolve(seleniumDriverPath + '/update-config.json');
+          const updateConfig = fs.readJsonSync(updateConfigPath);
 
-      let results = spawn.sync(webdriverManagerPath, ['update', '--gecko', 'false'], spawnOptions);
+          logger.info(`Webdriver Manager has been updated.`);
+          logger.info(`Reading drivers from ${updateConfigPath}`);
+          logger.info(updateConfig);
 
-      if (results.error) {
-        reject(results.error);
-        return;
-      }
-
-      logger.info('Selenium server is ready.');
-      resolve();
+          resolve(updateConfig);
+        })
+        .catch(reject);
     }
   });
 }
