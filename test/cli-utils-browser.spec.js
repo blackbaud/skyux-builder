@@ -3,7 +3,7 @@
 
 const logger = require('winston');
 const mock = require('mock-require');
-const merge = require('merge');
+const merge = require('lodash.merge');
 const url = require('url');
 
 const hostUtils = require('../utils/host-utils');
@@ -34,7 +34,7 @@ describe('browser utils', () => {
   });
 
   function bind(settings) {
-    const merged = merge.recursive({
+    const merged = merge({
       argv: {},
       skyPagesConfig: runtimeUtils.getDefault(),
       stats: {
