@@ -3,7 +3,7 @@
 
 const logger = require('winston');
 const mock = require('mock-require');
-const merge = require('lodash.merge');
+const merge = require('../utils/merge-utils');
 const url = require('url');
 
 const hostUtils = require('../utils/host-utils');
