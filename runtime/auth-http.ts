@@ -110,6 +110,6 @@ export class SkyAuthHttp extends Http {
   }
 
   private getEnvId() {
-    return this.skyAppConfig.runtime.params.get('envid');
+    return '1234';
   }
 }

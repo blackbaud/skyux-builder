@@ -18,7 +18,7 @@ function getConfig(config) {
 
   config.set({
     basePath: '',
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'pact'],
     exclude: [],
     files: [
       {
@@ -28,7 +28,8 @@ function getConfig(config) {
       {
         pattern: '../../utils/spec-styles.js',
         watched: false
-      }
+      },
+      path.resolve(process.cwd(), 'node_modules/pact-web', 'pact-web.js')
     ],
     preprocessors: {
       '../../utils/spec-styles.js': ['webpack'],
