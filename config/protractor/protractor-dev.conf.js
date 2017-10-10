@@ -3,7 +3,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('../../utils/merge-utils');
+const merge = require('../../utils/merge');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
 const common = require('../../e2e/shared/common');

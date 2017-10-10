@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const merge = require('../utils/merge-utils');
+const merge = require('../utils/merge');
 
 describe('merge-utils', () => {
   it('should return a merged object with overridden arrays', () => {

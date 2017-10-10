@@ -2,7 +2,7 @@
 'use strict';
 
 const fs = require('fs-extra');
-const merge = require('../utils/merge-utils');
+const merge = require('../utils/merge');
 
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');

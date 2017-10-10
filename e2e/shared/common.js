@@ -4,7 +4,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const merge = require('../../utils/merge-utils');
+const merge = require('../../utils/merge');
 const rimraf = require('rimraf');
 const portfinder = require('portfinder');
 const HttpServer = require('http-server');

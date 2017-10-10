@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
 
-const merge = require('../utils/merge-utils');
+const merge = require('../utils/merge');
 
 module.exports = {
   getDefault: function (runtime, skyux) {
