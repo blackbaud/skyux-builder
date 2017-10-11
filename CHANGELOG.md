@@ -1,6 +1,14 @@
+# 1.1.0 (2017-10-04)
+
+- Updated `runCommmand` to return a boolean to `skyux-cli`, indicating whether the command was handled. [#277](https://github.com/blackbaud/skyux-builder/pull/277)
+- Bugfix to correctly merge multiple `skyuxconfig.json` files. [#288](https://github.com/blackbaud/skyux-builder/pull/288) Thanks [@Blackbaud-BrandonHare](https://github.com/Blackbaud-BrandonHare)!
+- Upgraded `@blackbaud/auth-client` to 1.15.0. Supplying `allowAnonymous` flag to Omnibar. [#290](https://github.com/blackbaud/skyux-builder/pull/289)
+- Added ability to handle child route with parameter. [#286](https://github.com/blackbaud/skyux-builder/pull/286) Thanks [@Blackbaud-JoshGerdes](https://github.com/Blackbaud-JoshGerdes)!
+- Exporting `SkyAppAssetsService` in default `@blackbaud/skyux-builder/runtime` barrel. [#287](https://github.com/blackbaud/skyux-builder/pull/287)
+
 # 1.0.2 (2017-09-27)
 
-- Removed `help-client` from dependencies as it was causing a conflict with the help library. ((#284)[https://github.com/blackbaud/skyux-builder/pull/284])
+- Removed `help-client` from dependencies as it was causing a conflict with the help library. (#284)[https://github.com/blackbaud/skyux-builder/pull/284]
 
 # 1.0.1 (2017-09-26)
 
