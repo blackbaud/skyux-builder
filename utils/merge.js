@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const merge = require('lodash.mergeWith');
+const merge = require('lodash.mergewith');
 
 function customizer(originalValue, overrideValue) {
   if (Array.isArray(originalValue)) {
