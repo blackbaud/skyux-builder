@@ -2,7 +2,7 @@
 'use strict';
 
 const fs = require('fs-extra');
-const merge = require('merge');
+const merge = require('../utils/merge');
 
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
@@ -80,7 +80,7 @@ function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
   fs.ensureDirSync(spaPathTempSrc);
   fs.emptyDirSync(spaPathTempSrc);
 
-  merge.recursive(skyPagesConfig, skyPagesConfigOverrides);
+  merge(skyPagesConfig, skyPagesConfigOverrides);
   let skyPagesModuleSource = generator.getSource(skyPagesConfig);
 
   // The Webpack loader that processes referenced asset files will have run and emitted

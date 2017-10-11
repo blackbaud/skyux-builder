@@ -1,7 +1,7 @@
 /*jslint node: true */
 'use strict';
 
-const merge = require('merge');
+const merge = require('../utils/merge');
 
 module.exports = {
   getDefault: function (runtime, skyux) {
@@ -12,7 +12,7 @@ module.exports = {
   },
 
   getDefaultRuntime: function (runtime) {
-    return merge.recursive({
+    return merge({
       app: {
         base: '',
         inject: false,
@@ -34,7 +34,7 @@ module.exports = {
   },
 
   getDefaultSkyux: function (skyux) {
-    return merge.recursive({
+    return merge({
       host: {
         url: ''
       },

@@ -3,7 +3,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('lodash.merge');
+const merge = require('../../utils/merge');
 const logger = require('../../utils/logger');
 
 /**
