@@ -76,7 +76,7 @@ describe('config sky-pages', () => {
           config.n = {
             toDelete: true
           }; // Testing merge override
-          config.arr = ['stringOne', 'stringTwo'] // Testing array values not concatenated
+          config.arr = ['stringTwo'] // Testing array values not concatenated
 
         // Asking for builder's skyuxconfig.build.json
         } else if (!isSpaDirectory && isCommandConfig) {
