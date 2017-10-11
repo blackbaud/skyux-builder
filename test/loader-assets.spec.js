@@ -8,7 +8,7 @@ describe('SKY UX assets Webpack loader', () => {
   let loader;
 
   beforeEach(() => {
-    mock('fs', {
+    mock('fs-extra', {
       readFileSync: function () {
         return 'zxcv';
       }

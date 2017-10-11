@@ -15,7 +15,7 @@ describe('cli utils prepare-library-package', () => {
       spaPathTempSrc: () => '',
       spaPathTemp: () => ''
     });
-    util = require('../cli/utils/prepare-library-package');
+    util = mock.reRequire('../cli/utils/prepare-library-package');
   });
 
   afterEach(() => {
