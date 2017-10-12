@@ -1,3 +1,11 @@
 .skyux-app-loading {
-  visibility: hidden;
+  opacity: 0;
+}
+
+/deep/
+.sky-modal-body-full-page {
+  // Hide the bb-Help-invoker when a full-page modal is present and the widget is closed.
+  #bb-help-container.closed > #bb-help-invoker {
+    display: none;
+  }
 }
