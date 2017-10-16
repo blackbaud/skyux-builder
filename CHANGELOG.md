@@ -1,3 +1,8 @@
+# 1.3.0 (2017-10-16)
+
+- Added support for `@blackbaud/auth-client` 1.18.0. [#302](https://github.com/blackbaud/skyux-builder/pull/302)
+- Separated coverage and e2e steps into separate environments. [#299](https://github.com/blackbaud/skyux-builder/pull/299)
+
 # 1.2.0 (2017-10-04)
 
 - Created `SkyAppViewportService` for tracking when properties of the viewport change, such as when all styles and fonts have been loaded and the contents are ready for display. [#300](https://github.com/blackbaud/skyux-builder/pull/300)
