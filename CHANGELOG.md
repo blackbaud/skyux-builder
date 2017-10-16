@@ -1,3 +1,9 @@
+# 1.2.0 (2017-10-04)
+
+- Created `SkyAppViewportService` for tracking when properties of the viewport change, such as when all styles and fonts have been loaded and the contents are ready for display. [#300](https://github.com/blackbaud/skyux-builder/pull/300)
+- Upgraded `@blackbaud/skyux-lib-help` to `1.1.10`. [#293](https://github.com/blackbaud/skyux-builder/pull/293)
+- Bugfix regarding merging of multiple `skyuxconfig.json` files. [#292](https://github.com/blackbaud/skyux-builder/pull/292) Thanks [@Blackbaud-BrandonHare](https://github.com/Blackbaud-BrandonHare)!
+
 # 1.1.0 (2017-10-04)
 
 - Updated `runCommmand` to return a boolean to `skyux-cli`, indicating whether the command was handled. [#277](https://github.com/blackbaud/skyux-builder/pull/277)
