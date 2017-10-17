@@ -49,8 +49,9 @@ module.exports = {
         require('./cli/visual')(argv, skyPagesConfig, webpack);
         break;
       default:
-        logger.info('@blackbaud/skyux-builder: Unknown command %s', command);
-        break;
+        return false;
     }
+
+    return true;
   }
 };

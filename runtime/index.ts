@@ -8,3 +8,4 @@ export * from './directives';
 export * from './search-results-provider';
 export * from './window-ref';
 export * from './style-loader';
+export * from './viewport.service';
