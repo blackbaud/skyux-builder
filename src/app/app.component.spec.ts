@@ -1,4 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  async,
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick
+} from '@angular/core/testing';
+
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 
@@ -6,7 +13,8 @@ import {
   SkyAppConfig,
   SkyAppSearchResultsProvider,
   SkyAppStyleLoader,
-  SkyAppWindowRef
+  SkyAppWindowRef,
+  SkyAppViewportService
 } from '@blackbaud/skyux-builder/runtime';
 
 import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
@@ -25,6 +33,7 @@ describe('AppComponent', () => {
   let subscribeHandler: any;
   let scrollCalled: boolean = false;
   let skyAppConfig: any;
+  let viewport: SkyAppViewportService;
 
   const location = 'my-custom-location';
   const defaultSkyAppConfig: any = {
@@ -53,7 +62,7 @@ describe('AppComponent', () => {
   function setup(
     config: any,
     includeSearchProvider?: boolean,
-    styleLoadError?: any
+    styleLoadPromise?: Promise<any>
   ) {
     let providers: any[] = [
       {
@@ -86,12 +95,16 @@ describe('AppComponent', () => {
       {
         provide: SkyAppStyleLoader,
         useValue: {
-          loadStyles: () => Promise.resolve(styleLoadError)
+          loadStyles: () => styleLoadPromise || Promise.resolve()
         }
       },
       {
         provide: HelpInitializationService,
         useValue: mockHelpInitService
+      },
+      {
+        provide: SkyAppViewportService,
+        useValue: viewport
       }
     ];
 
@@ -124,6 +137,7 @@ describe('AppComponent', () => {
   beforeEach(() => {
     skyAppConfig = defaultSkyAppConfig;
     scrollCalled = false;
+    viewport = new SkyAppViewportService();
   });
 
   it('should create component', async(() => {
@@ -432,6 +446,35 @@ describe('AppComponent', () => {
     });
   }));
 
+  it('should respond when SkyAppStyleLoader.loadStyles is resolved', fakeAsync(() => {
+    let viewportVisible: boolean;
+
+    let styleResolve: () => void;
+
+    const stylePromise = new Promise((resolve) => {
+      styleResolve = resolve;
+    });
+
+    viewport
+      .visible
+      .subscribe((value) => {
+        viewportVisible = value;
+      });
+
+    setup(skyAppConfig, false, stylePromise);
+
+    tick();
+
+    expect(comp.isReady).toBe(false);
+    expect(viewportVisible).toBeUndefined();
+
+    styleResolve();
+    tick();
+
+    expect(comp.isReady).toBe(true);
+    expect(viewportVisible).toBe(true);
+  }));
+
   it('should pass SkyAppStyleLoader error through resolve and console.log it', async(() => {
     const result = {
       error: {
@@ -440,7 +483,7 @@ describe('AppComponent', () => {
     };
 
     spyOn(console, 'log');
-    setup(skyAppConfig, false, result).then(() => {
+    setup(skyAppConfig, false, Promise.resolve(result)).then(() => {
       expect(comp.isReady).toEqual(true);
       expect(console.log).toHaveBeenCalledWith(result.error.message);
     });
