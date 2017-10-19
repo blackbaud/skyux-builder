@@ -35,9 +35,10 @@ function getConfig(config) {
      * they are forwards to the original host (localhost:9876).  This ensures that
      * Access-Control-Allow-Origin exists with the correct origin.
      */
+
     proxies: {
       '/pact': {
-        'target': 'http://' + (skyPagesConfig.skyux.pact.host || 'localhost') + pactPort,
+        'target': 'http://' + (skyPagesConfig.skyux.pact.host || 'localhost:') + pactPort,
         changeOrigin: true
       }
     },

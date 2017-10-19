@@ -21,6 +21,8 @@ function getWebpackConfig(skyPagesConfig, argv) {
   const runCoverage = (!argv || argv.coverage !== false);
   skyPagesConfig.runtime.includeRouteModule = false;
 
+  const common = require('./common.webpack.config').getWebpackConfig(skyPagesConfig);
+
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
   const srcPath = path.resolve(process.cwd(), 'src', 'app');
 

@@ -40,7 +40,7 @@ export interface SkyuxConfigHost {
 }
 
 export interface SkyuxConfig {
-  a11y?: SkyuxConfigA11y|boolean;
+  a11y?: SkyuxConfigA11y | boolean;
   app?: SkyuxConfigApp;
   appSettings?: any;
   auth?: boolean;
@@ -52,6 +52,11 @@ export interface SkyuxConfig {
   importPath?: string;
   mode?: string;
   name?: string;
+  pact?: any[];
+  pactApiKeys?: string[];
+  pactPorts?: {
+    [provider: string]: number;
+  };
   params?: string[]; // Array of allowed params
   plugins?: string[];
   redirects?: any;

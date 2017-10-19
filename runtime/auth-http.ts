@@ -85,8 +85,7 @@ export class SkyAuthHttp extends Http {
     return Observable.fromPromise(this.authTokenProvider.getToken(tokenArgs))
       .flatMap((token: string) => {
         let authOptions: Request | RequestOptionsArgs;
-        console.log('skyAppConfig ===========================>');
-        console.log(this.skyAppConfig);
+
         if (url instanceof Request) {
           // If the user calls get(), post(), or any of the other convenience
           // methods supplied by the Http base class, Angular will have converted
@@ -111,6 +110,6 @@ export class SkyAuthHttp extends Http {
   }
 
   private getEnvId() {
-    return '1234';
+    return this.skyAppConfig.runtime.params.get('envid');
   }
 }
