@@ -1,6 +1,6 @@
 # 1.3.1 (2017-10-20)
 
-- Fixed bug when hiding help invoker when full-page modal opened. [#304](https://github.com/blackbaud/skyux-builder/pull/304)
+- Fixed help invoker not being hidden when full-page modal opened. [#304](https://github.com/blackbaud/skyux-builder/pull/304)
 
 # 1.3.0 (2017-10-16)
 
