@@ -56,25 +56,33 @@ describe('config webpack test', () => {
   });
 
   it('should match on whole folder names when excluding folders from code coverage', () => {
+    function createTestPaths(items) {
+      return [
+        ...items,
+        // Add backslash variants of all provided paths.
+        ...items.map(item => item.replace(/\//g, '\\'))
+      ];
+    }
+
     const instrumentLoader = getInstrumentLoader();
 
-    const allowedPaths = [
+    const allowedPaths = createTestPaths([
       '/home/not_node_modules/some-folder/test.ts',
       '/home/skyux-spa-testing/src/test.ts',
       '/src/app/do-not-exclude-this-fixtures-folder/test.ts',
       '/src/app/do-not-exclude-this-testing-folder/test.ts',
       '/src/app/libs/test.ts',
       '/src/app/some-other-index.ts'
-    ];
+    ]);
 
-    const disallowedPaths = [
+    const disallowedPaths = createTestPaths([
       '/home/node_modules/some-folder/test.ts',
       '/home/testing/src/test.ts',
       '/src/app/fixtures/test.ts',
       '/src/app/testing/test.ts',
       '/src/app/lib/test.ts',
       '/src/app/index.ts'
-    ];
+    ]);
 
     for (const allowedPath of allowedPaths) {
       let foundMatch;
