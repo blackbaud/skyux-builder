@@ -53,9 +53,8 @@ export interface SkyuxConfig {
   mode?: string;
   name?: string;
   pact?: any[];
-  pactApiKeys?: string[];
-  pactPorts?: {
-    [provider: string]: number;
+  pactServers?: {
+    [provider: string]: { host?: string; port?: string; fullUrl?: string; };
   };
   params?: string[]; // Array of allowed params
   plugins?: string[];

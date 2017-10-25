@@ -39,7 +39,7 @@ module.exports = {
         require('./cli/lint')();
         break;
       case 'pact':
-        require('./cli/pact')(command, skyPagesConfig, argv);
+        require('./cli/pact')(command, argv);
         break;
       case 'test':
       case 'watch':

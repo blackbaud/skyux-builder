@@ -11,9 +11,10 @@ function pact(command, argv) {
   const tsLinter = require('./utils/ts-linter');
   const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
   var skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig(command);
-  const httpProxy = require('http-proxy');
   var http = require('http');
   const portfinder = require('portfinder');
+  const url = require('url');
+  const pactServers = require('../utils/pact-servers');
 
   argv = argv || process.argv;
   argv.command = command;
@@ -44,26 +45,9 @@ function pact(command, argv) {
     process.exit(exitCode);
   };
 
-  // var proxy = httpProxy.createProxyServer({ target: 'http://localhost:' + karmaConfig.port + '/pact' });
-
-  // proxy.on('proxyReq', function (proxyReq, req, res, options) {
-  //   proxyReq.setHeader('Access-Control-Allow-Origin', skyPagesConfig.skyux.host.url || 'https://host.nxt.blackbaud.com');
-  // });
-  // proxy.on('proxyRes', function (proxyRes, req, res) {
-  //   proxyReq.setHeader('Access-Control-Allow-Origin', skyPagesConfig.skyux.host.url || 'http://localhost:' + karmaConfig.port);
-  // });
-
-  // var pactProxyServer = http.createServer((req, res) => {
-
-  //   proxy.web(req, res, {
-  //     target: 'http://localhost:' + req.qu
-  //   });
-
-  // });
-
   var pactPortPromises = [];
 
-  for (var i = 0; i < skyPagesConfig.skyux.pact.length; i++) {
+  for (var i = 0; i < skyPagesConfig.skyux.pact.length + 1; i++) {
 
     pactPortPromises.push(portfinder.getPortPromise());
 
@@ -72,11 +56,12 @@ function pact(command, argv) {
   Promise.all(pactPortPromises)
     .then((ports) => {
 
-      skyPagesConfig.skyux.pactPorts = skyPagesConfig.skyux.pactPorts || {};
+      skyPagesConfig.skyux.pactServers = skyPagesConfig.skyux.pactServers || {};
       for (var i = 0; i < skyPagesConfig.skyux.pact.length; i++) {
 
-        skyPagesConfig.skyux.pactPorts[skyPagesConfig.skyux.pact[i].provider] = ports[i];
-
+        let serverHost = (skyPagesConfig.skyux.pact[i].host || 'localhost');
+        let serverPort = ports[i];
+        pactServers.savePactServer(skyPagesConfig.skyux.pact[i].provider, serverHost, serverPort);
       }
 
       const karmaConfigUtil = require('karma').config;
