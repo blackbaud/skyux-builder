@@ -66,13 +66,13 @@ function addModalToHomePage() {
   common.writeAppFile('home.component.html', content, 'utf8');
 }
 
-describe('skyux lib help', () => {
+fdescribe('skyux lib help', () => {
   beforeAll((done) => {
     prepareBuild()
     .then(() => {
-      addModalToHomePage();
       done();
     });
+    addModalToHomePage();
   });
 
   afterAll(() => {
@@ -80,6 +80,8 @@ describe('skyux lib help', () => {
     common.removeAppFolder('modal-fixtures');
     common.afterAll();
   });
+
+
   /**
    * Skyux 2 adds a class to the body element 'sky-modal-body-full-page'. When this class is found
    * the css from builder's app.component.scss file should cause the invoker from the Help Widget

@@ -4,6 +4,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const async = require('async');
 const merge = require('../../utils/merge');
 const rimraf = require('rimraf');
 const portfinder = require('portfinder');
@@ -259,20 +260,27 @@ function removeAppFolder(folderPath) {
       */
       const files = fs.readdirSync(resolvedFolderPath);
 
-      files.forEach(file => {
-        let filePath = `${folderPath}/${file}`;
+      async.forEach(files,
+        (file) => {
+          let filePath = `${folderPath}/${file}`;
 
-        if (fs.statSync(`${resolvedFolderPath}/${file}`).isDirectory()) {
-          removeAppFolder(filePath);
-        } else {
-          removeAppFile(filePath);
+          if (fs.statSync(`${resolvedFolderPath}/${file}`).isDirectory()) {
+            removeAppFolder(filePath);
+          } else {
+            removeAppFile(filePath);
+          }
+        },
+
+        (err, results) => {
+          if (err) {
+            reject(err);
+          }
+
+          fs.rmdirSync(resolvedFolderPath);
+          resolve();
         }
-      });
-
-      fs.rmdirSync(resolvedFolderPath);
+      );
     }
-
-    resolve();
   });
 }
 
