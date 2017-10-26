@@ -260,6 +260,9 @@ function removeAppFolder(folderPath) {
       */
       const files = fs.readdirSync(resolvedFolderPath);
 
+      /**
+      * Recursively remove nested directories and files.
+      */
       async.forEach(files,
         (file) => {
           let filePath = `${folderPath}/${file}`;
