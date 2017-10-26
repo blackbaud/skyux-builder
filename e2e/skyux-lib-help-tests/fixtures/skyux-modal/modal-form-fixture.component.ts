@@ -12,7 +12,7 @@ import { SkyModalInstance } from '@blackbaud/skyux/dist/core';
       <sky-modal-content>
       </sky-modal-content>
       <sky-modal-footer>
-          <button id="modal-close-button" type="button" class="sky-btn sky-btn-primary" (click)="instance.close()">
+        <button id="modal-close-button" type="button" class="sky-btn sky-btn-primary" (click)="instance.close()">
         </button>
       </sky-modal-footer>
     </sky-modal>`
