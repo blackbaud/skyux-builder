@@ -1,3 +1,18 @@
+# 1.3.1 (2017-10-20)
+
+- Fixed help invoker not being hidden when full-page modal opened. [#304](https://github.com/blackbaud/skyux-builder/pull/304)
+
+# 1.3.0 (2017-10-16)
+
+- Added support for `@blackbaud/auth-client` 1.18.0. [#302](https://github.com/blackbaud/skyux-builder/pull/302)
+- Separated coverage and e2e steps into separate environments. [#299](https://github.com/blackbaud/skyux-builder/pull/299)
+
+# 1.2.0 (2017-10-04)
+
+- Created `SkyAppViewportService` for tracking when properties of the viewport change, such as when all styles and fonts have been loaded and the contents are ready for display. [#300](https://github.com/blackbaud/skyux-builder/pull/300)
+- Upgraded `@blackbaud/skyux-lib-help` to `1.1.10`. [#293](https://github.com/blackbaud/skyux-builder/pull/293)
+- Bugfix regarding merging of multiple `skyuxconfig.json` files. [#292](https://github.com/blackbaud/skyux-builder/pull/292) Thanks [@Blackbaud-BrandonHare](https://github.com/Blackbaud-BrandonHare)!
+
 # 1.1.0 (2017-10-04)
 
 - Updated `runCommmand` to return a boolean to `skyux-cli`, indicating whether the command was handled. [#277](https://github.com/blackbaud/skyux-builder/pull/277)

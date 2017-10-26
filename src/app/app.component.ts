@@ -11,6 +11,7 @@ import {
 
 import {
   BBOmnibar,
+  BBOmnibarLegacy,
   BBOmnibarNavigation,
   BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
@@ -22,7 +23,8 @@ import {
   SkyAppConfig,
   SkyAppSearchResultsProvider,
   SkyAppWindowRef,
-  SkyAppStyleLoader
+  SkyAppStyleLoader,
+  SkyAppViewportService
 } from '@blackbaud/skyux-builder/runtime';
 
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
@@ -75,7 +77,8 @@ export class AppComponent implements OnInit {
     private config: SkyAppConfig,
     private styleLoader: SkyAppStyleLoader,
     @Optional() private helpInitService?: HelpInitializationService,
-    @Optional() private searchProvider?: SkyAppSearchResultsProvider
+    @Optional() private searchProvider?: SkyAppSearchResultsProvider,
+    @Optional() viewport?: SkyAppViewportService
   ) {
     this.styleLoader.loadStyles()
       .then((result?: any) => {
@@ -84,6 +87,12 @@ export class AppComponent implements OnInit {
         if (result && result.error) {
           console.log(result.error.message);
         }
+
+        // Let the isReady property take effect on the CSS class that hides/shows
+        // content based on when styles are loaded.
+        setTimeout(() => {
+          viewport.visible.next(true);
+        });
       });
   }
 
@@ -138,7 +147,7 @@ export class AppComponent implements OnInit {
       nav = omnibarConfig.nav;
       fixUpNav(nav, baseUrl);
     } else {
-      nav = omnibarConfig.nav = new BBOmnibarNavigation();
+      nav = omnibarConfig.nav = {};
     }
 
     nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
@@ -193,7 +202,13 @@ export class AppComponent implements OnInit {
 
       omnibarConfig.allowAnonymous = !this.config.skyux.auth;
 
-      BBOmnibar.load(omnibarConfig);
+      if (omnibarConfig.experimental) {
+        // auth-client 2.0 made the "experimental" omnibar the default; maintain
+        // previous behavior until skyux-builder until 2.0.
+        BBOmnibar.load(omnibarConfig);
+      } else {
+        BBOmnibarLegacy.load(omnibarConfig);
+      }
     }
 
     if (helpConfig && this.helpInitService) {
