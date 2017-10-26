@@ -4,6 +4,7 @@
 const path = require('path');
 const glob = require('glob');
 const fs = require('fs-extra');
+const logger = require('winston');
 
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
@@ -21,25 +22,12 @@ function getPath(command, platform, root, dir) {
     break;
   }
 
-  const resolved = path.resolve(root, dir, platform, filename);
-  console.log(resolved);
-  return resolved;
+  return path.join(root, dir, platform, filename);
 }
 
 function resolve(command, argv) {
 
   const platform = argv.platform || '';
-
-  console.log('LOOKING FOR: ' + command);
-
-  // Using glob so we can find skyux-builder-config regardless of npm install location
-  const external = glob.sync(getPath(
-    command,
-    platform,
-    process.cwd(),
-    'node_modules/**/skyux-builder-config/**/'
-  ));
-
   const internal = getPath(
     command,
     platform,
@@ -47,11 +35,29 @@ function resolve(command, argv) {
     ''
   );
 
+  // Using glob so we can find skyux-builder-config regardless of npm install location
+  let external = glob.sync(getPath(
+    command,
+    platform,
+    process.cwd(),
+    'node_modules/**/skyux-builder-config/'
+  ));
+
   let config;
+  if (external.length > 1) {
+    logger.warn(`Found multiple external config files.`)
+    external = external.slice(0, 1);
+  }
+
   if (external.length === 1) {
+    logger.info(`Using external config ${external[0]}`);
     config = external[0];
   } else if (fs.existsSync(internal)) {
+    logger.info(`Using internal config ${internal}`);
     config = internal;
+  } else {
+    logger.error('Error locating a config file.');
+    process.exit(1);
   }
 
   return config;

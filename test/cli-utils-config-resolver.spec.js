@@ -2,6 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
+const logger = require('winston');
 
 describe('utils/config-resolver.js', () => {
 
@@ -21,7 +22,7 @@ describe('utils/config-resolver.js', () => {
   function testCommand(command, argv) {
     let _filename;
     mock('path', {
-      resolve: (root, dir, platform, filename) => _filename = filename
+      join: (root, dir, platform, filename) => _filename = filename
     });
 
     setup(command, [], true, argv);
@@ -34,8 +35,13 @@ describe('utils/config-resolver.js', () => {
   });
 
   it('should handle finding zero external configurations', () => {
+    spyOn(logger, 'error');
+    spyOn(process, 'exit');
+
     const config = setup('test', [], false, {});
     expect(config).not.toBeDefined();
+    expect(logger.error).toHaveBeenCalledWith('Error locating a config file.');
+    expect(process.exit).toHaveBeenCalledWith(1);
   });
 
   it('should handle finding one external configuration', () => {
@@ -44,21 +50,25 @@ describe('utils/config-resolver.js', () => {
     expect(config).toBe(result);
   });
 
-  it('should handle finding multiple external configurations', () => {
+  it('should warn if multiple external config files found, but default to first', () => {
+    spyOn(logger, 'warn');
+    spyOn(logger, 'info');
+
     const results = [
       'one-too.js',
       'many-files.js'
     ];
 
     const config = setup('test', results, false, {});
-    expect(config).not.toBeDefined();
+    expect(config).toBe(results[0]);
+    expect(logger.warn).toHaveBeenCalledWith(`Found multiple external config files.`);
   });
 
   it('should fallback to an internal config if it exists', () => {
     let resolveArgs = {};
 
     mock('path', {
-      resolve: (root, dir, platform, filename) => {
+      join: (root, dir, platform, filename) => {
         resolveArgs = {
           root: root,
           dir: dir,
@@ -91,7 +101,7 @@ describe('utils/config-resolver.js', () => {
 
     let _platform;
     mock('path', {
-      resolve: (root, dir, platform) => _platform = platform
+      join: (root, dir, platform) => _platform = platform
     });
 
     setup('test', [], true, { platform: custom });
