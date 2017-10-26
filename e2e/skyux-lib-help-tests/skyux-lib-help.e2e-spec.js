@@ -6,8 +6,28 @@ const path = require('path');
 const common = require('../shared/common');
 const tests = require('../shared/tests');
 
+const tmpSrcApp = path.resolve(process.cwd(), common.tmp, 'src/app');
+const e2eRootPath = path.resolve(process.cwd(), 'e2e/skyux-lib-help-tests');
+
+let originalHomePage;
+
+// Add the SkyModalDemoFormComponent to the entryComponents.
+const mockAppExtras = `
+import { NgModule } from '@angular/core';
+
+import { SkyModalDemoFormComponent } from './modal-fixtures/modal-form-fixture.component';
+
+@NgModule({
+  providers: [],
+  entryComponents: [
+    SkyModalDemoFormComponent
+  ]
+})
+export class AppExtrasModule { }
+`;
+
 function prepareBuild() {
-  const opts = {
+  const configOptions = {
     mode: 'easy',
     name: 'dist',
     compileMode: 'aot',
@@ -16,39 +36,59 @@ function prepareBuild() {
     }
   };
 
-  return common.prepareBuild(opts)
+  return common.prepareBuild(configOptions)
     .catch(console.error);
 }
 
-function addModalToHomePage() {
-  const rootPath = './e2e/skyux-lib-help-tests/fixtures/skyux-modal/';
-  const files = fs.readdirSync(rootPath);
+function migrateFixtures() {
+  const files = fs.readdirSync(`${e2eRootPath}/fixtures/skyux-modal`);
+
+  if (!fs.existsSync(`${tmpSrcApp}/modal-fixtures`)) {
+    fs.mkdirSync(`${tmpSrcApp}/modal-fixtures`);
+  }
 
   files.forEach(file => {
-    const filePath = path.resolve(rootPath, file);
+    const filePath = path.resolve(`${e2eRootPath}/fixtures/skyux-modal`, file);
     const content = fs.readFileSync(filePath, 'utf8');
-    common.writeAppFile(file, content);
+    common.writeAppFile(`modal-fixtures/${file}`, content);
   });
+}
 
-  const resolvedFilePath = path.join(path.resolve(common.tmp), 'src', 'app');
-  // common.addEntryComponentToAppExtras(
-  //   'SkyModalDemoFormComponent',
-  //   path.join(resolvedFilePath, 'modal-form-fixture.component')
-  // );
+function addModalToHomePage() {
+  migrateFixtures();
+  if (!originalHomePage) {
+    originalHomePage = fs.readFileSync(`${tmpSrcApp}/home.component.html`, 'utf8');
+  }
 
-  const file = path.resolve(common.tmp, 'src', 'app', 'home.component.html');
-  fs.writeFileSync(file, `<help-modal-launcher></help-modal-launcher>`, 'utf8');
+  common.writeAppExtras(mockAppExtras);
+  const content = `<help-modal-launcher></help-modal-launcher>`;
+  common.writeAppFile('home.component.html', content, 'utf8');
 }
 
 fdescribe('skyux lib help', () => {
   beforeAll((done) => prepareBuild().then(done));
+
+  afterAll(() => {
+    common.writeAppFile('home.component.html', originalHomePage, 'utf8');
+    common.removeAppFolder('modal-fixtures');
+    common.afterAll();
+  });
+
   addModalToHomePage();
 
-  it('should launch a modal', () => {
-    addModalToHomePage();
-    debugger;
-    browser.pause();
-    let invoker = $$('#bb-help-invokerssss');
-    expect(invoker).toBeDefined();
+  it('should hide the invoker when a full page modal is opened', () => {
+    let invoker = element(by.id('bb-help-invoker'));
+    let regularModalButton = element(by.id('regular-modal-launcher'));
+    let fullPageButton = element(by.id('full-page-modal-launcher'));
+
+    expect(invoker.isDisplayed()).toBe(true);
+
+    regularModalButton.click();
+    expect(invoker.isDisplayed()).toBe(true);
+    element(by.id('modal-close-button')).click();
+
+    fullPageButton.click();
+    expect(invoker.isDisplayed()).toBe(false);
+    element(by.id('modal-close-button')).click();
   });
 });

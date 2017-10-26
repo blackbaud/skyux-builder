@@ -6,15 +6,15 @@ import { SkyModalInstance } from '@blackbaud/skyux/dist/core';
   selector: 'sky-modal-form',
   template: `
     <sky-modal>
-    <sky-modal-header>
-    </sky-modal-header>
-    <sky-modal-content>
-    </sky-modal-content>
-    <sky-modal-footer>
-      <button type="button" class="sky-btn sky-btn-primary" (click)="instance.close()">
-        Close
-      </button>
-    </sky-modal-footer>
+      <sky-modal-header>
+        Mock Modal
+      </sky-modal-header>
+      <sky-modal-content>
+      </sky-modal-content>
+      <sky-modal-footer>
+          <button id="modal-close-button" type="button" class="sky-btn sky-btn-primary" (click)="instance.close()">
+        </button>
+      </sky-modal-footer>
     </sky-modal>`
 })
 export class SkyModalDemoFormComponent {

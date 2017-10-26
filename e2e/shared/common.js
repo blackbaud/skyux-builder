@@ -14,9 +14,11 @@ const tmp = './.e2e-tmp/';
 const cwdOpts = { cwd: tmp };
 
 const skyuxConfigPath = path.resolve(process.cwd(), tmp, 'skyuxconfig.json');
+const appExtrasPath = path.resolve(process.cwd(), tmp, 'src/app', 'app-extras.module.ts');
 const cliPath = `../e2e/shared/cli`;
 
 let skyuxConfigOriginal;
+let appExtrasOriginal;
 let webpackServer;
 let httpServer;
 let _exitCode;
@@ -36,6 +38,10 @@ function afterAll() {
   }
 
   resetConfig();
+
+  if (appExtrasOriginal) {
+    resetAppExtras();
+  }
 };
 
 /**
@@ -248,6 +254,21 @@ function removeAppFolder(folderPath) {
   const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', folderPath);
   return new Promise((resolve, reject) => {
     if (fs.existsSync(resolvedFolderPath)) {
+      /**
+      * Remove directory contents before deleting directory.
+      */
+      const files = fs.readdirSync(resolvedFolderPath);
+
+      files.forEach(file => {
+        let filePath = `${folderPath}/${file}`;
+
+        if (fs.statSync(`${resolvedFolderPath}/${file}`).isDirectory()) {
+          removeAppFolder(filePath);
+        } else {
+          removeAppFile(filePath);
+        }
+      });
+
       fs.rmdirSync(resolvedFolderPath);
     }
 
@@ -274,6 +295,18 @@ function removeAppFile(filePath) {
   });
 }
 
+function writeAppExtras(content) {
+  if (!appExtrasOriginal) {
+    appExtrasOriginal = fs.readFileSync(appExtrasPath, 'utf8');
+  }
+
+  fs.writeFileSync(appExtrasPath, content, 'utf8');
+}
+
+function resetAppExtras() {
+  writeAppExtras(appExtrasOriginal);
+}
+
 module.exports = {
   afterAll: afterAll,
   catchReject: catchReject,
@@ -289,5 +322,6 @@ module.exports = {
   writeAppFile: writeAppFile,
   removeAppFile: removeAppFile,
   verifyAppFolder: verifyAppFolder,
-  removeAppFolder: removeAppFolder
+  removeAppFolder: removeAppFolder,
+  writeAppExtras: writeAppExtras
 };
