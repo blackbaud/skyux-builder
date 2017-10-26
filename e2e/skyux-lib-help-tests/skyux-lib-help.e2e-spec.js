@@ -1,6 +1,7 @@
 /*jshint jasmine: true, node: true */
 /*global browser, element, by, $$*/
 'use strict';
+
 const fs = require('fs');
 const path = require('path');
 const common = require('../shared/common');
@@ -11,7 +12,7 @@ const e2eRootPath = path.resolve(process.cwd(), 'e2e/skyux-lib-help-tests');
 
 let originalHomePage;
 
-// Add the SkyModalDemoFormComponent to the entryComponents.
+// Add the SkyModalDemoFormComponent to the entryComponents in the app-extras module.
 const mockAppExtras = `
 import { NgModule } from '@angular/core';
 
@@ -65,17 +66,26 @@ function addModalToHomePage() {
   common.writeAppFile('home.component.html', content, 'utf8');
 }
 
-fdescribe('skyux lib help', () => {
-  beforeAll((done) => prepareBuild().then(done));
+describe('skyux lib help', () => {
+  beforeAll((done) => {
+    prepareBuild()
+    .then(() => {
+      addModalToHomePage();
+      done();
+    });
+  });
 
   afterAll(() => {
     common.writeAppFile('home.component.html', originalHomePage, 'utf8');
     common.removeAppFolder('modal-fixtures');
     common.afterAll();
   });
-
-  addModalToHomePage();
-
+  /**
+   * Skyux 2 adds a class to the body element 'sky-modal-body-full-page'. When this class is found
+   * the css from builder's app.component.scss file should cause the invoker from the Help Widget
+   * to be display: none. This test is to confirm that neither library has changed the dependent
+   * css classes to accomplish this.
+   */
   it('should hide the invoker when a full page modal is opened', () => {
     let invoker = element(by.id('bb-help-invoker'));
     let regularModalButton = element(by.id('regular-modal-launcher'));
