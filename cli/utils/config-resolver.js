@@ -45,7 +45,7 @@ function resolve(command, argv) {
 
   let config;
   if (external.length > 1) {
-    logger.warn(`Found multiple external config files.`)
+    logger.warn(`Found multiple external config files.`);
     external = external.slice(0, 1);
   }
 
