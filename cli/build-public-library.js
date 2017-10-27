@@ -13,7 +13,7 @@ const tsLinter = require('./utils/ts-linter');
 
 function runLinter() {
   const lintResult = tsLinter.lintSync();
-  if (lintResult && lintResult.exitCode > 0) {
+  if (lintResult.exitCode > 0) {
     process.exit(lintResult.exitCode);
   }
 }
