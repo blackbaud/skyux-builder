@@ -154,7 +154,7 @@ export class AppComponent implements OnInit {
       const url = item.url.toLowerCase();
 
       if (url.indexOf(baseUrl) === 0) {
-        const routePath = url.substring(baseUrl.length, url.length);
+        const routePath = item.url.substring(baseUrl.length, url.length);
         this.router.navigateByUrl(routePath);
         return false;
       }
