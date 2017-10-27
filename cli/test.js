@@ -37,7 +37,9 @@ function test(command, argv) {
 
   const onExit = (exitCode) => {
     if (exitCode === 0) {
-      exitCode = lintResult.exitCode;
+      if (lintResult) {
+        exitCode = lintResult.exitCode;
+      }
     }
 
     logger.info(`Karma has exited with ${exitCode}.`);
