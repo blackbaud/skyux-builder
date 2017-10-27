@@ -66,7 +66,7 @@ function addModalToHomePage() {
   common.writeAppFile('home.component.html', content, 'utf8');
 }
 
-fdescribe('skyux lib help', () => {
+describe('skyux lib help', () => {
   beforeAll((done) => {
     prepareBuild()
     .then(() => {
