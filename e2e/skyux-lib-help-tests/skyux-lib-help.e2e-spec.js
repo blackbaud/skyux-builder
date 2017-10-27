@@ -82,7 +82,11 @@ describe('skyux lib help', () => {
   });
 
   /**
-   * SKY UX adds the class 'sky-modal-body-full-page' to the body tag when a full page modal is launched. In order to hide the invoker tab when a full page modal is present, we added a style to the app.component.scss file in builder to target the '#bb-help-container.bb-help-closed' selector and add a display: none to the invoker. This test is to confirm that neither library changed the class names that accomplish this style override.
+   * SKY UX adds the class 'sky-modal-body-full-page' to the body tag when a full page modal is
+   * launched. In order to hide the invoker tab when a full page modal is present, we added a style
+   * to the app.component.scss file in builder to target the '#bb-help-container.bb-help-closed'
+   * selector and add a display: none to the invoker. This test is to confirm that neither library
+   * changed the class names that accomplish this style override.
    */
   it('should hide the invoker when a full page modal is opened', () => {
     let invoker = element(by.id('bb-help-invoker'));
