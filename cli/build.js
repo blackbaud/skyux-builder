@@ -172,7 +172,7 @@ function build(argv, skyPagesConfig, webpack) {
     skyPagesConfig.skyux &&
     skyPagesConfig.skyux.compileMode === 'aot';
 
-  if (lintResult.exitCode > 0) {
+  if (lintResult && lintResult.exitCode > 0) {
     process.exit(lintResult.exitCode);
   } else {
     const name = argv.serve ? buildServe : buildCompiler;

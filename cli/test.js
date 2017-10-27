@@ -25,7 +25,7 @@ function test(command, argv) {
   };
 
   const onRunComplete = () => {
-    if (lintResult.exitCode > 0) {
+    if (lintResult && lintResult.exitCode > 0) {
       // Pull the logger out of the execution stream to let it print
       // after karma's coverage reporter.
       setTimeout(() => {
