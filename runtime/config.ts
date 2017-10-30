@@ -39,6 +39,12 @@ export interface SkyuxConfigHost {
   url?: string;
 }
 
+export class SkyuxPactConfig {
+  public pacts?: any[];
+  public providers?: { [provider: string]: { host?: string; port?: string; fullUrl?: string; } };
+  public pactProxyServer?: string;
+}
+
 export interface SkyuxConfig {
   a11y?: SkyuxConfigA11y | boolean;
   app?: SkyuxConfigApp;
@@ -52,10 +58,7 @@ export interface SkyuxConfig {
   importPath?: string;
   mode?: string;
   name?: string;
-  pact?: any[];
-  pactServers?: {
-    [provider: string]: { host?: string; port?: string; fullUrl?: string; };
-  };
+  pactConfig?: SkyuxPactConfig;
   params?: string[]; // Array of allowed params
   plugins?: string[];
   redirects?: any;
