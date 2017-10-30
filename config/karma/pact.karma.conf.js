@@ -9,7 +9,8 @@
 function getConfig(config) {
   const minimist = require('minimist');
   const argv = minimist(process.argv.slice(2));
-  require(`./${argv.watch ? 'watch': 'test'}.karma.conf`)(config);
+  require(`./${argv.watch ? 'watch' : 'test'}.karma.conf`)(config);
+
   let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
   let testWebpackConfig = require('../webpack/test.webpack.config');
   const logger = require('../../utils/logger');
@@ -29,8 +30,7 @@ function getConfig(config) {
       pact.port = pactServers.getPactServer(pact.provider).port;
       i++;
     });
-  }
-  else {
+  } else {
     logger.error('No pact entry in configuration!');
   }
 

@@ -1,3 +1,6 @@
+/*jslint node: true */
+'use strict';
+
 let pactServers = {};
 let pactProxyServer = '';
 
@@ -31,26 +34,20 @@ module.exports = {
    *
    * @returns {string} the url
    */
-  getPactProxyServer: () => {
-    return pactProxyServer;
-  },
+  getPactProxyServer: () => pactProxyServer,
 
   /**
    * Returns the pact object for the desired provider
    *
    * @param {string} providerName - The name of the provider
    */
-  getPactServer: (providerName) => {
-    return pactServers[providerName];
-  },
+  getPactServer: (providerName) => pactServers[providerName],
 
   /**
    * Returns all recorded pact objects
    *
    * @returns {Object} All recorded pact servers for test run
    */
-  getAllPactServers: () => {
-    return pactServers;
-  }
+  getAllPactServers: () => pactServers
 
-}
+};

@@ -10,9 +10,9 @@ function pact(command, argv) {
   const Server = require('karma').Server;
   const tsLinter = require('./utils/ts-linter');
   const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
-  var skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig(command);
-  var http = require('http'),
-    httpProxy = require('http-proxy');
+  let skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig(command);
+  let http = require('http');
+  let httpProxy = require('http-proxy');
   const portfinder = require('portfinder');
   const url = require('url');
   const pactServers = require('../utils/pact-servers');
@@ -46,9 +46,9 @@ function pact(command, argv) {
     process.exit(exitCode);
   };
 
-  var pactPortPromises = [];
+  let pactPortPromises = [];
   // get a free port for every config entry, plus one for the proxy
-  for (var i = 0; i < skyPagesConfig.skyux.pactConfig.pacts.length + 1; i++) {
+  for (let i = 0; i < skyPagesConfig.skyux.pactConfig.pacts.length + 1; i++) {
 
     pactPortPromises.push(portfinder.getPortPromise());
 
@@ -59,29 +59,32 @@ function pact(command, argv) {
 
       skyPagesConfig.skyux.pactConfig.providers = {};
 
-      for (var i = 0; i < skyPagesConfig.skyux.pactConfig.pacts.length; i++) {
+      for (let i = 0; i < skyPagesConfig.skyux.pactConfig.pacts.length; i++) {
 
         let serverHost = (skyPagesConfig.skyux.pactConfig.pacts[i].host || 'localhost');
         let serverPort = (skyPagesConfig.skyux.pactConfig.pacts[i].port || ports[i]);
         // saving pact server information so it can carry over into karma config
-        pactServers.savePactServer(skyPagesConfig.skyux.pactConfig.pacts[i].provider, serverHost, serverPort);
+        pactServers
+        .savePactServer(skyPagesConfig.skyux.pactConfig.pacts[i].provider, serverHost, serverPort);
       }
 
-      var proxy = httpProxy.createProxyServer({});
+      let proxy = httpProxy.createProxyServer({});
 
       // proxy requests to pact server to contain actual host url rather than the karma url
-      proxy.on('proxyReq', function (proxyReq, req, res, options) {
+      proxy.on('proxyReq', function (proxyReq) {
         let origin = skyPagesConfig.skyux.host.url || 'https://host.nxt.blackbaud.com';
         proxyReq.setHeader('Origin', origin);
       });
       // revert CORS header value back to karma url so that requests are successful
-      proxy.on('proxyRes', function (proxyRes, req, res) {
-        proxyRes.headers['Access-Control-Allow-Origin'] = req.headers['origin'];
+      proxy.on('proxyRes', function (proxyRes, req) {
+        proxyRes.headers['Access-Control-Allow-Origin'] = req.headers.origin;
       });
 
       http.createServer((req, res) => {
 
-        // provider is part of path so that consuming app can make requests to multiple pact servers from one proxy server.  Use that value to identify proper pact server and then remove from request url.
+        // provider is part of path so that consuming app can make requests to multiple pact
+        // servers from one proxy server.  Use that value to identify proper pact server and then
+        // remove from request url.
         let provider = url.parse(req.url).pathname.split('/')[1];
         req.url = req.url.split(provider)[1];
 
@@ -89,9 +92,9 @@ function pact(command, argv) {
           proxy.web(req, res, {
             target: pactServers.getPactServer(provider).fullUrl
           });
-        }
-        else {
-          logger.error(`Pact proxy path is invalid.  Expected format is base/provider-name/api-path.`);
+        } else {
+          logger
+            .error(`Pact proxy path is invalid.  Expected format is base/provider-name/api-path.`);
         }
       }).listen(ports[ports.length - 1]);
 
@@ -109,7 +112,7 @@ function pact(command, argv) {
     })
     .catch((err) => {
       logger.error(err);
-    })
+    });
 }
 
 module.exports = pact;

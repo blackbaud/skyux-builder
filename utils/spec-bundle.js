@@ -1,5 +1,6 @@
 /*jslint node: true */
 /*global ROOT_DIR*/
+/*global skyPagesConfig*/
 'use strict';
 
 /**
