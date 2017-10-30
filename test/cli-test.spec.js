@@ -198,4 +198,33 @@ describe('cli test', () => {
     expect(_hooks[1]).toEqual('run_complete');
     expect(process.exit).toHaveBeenCalledWith(0);
   });
+
+  it('should handle signal interrupted', () => {
+    let _onExit;
+
+    mock.stop('../cli/utils/ts-linter');
+
+    // After SIGINT, lintSync returns undefined.
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => undefined
+    });
+
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, onExit) {
+        _onExit = onExit;
+        this.on = (hook, callback) => callback();
+        this.start = () => {};
+      }
+    });
+
+    const test = mock.reRequire('../cli/test');
+
+    test('test');
+    _onExit(0);
+
+    expect(process.exit).toHaveBeenCalledWith(0);
+  });
 });

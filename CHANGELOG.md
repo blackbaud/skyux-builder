@@ -1,3 +1,11 @@
+# 1.4.0 (2017-10-27)
+
+- Adjusted class names used to hide help invoker on full-page modal. [#314](https://github.com/blackbaud/skyux-builder/pull/314)
+- Bugfix to not force URLs to lowercase when calling `navigateByUrl`. [#313](https://github.com/blackbaud/skyux-builder/pull/313)
+- Using AppVeyor to validate building on the Windows platform. [#310](https://github.com/blackbaud/skyux-builder/pull/310), [#312](https://github.com/blackbaud/skyux-builder/pull/312)
+- Upgraded `@blackbaud/auth-client` to 2.0.0. Providing backwards compatibility until 2.x.x release. [#308](https://github.com/blackbaud/skyux-builder/pull/308)
+- Fixed the paths used for automatically excluding files from code coverage. [#306](https://github.com/blackbaud/skyux-builder/pull/306)
+
 # 1.3.1 (2017-10-20)
 
 - Fixed help invoker not being hidden when full-page modal opened. [#304](https://github.com/blackbaud/skyux-builder/pull/304)

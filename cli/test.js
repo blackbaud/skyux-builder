@@ -25,7 +25,7 @@ function test(command, argv) {
   };
 
   const onRunComplete = () => {
-    if (lintResult.exitCode > 0) {
+    if (lintResult && lintResult.exitCode > 0) {
       // Pull the logger out of the execution stream to let it print
       // after karma's coverage reporter.
       setTimeout(() => {
@@ -37,7 +37,9 @@ function test(command, argv) {
 
   const onExit = (exitCode) => {
     if (exitCode === 0) {
-      exitCode = lintResult.exitCode;
+      if (lintResult) {
+        exitCode = lintResult.exitCode;
+      }
     }
 
     logger.info(`Karma has exited with ${exitCode}.`);
