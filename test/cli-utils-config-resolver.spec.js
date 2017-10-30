@@ -6,6 +6,10 @@ const logger = require('winston');
 
 describe('utils/config-resolver.js', () => {
 
+  afterEach(() => {
+    mock.stopAll();
+  });
+
   function setup(command, globResult, internal, argv) {
     mock('fs-extra', {
       existsSync: () => internal
