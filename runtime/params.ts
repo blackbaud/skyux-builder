@@ -37,19 +37,17 @@ export class SkyAppRuntimeConfigParams {
 
       for (const p in configParams) {
         /* istanbul ignore else */
-        if (configParams.hasOwnProperty(p) && configParams[p]) {
+        if (configParams.hasOwnProperty(p)) {
           const configParam = configParams[p];
 
           // The config param could be present but be set to false/undefined indicating
           // an override of the default parameter.
           if (configParam) {
-            // Each key on the object represents the name of the parameter.
             allowed.push(p);
 
             // A boolean value may be present to simply indicate that a parameter is allowed.
             // If the type is object, look for additional config properties.
             if (typeof configParam === 'object') {
-              // Apply default value.
               const paramValue = configParam.value;
 
               if (paramValue) {
