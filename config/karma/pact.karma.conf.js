@@ -24,8 +24,8 @@ function getConfig(config) {
     var i = 0;
     skyPagesConfig.skyux.pactConfig.pacts.forEach((pact) => {
       // set pact settings not specified in config file
-      pact.log = path.resolve(process.cwd(), 'logs', `pact-${pact.provider}.log`);
-      pact.dir = path.resolve(process.cwd(), 'pacts');
+      pact.log = pact.log || path.resolve(process.cwd(), 'logs', `pact-${pact.provider}.log`);
+      pact.dir = pact.dir || path.resolve(process.cwd(), 'pacts');
       pact.host = pactServers.getPactServer(pact.provider).host;
       pact.port = pactServers.getPactServer(pact.provider).port;
       i++;
