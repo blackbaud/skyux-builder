@@ -157,11 +157,11 @@ function getWebpackConfig(skyPagesConfig, argv) {
       include: srcPath,
       exclude: [
         /\.(e2e|spec)\.ts$/,
-        /node_modules/,
-        /index\.ts/,
-        /fixtures/,
-        /testing/,
-        /src(\\|\/)app(\\|\/)lib/
+        /(\\|\/)node_modules(\\|\/)/,
+        /(\\|\/)index\.ts/,
+        /(\\|\/)fixtures(\\|\/)/,
+        /(\\|\/)testing(\\|\/)/,
+        /(\\|\/)src(\\|\/)app(\\|\/)lib(\\|\/)/
       ]
     });
   }
