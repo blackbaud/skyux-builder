@@ -56,15 +56,15 @@ export class SkyAppRuntimeConfigParams {
       }
     }
 
-    const urlSearchParams: URLSearchParams = getUrlSearchParams(url);
+    const urlSearchParams = getUrlSearchParams(url);
 
     // Get uppercase keys.
-    const allowedKeysUC: string[] = allowed.map(key => key.toUpperCase());
-    const urlSearchParamKeys: string[] = Array.from(urlSearchParams.paramsMap.keys());
+    const allowedKeysUC = allowed.map(key => key.toUpperCase());
+    const urlSearchParamKeys = Array.from(urlSearchParams.paramsMap.keys());
 
     // Filter to allowed params and override default values.
     urlSearchParamKeys.forEach(givenKey => {
-      const givenKeyUC: string = givenKey.toUpperCase();
+      const givenKeyUC = givenKey.toUpperCase();
       allowedKeysUC.forEach((allowedKeyUC, index) => {
         if (givenKeyUC === allowedKeyUC) {
           this.params[allowed[index]] = urlSearchParams.get(givenKey);
@@ -119,7 +119,7 @@ export class SkyAppRuntimeConfigParams {
    * @returns {string} url
    */
   public getUrl(url: string): string {
-    const urlSearchParams: URLSearchParams = getUrlSearchParams(url);
+    const urlSearchParams = getUrlSearchParams(url);
     const delimiter = url.indexOf('?') === -1 ? '?' : '&';
     let joined: string[] = [];
 
