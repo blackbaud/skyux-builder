@@ -19,22 +19,60 @@ export class SkyAppRuntimeConfigParams {
   private params: {[key: string]: string} = {};
 
   constructor(
-    private url: string,
-    private allowed: string[]
+    url: string,
+    configParams: string[] | {[key: string]: boolean | {value?: any}}
   ) {
+    let allowed: string[];
 
-    const urlSearchParams: URLSearchParams = getUrlSearchParams(this.url);
+    // The default params value in Builder's skyuxconfig.json has been changed
+    // from an array to an object to support more metadata about each parameter,
+    // including the parameter's default value and possible future properties
+    // like required. Check for an array first to maintain backwards compatibility
+    // with the previous default value and any consumers who may be overriding the
+    // value until we release builder 2.0.
+    if (Array.isArray(configParams)) {
+      allowed = configParams;
+    } else {
+      allowed = [];
 
-    // Get uppercase keys
-    const allowedKeysUC: string[] = this.allowed.map(key => key.toUpperCase());
+      for (const p in configParams) {
+        /* istanbul ignore else */
+        if (configParams.hasOwnProperty(p) && configParams[p]) {
+          const configParam = configParams[p];
+
+          // The config param could be present but be set to false/undefined indicating
+          // an override of the default parameter.
+          if (configParam) {
+            // Each key on the object represents the name of the parameter.
+            allowed.push(p);
+
+            // A boolean value may be present to simply indicate that a parameter is allowed.
+            // If the type is object, look for additional config properties.
+            if (typeof configParam === 'object') {
+              // Apply default value.
+              const paramValue = configParam.value;
+
+              if (paramValue) {
+                this.params[p] = paramValue;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const urlSearchParams: URLSearchParams = getUrlSearchParams(url);
+
+    // Get uppercase keys.
+    const allowedKeysUC: string[] = allowed.map(key => key.toUpperCase());
     const urlSearchParamKeys: string[] = Array.from(urlSearchParams.paramsMap.keys());
 
-    // Filter to allowed params
+    // Filter to allowed params and override default values.
     urlSearchParamKeys.forEach(givenKey => {
       const givenKeyUC: string = givenKey.toUpperCase();
       allowedKeysUC.forEach((allowedKeyUC, index) => {
         if (givenKeyUC === allowedKeyUC) {
-          this.params[this.allowed[index]] = urlSearchParams.get(givenKey);
+          this.params[allowed[index]] = urlSearchParams.get(givenKey);
         }
       });
     });
