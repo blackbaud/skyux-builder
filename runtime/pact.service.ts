@@ -1,4 +1,4 @@
-import { SkyAppConfig } from 'runtime';
+import { SkyAppConfig } from '@blackbaud/skyux-builder/runtime/config';
 
 declare var Pact: any;
 
