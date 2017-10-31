@@ -35,24 +35,21 @@ export class SkyAppRuntimeConfigParams {
     } else {
       allowed = [];
 
-      for (const p in configParams) {
-        /* istanbul ignore else */
-        if (configParams.hasOwnProperty(p)) {
-          const configParam = configParams[p];
+      for (const paramName of Object.keys(configParams)) {
+        const configParam = configParams[paramName];
 
-          // The config param could be present but be set to false/undefined indicating
-          // an override of the default parameter.
-          if (configParam) {
-            allowed.push(p);
+        // The config param could be present but be set to false/undefined indicating
+        // an override of the default parameter.
+        if (configParam) {
+          allowed.push(paramName);
 
-            // A boolean value may be present to simply indicate that a parameter is allowed.
-            // If the type is object, look for additional config properties.
-            if (typeof configParam === 'object') {
-              const paramValue = configParam.value;
+          // A boolean value may be present to simply indicate that a parameter is allowed.
+          // If the type is object, look for additional config properties.
+          if (typeof configParam === 'object') {
+            const paramValue = configParam.value;
 
-              if (paramValue) {
-                this.params[p] = paramValue;
-              }
+            if (paramValue) {
+              this.params[paramName] = paramValue;
             }
           }
         }
