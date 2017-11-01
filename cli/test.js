@@ -9,13 +9,13 @@ function test(command, argv) {
   const logger = require('../utils/logger');
   const Server = require('karma').Server;
   const tsLinter = require('./utils/ts-linter');
-  const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+  const configResolver = require('./utils/config-resolver');
 
   argv = argv || process.argv;
   argv.command = command;
 
   const karmaConfigUtil = require('karma').config;
-  const karmaConfigPath = skyPagesConfigUtil.outPath(`config/karma/${command}.karma.conf.js`);
+  const karmaConfigPath = configResolver.resolve(command, argv);
   const karmaConfig = karmaConfigUtil.parseConfig(karmaConfigPath);
 
   let lintResult;
@@ -25,7 +25,7 @@ function test(command, argv) {
   };
 
   const onRunComplete = () => {
-    if (lintResult.exitCode > 0) {
+    if (lintResult && lintResult.exitCode > 0) {
       // Pull the logger out of the execution stream to let it print
       // after karma's coverage reporter.
       setTimeout(() => {
@@ -37,7 +37,9 @@ function test(command, argv) {
 
   const onExit = (exitCode) => {
     if (exitCode === 0) {
-      exitCode = lintResult.exitCode;
+      if (lintResult) {
+        exitCode = lintResult.exitCode;
+      }
     }
 
     logger.info(`Karma has exited with ${exitCode}.`);

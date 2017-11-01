@@ -1,5 +1,6 @@
 import {
   Component,
+  NgZone,
   OnInit,
   Optional
 } from '@angular/core';
@@ -11,6 +12,7 @@ import {
 
 import {
   BBOmnibar,
+  BBOmnibarLegacy,
   BBOmnibarNavigation,
   BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
@@ -77,7 +79,8 @@ export class AppComponent implements OnInit {
     private styleLoader: SkyAppStyleLoader,
     @Optional() private helpInitService?: HelpInitializationService,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider,
-    @Optional() viewport?: SkyAppViewportService
+    @Optional() viewport?: SkyAppViewportService,
+    @Optional() private zone?: NgZone
   ) {
     this.styleLoader.loadStyles()
       .then((result?: any) => {
@@ -146,14 +149,14 @@ export class AppComponent implements OnInit {
       nav = omnibarConfig.nav;
       fixUpNav(nav, baseUrl);
     } else {
-      nav = omnibarConfig.nav = new BBOmnibarNavigation();
+      nav = omnibarConfig.nav = {};
     }
 
     nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
       const url = item.url.toLowerCase();
 
       if (url.indexOf(baseUrl) === 0) {
-        const routePath = url.substring(baseUrl.length, url.length);
+        const routePath = item.url.substring(baseUrl.length, url.length);
         this.router.navigateByUrl(routePath);
         return false;
       }
@@ -201,7 +204,18 @@ export class AppComponent implements OnInit {
 
       omnibarConfig.allowAnonymous = !this.config.skyux.auth;
 
-      BBOmnibar.load(omnibarConfig);
+      // The omnibar uses setInterval() to poll for user activity, and setInterval()
+      // triggers change detection on each interval.  Loading the omnibar outside
+      // Angular will keep change detection from being triggered during each interval.
+      this.zone.runOutsideAngular(() => {
+        if (omnibarConfig.experimental) {
+          // auth-client 2.0 made the "experimental" omnibar the default; maintain
+          // previous behavior until skyux-builder 2.0.
+          BBOmnibar.load(omnibarConfig);
+        } else {
+          BBOmnibarLegacy.load(omnibarConfig);
+        }
+      });
     }
 
     if (helpConfig && this.helpInitService) {
