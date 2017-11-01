@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const loaderUtils = require('loader-utils');
 
 const assetsProcessor = require('../../lib/assets-processor');
