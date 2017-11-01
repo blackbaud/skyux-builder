@@ -6,9 +6,13 @@ const WebpackDevServer = require('webpack-dev-server');
 const logger = require('./utils/logger');
 const config = require('./config/sky-pages/sky-pages.config');
 
+// Used to suppress logging unless it's a known command
+function getConfig(command) {
+  return config.getSkyPagesConfig(command);
+}
+
 module.exports = {
   runCommand: (command, argv) => {
-    const skyPagesConfig = config.getSkyPagesConfig(command);
     const shorthand = {
       l: 'launch',
       b: 'browser',
@@ -24,16 +28,16 @@ module.exports = {
 
     switch (command) {
       case 'build':
-        require('./cli/build')(argv, skyPagesConfig, webpack);
+        require('./cli/build')(argv, getConfig(command), webpack);
         break;
       case 'build-public-library':
-        require('./cli/build-public-library')(skyPagesConfig, webpack);
+        require('./cli/build-public-library')(getConfig(command), webpack);
         break;
       case 'e2e':
-        require('./cli/e2e')(argv, skyPagesConfig, webpack);
+        require('./cli/e2e')(argv, getConfig(command), webpack);
         break;
       case 'serve':
-        require('./cli/serve')(argv, skyPagesConfig, webpack, WebpackDevServer);
+        require('./cli/serve')(argv, getConfig(command), webpack, WebpackDevServer);
         break;
       case 'lint':
         require('./cli/lint')();
