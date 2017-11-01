@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SkyAppRuntimeConfigParams } from './params';
+import { SkyuxConfigParams } from './config-params';
 
 export interface RuntimeConfigApp {
   base: string;
@@ -52,7 +53,7 @@ export interface SkyuxConfig {
   importPath?: string;
   mode?: string;
   name?: string;
-  params?: string[]; // Array of allowed params
+  params?: SkyuxConfigParams; // List of allowed params
   plugins?: string[];
   redirects?: any;
   routes?: {
