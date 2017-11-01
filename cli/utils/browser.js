@@ -17,8 +17,21 @@ const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
  */
 function getQueryStringFromArgv(argv, skyPagesConfig) {
 
+  const configParams = skyPagesConfig.skyux.params;
+
+  let params;
+
+  if (Array.isArray(configParams)) {
+    params = configParams;
+  } else {
+    // Get the params that have truthy values, since false/undefined indicates
+    // the parameter should not be added.
+    params = Object.keys(configParams)
+      .filter(configParam => configParams[configParam]);
+  }
+
   let found = [];
-  skyPagesConfig.skyux.params.forEach(param => {
+  params.forEach(param => {
     if (argv[param]) {
       found.push(`${param}=${encodeURIComponent(argv[param])}`);
     }
