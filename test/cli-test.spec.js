@@ -7,7 +7,8 @@ const logger = require('../utils/logger');
 describe('cli test', () => {
   let originalArgv = process.argv;
 
-  function MockServer(config, onExit) {}
+  function MockServer() { }
+
   MockServer.prototype.on = function () {};
   MockServer.prototype.start = function () {};
 
@@ -16,6 +17,7 @@ describe('cli test', () => {
     spyOn(process, 'exit').and.returnValue();
     spyOn(logger, 'info').and.returnValue();
     spyOn(logger, 'error').and.returnValue();
+
     mock('../cli/utils/ts-linter', {
       lintSync: () => {
         return {
@@ -24,8 +26,13 @@ describe('cli test', () => {
         };
       }
     });
+
     mock('../config/sky-pages/sky-pages.config', {
       outPath: (path) => path
+    });
+
+    mock('../cli/utils/config-resolver', {
+      resolve: (command) => `${command}-config.js`
     });
   });
 
@@ -44,7 +51,7 @@ describe('cli test', () => {
     });
     const test = mock.reRequire('../cli/test');
     test('test', {});
-    expect(_configPath.indexOf('/test.karma.conf.js') > -1).toEqual(true);
+    expect(_configPath).toEqual('test-config.js');
   });
 
   it('should load the watch config when running watch command', () => {
@@ -57,7 +64,7 @@ describe('cli test', () => {
     });
     const test = mock.reRequire('../cli/test');
     test('watch');
-    expect(_configPath.indexOf('/watch.karma.conf.js') > -1).toEqual(true);
+    expect(_configPath).toEqual('watch-config.js');
   });
 
   it('should save the current command to argv', () => {

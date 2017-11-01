@@ -8,7 +8,7 @@ describe('SKY UX assets Webpack loader', () => {
   let loader;
 
   beforeEach(() => {
-    mock('fs', {
+    mock('fs-extra', {
       readFileSync: function () {
         return 'zxcv';
       }
@@ -33,8 +33,7 @@ describe('SKY UX assets Webpack loader', () => {
   });
 
   afterEach(() => {
-    mock.stop('hash-file');
-    mock.stop('fs');
+    mock.stopAll();
   });
 
   it('should replace links to assets and emit the referenced files', () => {
