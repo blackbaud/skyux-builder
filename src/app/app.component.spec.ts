@@ -1,4 +1,8 @@
 import {
+  NgZone
+} from '@angular/core';
+
+import {
   async,
   ComponentFixture,
   fakeAsync,
@@ -203,6 +207,42 @@ describe('AppComponent', () => {
       expect(spyOmnibar).toHaveBeenCalled();
     });
   }));
+
+  it(
+    'should load the omnibar outside Angular to avoid change detection during user activity checks',
+    async(() => {
+      const spyOmnibar = spyOn(BBOmnibar, 'load');
+
+      skyAppConfig.skyux.omnibar = {
+        experimental: true
+      };
+
+      setup(skyAppConfig).then(() => {
+        const zone = fixture.debugElement.injector.get(NgZone);
+
+        let loadOmnibarCallback: Function;
+
+        const runOutsideAngularSpy = spyOn(zone, 'runOutsideAngular').and.callFake(
+          (cb: Function) => {
+            if (cb && cb.toString().indexOf('BBOmnibar') >= 0) {
+              loadOmnibarCallback = cb;
+            } else {
+              cb();
+            }
+          }
+        );
+
+        fixture.detectChanges();
+
+        expect(runOutsideAngularSpy).toHaveBeenCalled();
+        expect(spyOmnibar).not.toHaveBeenCalled();
+
+        loadOmnibarCallback();
+
+        expect(spyOmnibar).toHaveBeenCalled();
+      });
+    })
+  );
 
   it('should set the onSearch property if a search provider is provided', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
