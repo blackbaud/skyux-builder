@@ -18,7 +18,7 @@ function getConfig(config) {
 
   // Using __dirname so this file can be extended from other configuration file locations
   const specBundle = `${__dirname}/../../utils/spec-bundle.js`;
-  const specStyles = `${__dirname}/../../utils/spec-styles.js`
+  const specStyles = `${__dirname}/../../utils/spec-styles.js`;
   let preprocessors = {};
 
   preprocessors[specBundle] = ['coverage', 'webpack', 'sourcemap'];
