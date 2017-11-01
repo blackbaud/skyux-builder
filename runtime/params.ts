@@ -1,4 +1,5 @@
 import { URLSearchParams } from '@angular/http';
+import { SkyuxConfigParams } from './config-params';
 
 /**
  * Given a "url" (could be just querystring, or fully qualified),
@@ -20,7 +21,7 @@ export class SkyAppRuntimeConfigParams {
 
   constructor(
     url: string,
-    configParams: string[] | {[key: string]: boolean | {value?: any}}
+    configParams: SkyuxConfigParams
   ) {
     let allowed: string[];
 
