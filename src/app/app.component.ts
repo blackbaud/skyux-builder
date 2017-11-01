@@ -1,5 +1,6 @@
 import {
   Component,
+  NgZone,
   OnInit,
   Optional
 } from '@angular/core';
@@ -78,7 +79,8 @@ export class AppComponent implements OnInit {
     private styleLoader: SkyAppStyleLoader,
     @Optional() private helpInitService?: HelpInitializationService,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider,
-    @Optional() viewport?: SkyAppViewportService
+    @Optional() viewport?: SkyAppViewportService,
+    @Optional() private zone?: NgZone
   ) {
     this.styleLoader.loadStyles()
       .then((result?: any) => {
@@ -202,13 +204,18 @@ export class AppComponent implements OnInit {
 
       omnibarConfig.allowAnonymous = !this.config.skyux.auth;
 
-      if (omnibarConfig.experimental) {
-        // auth-client 2.0 made the "experimental" omnibar the default; maintain
-        // previous behavior until skyux-builder until 2.0.
-        BBOmnibar.load(omnibarConfig);
-      } else {
-        BBOmnibarLegacy.load(omnibarConfig);
-      }
+      // The omnibar uses setInterval() to poll for user activity, and setInterval()
+      // triggers change detection on each interval.  Loading the omnibar outside
+      // Angular will keep change detection from being triggered during each interval.
+      this.zone.runOutsideAngular(() => {
+        if (omnibarConfig.experimental) {
+          // auth-client 2.0 made the "experimental" omnibar the default; maintain
+          // previous behavior until skyux-builder 2.0.
+          BBOmnibar.load(omnibarConfig);
+        } else {
+          BBOmnibarLegacy.load(omnibarConfig);
+        }
+      });
     }
 
     if (helpConfig && this.helpInitService) {
