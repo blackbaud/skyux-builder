@@ -1,4 +1,5 @@
 import { URLSearchParams } from '@angular/http';
+import { SkyuxConfigParams } from './config-params';
 
 /**
  * Given a "url" (could be just querystring, or fully qualified),
@@ -19,22 +20,55 @@ export class SkyAppRuntimeConfigParams {
   private params: {[key: string]: string} = {};
 
   constructor(
-    private url: string,
-    private allowed: string[]
+    url: string,
+    configParams: SkyuxConfigParams
   ) {
+    let allowed: string[];
 
-    const urlSearchParams: URLSearchParams = getUrlSearchParams(this.url);
+    // The default params value in Builder's skyuxconfig.json has been changed
+    // from an array to an object to support more metadata about each parameter,
+    // including the parameter's default value and possible future properties
+    // like required. Check for an array first to maintain backwards compatibility
+    // with the previous default value and any consumers who may be overriding the
+    // value until we release builder 2.0.
+    if (Array.isArray(configParams)) {
+      allowed = configParams;
+    } else {
+      allowed = [];
 
-    // Get uppercase keys
-    const allowedKeysUC: string[] = this.allowed.map(key => key.toUpperCase());
-    const urlSearchParamKeys: string[] = Array.from(urlSearchParams.paramsMap.keys());
+      for (const paramName of Object.keys(configParams)) {
+        const configParam = configParams[paramName];
 
-    // Filter to allowed params
+        // The config param could be present but be set to false/undefined indicating
+        // an override of the default parameter.
+        if (configParam) {
+          allowed.push(paramName);
+
+          // A boolean value may be present to simply indicate that a parameter is allowed.
+          // If the type is object, look for additional config properties.
+          if (typeof configParam === 'object') {
+            const paramValue = configParam.value;
+
+            if (paramValue) {
+              this.params[paramName] = paramValue;
+            }
+          }
+        }
+      }
+    }
+
+    const urlSearchParams = getUrlSearchParams(url);
+
+    // Get uppercase keys.
+    const allowedKeysUC = allowed.map(key => key.toUpperCase());
+    const urlSearchParamKeys = Array.from(urlSearchParams.paramsMap.keys());
+
+    // Filter to allowed params and override default values.
     urlSearchParamKeys.forEach(givenKey => {
-      const givenKeyUC: string = givenKey.toUpperCase();
+      const givenKeyUC = givenKey.toUpperCase();
       allowedKeysUC.forEach((allowedKeyUC, index) => {
         if (givenKeyUC === allowedKeyUC) {
-          this.params[this.allowed[index]] = urlSearchParams.get(givenKey);
+          this.params[allowed[index]] = urlSearchParams.get(givenKey);
         }
       });
     });
@@ -86,7 +120,7 @@ export class SkyAppRuntimeConfigParams {
    * @returns {string} url
    */
   public getUrl(url: string): string {
-    const urlSearchParams: URLSearchParams = getUrlSearchParams(url);
+    const urlSearchParams = getUrlSearchParams(url);
     const delimiter = url.indexOf('?') === -1 ? '?' : '&';
     let joined: string[] = [];
 

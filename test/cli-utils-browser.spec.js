@@ -113,6 +113,36 @@ describe('browser utils', () => {
     expect(parsed.query.noid).not.toBeDefined();
   });
 
+  it(
+    'should pass through envid and svcid, but not other flags from the command line when ' + 'config specifies a params object',
+    () => {
+      const settings = bind({
+        argv: {
+          launch: 'host',
+          envid: 'my-envid',
+          svcid: 'my-svcid',
+          noid: 'nope'
+        },
+        skyPagesConfig: {
+          skyux: {
+            params: {
+              envid: true,
+              svcid: {
+                value: 'abc'
+              },
+              noid: false
+            }
+          }
+        }
+      });
+
+      const parsed = url.parse(openParamUrl, true);
+      expect(parsed.query.envid).toBe(settings.argv.envid);
+      expect(parsed.query.svcid).toBe(settings.argv.svcid);
+      expect(parsed.query.noid).not.toBeDefined();
+    }
+  );
+
   it('should default --launch to host', () => {
     testLaunchHost({});
   });

@@ -30,7 +30,7 @@ module.exports = {
         require('./cli/build-public-library')(skyPagesConfig, webpack);
         break;
       case 'e2e':
-        require('./cli/e2e')(argv, skyPagesConfig, webpack);
+        require('./cli/e2e')(command, argv, skyPagesConfig, webpack);
         break;
       case 'serve':
         require('./cli/serve')(argv, skyPagesConfig, webpack, WebpackDevServer);
