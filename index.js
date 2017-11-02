@@ -3,7 +3,6 @@
 
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const logger = require('./utils/logger');
 const config = require('./config/sky-pages/sky-pages.config');
 
 // Used to suppress logging unless it's a known command
