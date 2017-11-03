@@ -42,6 +42,7 @@ function getWebpackConfig(skyPagesConfig) {
     case 'advanced':
       appPath = spaPath('src', 'main.ts');
       break;
+
     default:
       appPath = outPath('src', 'main-internal.ts');
       break;

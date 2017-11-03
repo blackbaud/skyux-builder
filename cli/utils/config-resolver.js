@@ -14,12 +14,12 @@ function getPath(command, platform, root, dir) {
     case 'e2e':
     case 'visual':
       filename = `config/protractor/protractor.conf.js`;
-    break;
+      break;
 
     // Defaulting to karma so dev-runtime and src-app can be passed in via our test suite.
     default:
       filename = `config/karma/${command}.karma.conf.js`;
-    break;
+      break;
   }
 
   return path.join(root, dir, platform, filename);

@@ -67,6 +67,7 @@ function getFileContents(filePath) {
     case '.scss':
       contents = compileSass(filePath);
       break;
+
     case '.html':
       contents = getHtmlContents(filePath);
       break;
