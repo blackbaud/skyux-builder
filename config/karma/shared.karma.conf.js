@@ -51,6 +51,9 @@ function getConfig(config) {
         return remapIstanbul.remap(collector.getFinalCoverage());
       }
     },
+    junitReporter: {
+      outputDir: `${process.cwd()}/coverage/junit/`
+    },
     webpackServer: {
       noInfo: true,
       stats: 'minimal'
@@ -60,7 +63,7 @@ function getConfig(config) {
     browserConsoleLogOptions: {
       level: 'log'
     },
-    reporters: ['mocha', 'coverage'],
+    reporters: ['junit', 'mocha', 'coverage'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
