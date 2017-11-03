@@ -16,24 +16,29 @@ function getConfig(config) {
   let remapIstanbul = require('remap-istanbul');
   let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv.command);
 
+  // Using __dirname so this file can be extended from other configuration file locations
+  const specBundle = `${__dirname}/../../utils/spec-bundle.js`;
+  const specStyles = `${__dirname}/../../utils/spec-styles.js`;
+  let preprocessors = {};
+
+  preprocessors[specBundle] = ['coverage', 'webpack', 'sourcemap'];
+  preprocessors[specStyles] = ['webpack'];
+
   config.set({
     basePath: '',
     frameworks: ['jasmine'],
     exclude: [],
     files: [
       {
-        pattern: '../../utils/spec-bundle.js',
+        pattern: specBundle,
         watched: false
       },
       {
-        pattern: '../../utils/spec-styles.js',
+        pattern: specStyles,
         watched: false
       }
     ],
-    preprocessors: {
-      '../../utils/spec-styles.js': ['webpack'],
-      '../../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
-    },
+    preprocessors: preprocessors,
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
