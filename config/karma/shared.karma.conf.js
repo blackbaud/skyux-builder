@@ -44,7 +44,8 @@ function getConfig(config) {
       dir: path.join(process.cwd(), 'coverage'),
       reporters: [
         { type: 'json' },
-        { type: 'html' }
+        { type: 'html' },
+        { type: 'cobertura' }
       ],
       _onWriteReport: function (collector) {
         return remapIstanbul.remap(collector.getFinalCoverage());
