@@ -6,16 +6,16 @@
  * @name pact
  */
 function pact(command, argv) {
-  const logger = require('../utils/logger');
   const Server = require('karma').Server;
+  const portfinder = require('portfinder');
+  const url = require('url');
+  const logger = require('../utils/logger');
   const tsLinter = require('./utils/ts-linter');
   const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+  const pactServers = require('../utils/pact-servers');
   let skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig(command);
   let http = require('http');
   let httpProxy = require('http-proxy');
-  const portfinder = require('portfinder');
-  const url = require('url');
-  const pactServers = require('../utils/pact-servers');
 
   argv = argv || process.argv;
   argv.command = command;
@@ -48,7 +48,11 @@ function pact(command, argv) {
 
   let pactPortPromises = [];
   // get a free port for every config entry, plus one for the proxy
-  for (let i = 0; i < skyPagesConfig.skyux.pactConfig.pacts.length + 1; i++) {
+  if(! skyPagesConfig.skyux.pacts) {
+    logger.error('skyux pact failed! pacts does not exist on configuration file.');
+    process.exit();
+  }
+  for (let i = 0; i < skyPagesConfig.skyux.pacts.length + 1; i++) {
 
     pactPortPromises.push(portfinder.getPortPromise());
 
@@ -57,15 +61,13 @@ function pact(command, argv) {
   Promise.all(pactPortPromises)
     .then((ports) => {
 
-      skyPagesConfig.skyux.pactConfig.providers = {};
+      for (let i = 0; i < skyPagesConfig.skyux.pacts.length; i++) {
 
-      for (let i = 0; i < skyPagesConfig.skyux.pactConfig.pacts.length; i++) {
-
-        let serverHost = (skyPagesConfig.skyux.pactConfig.pacts[i].host || 'localhost');
-        let serverPort = (skyPagesConfig.skyux.pactConfig.pacts[i].port || ports[i]);
+        let serverHost = (skyPagesConfig.skyux.pacts[i].host || 'localhost');
+        let serverPort = (skyPagesConfig.skyux.pacts[i].port || ports[i]);
         // saving pact server information so it can carry over into karma config
         pactServers
-        .savePactServer(skyPagesConfig.skyux.pactConfig.pacts[i].provider, serverHost, serverPort);
+        .savePactServer(skyPagesConfig.skyux.pacts[i].provider, serverHost, serverPort);
       }
 
       let proxy = httpProxy.createProxyServer({});

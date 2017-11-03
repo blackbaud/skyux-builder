@@ -17,12 +17,13 @@ function getConfig(config) {
   const path = require('path');
   const pactServers = require('../../utils/pact-servers');
 
-  skyPagesConfig.skyux.pactConfig.providers = pactServers.getAllPactServers();
-  skyPagesConfig.skyux.pactConfig.pactProxyServer = pactServers.getPactProxyServer();
+  skyPagesConfig.runtime.pactConfig = {};
+  skyPagesConfig.runtime.pactConfig.providers = pactServers.getAllPactServers();
+  skyPagesConfig.runtime.pactConfig.pactProxyServer = pactServers.getPactProxyServer();
 
-  if (skyPagesConfig.skyux.pactConfig.pacts) {
+  if (skyPagesConfig.skyux.pacts) {
     var i = 0;
-    skyPagesConfig.skyux.pactConfig.pacts.forEach((pact) => {
+    skyPagesConfig.skyux.pacts.forEach((pact) => {
       // set pact settings not specified in config file
       pact.log = pact.log || path.resolve(process.cwd(), 'logs', `pact-${pact.provider}.log`);
       pact.dir = pact.dir || path.resolve(process.cwd(), 'pacts');
@@ -37,7 +38,7 @@ function getConfig(config) {
   config.set({
     frameworks: config.frameworks.concat('pact'),
     files: config.files.concat('../../node_modules/pact-web/pact-web.js'),
-    pact: skyPagesConfig.skyux.pactConfig.pacts,
+    pact: skyPagesConfig.skyux.pacts,
     plugins: config.plugins.concat('@pact-foundation/karma-pact'),
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv)
 

@@ -9,13 +9,13 @@ export class SkyPactService {
 
   private pactProviders: { [providerName: string]: any } = {};
   constructor(private appConfig: SkyAppConfig) {
-    Object.keys(this.appConfig.skyux.pactConfig.providers).forEach((providerName: string) => {
+    Object.keys(this.appConfig.runtime.pactConfig.providers).forEach((providerName: string) => {
 
       this.pactProviders[providerName] =
         Pact(
           {
-            host: this.appConfig.skyux.pactConfig.providers[providerName].host,
-            port: this.appConfig.skyux.pactConfig.providers[providerName].port
+            host: this.appConfig.runtime.pactConfig.providers[providerName].host,
+            port: this.appConfig.runtime.pactConfig.providers[providerName].port
           }
         );
 
