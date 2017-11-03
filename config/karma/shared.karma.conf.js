@@ -44,11 +44,15 @@ function getConfig(config) {
       dir: path.join(process.cwd(), 'coverage'),
       reporters: [
         { type: 'json' },
-        { type: 'html' }
+        { type: 'html' },
+        { type: 'cobertura' }
       ],
       _onWriteReport: function (collector) {
         return remapIstanbul.remap(collector.getFinalCoverage());
       }
+    },
+    junitReporter: {
+      outputDir: path.join(process.cwd(), 'coverage/junit/')
     },
     webpackServer: {
       noInfo: true,
@@ -59,7 +63,7 @@ function getConfig(config) {
     browserConsoleLogOptions: {
       level: 'log'
     },
-    reporters: ['mocha', 'coverage'],
+    reporters: ['junit', 'mocha', 'coverage'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
