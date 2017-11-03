@@ -1,3 +1,12 @@
+# 1.5.0 (2017-11-03)
+
+- Added `SkyAppOmnibarProvider` to enable custom `envId` and `svcId` to be provided to the omnibar. [#323](https://github.com/blackbaud/skyux-builder/pull/323)
+- Cleaned up logging by only generating config for known commands. [#321](https://github.com/blackbaud/skyux-builder/pull/321)
+- Enabled default `envid` and `svcid` params in `skyuxconfig.json`. [#320](https://github.com/blackbaud/skyux-builder/pull/320)
+- Exposed `--platform` flag and adjusted config paths to improve internal continuous integration. [#297](https://github.com/blackbaud/skyux-builder/pull/297), [#322](https://github.com/blackbaud/skyux-builder/pull/322)
+- Performance enhancement to load omnibar outside context of Angular. [#317](https://github.com/blackbaud/skyux-builder/pull/317)
+- Bugfix to handle stopping `skyux test` before linter finishes. [#316](https://github.com/blackbaud/skyux-builder/pull/316)
+
 # 1.4.0 (2017-10-27)
 
 - Adjusted class names used to hide help invoker on full-page modal. [#314](https://github.com/blackbaud/skyux-builder/pull/314)
