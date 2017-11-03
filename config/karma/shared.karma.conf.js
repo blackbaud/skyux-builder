@@ -52,7 +52,7 @@ function getConfig(config) {
       }
     },
     junitReporter: {
-      outputDir: `${process.cwd()}/coverage/junit/`
+      outputDir: path.join(process.cwd(), 'coverage/junit/')
     },
     webpackServer: {
       noInfo: true,
