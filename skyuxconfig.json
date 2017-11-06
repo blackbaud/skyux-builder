@@ -7,8 +7,8 @@
     "title": "Blackbaud - SKY UX Application"
   },
   "compileMode": "jit",
-  "params": [
-    "envid",
-    "svcid"
-  ]
+  "params": {
+    "envid": true,
+    "svcid": true
+  }
 }

@@ -83,4 +83,45 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.has('a3')).toEqual(false);
   });
 
+  it('should allow default values to be specified', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?a1=b&a2=c&a4=x',
+      {
+        // Allowed with simple boolean flag
+        a1: true,
+        // Disallowed but present in the query string
+        a2: undefined,
+        // Allowed with explicit default value
+        a3: {
+          value: 'd'
+        },
+        // Allowed with explicit default value of undefined
+        a4: {
+          value: undefined
+        }
+      }
+    );
+
+    expect(params.get('a1')).toBe('b');
+    expect(params.get('a2')).toBe(undefined);
+    expect(params.get('a3')).toBe('d');
+    expect(params.get('a4')).toBe('x');
+    expect(params.get('a5')).toBe(undefined);
+  });
+
+  it('should allow default values to be overridden by the query string', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?a1=b&a2=c',
+      {
+        a1: {
+          value: 'x'
+        },
+        a2: {}
+      }
+    );
+
+    expect(params.get('a1')).toBe('b');
+    expect(params.get('a2')).toBe('c');
+  });
+
 });

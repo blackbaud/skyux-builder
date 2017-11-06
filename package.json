@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.3.1",
+  "version": "1.5.0",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
@@ -9,8 +9,8 @@
     "coverage:runtime": "node ./utils/cli-test.js dev-runtime",
     "coverage:src-app": "node ./utils/cli-test.js dev-src-app",
     "e2e": "webdriver-manager update --gecko false && protractor ./config/protractor/protractor-dev.conf.js",
-    "jscs": "jscs cli config lib loader plugin src utils",
-    "jshint": "jshint cli config lib loader plugin src utils",
+    "jscs": "jscs cli config lib loader plugin src utils index.js",
+    "jshint": "jshint cli config lib loader plugin src utils index.js",
     "lint": "npm run jshint && npm run jscs",
     "test": "npm run lint && npm run coverage && npm run e2e"
   },

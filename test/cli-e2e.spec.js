@@ -77,6 +77,10 @@ describe('cli e2e', () => {
       }
     });
 
+    mock('../cli/utils/config-resolver', {
+      resolve: () => configPath
+    });
+
     spyOn(process, 'on').and.callFake((evt, cb) => {
       if (evt === 'exit') {
         PROTRACTOR_CB = cb;
@@ -100,7 +104,7 @@ describe('cli e2e', () => {
     });
 
     EXIT_CODE = 1;
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should catch protractor kitchen sink error', (done) => {
@@ -112,7 +116,7 @@ describe('cli e2e', () => {
     });
 
     EXIT_CODE = 199;
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should install, start, and kill selenium only if a seleniumAddress is specified', (done) => {
@@ -141,7 +145,7 @@ describe('cli e2e', () => {
       done();
     });
 
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should catch build failures', (done) => {
@@ -152,10 +156,11 @@ describe('cli e2e', () => {
       done();
     });
 
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should catch selenium failures', (done) => {
+
     mock(configPath, {
       config: {
         seleniumAddress: 'asdf'
@@ -176,13 +181,10 @@ describe('cli e2e', () => {
       done();
     });
 
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should catch protractor\'s selenium failures', (done) => {
-    mock(configPath, {
-      config: {}
-    });
 
     mock('cross-spawn', {
       spawn: () => {
@@ -202,7 +204,7 @@ describe('cli e2e', () => {
       done();
     });
 
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should not continue if no e2e spec files exist', (done) => {
@@ -216,14 +218,14 @@ describe('cli e2e', () => {
       done();
     });
 
-    mock.reRequire('../cli/e2e')(ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should accept the --no-build flag and handle errors', (done) => {
 
     spyOn(fs, 'existsSync').and.returnValue(false);
 
-    mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', { build: false }, SKY_PAGES_CONFIG, WEBPACK);
     spyOn(process, 'exit').and.callFake(() => {
       const calls = logger.info.calls.allArgs();
       const message = `Unable to skip build step.  "dist/metadata.json" not found.`;
@@ -239,7 +241,7 @@ describe('cli e2e', () => {
     spyOn(fs, 'existsSync').and.returnValue(true);
     const fsSpy = spyOn(fs, 'readJsonSync').and.returnValue(metadata);
 
-    mock.reRequire('../cli/e2e')({ build: false }, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/e2e')('e2e', { build: false }, SKY_PAGES_CONFIG, WEBPACK);
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(fsSpy).toHaveBeenCalledWith('dist/metadata.json');
       expect(PROTRACTOR_CONFIG_ARGS.params.chunks).toEqual({
