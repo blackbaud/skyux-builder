@@ -48,10 +48,11 @@ function pact(command, argv) {
 
   let pactPortPromises = [];
   // get a free port for every config entry, plus one for the proxy
-  if(! skyPagesConfig.skyux.pacts) {
+  if (!skyPagesConfig.skyux.pacts) {
     logger.error('skyux pact failed! pacts does not exist on configuration file.');
     process.exit();
   }
+
   for (let i = 0; i < skyPagesConfig.skyux.pacts.length + 1; i++) {
 
     pactPortPromises.push(portfinder.getPortPromise());
@@ -67,7 +68,7 @@ function pact(command, argv) {
         let serverPort = (skyPagesConfig.skyux.pacts[i].port || ports[i]);
         // saving pact server information so it can carry over into karma config
         pactServers
-        .savePactServer(skyPagesConfig.skyux.pacts[i].provider, serverHost, serverPort);
+          .savePactServer(skyPagesConfig.skyux.pacts[i].provider, serverHost, serverPort);
       }
 
       let proxy = httpProxy.createProxyServer({});
