@@ -7,7 +7,8 @@ const logger = require('../utils/logger');
 describe('cli test', () => {
   let originalArgv = process.argv;
 
-  function MockServer(config, onExit) {}
+  function MockServer() { }
+
   MockServer.prototype.on = function () {};
   MockServer.prototype.start = function () {};
 
@@ -16,6 +17,7 @@ describe('cli test', () => {
     spyOn(process, 'exit').and.returnValue();
     spyOn(logger, 'info').and.returnValue();
     spyOn(logger, 'error').and.returnValue();
+
     mock('../cli/utils/ts-linter', {
       lintSync: () => {
         return {
@@ -24,8 +26,13 @@ describe('cli test', () => {
         };
       }
     });
+
     mock('../config/sky-pages/sky-pages.config', {
       outPath: (path) => path
+    });
+
+    mock('../cli/utils/config-resolver', {
+      resolve: (command) => `${command}-config.js`
     });
   });
 
@@ -44,7 +51,7 @@ describe('cli test', () => {
     });
     const test = mock.reRequire('../cli/test');
     test('test', {});
-    expect(_configPath.indexOf('/test.karma.conf.js') > -1).toEqual(true);
+    expect(_configPath).toEqual('test-config.js');
   });
 
   it('should load the watch config when running watch command', () => {
@@ -57,7 +64,7 @@ describe('cli test', () => {
     });
     const test = mock.reRequire('../cli/test');
     test('watch');
-    expect(_configPath.indexOf('/watch.karma.conf.js') > -1).toEqual(true);
+    expect(_configPath).toEqual('watch-config.js');
   });
 
   it('should save the current command to argv', () => {
@@ -189,6 +196,35 @@ describe('cli test', () => {
     test('test');
     _onExit(0);
     expect(_hooks[1]).toEqual('run_complete');
+    expect(process.exit).toHaveBeenCalledWith(0);
+  });
+
+  it('should handle signal interrupted', () => {
+    let _onExit;
+
+    mock.stop('../cli/utils/ts-linter');
+
+    // After SIGINT, lintSync returns undefined.
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => undefined
+    });
+
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, onExit) {
+        _onExit = onExit;
+        this.on = (hook, callback) => callback();
+        this.start = () => {};
+      }
+    });
+
+    const test = mock.reRequire('../cli/test');
+
+    test('test');
+    _onExit(0);
+
     expect(process.exit).toHaveBeenCalledWith(0);
   });
 });

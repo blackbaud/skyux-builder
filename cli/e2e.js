@@ -11,31 +11,13 @@ const protractorLauncher = require('protractor/built/launcher');
 const build = require('./build');
 const server = require('./utils/server');
 const logger = require('../utils/logger');
+const configResolver = require('./utils/config-resolver');
 
 // Disable this to quiet the output
 const spawnOptions = { stdio: 'inherit' };
 
 let seleniumServer;
 let start;
-
-/**
- * Function to get the protractorConfigPath
- * @name getProtractorConfigPath
- * @returns {string} protractorConfigPath
- */
-function getProtractorConfigPath(argv) {
-  if (argv.config) {
-    return path.resolve(argv.config);
-  } else {
-    return path.resolve(
-      __dirname,
-      '..',
-      'config',
-      'protractor',
-      'protractor.conf.js'
-    );
-  }
-}
 
 /**
  * Handles killing off the selenium and webpack servers.
@@ -67,9 +49,9 @@ function killServers(exitCode) {
  * Perhaps this should be API driven?
  * @name spawnProtractor
  */
-function spawnProtractor(argv, chunks, port, skyPagesConfig) {
+function spawnProtractor(configPath, chunks, port, skyPagesConfig) {
   logger.info('Running Protractor');
-  protractorLauncher.init(getProtractorConfigPath(argv), {
+  protractorLauncher.init(configPath, {
     params: {
       localUrl: `https://localhost:${port}`,
       chunks: chunks,
@@ -83,9 +65,8 @@ function spawnProtractor(argv, chunks, port, skyPagesConfig) {
  * Spawns the selenium server if directConnect is not enabled.
  * @name spawnSelenium
  */
-function spawnSelenium(argv) {
-  const configPath = getProtractorConfigPath(argv);
-  let configFile;
+function spawnSelenium(configPath) {
+  const config = require(configPath).config;
 
   return new Promise((resolve, reject) => {
     logger.info('Spawning selenium...');
@@ -171,12 +152,13 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
  * Assumes build was ran.
  * @name e2e
  */
-function e2e(argv, skyPagesConfig, webpack) {
+function e2e(command, argv, skyPagesConfig, webpack) {
   start = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  // const specsPath = path.resolve(process.cwd(), 'e2e/**/*.e2e-spec.ts');
-  // const specsGlob = glob.sync(specsPath);
+  const specsPath = path.resolve(process.cwd(), 'e2e/**/*.e2e-spec.ts');
+  const specsGlob = glob.sync(specsPath);
+  const configPath = configResolver.resolve(command, argv);
 
   // if (specsGlob.length === 0) {
   //   logger.info('No spec files located. Stopping command from running.');
@@ -198,12 +180,12 @@ function e2e(argv, skyPagesConfig, webpack) {
         .all([
           spawnBuild(argv, skyPagesConfig, webpack),
           port,
-          spawnSelenium(argv)
+          spawnSelenium(configPath)
         ]);
     })
     .then(values => {
       spawnProtractor(
-        argv,
+        configPath,
         values[0],
         values[1],
         skyPagesConfig

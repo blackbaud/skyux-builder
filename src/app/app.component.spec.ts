@@ -1,4 +1,8 @@
 import {
+  NgZone
+} from '@angular/core';
+
+import {
   async,
   ComponentFixture,
   fakeAsync,
@@ -11,6 +15,8 @@ import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 
 import {
   SkyAppConfig,
+  SkyAppOmnibarProvider,
+  SkyAppOmnibarReadyArgs,
   SkyAppSearchResultsProvider,
   SkyAppStyleLoader,
   SkyAppWindowRef,
@@ -19,7 +25,11 @@ import {
 
 import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
 
-import { BBOmnibar, BBOmnibarSearchArgs } from '@blackbaud/auth-client';
+import {
+  BBOmnibar,
+  BBOmnibarLegacy,
+  BBOmnibarSearchArgs
+} from '@blackbaud/auth-client';
 
 import { AppComponent } from './app.component';
 
@@ -36,22 +46,6 @@ describe('AppComponent', () => {
   let viewport: SkyAppViewportService;
 
   const location = 'my-custom-location';
-  const defaultSkyAppConfig: any = {
-    runtime: {
-      app: {
-        base: 'app-base'
-      },
-      params: {
-        has: (key: any) => false,
-        parse: (p: any) => parseParams = p
-      }
-    },
-    skyux: {
-      host: {
-        url: 'host-url'
-      }
-    }
-  };
 
   class MockHelpInitService {
     public load() { }
@@ -62,7 +56,8 @@ describe('AppComponent', () => {
   function setup(
     config: any,
     includeSearchProvider?: boolean,
-    styleLoadPromise?: Promise<any>
+    styleLoadPromise?: Promise<any>,
+    omnibarProvider?: any
   ) {
     let providers: any[] = [
       {
@@ -117,6 +112,13 @@ describe('AppComponent', () => {
       });
     }
 
+    if (omnibarProvider) {
+      providers.push({
+        provide: SkyAppOmnibarProvider,
+        useValue: omnibarProvider
+      });
+    }
+
     return TestBed.configureTestingModule({
       declarations: [
         AppComponent
@@ -133,9 +135,61 @@ describe('AppComponent', () => {
     });
   }
 
+  function validateOmnibarProvider(
+    readyArgs: SkyAppOmnibarReadyArgs,
+    expectedNotCalledWith?: any
+  ) {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    let readyPromiseResolve: (args: SkyAppOmnibarReadyArgs) => void;
+
+    const readyPromise = new Promise<SkyAppOmnibarReadyArgs>((resolve) => {
+      readyPromiseResolve = resolve;
+    });
+
+    setup(skyAppConfig, undefined, undefined, {
+      ready: () => readyPromise
+    }).then(() => {
+      fixture.detectChanges();
+
+      expect(spyOmnibar).not.toHaveBeenCalled();
+
+      readyPromiseResolve(readyArgs);
+
+      tick();
+
+      expect(spyOmnibar).toHaveBeenCalledWith(jasmine.objectContaining(readyArgs));
+
+      if (expectedNotCalledWith) {
+        expect(spyOmnibar).not.toHaveBeenCalledWith(
+          jasmine.objectContaining(expectedNotCalledWith)
+        );
+      }
+    });
+  }
+
   // Reset skyAppConfig and scrollCalled
   beforeEach(() => {
-    skyAppConfig = defaultSkyAppConfig;
+    skyAppConfig = {
+      runtime: {
+        app: {
+          base: 'app-base'
+        },
+        params: {
+          has: (key: any) => false,
+          parse: (p: any) => parseParams = p
+        }
+      },
+      skyux: {
+        host: {
+          url: 'host-url'
+        }
+      }
+    };
     scrollCalled = false;
     viewport = new SkyAppViewportService();
   });
@@ -167,24 +221,82 @@ describe('AppComponent', () => {
 
   it('should not call BBOmnibar.load if config.skyux.omnibar does not exist', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
+    let spyOmnibarLegacy = spyOn(BBOmnibarLegacy, 'load');
+
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar).not.toHaveBeenCalled();
+      expect(spyOmnibarLegacy).not.toHaveBeenCalled();
     });
   }));
 
-  it('should call BBOmnibar.load if config.skyux.omnibar exists', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+  it('should load the legacy omnibar if "experimental" is not specified', async(() => {
+    let spyOmnibar = spyOn(BBOmnibarLegacy, 'load');
+
     skyAppConfig.skyux.omnibar = {};
+
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar).toHaveBeenCalled();
     });
   }));
 
+  it('should load the default omnibar if "experimental" is specified', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar).toHaveBeenCalled();
+    });
+  }));
+
+  it(
+    'should load the omnibar outside Angular to avoid change detection during user activity checks',
+    async(() => {
+      const spyOmnibar = spyOn(BBOmnibar, 'load');
+
+      skyAppConfig.skyux.omnibar = {
+        experimental: true
+      };
+
+      setup(skyAppConfig).then(() => {
+        const zone = fixture.debugElement.injector.get(NgZone);
+
+        let loadOmnibarCallback: Function;
+
+        const runOutsideAngularSpy = spyOn(zone, 'runOutsideAngular').and.callFake(
+          (cb: Function) => {
+            if (cb && cb.toString().indexOf('BBOmnibar') >= 0) {
+              loadOmnibarCallback = cb;
+            } else {
+              cb();
+            }
+          }
+        );
+
+        fixture.detectChanges();
+
+        expect(runOutsideAngularSpy).toHaveBeenCalled();
+        expect(spyOmnibar).not.toHaveBeenCalled();
+
+        loadOmnibarCallback();
+
+        expect(spyOmnibar).toHaveBeenCalled();
+      });
+    })
+  );
+
   it('should set the onSearch property if a search provider is provided', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
-    skyAppConfig.skyux.omnibar = {};
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
     setup(skyAppConfig, true).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar.calls.first().args[0].onSearch).toBeDefined();
@@ -193,7 +305,11 @@ describe('AppComponent', () => {
 
   it('should call the search provider getSearchResults in the onSearch callback', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
-    skyAppConfig.skyux.omnibar = {};
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
     setup(skyAppConfig, true).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar.calls.first().args[0].onSearch).toBeDefined();
@@ -208,7 +324,11 @@ describe('AppComponent', () => {
 
   it('should set the allow anonymous flag based on the app\'s auth configuration', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
-    skyAppConfig.skyux.omnibar = {};
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
     skyAppConfig.skyux.auth = true;
 
     setup(skyAppConfig, true).then(() => {
@@ -224,7 +344,10 @@ describe('AppComponent', () => {
 
   it('should set the known params on the omnibar config if they exist', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
-    skyAppConfig.skyux.omnibar = {};
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
 
     skyAppConfig.skyux.params = ['envid', 'svcid'];
     skyAppConfig.runtime.params.has = (key: any) => true;
@@ -243,6 +366,7 @@ describe('AppComponent', () => {
   it('should not create BBOmnibarNavigation if omnibar.nav is set', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
+      experimental: true,
       nav: {
         junk: true
       }
@@ -257,6 +381,7 @@ describe('AppComponent', () => {
   it('should mark first service as selected if no omnibar.nav.services are selected', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
+      experimental: true,
       nav: {
         services: [
           { },
@@ -271,9 +396,10 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should not mark the first service as select if another one is already marked', async(() => {
+  it('should not mark the first service as selected if another one is already marked', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
+      experimental: true,
       nav: {
         services: [
           { },
@@ -294,6 +420,7 @@ describe('AppComponent', () => {
     skyAppConfig.skyux.host.url = 'base.com/';
     skyAppConfig.runtime.app.base = 'custom-base/';
     skyAppConfig.skyux.omnibar = {
+      experimental: true,
       nav: {
         services: [
           {
@@ -333,6 +460,10 @@ describe('AppComponent', () => {
   it('should add the beforeNavCallback', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
 
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
     skyAppConfig.skyux.host.url = 'base.com/';
     skyAppConfig.runtime.app.base = 'custom-base/';
 
@@ -342,8 +473,32 @@ describe('AppComponent', () => {
     });
   }));
 
+  it('should enable help for the omnibar when help config is present', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    skyAppConfig.skyux.help = {
+      productId: 'test-config'
+    };
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+
+      expect(spyOmnibar).toHaveBeenCalledWith(jasmine.objectContaining({
+        enableHelp: true
+      }));
+    });
+  }));
+
   it('should call navigateByUrl, return false in the beforeNavCallback if local link', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
 
     skyAppConfig.skyux.host.url = 'base.com/';
     skyAppConfig.runtime.app.base = 'custom-base/';
@@ -362,8 +517,33 @@ describe('AppComponent', () => {
     });
   }));
 
+  it('should use the original url casing if calling navigateByUrl', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    skyAppConfig.skyux.host.url = 'base.com/';
+    skyAppConfig.runtime.app.base = 'custom-base/';
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
+
+      const localLink = cb({ url: 'base.com/custom-base/new-place?envid=AbCd' });
+      expect(localLink).toEqual(false);
+      expect(navigateByUrlParams).toEqual('/new-place?envid=AbCd');
+    });
+  }));
+
   it('should handle no public routes during serve', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
     skyAppConfig.runtime.command = 'serve';
     skyAppConfig.skyux.routes = {};
 
@@ -375,6 +555,10 @@ describe('AppComponent', () => {
 
   it('should add global public routes as localNavItems during serve', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
 
     skyAppConfig.skyux.host.url = 'base.com/';
     skyAppConfig.runtime.app.base = 'custom-base/';
@@ -488,4 +672,39 @@ describe('AppComponent', () => {
       expect(console.log).toHaveBeenCalledWith(result.error.message);
     });
   }));
+
+  it(
+    'should load the omnibar when the omnibar provider\'s ready() promise is resolved',
+    fakeAsync(() => {
+      validateOmnibarProvider(
+        {
+          envId: '999',
+          svcId: 'zzz'
+        }
+      );
+    })
+  );
+
+  it('should consider the omnibar provider args envId property optional', fakeAsync(() => {
+    validateOmnibarProvider(
+      {
+        envId: '999'
+      },
+      {
+        svcId: jasmine.anything()
+      }
+    );
+  }));
+
+  it('should consider the omnibar provider args svcId property optional', fakeAsync(() => {
+    validateOmnibarProvider(
+      {
+        svcId: 'zzz'
+      },
+      {
+        envId: jasmine.anything()
+      }
+    );
+  }));
+
 });

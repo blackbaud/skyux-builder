@@ -24,14 +24,14 @@ module.exports = function () {
     switch (filenameParsed.ext) {
       case '.html':
         writeTimeStamp();
-      break;
+        break;
 
       case '.ts':
         if (filenameParsed.name !== 'sky-pages.module') {
           writeTimeStamp();
         }
 
-      break;
+        break;
     }
   });
 

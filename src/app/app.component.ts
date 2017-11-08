@@ -1,5 +1,6 @@
 import {
   Component,
+  NgZone,
   OnInit,
   Optional
 } from '@angular/core';
@@ -11,6 +12,7 @@ import {
 
 import {
   BBOmnibar,
+  BBOmnibarLegacy,
   BBOmnibarNavigation,
   BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
@@ -20,10 +22,12 @@ import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
 
 import {
   SkyAppConfig,
+  SkyAppOmnibarProvider,
+  SkyAppOmnibarReadyArgs,
   SkyAppSearchResultsProvider,
-  SkyAppWindowRef,
   SkyAppStyleLoader,
-  SkyAppViewportService
+  SkyAppViewportService,
+  SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
 
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
@@ -77,7 +81,9 @@ export class AppComponent implements OnInit {
     private styleLoader: SkyAppStyleLoader,
     @Optional() private helpInitService?: HelpInitializationService,
     @Optional() private searchProvider?: SkyAppSearchResultsProvider,
-    @Optional() viewport?: SkyAppViewportService
+    @Optional() viewport?: SkyAppViewportService,
+    @Optional() private zone?: NgZone,
+    @Optional() private omnibarProvider?: SkyAppOmnibarProvider
   ) {
     this.styleLoader.loadStyles()
       .then((result?: any) => {
@@ -146,14 +152,14 @@ export class AppComponent implements OnInit {
       nav = omnibarConfig.nav;
       fixUpNav(nav, baseUrl);
     } else {
-      nav = omnibarConfig.nav = new BBOmnibarNavigation();
+      nav = omnibarConfig.nav = {};
     }
 
     nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
       const url = item.url.toLowerCase();
 
       if (url.indexOf(baseUrl) === 0) {
-        const routePath = url.substring(baseUrl.length, url.length);
+        const routePath = item.url.substring(baseUrl.length, url.length);
         this.router.navigateByUrl(routePath);
         return false;
       }
@@ -186,11 +192,25 @@ export class AppComponent implements OnInit {
     }
   }
 
+  private setOmnibarArgsOverrides(omnibarConfig: any, args: SkyAppOmnibarReadyArgs) {
+    if (args) {
+      // Eventually this could be expanded to allow any valid config property to be overridden,
+      // but for now keep it scoped to the two parameters we know consumers will want to override.
+      if (args.hasOwnProperty('envId')) {
+        omnibarConfig.envId = args.envId;
+      }
+
+      if (args.hasOwnProperty('svcId')) {
+        omnibarConfig.svcId = args.svcId;
+      }
+    }
+  }
+
   private initShellComponents() {
     const omnibarConfig = this.config.skyux.omnibar;
     const helpConfig = this.config.skyux.help;
 
-    if (omnibarConfig) {
+    const loadOmnibar = (args?: SkyAppOmnibarReadyArgs) => {
       this.setParamsFromQS(omnibarConfig);
       this.setNav(omnibarConfig);
       this.setOnSearch(omnibarConfig);
@@ -201,7 +221,28 @@ export class AppComponent implements OnInit {
 
       omnibarConfig.allowAnonymous = !this.config.skyux.auth;
 
-      BBOmnibar.load(omnibarConfig);
+      this.setOmnibarArgsOverrides(omnibarConfig, args);
+
+      // The omnibar uses setInterval() to poll for user activity, and setInterval()
+      // triggers change detection on each interval.  Loading the omnibar outside
+      // Angular will keep change detection from being triggered during each interval.
+      this.zone.runOutsideAngular(() => {
+        if (omnibarConfig.experimental) {
+          // auth-client 2.0 made the "experimental" omnibar the default; maintain
+          // previous behavior until skyux-builder 2.0.
+          BBOmnibar.load(omnibarConfig);
+        } else {
+          BBOmnibarLegacy.load(omnibarConfig);
+        }
+      });
+    };
+
+    if (omnibarConfig) {
+      if (this.omnibarProvider) {
+        this.omnibarProvider.ready().then(loadOmnibar);
+      } else {
+        loadOmnibar();
+      }
     }
 
     if (helpConfig && this.helpInitService) {
