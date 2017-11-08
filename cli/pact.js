@@ -6,6 +6,7 @@
  * @name pact
  */
 function pact(command, argv) {
+  const async = require('async');
   const Server = require('karma').Server;
   const portfinder = require('portfinder');
   const url = require('url');
@@ -46,7 +47,8 @@ function pact(command, argv) {
     process.exit(exitCode);
   };
 
-  let pactPortPromises = [];
+  let pactPortSeries = [];
+  let consumedPorts = [];
   // get a free port for every config entry, plus one for the proxy
   if (!skyPagesConfig.skyux.pacts) {
     logger.error('skyux pact failed! pacts does not exist on configuration file.');
@@ -55,12 +57,29 @@ function pact(command, argv) {
 
   for (let i = 0; i < skyPagesConfig.skyux.pacts.length + 1; i++) {
 
-    pactPortPromises.push(portfinder.getPortPromise());
+    var asyncFunction = (callback) => {
+
+      // ports are not consumed until karma starts, so need to keep track of future consumed ports
+      portfinder.getPortPromise(
+        { port: consumedPorts.length === 0 ? 8000 : Math.max(consumedPorts) + 1 }
+      )
+        .then((port) => {
+          consumedPorts.push(port);
+          callback(null, port);
+        });
+    };
+
+    pactPortSeries.push(asyncFunction);
 
   }
+  // make sure ports are resolved in order
+  async.series(pactPortSeries,
+    (err, ports) => {
 
-  Promise.all(pactPortPromises)
-    .then((ports) => {
+      if (err) {
+        logger.error(err);
+        process.exit(exitCode);
+      }
 
       for (let i = 0; i < skyPagesConfig.skyux.pacts.length; i++) {
 
@@ -90,7 +109,6 @@ function pact(command, argv) {
         // remove from request url.
         let provider = url.parse(req.url).pathname.split('/')[1];
         req.url = req.url.split(provider)[1];
-
         if (Object.keys(pactServers.getAllPactServers()).indexOf(provider) !== -1) {
           proxy.web(req, res, {
             target: pactServers.getPactServer(provider).fullUrl
@@ -99,7 +117,14 @@ function pact(command, argv) {
           logger
             .error(`Pact proxy path is invalid.  Expected format is base/provider-name/api-path.`);
         }
-      }).listen(ports[ports.length - 1]);
+      })
+      .on('connect', () => {
+        logger
+          .log(
+          `Pact proxy server successfully started on http://localhost:${ports[ports.length - 1]}`
+          );
+      })
+      .listen(ports[ports.length - 1], 'localhost');
 
       // for use by consuming app
       pactServers.savePactProxyServer(`http://localhost:${ports[ports.length - 1]}`);
@@ -112,9 +137,6 @@ function pact(command, argv) {
       server.on('run_start', onRunStart);
       server.on('run_complete', onRunComplete);
       server.start();
-    })
-    .catch((err) => {
-      logger.error(err);
     });
 }
 
