@@ -3,29 +3,30 @@ const pixDiff = require('pix-diff');
 
 import { SkyHostBrowser } from './host-browser';
 
+const CHECK_REGION_CONFIG = {
+  thresholdType: pixDiff.THRESHOLD_PERCENT,
+  threshold: .02
+};
+
 export interface SkyCompareScreenshotConfig {
   screenshotName: string;
-  selector: string;
+  selector?: string;
   breakpoint?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export abstract class SkyVisualTest {
-  public static readonly THRESHOLD_PERCENT = .02;
-
   public static compareScreenshot(config: SkyCompareScreenshotConfig): any {
-    const subject = element(by.css(config.selector));
-    const checkRegionConfig = {
-      thresholdType: pixDiff.THRESHOLD_PERCENT,
-      threshold: SkyVisualTest.THRESHOLD_PERCENT
-    };
+    const selector = config.selector || 'body';
+    const subject = element(by.css(selector));
 
     SkyVisualTest.resizeWindow(config.breakpoint);
 
-    return browser.pixDiff
+    return browser
+      .pixDiff
       .checkRegion(
         subject,
         config.screenshotName,
-        checkRegionConfig
+        CHECK_REGION_CONFIG
       )
       .then((results: any) => {
         const code = results.code;
@@ -35,6 +36,18 @@ export abstract class SkyVisualTest {
 
         expect(isSimilar).toBe(true, message);
       });
+  }
+
+  public static scrollTo(selector: string): void {
+    const elem = element(by.css(selector)).getWebElement();
+    browser.executeScript('arguments[0].scrollIntoView();', elem);
+  }
+
+  public static moveCursorOffScreen(): void {
+    browser
+      .actions()
+      .mouseMove(element(by.css('body')), { x: 0, y: 0 })
+      .perform();
   }
 
   private static resizeWindow(breakpoint: string): void {
@@ -52,7 +65,7 @@ export abstract class SkyVisualTest {
         break;
       default:
       case 'md':
-        width = 920;
+        width = 992;
         height = 800;
         break;
       case 'lg':

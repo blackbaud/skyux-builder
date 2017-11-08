@@ -71,17 +71,8 @@ function spawnSelenium(configPath) {
   return new Promise((resolve, reject) => {
     logger.info('Spawning selenium...');
 
-    if (!fs.existsSync(configPath)) {
-      return reject(`Unable to locate config file ${configPath}`);
-    }
-
-    configFile = require(configPath);
-    if (!configFile.hasOwnProperty('config')) {
-      return reject(`Invalid config file ${configPath}`);
-    }
-
     // Assumes we're running selenium ourselves, so we should prep it
-    if (configFile.config.seleniumAddress) {
+    if (config.seleniumAddress) {
       logger.info('Installing Selenium...');
       selenium.install({ logger: logger.info }, () => {
         logger.info('Selenium installed. Starting...');
@@ -160,10 +151,10 @@ function e2e(command, argv, skyPagesConfig, webpack) {
   const specsGlob = glob.sync(specsPath);
   const configPath = configResolver.resolve(command, argv);
 
-  // if (specsGlob.length === 0) {
-  //   logger.info('No spec files located. Stopping command from running.');
-  //   return killServers(0);
-  // }
+  if (specsGlob.length === 0) {
+    logger.info('No spec files located. Stopping command from running.');
+    return killServers(0);
+  }
 
   server.start()
     .then((port) => {
@@ -192,7 +183,7 @@ function e2e(command, argv, skyPagesConfig, webpack) {
       );
     })
     .catch(err => {
-      logger.error(`ERROR [skyux e2e]: ${err}`);
+      logger.warn(`ERROR [skyux e2e]: ${err.message}`);
       killServers(1);
     });
 }
