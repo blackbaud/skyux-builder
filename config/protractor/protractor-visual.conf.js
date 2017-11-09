@@ -39,6 +39,7 @@ const config = {
   beforeLaunch: function () {
     require('ts-node').register({ ignore: false });
   },
+
   jasmineNodeOpts: {
     showColors: true,
     defaultTimeoutInterval: 90000
