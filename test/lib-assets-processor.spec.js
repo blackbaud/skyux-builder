@@ -82,4 +82,19 @@ describe('SKY assets configuration module', () => {
     expect(content).toBe('https://example.com/base/a/b/c.abcdefg.jpg');
   });
 
+  it('should handle trailing content after an asset match', () => {
+    const content = processor.processAssets(
+`<img src="~/assets/images/image.svg" (click)="someMethod()" [class.some-style="condition"]>
+<img src="~/assets/measure.png" />, such as to compare their performance.`,
+      processor.getAssetsUrl(skyPagesConfig, 'https://example.com')
+    );
+
+    expect(content).toBe(
+      // jscs:disable maximumLineLength
+`<img src="https://example.com/base/a/b/c.abcdefg.jpg" (click)="someMethod()" [class.some-style="condition"]>
+<img src="https://example.com/base/a/b/c.abcdefg.jpg" />, such as to compare their performance.`
+      // jscs:enable
+    );
+  });
+
 });
