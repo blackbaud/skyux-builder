@@ -49,7 +49,7 @@ module.exports = {
         require('./cli/version')();
         break;
       case 'visual':
-        require('./cli/visual')(argv, skyPagesConfig, webpack);
+        require('./cli/visual')(argv, getConfig(command), webpack);
         break;
       default:
         return false;

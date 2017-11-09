@@ -1,7 +1,14 @@
-import { element, by, browser } from 'protractor';
 const pixDiff = require('pix-diff');
 
-import { SkyHostBrowser } from './host-browser';
+import {
+  browser,
+  by,
+  element
+} from 'protractor';
+
+import {
+  SkyHostBrowser
+} from './host-browser';
 
 const CHECK_REGION_CONFIG = {
   thresholdType: pixDiff.THRESHOLD_PERCENT,
