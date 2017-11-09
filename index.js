@@ -48,9 +48,6 @@ module.exports = {
       case 'version':
         require('./cli/version')();
         break;
-      case 'visual':
-        require('./cli/visual')(argv, getConfig(command), webpack);
-        break;
       default:
         return false;
     }
