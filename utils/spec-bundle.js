@@ -30,6 +30,8 @@ require('zone.js/dist/sync-test');
 require('zone.js/dist/proxy');
 require('zone.js/dist/jasmine-patch');
 
+require('reflect-metadata');
+
 // RxJS
 require('rxjs/Rx');
 
