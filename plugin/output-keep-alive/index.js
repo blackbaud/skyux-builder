@@ -11,23 +11,22 @@
  * @param {any} options
  */
 function OutputKeepAlivePlugin(options = {}) {
-  const printDot = () => process.stdout.write('.');
-
+  const getTime = () => new Date().getTime();
   this.apply = function (compiler) {
     if (!options.enabled) {
       return;
     }
 
-    compiler.plugin('compilation', function (compilation) {
-      printDot();
+    let currentTime = new Date().getTime();
 
-      compilation.plugin('after-optimize-modules', function () {
-        printDot();
-      });
+    const interval = setInterval(() => {
+      const diffTime = getTime() - currentTime;
+      console.log(`keep-alive triggered after ${diffTime} milliseconds`);
+      currentTime = getTime();
+    }, 1);
 
-      compilation.plugin('build-module', function () {
-        printDot();
-      });
+    compiler.plugin('done', function () {
+      clearInterval(interval);
     });
   };
 }
