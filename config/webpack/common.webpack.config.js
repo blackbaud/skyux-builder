@@ -26,8 +26,7 @@ function outPath() {
  * @param {SkyPagesConfig} skyPagesConfig
  * @returns {WebpackConfig} webpackConfig
  */
-function getWebpackConfig(skyPagesConfig) {
-
+function getWebpackConfig(skyPagesConfig, argv = {}) {
   const resolves = [
     process.cwd(),
     spaPath('node_modules'),
@@ -72,7 +71,6 @@ function getWebpackConfig(skyPagesConfig) {
         '.ts'
       ]
     },
-    profile: true,
     module: {
       rules: [
         {

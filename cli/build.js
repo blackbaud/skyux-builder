@@ -145,7 +145,7 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
     buildConfig = require('../config/webpack/build.webpack.config');
   }
 
-  const config = buildConfig.getWebpackConfig(skyPagesConfig);
+  const config = buildConfig.getWebpackConfig(skyPagesConfig, argv);
   assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
 
   return runCompiler(webpack, config, isAot)
