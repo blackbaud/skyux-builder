@@ -145,7 +145,9 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       // Webpack 2 behavior does not correctly return non-zero exit code.
       new ProcessExitCode(),
 
-      new OutputKeepAlivePlugin()
+      new OutputKeepAlivePlugin({
+        enabled: argv['output-keep-alive']
+      })
     ]
   };
 }
