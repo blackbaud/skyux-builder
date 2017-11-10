@@ -11,22 +11,28 @@
  * @param {any} options
  */
 function OutputKeepAlivePlugin(options = {}) {
-  const getTime = () => new Date().getTime();
+  const printDot = () => process.stdout.write('.');
+
   this.apply = function (compiler) {
     if (!options.enabled) {
       return;
     }
 
-    let currentTime = new Date().getTime();
+    compiler.plugin('compilation', function (compilation) {
+      printDot();
 
-    const interval = setInterval(() => {
-      const diffTime = getTime() - currentTime;
-      console.log(`keep-alive triggered after ${diffTime} milliseconds`);
-      currentTime = getTime();
-    }, 1);
+      // More hooks found on the docs:
+      // https://webpack.js.org/api/compilation/
+      const hooks = [
+        'after-optimize-modules',
+        'build-module'
+      ];
 
-    compiler.plugin('done', function () {
-      clearInterval(interval);
+      hooks.forEach((hook) => {
+        compilation.plugin(hook, function () {
+          printDot();
+        });
+      });
     });
   };
 }
