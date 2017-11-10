@@ -71,6 +71,7 @@ function getWebpackConfig(skyPagesConfig) {
         '.ts'
       ]
     },
+    profile: true,
     module: {
       rules: [
         {
@@ -143,7 +144,9 @@ function getWebpackConfig(skyPagesConfig) {
       ),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
-      new ProcessExitCode()
+      new ProcessExitCode(),
+
+      new VerbosePlugin()
     ]
   };
 }
