@@ -9,12 +9,12 @@ function OutputKeepAlivePlugin(options = {}) {
       return;
     }
 
-    compiler.plugin('compile', printDot);
+    compiler.plugin('compile', () => printDot());
     compiler.plugin('compilation', (compilation) => {
       printDot();
-      compilation.plugin('after-optimize-modules', printDot);
-      compilation.plugin('build-module', printDot);
-      compilation.plugin('module-asset', printDot);
+      compilation.plugin('after-optimize-modules', () => printDot());
+      compilation.plugin('build-module', () => printDot());
+      compilation.plugin('module-asset', () => printDot());
     });
   };
 }
