@@ -1,6 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const mock = require('mock-require');
 const path = require('path');
 const fs = require('fs');
 const ProcessExitCode = require('../plugin/process-exit-code');
@@ -38,13 +39,17 @@ describe('config webpack common', () => {
     ).toBe(expectedAppExtrasAlias);
   }
 
+  afterAll(() => {
+    mock.stopAll();
+  });
+
   it('should expose a getWebpackConfig method', () => {
-    const lib = require('../config/webpack/common.webpack.config');
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
   it('should handle an advanced mode', () => {
-    const lib = require('../config/webpack/common.webpack.config');
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {
@@ -55,7 +60,7 @@ describe('config webpack common', () => {
   });
 
   it('should look in the specified import path when resolving SKY UX', () => {
-    const lib = require('../config/webpack/common.webpack.config');
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
     const importPath = './some-folder';
     const cssPath = path.join(importPath, '/scss/sky.scss');
 
@@ -98,7 +103,7 @@ describe('config webpack common', () => {
 
   it('should not bind to beforeExit if no errors', () => {
     const processOnSpy = spyOn(process, 'on');
-    const lib = require('../config/webpack/common.webpack.config');
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
@@ -132,7 +137,7 @@ describe('config webpack common', () => {
         cb();
       }
     });
-    const lib = require('../config/webpack/common.webpack.config');
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
@@ -168,7 +173,7 @@ describe('config webpack common', () => {
     process.exitCode = 0;
 
     const processOnSpy = spyOn(process, 'on');
-    const lib = require('../config/webpack/common.webpack.config');
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
@@ -196,4 +201,23 @@ describe('config webpack common', () => {
     expect(process.exitCode).not.toEqual(1);
   });
 
+  it('should pass --output-keep-alive to OutputKeepAlivePlugin', () => {
+    let _options;
+
+    mock('../plugin/output-keep-alive', {
+      OutputKeepAlivePlugin: function OutputKeepAlivePlugin(options = {}) {
+        _options = options;
+      }
+    });
+
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
+    const config = lib.getWebpackConfig({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    }, {
+      'output-keep-alive': true
+    });
+
+    expect(_options.enabled).toEqual(true);
+  });
 });

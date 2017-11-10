@@ -23,4 +23,4 @@ function OutputKeepAlivePlugin(options = {}) {
   };
 }
 
-module.exports = OutputKeepAlivePlugin;
+module.exports = { OutputKeepAlivePlugin };
