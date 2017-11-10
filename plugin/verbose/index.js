@@ -40,6 +40,26 @@ VerbosePlugin.prototype.apply = function (compiler) {
 
       logger.info('=========================================');
     });
+
+    compilation.plugin('build-module', function (module) {
+      if (module.resource) {
+        logger.info(`Building ${module.resource}...`);
+      }
+    });
+
+    compilation.plugin('succeed-module', function (module) {
+      if (module.resource) {
+        logger.info(`Build finished for ${module.resource}.`);
+      }
+    });
+
+    compilation.plugin('module-asset', function (module, filename) {
+      logger.info(`Module asset added to compilation: ${filename}`);
+    });
+
+    compilation.plugin('chunk-asset', function (chunk, filename) {
+      logger.info(`Chunk asset added to compilation: ${filename}`);
+    });
   });
 };
 
