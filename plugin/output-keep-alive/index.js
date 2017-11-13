@@ -20,9 +20,9 @@ function OutputKeepAlivePlugin(options = {}) {
 
     // Set stdout to be synchronous, to avoid a memory heap issue:
     // https://github.com/nodejs/node/issues/1741
-    compiler.plugin('after-plugins', function () {
-      process.stdout._handle.setBlocking(true);
-    });
+    // compiler.plugin('after-plugins', function () {
+    //   process.stdout._handle.setBlocking(true);
+    // });
 
     compiler.plugin('compilation', function (compilation) {
       printDot();
@@ -30,7 +30,7 @@ function OutputKeepAlivePlugin(options = {}) {
       // More hooks found on the docs:
       // https://webpack.js.org/api/compilation/
       const hooks = [
-        'after-optimize-modules',
+        // 'after-optimize-modules',
         'build-module'
       ];
 
@@ -41,9 +41,9 @@ function OutputKeepAlivePlugin(options = {}) {
       });
     });
 
-    compiler.plugin('done', function () {
-      process.stdout._handle.setBlocking(false);
-    });
+    // compiler.plugin('done', function () {
+    //   process.stdout._handle.setBlocking(false);
+    // });
   };
 }
 
