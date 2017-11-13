@@ -18,6 +18,12 @@ function OutputKeepAlivePlugin(options = {}) {
       return;
     }
 
+    // Set stdout to be synchronous, to avoid a memory heap issue:
+    // https://github.com/nodejs/node/issues/1741
+    compiler.plugin('after-plugins', function () {
+      process.stdout._handle.setBlocking(true);
+    });
+
     compiler.plugin('compilation', function (compilation) {
       printDot();
 
@@ -33,6 +39,10 @@ function OutputKeepAlivePlugin(options = {}) {
           printDot();
         });
       });
+    });
+
+    compiler.plugin('done', function () {
+      process.stdout._handle.setBlocking(false);
     });
   };
 }
