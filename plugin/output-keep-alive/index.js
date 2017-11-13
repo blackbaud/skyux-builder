@@ -11,39 +11,29 @@
  * @param {any} options
  */
 function OutputKeepAlivePlugin(options = {}) {
-  const printDot = () => process.stdout.write('.');
-
   this.apply = function (compiler) {
+    let done = false;
+
     if (!options.enabled) {
       return;
     }
 
-    // Set stdout to be synchronous, to avoid a memory heap issue:
-    // https://github.com/nodejs/node/issues/1741
-    // compiler.plugin('after-plugins', function () {
-    //   process.stdout._handle.setBlocking(true);
-    // });
+    const check = () => {
+      if (done) {
+        return;
+      }
 
-    compiler.plugin('compilation', function (compilation) {
-      printDot();
-
-      // More hooks found on the docs:
-      // https://webpack.js.org/api/compilation/
-      const hooks = [
-        // 'after-optimize-modules',
-        'build-module'
-      ];
-
-      hooks.forEach((hook) => {
-        compilation.plugin(hook, function () {
-          printDot();
-        });
+      setImmediate(() => {
+        process.stdout.write('.');
+        check();
       });
-    });
+    };
 
-    // compiler.plugin('done', function () {
-    //   process.stdout._handle.setBlocking(false);
-    // });
+    check();
+
+    compiler.plugin('done', function () {
+      done = true;
+    });
   };
 }
 
