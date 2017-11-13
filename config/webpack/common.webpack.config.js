@@ -8,6 +8,7 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const ProcessExitCode = require('../../plugin/process-exit-code');
+const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
 
@@ -25,8 +26,7 @@ function outPath() {
  * @param {SkyPagesConfig} skyPagesConfig
  * @returns {WebpackConfig} webpackConfig
  */
-function getWebpackConfig(skyPagesConfig) {
-
+function getWebpackConfig(skyPagesConfig, argv = {}) {
   const resolves = [
     process.cwd(),
     spaPath('node_modules'),
@@ -143,7 +143,11 @@ function getWebpackConfig(skyPagesConfig) {
       ),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
-      new ProcessExitCode()
+      new ProcessExitCode(),
+
+      new OutputKeepAlivePlugin({
+        enabled: argv['output-keep-alive']
+      })
     ]
   };
 }
