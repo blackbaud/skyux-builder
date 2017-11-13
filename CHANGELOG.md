@@ -1,3 +1,7 @@
+# 1.6.1 (2017-11-13)
+
+- Fixed navigation via Omnibar due to loading outside Angular. [#332](https://github.com/blackbaud/skyux-builder/pull/332)
+
 # 1.6.0 (2017-11-13)
 
 - Added webpack `OutputKeepAlivePlugin` to periodically print to the console to reset any timeouts associated with watched output. [#328](https://github.com/blackbaud/skyux-builder/pull/328)
