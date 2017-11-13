@@ -35,4 +35,11 @@ after_success:
   - bash <(curl -s https://codecov.io/bash) -s coverage/builder -F builder
   - bash <(curl -s https://codecov.io/bash) -s coverage/runtime/ -F runtime
   - bash <(curl -s https://codecov.io/bash) -s coverage/src-app/ -F srcapp
-  - bash <(curl -s https://blackbaud.github.io/skyux-travis/after-success.sh)
+
+# Run the deployment after all jobs have been successfully completed.
+# https://docs.travis-ci.com/user/build-stages
+jobs:
+  include:
+    - stage: deploy
+      env: TEST_COMMAND=none
+      script: bash <(curl -s https://blackbaud.github.io/skyux-travis/after-success.sh)
