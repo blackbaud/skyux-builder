@@ -156,7 +156,6 @@ export class AppComponent implements OnInit {
     }
 
     nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
-      console.log(baseUrl);
       const url = item.url.toLowerCase();
 
       if (url.indexOf(baseUrl) === 0) {
