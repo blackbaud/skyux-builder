@@ -1,6 +1,10 @@
+# 1.7.0 (2017-11-14)
+
+- Added ability to generate a component from the SKY UX CLI.  Run `skyux generate component <component-name>` where `<component-name>` is the name of the component preceded by an optional subfolder (e.g. `skyux generate component some-folder/some-thing`).  This will generate the TypeScript, HTML, CSS and spec files for your new component in the specified folder. [#330](https://github.com/blackbaud/skyux-builder/pull/330)
+
 # 1.6.2 (2017-11-14)
 
-- Reduced number of console logs for output keep alive [#334](https://github.com/blackbaud/skyux-builder/pull/334)
+- Reduced number of console logs for output keep alive. [#334](https://github.com/blackbaud/skyux-builder/pull/334)
 
 # 1.6.1 (2017-11-13)
 
