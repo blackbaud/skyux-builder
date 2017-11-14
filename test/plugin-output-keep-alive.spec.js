@@ -41,9 +41,9 @@ describe('SKY UX plugin file processor', () => {
 
     plugin.apply(_mockCompiler);
 
-    expect(stdoutSpy.calls.count()).toEqual(3);
+    expect(stdoutSpy.calls.count()).toEqual(1);
     expect(_compilerHooksCalled).toEqual(['compilation']);
-    expect(_compilationHooksCalled).toEqual(['after-optimize-modules', 'build-module']);
+    expect(_compilationHooksCalled).toEqual(['build-module']);
   });
 
   it('should not output to the console if disabled', () => {
