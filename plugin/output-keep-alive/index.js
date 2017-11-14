@@ -11,27 +11,16 @@
  * @param {any} options
  */
 function OutputKeepAlivePlugin(options = {}) {
-  const printDot = () => process.stdout.write('.');
-
   this.apply = function (compiler) {
     if (!options.enabled) {
       return;
     }
 
     compiler.plugin('compilation', function (compilation) {
-      printDot();
-
       // More hooks found on the docs:
       // https://webpack.js.org/api/compilation/
-      const hooks = [
-        'after-optimize-modules',
-        'build-module'
-      ];
-
-      hooks.forEach((hook) => {
-        compilation.plugin(hook, function () {
-          printDot();
-        });
+      compilation.plugin('build-module', function () {
+        process.stdout.write('.');
       });
     });
   };
