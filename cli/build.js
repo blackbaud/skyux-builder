@@ -15,39 +15,37 @@ const runCompiler = require('./utils/run-compiler');
 const tsLinter = require('./utils/ts-linter');
 
 function writeTSConfig() {
-  var config = {
+  const config = {
     'compilerOptions': {
       'target': 'es5',
       'module': 'es2015',
       'moduleResolution': 'node',
+
       'emitDecoratorMetadata': true,
       'experimentalDecorators': true,
-      'sourceMap': true,
-      'noEmitHelpers': true,
-      'noImplicitAny': true,
-      'rootDir': '.',
+
       'inlineSources': true,
+      'sourceMap': true,
+
+      'noEmitHelpers': true,
+      'noEmitOnError': true,
+      'noImplicitAny': true,
+      'noUnusedLocals': true,
+
       'declaration': true,
       'skipLibCheck': true,
+
       'lib': [
-        'es2015',
-        'dom'
-      ],
-      'types': [
-        'jasmine',
-        'node'
+        'dom',
+        'es2015'
       ]
     },
     'files': [
       './app/app.module.ts'
     ],
-    'exclude': [
-      '../../node_modules'
-    ],
     'compileOnSave': false,
     'buildOnSave': false,
     'angularCompilerOptions': {
-      'debug': true,
       'genDir': './ngfactory',
       'skipMetadataEmit': true
     }

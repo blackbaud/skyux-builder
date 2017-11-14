@@ -64,6 +64,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       modules: resolves
     },
     resolve: {
+      symlinks: false,
       alias: alias,
       modules: resolves,
       extensions: [
