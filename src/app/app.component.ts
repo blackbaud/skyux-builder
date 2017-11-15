@@ -160,7 +160,13 @@ export class AppComponent implements OnInit {
 
       if (url.indexOf(baseUrl) === 0) {
         const routePath = item.url.substring(baseUrl.length, url.length);
-        this.router.navigateByUrl(routePath);
+
+        // Since the omnibar is loaded outside Angular, navigating needs to be explicitly
+        // run inside the Angular zone in order for navigation to work properly.
+        this.zone.run(() => {
+          this.router.navigateByUrl(routePath);
+        });
+
         return false;
       }
 
