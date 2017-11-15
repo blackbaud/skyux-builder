@@ -46,7 +46,8 @@ function getWebpackConfig(skyPagesConfig, argv) {
     plugins: [
       new ngtools.AotPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule'
+        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule',
+        typeChecking: false
       }),
       SaveMetadata,
       new webpack.optimize.UglifyJsPlugin({
