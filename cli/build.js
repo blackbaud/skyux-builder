@@ -30,7 +30,6 @@ function writeTSConfig() {
       'noEmitHelpers': true,
       'noEmitOnError': true,
       'noImplicitAny': true,
-      'noUnusedLocals': true,
 
       'declaration': true,
       'skipLibCheck': true,
