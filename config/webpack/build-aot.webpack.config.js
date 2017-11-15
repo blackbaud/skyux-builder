@@ -1,7 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const ngtools = require('@ngtools/webpack');

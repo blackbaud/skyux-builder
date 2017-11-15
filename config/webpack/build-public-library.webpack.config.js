@@ -1,7 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const webpack = require('webpack');
 const ngcWebpack = require('ngc-webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
