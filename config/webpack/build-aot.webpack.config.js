@@ -19,6 +19,10 @@ function getWebpackConfig(skyPagesConfig, argv) {
   let commonConfig = common.getWebpackConfig(skyPagesConfig, argv);
   commonConfig.entry = null;
 
+  // Resolves aren't needed for AoT and will only slow the build down:
+  commonConfig.resolveLoader = undefined;
+  commonConfig.resolve.modules = undefined;
+
   // Since the preloader is executed against the file system during an AoT build,
   // we need to remove it from the webpack config, otherwise it will get executed twice.
   commonConfig.module.rules = commonConfig.module.rules
@@ -58,6 +62,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
 
       new UglifyJSPlugin({
         parallel: true,
+        exclude: /node_modules/,
         uglifyOptions: {
           compress: {
             warnings: false

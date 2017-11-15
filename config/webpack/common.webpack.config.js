@@ -27,6 +27,12 @@ function outPath() {
  * @returns {WebpackConfig} webpackConfig
  */
 function getWebpackConfig(skyPagesConfig, argv = {}) {
+  const resolves = [
+    process.cwd(),
+    spaPath('node_modules'),
+    outPath('node_modules')
+  ];
+
   const alias = aliasBuilder.buildAliasList(skyPagesConfig);
   const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
 
@@ -54,8 +60,12 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       chunkFilename: '[id].chunk.js',
       path: spaPath('dist'),
     },
+    resolveLoader: {
+      modules: resolves
+    },
     resolve: {
       alias,
+      modules: resolves,
       extensions: [
         '.js',
         '.ts'
