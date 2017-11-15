@@ -3,6 +3,7 @@
 
 const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const ngtools = require('@ngtools/webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const SaveMetadata = require('../../plugin/save-metadata');
@@ -34,26 +35,38 @@ function getWebpackConfig(skyPagesConfig, argv) {
       skyux: [skyPagesConfigUtil.spaPathTempSrc('skyux.ts')],
       app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
-    devtool: 'source-map',
+    // Disable sourcemaps for production:
+    // https://webpack.js.org/configuration/devtool/#production
+    // devtool: 'source-map',
     module: {
       rules: [
         {
           test: /\.ts$/,
-          loader: '@ngtools/webpack'
+          loader: '@ngtools/webpack',
+          exclude: /\.spec\.ts$/
         }
       ]
     },
     plugins: [
       new ngtools.AotPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule'
+        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule',
+        // Type checking handled by Builder's ts-linter utility.
+        typeChecking: false
       }),
+
       SaveMetadata,
-      new webpack.optimize.UglifyJsPlugin({
-        beautify: false,
-        comments: false,
-        compress: { warnings: false },
-        mangle: { screw_ie8: true, keep_fnames: true }
+
+      new UglifyJSPlugin({
+        parallel: true,
+        uglifyOptions: {
+          compress: {
+            warnings: false
+          },
+          mangle: {
+            keep_fnames: true
+          }
+        }
       })
     ]
   });

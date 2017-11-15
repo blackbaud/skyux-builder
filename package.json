@@ -110,6 +110,7 @@
     "jshint": "2.9.4",
     "mock-require": "2.0.2",
     "proxyquire": "1.8.0",
-    "rimraf": "2.6.1"
+    "rimraf": "2.6.1",
+    "uglifyjs-webpack-plugin": "1.0.1"
   }
 }

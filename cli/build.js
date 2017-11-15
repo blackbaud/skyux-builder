@@ -32,22 +32,14 @@ function writeTSConfig() {
       'lib': [
         'es2015',
         'dom'
-      ],
-      'types': [
-        'jasmine',
-        'node'
       ]
     },
     'files': [
       './app/app.module.ts'
     ],
-    'exclude': [
-      '../../node_modules'
-    ],
     'compileOnSave': false,
     'buildOnSave': false,
     'angularCompilerOptions': {
-      'debug': true,
       'genDir': './ngfactory',
       'skipMetadataEmit': true
     }
@@ -166,7 +158,6 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
  * @param {*} isAot
  */
 function build(argv, skyPagesConfig, webpack) {
-
   const lintResult = tsLinter.lintSync();
   const isAot = skyPagesConfig &&
     skyPagesConfig.skyux &&

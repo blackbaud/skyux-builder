@@ -3,6 +3,7 @@
 
 const webpack = require('webpack');
 const ngcWebpack = require('ngc-webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const ProcessExitCode = require('../../plugin/process-exit-code');
 
@@ -50,11 +51,17 @@ function getWebpackConfig(skyPagesConfig) {
         tsConfig: skyPagesConfigUtil.spaPathTemp('tsconfig.json')
       }),
 
-      new webpack.optimize.UglifyJsPlugin({
-        beautify: false,
-        comments: false,
-        compress: { warnings: false },
-        mangle: { screw_ie8: true, keep_fnames: true }
+      new UglifyJSPlugin({
+        parallel: true,
+        exclude: /node_modules/,
+        uglifyOptions: {
+          compress: {
+            warnings: false
+          },
+          mangle: {
+            keep_fnames: true
+          }
+        }
       }),
 
       // Webpack 2 behavior does not correctly return non-zero exit code.
