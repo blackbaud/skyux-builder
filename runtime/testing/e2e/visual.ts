@@ -1,5 +1,3 @@
-const pixDiff = require('pix-diff');
-
 import {
   browser,
   by,
@@ -9,6 +7,8 @@ import {
 import {
   SkyHostBrowser
 } from './host-browser';
+
+const pixDiff = require('pix-diff');
 
 const CHECK_REGION_CONFIG = {
   thresholdType: pixDiff.THRESHOLD_PERCENT,
@@ -28,6 +28,7 @@ export abstract class SkyVisualTest {
 
     SkyVisualTest.resizeWindow(config.breakpoint);
 
+    // TODO: Need to set browser.pixDiff in a global location!
     return browser
       .pixDiff
       .checkRegion(
@@ -51,9 +52,10 @@ export abstract class SkyVisualTest {
   }
 
   public static moveCursorOffScreen(): void {
+    const moveToElement = element(by.css('body'));
     browser
       .actions()
-      .mouseMove(element(by.css('body')), { x: 0, y: 0 })
+      .mouseMove(moveToElement, { x: 0, y: 0 })
       .perform();
   }
 

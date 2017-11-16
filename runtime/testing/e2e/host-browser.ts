@@ -1,4 +1,5 @@
 import { browser } from 'protractor';
+
 const hostUtils = require('../../../utils/host-utils');
 
 // TODO: May be nice to expose all browser's methods through SkyHostBrowser
@@ -15,7 +16,7 @@ export class SkyHostBrowser {
     return browser.get(destination, timeout);
   }
 
-  public static resizeWindow(width: number, height: number) {
+  public static resizeWindow(width: number, height: number): void {
     browser.driver.manage().window().setSize(width, height);
   }
 }
