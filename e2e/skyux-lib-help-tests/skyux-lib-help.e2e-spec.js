@@ -77,7 +77,7 @@ describe('skyux lib help', () => {
 
   afterAll(() => {
     common.writeAppFile('home.component.html', originalHomePage, 'utf8');
-    common.removeAppFolder('modal-fixtures');
+    common.removeAppFolderItem('modal-fixtures');
     common.afterAll();
   });
 

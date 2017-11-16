@@ -2,7 +2,7 @@
 /*global browser, element, by*/
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const async = require('async');
 const merge = require('../../utils/merge');
@@ -249,61 +249,13 @@ function verifyAppFolder(folderPath) {
 }
 
 /**
- * Remove directory if it exists in src/app folder
+ * Remove specified file or directory and its contents if it exists in src/app folder
+ * -- Used for cleaning up after we've injected files for a specific test or group of tests
  */
-function removeAppFolder(folderPath) {
-  const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', folderPath);
-  return new Promise((resolve, reject) => {
-    if (fs.existsSync(resolvedFolderPath)) {
-      /**
-      * Remove directory contents before deleting directory.
-      */
-      const files = fs.readdirSync(resolvedFolderPath);
 
-      /**
-      * Recursively remove nested directories and files.
-      */
-      async.forEach(files,
-        (file) => {
-          let filePath = `${folderPath}/${file}`;
-
-          if (fs.statSync(`${resolvedFolderPath}/${file}`).isDirectory()) {
-            removeAppFolder(filePath);
-          } else {
-            removeAppFile(filePath);
-          }
-        },
-
-        (err, results) => {
-          if (err) {
-            reject(err);
-          }
-
-          fs.rmdirSync(resolvedFolderPath);
-          resolve();
-        }
-      );
-    }
-  });
-}
-
-/**
- * Remove file from the src/app folder -- Used for cleaning up after we've injected
- * files for a specific test or group of tests
- */
-function removeAppFile(filePath) {
-  return new Promise((resolve, reject) => {
-    const resolvedFilePath = path.join(path.resolve(tmp), 'src', 'app', filePath);
-
-    fs.unlink(resolvedFilePath, (err) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      resolve();
-    });
-  });
+function removeAppFolderItem(itemPath) {
+  const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', itemPath);
+  return fs.remove(resolvedFolderPath);
 }
 
 function writeAppExtras(content) {
@@ -331,8 +283,7 @@ module.exports = {
   rimrafPromise: rimrafPromise,
   tmp: tmp,
   writeAppFile: writeAppFile,
-  removeAppFile: removeAppFile,
+  removeAppFolderItem: removeAppFolderItem,
   verifyAppFolder: verifyAppFolder,
-  removeAppFolder: removeAppFolder,
   writeAppExtras: writeAppExtras
 };

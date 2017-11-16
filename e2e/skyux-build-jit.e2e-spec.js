@@ -48,7 +48,7 @@ export class AboutGuard {
     it('should not follow routerLink when guard returns false', tests.respectGuardCanActivate);
 
     afterAll((done) => {
-      common.removeAppFile('about/index.guard.ts')
+      common.removeAppFolderItem('about/index.guard.ts')
         .then(() => common.afterAll())
         .then(done)
         .catch(console.error);
@@ -77,7 +77,7 @@ export class RootGuard {
     it('should respect root guard', tests.respectRootGuard);
 
     afterAll((done) => {
-      common.removeAppFile('index.guard.ts')
+      common.removeAppFolderItem('index.guard.ts')
         .then(() => common.afterAll())
         .then(done)
         .catch(console.error);
@@ -111,13 +111,9 @@ export class RootGuard {
     it('should have working top level route inside child route folder', tests.verifyNestedTopRoute);
 
     afterAll((done) => {
-      common.removeAppFile('test/#child/top/index.html')
+      common.removeAppFolderItem('test/#child/top/index.html')
         .then(() => common.writeAppFile('index.html', '<my-home></my-home>'))
-        .then(() => common.removeAppFile('test/#child/index.html'))
-        .then(() => common.removeAppFile('test/index.html'))
-        .then(() => common.removeAppFolder('test/#child/top'))
-        .then(() => common.removeAppFolder('test/#child'))
-        .then(() => common.removeAppFolder('test'))
+        .then(() => common.removeAppFolderItem('test'))
         .then(() => common.afterAll())
         .then(done)
         .catch(console.error);
