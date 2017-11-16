@@ -4,7 +4,6 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const async = require('async');
 const merge = require('../../utils/merge');
 const rimraf = require('rimraf');
 const portfinder = require('portfinder');
