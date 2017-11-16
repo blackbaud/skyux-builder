@@ -5,7 +5,7 @@ const mock = require('mock-require');
 const logger = require('../utils/logger');
 const portfinder = require('portfinder');
 
-fdescribe('cli pact', () => {
+describe('cli pact', () => {
   let originalArgv = process.argv;
 
   function MockServer() { }

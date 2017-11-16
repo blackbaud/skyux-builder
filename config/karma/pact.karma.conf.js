@@ -10,7 +10,6 @@ function getConfig(config) {
   const minimist = require('minimist');
   const argv = minimist(process.argv.slice(2));
   require(`./${argv.watch ? 'watch' : 'test'}.karma.conf`)(config);
-
   let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
   let testWebpackConfig = require('../webpack/test.webpack.config');
   const logger = require('../../utils/logger');
@@ -39,9 +38,7 @@ function getConfig(config) {
     frameworks: config.frameworks.concat('pact'),
     files: config.files.concat(path.resolve(process.cwd(), 'node_modules/pact-web', `pact-web.js`)),
     pact: skyPagesConfig.skyux.pacts,
-    plugins: config.plugins.concat('@pact-foundation/karma-pact'),
-    webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv)
-
+    plugins: config.plugins.concat('@pact-foundation/karma-pact')
   });
 
 }
