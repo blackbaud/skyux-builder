@@ -1,3 +1,21 @@
+# 1.7.0 (2017-11-14)
+
+- Added ability to generate a component from the SKY UX CLI.  Run `skyux generate component <component-name>` where `<component-name>` is the name of the component preceded by an optional subfolder (e.g. `skyux generate component some-folder/some-thing`).  This will generate the TypeScript, HTML, CSS and spec files for your new component in the specified folder. [#330](https://github.com/blackbaud/skyux-builder/pull/330)
+
+# 1.6.2 (2017-11-14)
+
+- Reduced number of console logs for output keep alive. [#334](https://github.com/blackbaud/skyux-builder/pull/334)
+
+# 1.6.1 (2017-11-13)
+
+- Fixed navigation via Omnibar due to loading outside Angular. [#332](https://github.com/blackbaud/skyux-builder/pull/332)
+
+# 1.6.0 (2017-11-13)
+
+- Added webpack `OutputKeepAlivePlugin` to periodically print to the console to reset any timeouts associated with watched output. [#328](https://github.com/blackbaud/skyux-builder/pull/328)
+- Added support for RxJS 5.4.3. [#298](https://github.com/blackbaud/skyux-builder/pull/298) Thanks [@Blackbaud-MikitaYankouski](https://github.com/Blackbaud-MikitaYankouski)!
+- Adjusted regular expression specificity for elements referencing static assets. [#326](https://github.com/blackbaud/skyux-builder/pull/326)
+
 # 1.5.0 (2017-11-03)
 
 - Added `SkyAppOmnibarProvider` to enable custom `envId` and `svcId` to be provided to the omnibar. [#323](https://github.com/blackbaud/skyux-builder/pull/323)

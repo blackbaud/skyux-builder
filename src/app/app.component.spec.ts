@@ -27,7 +27,9 @@ import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
 
 import {
   BBOmnibar,
+  BBOmnibarConfig,
   BBOmnibarLegacy,
+  BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
 
@@ -286,6 +288,57 @@ describe('AppComponent', () => {
         loadOmnibarCallback();
 
         expect(spyOmnibar).toHaveBeenCalled();
+      });
+    })
+  );
+
+  it(
+    'should run omnibar navigation within the Angular zone',
+    async(() => {
+      skyAppConfig.skyux.host.url = 'base.com/';
+      skyAppConfig.runtime.app.base = 'custom-base/';
+
+      let beforeNavCallback: (item: BBOmnibarNavigationItem) => boolean | void;
+
+      spyOn(BBOmnibar, 'load').and.callFake((config: BBOmnibarConfig) => {
+        beforeNavCallback = config.nav.beforeNavCallback;
+      });
+
+      skyAppConfig.skyux.omnibar = {
+        experimental: true
+      };
+
+      setup(skyAppConfig).then(() => {
+        const zone = fixture.debugElement.injector.get(NgZone);
+        const router = fixture.debugElement.injector.get(Router);
+
+        const navigateByUrlSpy = spyOn(router, 'navigateByUrl');
+
+        let zoneRunCallback: Function;
+
+        const runSpy = spyOn(zone, 'run').and.callFake(
+          (cb: Function) => {
+            if (cb && cb.toString().indexOf('navigateByUrl') >= 0) {
+              zoneRunCallback = cb;
+            } else {
+              cb();
+            }
+          }
+        );
+
+        fixture.detectChanges();
+
+        beforeNavCallback({
+          title: '',
+          url: 'base.com/custom-base/new-place'
+        });
+
+        expect(runSpy).toHaveBeenCalled();
+        expect(navigateByUrlSpy).not.toHaveBeenCalled();
+
+        zoneRunCallback();
+
+        expect(navigateByUrlSpy).toHaveBeenCalled();
       });
     })
   );

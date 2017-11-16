@@ -12,11 +12,11 @@ const SaveMetadata = require('../../plugin/save-metadata');
  * @name getDefaultWebpackConfig
  * @returns {WebpackConfig} webpackConfig
  */
-function getWebpackConfig(skyPagesConfig) {
+function getWebpackConfig(skyPagesConfig, argv) {
   const common = require('./common.webpack.config');
 
   // Webpackmege will attempt to merge each entries array, so we need to delete it
-  let commonConfig = common.getWebpackConfig(skyPagesConfig);
+  let commonConfig = common.getWebpackConfig(skyPagesConfig, argv);
   commonConfig.entry = null;
 
   // Since the preloader is executed against the file system during an AoT build,
