@@ -13,6 +13,13 @@ describe('config karma pact', () => {
 
   beforeEach(() => {
 
+    const f = '../config/webpack/test.webpack.config';
+    mock(f, {
+      getWebpackConfig: () => {
+        return {};
+      }
+    });
+
     mock(watchPath, () => {
       watchCalled = true;
     });
