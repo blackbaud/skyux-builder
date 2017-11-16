@@ -10,10 +10,10 @@ const SaveMetadata = require('../../plugin/save-metadata');
  * @name getDefaultWebpackConfig
  * @returns {WebpackConfig} webpackConfig
  */
-function getWebpackConfig(skyPagesConfig) {
+function getWebpackConfig(skyPagesConfig, argv) {
   const common = require('./common.webpack.config');
 
-  return webpackMerge(common.getWebpackConfig(skyPagesConfig), {
+  return webpackMerge(common.getWebpackConfig(skyPagesConfig, argv), {
     devtool: 'source-map',
     module: {
       rules: [
