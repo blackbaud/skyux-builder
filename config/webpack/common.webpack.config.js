@@ -33,9 +33,9 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     outPath('node_modules')
   ];
 
-  const alias = aliasBuilder.buildAliasList(skyPagesConfig);
-  const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
+  const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
   let appPath;
 
   switch (outConfigMode) {
@@ -64,23 +64,19 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       modules: resolves
     },
     resolve: {
-      alias,
+      alias: alias,
       modules: resolves,
       extensions: [
         '.js',
         '.ts'
-      ],
-      // Disable symlinks to increase performance:
-      // https://webpack.js.org/guides/build-performance/#resolving
-      symlinks: false
+      ]
     },
     module: {
       rules: [
         {
           enforce: 'pre',
-          test: /config\.ts$/,
-          loader: outPath('loader', 'sky-app-config'),
-          include: outPath('runtime')
+          test: /runtime\/config\.ts$/,
+          loader: outPath('loader', 'sky-app-config')
         },
         {
           enforce: 'pre',
@@ -98,7 +94,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         {
           enforce: 'pre',
           loader: outPath('loader', 'sky-processor', 'preload'),
-          include: spaPath('src')
+          exclude: /node_modules/
         },
         {
           test: /\.s?css$/,
