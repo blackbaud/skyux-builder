@@ -34,7 +34,11 @@ function getWebpackConfig(skyPagesConfig, argv) {
       skyux: [skyPagesConfigUtil.spaPathTempSrc('skyux.ts')],
       app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
-    devtool: 'source-map',
+    
+    // Disable sourcemaps for production:
+    // https://webpack.js.org/configuration/devtool/#production
+    devtool: undefined,
+    
     module: {
       rules: [
         {
