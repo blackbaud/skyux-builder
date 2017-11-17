@@ -75,8 +75,9 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       rules: [
         {
           enforce: 'pre',
-          test: /runtime\/config\.ts$/,
-          loader: outPath('loader', 'sky-app-config')
+          test: /config\.ts$/,
+          loader: outPath('loader', 'sky-app-config'),
+          include: outPath('runtime')
         },
         {
           enforce: 'pre',
@@ -89,11 +90,13 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
-          loader: outPath('loader', 'sky-pages-module')
+          loader: outPath('loader', 'sky-pages-module'),
+          include: outPath('src', 'app'),
         },
         {
           enforce: 'pre',
           loader: outPath('loader', 'sky-processor', 'preload'),
+          include: spaPath('src'),
           exclude: /node_modules/
         },
         {
