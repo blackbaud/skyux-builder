@@ -15,7 +15,7 @@ const runCompiler = require('./utils/run-compiler');
 const tsLinter = require('./utils/ts-linter');
 
 function writeTSConfig() {
-  var config = {
+  const config = {
     'compilerOptions': {
       'target': 'es5',
       'module': 'es2015',
@@ -32,10 +32,19 @@ function writeTSConfig() {
       'lib': [
         'es2015',
         'dom'
+      ],
+      'types': [
+        'jasmine',
+        'node'
       ]
     },
     'files': [
       './app/app.module.ts'
+    ],
+    'exclude': [
+      'node_modules',
+      skyPagesConfigUtil.outPath('node_modules'),
+      '**/*.spec.ts'
     ],
     'compileOnSave': false,
     'buildOnSave': false,
@@ -45,7 +54,10 @@ function writeTSConfig() {
     }
   };
 
-  fs.writeJSONSync(skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'), config);
+  fs.writeJSONSync(
+    skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
+    config
+  );
 }
 
 function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
@@ -158,6 +170,7 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
  * @param {*} isAot
  */
 function build(argv, skyPagesConfig, webpack) {
+
   const lintResult = tsLinter.lintSync();
   const isAot = skyPagesConfig &&
     skyPagesConfig.skyux &&

@@ -64,15 +64,17 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       modules: resolves
     },
     resolve: {
-      alias,
+      alias: alias,
       modules: resolves,
       extensions: [
         '.js',
         '.ts'
       ],
+
       // Disable symlinks to increase performance:
       // https://webpack.js.org/guides/build-performance/#resolving
       symlinks: false
+
     },
     module: {
       rules: [
@@ -93,12 +95,14 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         {
           enforce: 'pre',
           test: /sky-pages\.module\.ts$/,
-          loader: outPath('loader', 'sky-pages-module')
+          loader: outPath('loader', 'sky-pages-module'),
+          include: outPath('src', 'app'),
         },
         {
           enforce: 'pre',
           loader: outPath('loader', 'sky-processor', 'preload'),
-          include: spaPath('src')
+          include: spaPath('src'),
+          exclude: /node_modules/
         },
         {
           test: /\.s?css$/,
