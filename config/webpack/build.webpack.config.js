@@ -1,8 +1,8 @@
 /*jslint node: true */
 'use strict';
 
-const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const SaveMetadata = require('../../plugin/save-metadata');
 
 /**
@@ -39,11 +39,18 @@ function getWebpackConfig(skyPagesConfig, argv) {
     },
     plugins: [
       SaveMetadata,
-      new webpack.optimize.UglifyJsPlugin({
-        beautify: false,
-        comments: false,
-        mangle: { screw_ie8: true, keep_fnames: true },
-        sourceMap: true
+
+      new UglifyJSPlugin({
+        parallel: true,
+        exclude: /node_modules/,
+        uglifyOptions: {
+          compress: {
+            warnings: false
+          },
+          mangle: {
+            keep_fnames: true
+          }
+        }
       })
     ]
   });

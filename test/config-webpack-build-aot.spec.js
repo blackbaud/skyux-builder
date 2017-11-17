@@ -29,7 +29,12 @@ describe('config webpack build-aot', () => {
   it('should merge the common webpack config with overrides', () => {
     const f = '../config/webpack/common.webpack.config';
     mock(f, {
-      getWebpackConfig: () => ({ module: { rules: [] } })
+      getWebpackConfig: () => ({
+        module: {
+          rules: []
+        },
+        resolve: { }
+      })
     });
 
     const lib = require('../config/webpack/build-aot.webpack.config');
@@ -56,7 +61,12 @@ describe('config webpack build-aot', () => {
   it('should use the AoT entry module', () => {
     const f = '../config/webpack/common.webpack.config';
     mock(f, {
-      getWebpackConfig: () => ({ module: { rules: [] } })
+      getWebpackConfig: () => ({
+        module: {
+          rules: []
+        },
+        resolve: { }
+      })
     });
 
     const lib = require('../config/webpack/build-aot.webpack.config');
@@ -207,7 +217,8 @@ describe('config webpack build-aot', () => {
               loader: loaderName
             }
           ]
-        }
+        },
+        resolve: { }
       })
     });
 
@@ -248,7 +259,8 @@ describe('config webpack build-aot', () => {
               loader: loaderName
             }
           ]
-        }
+        },
+        resolve: { }
       })
     });
 
@@ -273,6 +285,33 @@ describe('config webpack build-aot', () => {
 
     expect(found).toEqual(false);
     expect(config.module.rules.length).toEqual(2);
+  });
+
+  it('should remove resolves', () => {
+    const f = '../config/webpack/common.webpack.config';
+    const loaderName = '\\sky-processor\\';
+    mock(f, {
+      getWebpackConfig: () => ({
+        module: {
+          rules: []
+        },
+        resolveLoader: {},
+        resolve: {
+          modules: {}
+        }
+      })
+    });
+
+    const lib = require('../config/webpack/build-aot.webpack.config');
+
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    };
+
+    const config = lib.getWebpackConfig(skyPagesConfig);
+    expect(config.resolveLoader).toBeUndefined();
+    expect(config.resolve.modules).toBeUndefined();
   });
 
 });

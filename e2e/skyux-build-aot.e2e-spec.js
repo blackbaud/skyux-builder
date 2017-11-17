@@ -4,14 +4,26 @@ const common = require('./shared/common');
 const tests = require('./shared/tests');
 
 function prepareBuild() {
-  const opts = { mode: 'easy', name: 'dist', compileMode: 'aot' };
-  return common.prepareBuild(opts)
+  const opts = {
+    mode: 'easy',
+    name: 'dist',
+    compileMode: 'aot'
+  };
+
+  return common
+    .prepareBuild(opts)
     .catch(console.error);
 }
 
 describe('skyux build aot', () => {
   describe('w/base template', () => {
-    beforeAll((done) => prepareBuild().then(done));
+    beforeAll((done) => {
+      prepareBuild()
+        .then(() => {
+          console.info('Protractor build complete!');
+          done();
+        });
+    });
 
     it('should have exitCode 0', tests.verifyExitCode);
 

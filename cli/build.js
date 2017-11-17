@@ -15,7 +15,7 @@ const runCompiler = require('./utils/run-compiler');
 const tsLinter = require('./utils/ts-linter');
 
 function writeTSConfig() {
-  var config = {
+  const config = {
     'compilerOptions': {
       'target': 'es5',
       'module': 'es2015',
@@ -42,18 +42,22 @@ function writeTSConfig() {
       './app/app.module.ts'
     ],
     'exclude': [
-      '../../node_modules'
+      'node_modules',
+      skyPagesConfigUtil.outPath('node_modules'),
+      '**/*.spec.ts'
     ],
     'compileOnSave': false,
     'buildOnSave': false,
     'angularCompilerOptions': {
-      'debug': true,
       'genDir': './ngfactory',
       'skipMetadataEmit': true
     }
   };
 
-  fs.writeJSONSync(skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'), config);
+  fs.writeJSONSync(
+    skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
+    config
+  );
 }
 
 function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
