@@ -42,7 +42,9 @@ function writeTSConfig() {
       './app/app.module.ts'
     ],
     'exclude': [
-      '../../node_modules'
+      'node_modules',
+      skyPagesConfigUtil.outPath('node_modules'),
+      '**/*.spec.ts'
     ],
     'compileOnSave': false,
     'buildOnSave': false,
