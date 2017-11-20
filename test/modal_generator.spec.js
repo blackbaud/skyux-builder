@@ -74,4 +74,4 @@ xdescribe('Gen Modal', () => {
         .toBe('my-test-modal');
     });
   });
-}
+});
