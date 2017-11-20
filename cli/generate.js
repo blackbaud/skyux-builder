@@ -3,6 +3,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const generateModal = require('../lib/modal_generator');
 
 function resolveFilePath(pathParts, fileName) {
   fs.ensureDirSync(path.resolve('src', 'app', ...pathParts));
@@ -153,6 +154,9 @@ function generate(argv) {
       case 'component':
       case 'c':
         generateComponent(name);
+        break;
+      case 'modal':
+        generateModal.genFiles(name);
         break;
     }
 
