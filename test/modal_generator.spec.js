@@ -6,7 +6,7 @@ const validate = require('html-angular-validate');
 const gen_modal = rewire('../lib/modal_generator');
 const fs = require('fs');
 
-describe('Gen Modal', () => {
+xdescribe('Gen Modal', () => {
   const folderName = 'test_files';
   const componentName = 'myComponent';
   const fsStub = {
