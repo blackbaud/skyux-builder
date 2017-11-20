@@ -2,9 +2,7 @@
 /*jshint jasmine: true */
 'use strict';
 const rewire = require('rewire');
-const validate = require('html-angular-validate');
 const gen_modal = rewire('../lib/modal_generator');
-const fs = require('fs');
 
 xdescribe('Gen Modal', () => {
   const folderName = 'test_files';
