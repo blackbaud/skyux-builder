@@ -14,7 +14,7 @@ const tmp = './.e2e-tmp/';
 const cwdOpts = { cwd: tmp };
 
 const skyuxConfigPath = path.resolve(process.cwd(), tmp, 'skyuxconfig.json');
-const appExtrasPath = path.resolve(process.cwd(), tmp, 'src/app', 'app-extras.module.ts');
+const appExtrasPath = path.resolve(process.cwd(), tmp, 'src/app/app-extras.module.ts');
 const cliPath = `../e2e/shared/cli`;
 
 let skyuxConfigOriginal;
