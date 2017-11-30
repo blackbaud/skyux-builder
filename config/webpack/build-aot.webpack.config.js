@@ -12,11 +12,11 @@ const SaveMetadata = require('../../plugin/save-metadata');
  * @name getDefaultWebpackConfig
  * @returns {WebpackConfig} webpackConfig
  */
-function getWebpackConfig(skyPagesConfig) {
+function getWebpackConfig(skyPagesConfig, argv) {
   const common = require('./common.webpack.config');
 
   // Webpackmege will attempt to merge each entries array, so we need to delete it
-  let commonConfig = common.getWebpackConfig(skyPagesConfig);
+  let commonConfig = common.getWebpackConfig(skyPagesConfig, argv);
   commonConfig.entry = null;
 
   // Since the preloader is executed against the file system during an AoT build,
@@ -34,7 +34,11 @@ function getWebpackConfig(skyPagesConfig) {
       skyux: [skyPagesConfigUtil.spaPathTempSrc('skyux.ts')],
       app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
-    devtool: 'source-map',
+    
+    // Disable sourcemaps for production:
+    // https://webpack.js.org/configuration/devtool/#production
+    devtool: undefined,
+    
     module: {
       rules: [
         {
@@ -46,7 +50,9 @@ function getWebpackConfig(skyPagesConfig) {
     plugins: [
       new ngtools.AotPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule'
+        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule',
+        // Type checking handled by Builder's ts-linter utility.
+        typeChecking: false
       }),
       SaveMetadata,
       new webpack.optimize.UglifyJsPlugin({

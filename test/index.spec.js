@@ -3,6 +3,7 @@
 
 const mock = require('mock-require');
 const logger = require('../utils/logger');
+const config = require('../config/sky-pages/sky-pages.config');
 
 describe('@blackbaud/skyux-builder', () => {
 
@@ -45,6 +46,10 @@ describe('@blackbaud/skyux-builder', () => {
       'version': {
         cmd: 'version',
         lib: 'version'
+      },
+      'generate': {
+        cmd: 'generate',
+        lib: 'generate'
       }
     };
 
@@ -59,16 +64,24 @@ describe('@blackbaud/skyux-builder', () => {
 
   it('should return false for unknown command', () => {
     spyOn(logger, 'info');
+    spyOn(config, 'getSkyPagesConfig');
+
     const cmd = 'junk-command-that-does-not-exist';
     const lib = require('../index');
+
     expect(lib.runCommand(cmd, {})).toBe(false);
+    expect(config.getSkyPagesConfig).not.toHaveBeenCalled();
   });
 
   it('should return true for known command', () => {
     spyOn(logger, 'info');
-    const cmd = 'version';
+    spyOn(config, 'getSkyPagesConfig');
+
+    const cmd = 'build';
     const lib = require('../index');
+
     expect(lib.runCommand(cmd, {})).toBe(true);
+    expect(config.getSkyPagesConfig).toHaveBeenCalled();
   });
 
   it('should process shorthand tags', (done) => {

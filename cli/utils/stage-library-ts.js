@@ -66,10 +66,11 @@ function getFileContents(filePath) {
   switch (path.extname(filePath)) {
     case '.scss':
       contents = compileSass(filePath);
-    break;
+      break;
+
     case '.html':
       contents = getHtmlContents(filePath);
-    break;
+      break;
   }
 
   contents = contents

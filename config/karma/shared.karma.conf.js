@@ -14,7 +14,17 @@ function getConfig(config) {
   const path = require('path');
   let testWebpackConfig = require('../webpack/test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
-  let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv.command);
+
+  // See minimist documentation regarding `argv._` https://github.com/substack/minimist
+  let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
+
+  // Using __dirname so this file can be extended from other configuration file locations
+  const specBundle = `${__dirname}/../../utils/spec-bundle.js`;
+  const specStyles = `${__dirname}/../../utils/spec-styles.js`;
+  let preprocessors = {};
+
+  preprocessors[specBundle] = ['coverage', 'webpack', 'sourcemap'];
+  preprocessors[specStyles] = ['webpack'];
 
   config.set({
     basePath: '',
@@ -22,18 +32,15 @@ function getConfig(config) {
     exclude: [],
     files: [
       {
-        pattern: '../../utils/spec-bundle.js',
+        pattern: specBundle,
         watched: false
       },
       {
-        pattern: '../../utils/spec-styles.js',
+        pattern: specStyles,
         watched: false
       }
     ],
-    preprocessors: {
-      '../../utils/spec-styles.js': ['webpack'],
-      '../../utils/spec-bundle.js': ['coverage', 'webpack', 'sourcemap']
-    },
+    preprocessors: preprocessors,
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),

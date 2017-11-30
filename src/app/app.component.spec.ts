@@ -1,4 +1,8 @@
 import {
+  NgZone
+} from '@angular/core';
+
+import {
   async,
   ComponentFixture,
   fakeAsync,
@@ -11,6 +15,8 @@ import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 
 import {
   SkyAppConfig,
+  SkyAppOmnibarProvider,
+  SkyAppOmnibarReadyArgs,
   SkyAppSearchResultsProvider,
   SkyAppStyleLoader,
   SkyAppWindowRef,
@@ -21,7 +27,9 @@ import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
 
 import {
   BBOmnibar,
+  BBOmnibarConfig,
   BBOmnibarLegacy,
+  BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
 
@@ -40,22 +48,6 @@ describe('AppComponent', () => {
   let viewport: SkyAppViewportService;
 
   const location = 'my-custom-location';
-  const defaultSkyAppConfig: any = {
-    runtime: {
-      app: {
-        base: 'app-base'
-      },
-      params: {
-        has: (key: any) => false,
-        parse: (p: any) => parseParams = p
-      }
-    },
-    skyux: {
-      host: {
-        url: 'host-url'
-      }
-    }
-  };
 
   class MockHelpInitService {
     public load() { }
@@ -66,7 +58,8 @@ describe('AppComponent', () => {
   function setup(
     config: any,
     includeSearchProvider?: boolean,
-    styleLoadPromise?: Promise<any>
+    styleLoadPromise?: Promise<any>,
+    omnibarProvider?: any
   ) {
     let providers: any[] = [
       {
@@ -122,6 +115,13 @@ describe('AppComponent', () => {
       });
     }
 
+    if (omnibarProvider) {
+      providers.push({
+        provide: SkyAppOmnibarProvider,
+        useValue: omnibarProvider
+      });
+    }
+
     return TestBed.configureTestingModule({
       declarations: [
         AppComponent
@@ -138,9 +138,61 @@ describe('AppComponent', () => {
     });
   }
 
+  function validateOmnibarProvider(
+    readyArgs: SkyAppOmnibarReadyArgs,
+    expectedNotCalledWith?: any
+  ) {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    let readyPromiseResolve: (args: SkyAppOmnibarReadyArgs) => void;
+
+    const readyPromise = new Promise<SkyAppOmnibarReadyArgs>((resolve) => {
+      readyPromiseResolve = resolve;
+    });
+
+    setup(skyAppConfig, undefined, undefined, {
+      ready: () => readyPromise
+    }).then(() => {
+      fixture.detectChanges();
+
+      expect(spyOmnibar).not.toHaveBeenCalled();
+
+      readyPromiseResolve(readyArgs);
+
+      tick();
+
+      expect(spyOmnibar).toHaveBeenCalledWith(jasmine.objectContaining(readyArgs));
+
+      if (expectedNotCalledWith) {
+        expect(spyOmnibar).not.toHaveBeenCalledWith(
+          jasmine.objectContaining(expectedNotCalledWith)
+        );
+      }
+    });
+  }
+
   // Reset skyAppConfig and scrollCalled
   beforeEach(() => {
-    skyAppConfig = defaultSkyAppConfig;
+    skyAppConfig = {
+      runtime: {
+        app: {
+          base: 'app-base'
+        },
+        params: {
+          has: (key: any) => false,
+          parse: (p: any) => parseParams = p
+        }
+      },
+      skyux: {
+        host: {
+          url: 'host-url'
+        }
+      }
+    };
     scrollCalled = false;
     viewport = new SkyAppViewportService();
   });
@@ -204,6 +256,93 @@ describe('AppComponent', () => {
       expect(spyOmnibar).toHaveBeenCalled();
     });
   }));
+
+  it(
+    'should load the omnibar outside Angular to avoid change detection during user activity checks',
+    async(() => {
+      const spyOmnibar = spyOn(BBOmnibar, 'load');
+
+      skyAppConfig.skyux.omnibar = {
+        experimental: true
+      };
+
+      setup(skyAppConfig).then(() => {
+        const zone = fixture.debugElement.injector.get(NgZone);
+
+        let loadOmnibarCallback: Function;
+
+        const runOutsideAngularSpy = spyOn(zone, 'runOutsideAngular').and.callFake(
+          (cb: Function) => {
+            if (cb && cb.toString().indexOf('BBOmnibar') >= 0) {
+              loadOmnibarCallback = cb;
+            } else {
+              cb();
+            }
+          }
+        );
+
+        fixture.detectChanges();
+
+        expect(runOutsideAngularSpy).toHaveBeenCalled();
+        expect(spyOmnibar).not.toHaveBeenCalled();
+
+        loadOmnibarCallback();
+
+        expect(spyOmnibar).toHaveBeenCalled();
+      });
+    })
+  );
+
+  it(
+    'should run omnibar navigation within the Angular zone',
+    async(() => {
+      skyAppConfig.skyux.host.url = 'base.com/';
+      skyAppConfig.runtime.app.base = 'custom-base/';
+
+      let beforeNavCallback: (item: BBOmnibarNavigationItem) => boolean | void;
+
+      spyOn(BBOmnibar, 'load').and.callFake((config: BBOmnibarConfig) => {
+        beforeNavCallback = config.nav.beforeNavCallback;
+      });
+
+      skyAppConfig.skyux.omnibar = {
+        experimental: true
+      };
+
+      setup(skyAppConfig).then(() => {
+        const zone = fixture.debugElement.injector.get(NgZone);
+        const router = fixture.debugElement.injector.get(Router);
+
+        const navigateByUrlSpy = spyOn(router, 'navigateByUrl');
+
+        let zoneRunCallback: Function;
+
+        const runSpy = spyOn(zone, 'run').and.callFake(
+          (cb: Function) => {
+            if (cb && cb.toString().indexOf('navigateByUrl') >= 0) {
+              zoneRunCallback = cb;
+            } else {
+              cb();
+            }
+          }
+        );
+
+        fixture.detectChanges();
+
+        beforeNavCallback({
+          title: '',
+          url: 'base.com/custom-base/new-place'
+        });
+
+        expect(runSpy).toHaveBeenCalled();
+        expect(navigateByUrlSpy).not.toHaveBeenCalled();
+
+        zoneRunCallback();
+
+        expect(navigateByUrlSpy).toHaveBeenCalled();
+      });
+    })
+  );
 
   it('should set the onSearch property if a search provider is provided', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
@@ -385,6 +524,26 @@ describe('AppComponent', () => {
     setup(skyAppConfig, false).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar.calls.first().args[0].nav.beforeNavCallback).toBeDefined();
+    });
+  }));
+
+  it('should enable help for the omnibar when help config is present', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    skyAppConfig.skyux.help = {
+      productId: 'test-config'
+    };
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+
+      expect(spyOmnibar).toHaveBeenCalledWith(jasmine.objectContaining({
+        enableHelp: true
+      }));
     });
   }));
 
@@ -616,4 +775,39 @@ describe('AppComponent', () => {
       expect(console.log).toHaveBeenCalledWith(result.error.message);
     });
   }));
+
+  it(
+    'should load the omnibar when the omnibar provider\'s ready() promise is resolved',
+    fakeAsync(() => {
+      validateOmnibarProvider(
+        {
+          envId: '999',
+          svcId: 'zzz'
+        }
+      );
+    })
+  );
+
+  it('should consider the omnibar provider args envId property optional', fakeAsync(() => {
+    validateOmnibarProvider(
+      {
+        envId: '999'
+      },
+      {
+        svcId: jasmine.anything()
+      }
+    );
+  }));
+
+  it('should consider the omnibar provider args svcId property optional', fakeAsync(() => {
+    validateOmnibarProvider(
+      {
+        svcId: 'zzz'
+      },
+      {
+        envId: jasmine.anything()
+      }
+    );
+  }));
+
 });

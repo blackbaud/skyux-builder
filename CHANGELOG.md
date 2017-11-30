@@ -1,3 +1,42 @@
+# 1.7.1 (2017-11-17)
+
+- Fixed slowness and out-of-memory issues with build. [#340](https://github.com/blackbaud/skyux-builder/pull/340)
+
+# 1.7.0 (2017-11-14)
+
+- Added ability to generate a component from the SKY UX CLI.  Run `skyux generate component <component-name>` where `<component-name>` is the name of the component preceded by an optional subfolder (e.g. `skyux generate component some-folder/some-thing`).  This will generate the TypeScript, HTML, CSS and spec files for your new component in the specified folder. [#330](https://github.com/blackbaud/skyux-builder/pull/330)
+
+# 1.6.2 (2017-11-14)
+
+- Reduced number of console logs for output keep alive. [#334](https://github.com/blackbaud/skyux-builder/pull/334)
+
+# 1.6.1 (2017-11-13)
+
+- Fixed navigation via Omnibar due to loading outside Angular. [#332](https://github.com/blackbaud/skyux-builder/pull/332)
+
+# 1.6.0 (2017-11-13)
+
+- Added webpack `OutputKeepAlivePlugin` to periodically print to the console to reset any timeouts associated with watched output. [#328](https://github.com/blackbaud/skyux-builder/pull/328)
+- Added support for RxJS 5.4.3. [#298](https://github.com/blackbaud/skyux-builder/pull/298) Thanks [@Blackbaud-MikitaYankouski](https://github.com/Blackbaud-MikitaYankouski)!
+- Adjusted regular expression specificity for elements referencing static assets. [#326](https://github.com/blackbaud/skyux-builder/pull/326)
+
+# 1.5.0 (2017-11-03)
+
+- Added `SkyAppOmnibarProvider` to enable custom `envId` and `svcId` to be provided to the omnibar. [#323](https://github.com/blackbaud/skyux-builder/pull/323)
+- Cleaned up logging by only generating config for known commands. [#321](https://github.com/blackbaud/skyux-builder/pull/321)
+- Enabled default `envid` and `svcid` params in `skyuxconfig.json`. [#320](https://github.com/blackbaud/skyux-builder/pull/320)
+- Exposed `--platform` flag and adjusted config paths to improve internal continuous integration. [#297](https://github.com/blackbaud/skyux-builder/pull/297), [#322](https://github.com/blackbaud/skyux-builder/pull/322)
+- Performance enhancement to load omnibar outside context of Angular. [#317](https://github.com/blackbaud/skyux-builder/pull/317)
+- Bugfix to handle stopping `skyux test` before linter finishes. [#316](https://github.com/blackbaud/skyux-builder/pull/316)
+
+# 1.4.0 (2017-10-27)
+
+- Adjusted class names used to hide help invoker on full-page modal. [#314](https://github.com/blackbaud/skyux-builder/pull/314)
+- Bugfix to not force URLs to lowercase when calling `navigateByUrl`. [#313](https://github.com/blackbaud/skyux-builder/pull/313)
+- Using AppVeyor to validate building on the Windows platform. [#310](https://github.com/blackbaud/skyux-builder/pull/310), [#312](https://github.com/blackbaud/skyux-builder/pull/312)
+- Upgraded `@blackbaud/auth-client` to 2.0.0. Providing backwards compatibility until 2.x.x release. [#308](https://github.com/blackbaud/skyux-builder/pull/308)
+- Fixed the paths used for automatically excluding files from code coverage. [#306](https://github.com/blackbaud/skyux-builder/pull/306)
+
 # 1.3.1 (2017-10-20)
 
 - Fixed help invoker not being hidden when full-page modal opened. [#304](https://github.com/blackbaud/skyux-builder/pull/304)

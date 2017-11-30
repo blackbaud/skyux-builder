@@ -9,3 +9,5 @@ export * from './search-results-provider';
 export * from './window-ref';
 export * from './style-loader';
 export * from './viewport.service';
+export * from './omnibar-provider';
+export * from './omnibar-ready-args';
