@@ -217,6 +217,11 @@ export class AppComponent implements OnInit {
         helpConfig.extends = this.config.runtime.params.get('svcid');
       }
 
+      if ((this.windowRef.nativeWindow as any).SKYUX_HOST && !helpConfig.locale) {
+        let browserLanguages = (this.windowRef.nativeWindow as any).SKYUX_HOST.acceptLanguage || '';
+        helpConfig.locale = browserLanguages.split(',')[0];
+      }
+
       this.helpInitService.load(helpConfig);
     }
   }
