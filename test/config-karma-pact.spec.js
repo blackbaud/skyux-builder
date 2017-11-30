@@ -85,8 +85,7 @@ describe('config karma pact', () => {
   });
 
   afterEach(() => {
-    mock.stop(watchPath);
-    mock.stop(testPath);
+    mock.stopAll();
   });
 
   it('should load the watch config if watch command is given', (done) => {
