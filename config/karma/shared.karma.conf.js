@@ -14,7 +14,6 @@ function getConfig(config) {
   let testWebpackConfig = require('../webpack/test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
 
-
   // See minimist documentation regarding `argv._` https://github.com/substack/minimist
   let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
 
