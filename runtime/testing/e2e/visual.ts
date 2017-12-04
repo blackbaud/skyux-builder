@@ -43,6 +43,15 @@ export abstract class SkyVisualTest {
         const message = `Screenshots have mismatch of ${mismatchPercentage} percent!`;
 
         expect(isSimilar).toBe(true, message);
+      })
+      .catch((error: any) => {
+        // Ignore 'baseline image not found' errors from PixDiff.
+        if (error.message.indexOf('saving current image') > -1) {
+          console.log(`[${config.screenshotName}]`, error.message);
+          return Promise.resolve();
+        }
+
+        throw error;
       });
   }
 
