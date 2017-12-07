@@ -36,7 +36,7 @@ import {
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
-
+  let mockSkyuxHost: any;
   let comp: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let parseParams: any;
@@ -81,6 +81,7 @@ describe('AppComponent', () => {
         useValue: {
           nativeWindow: {
             location: location,
+            SKYUX_HOST: mockSkyuxHost,
             scroll: () => scrollCalled = true
           }
         }
@@ -673,6 +674,55 @@ describe('AppComponent', () => {
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyHelp).not.toHaveBeenCalledWith(skyAppConfig.skyux.help);
+      expect(spyHelp).toHaveBeenCalledWith(expectedCall);
+    });
+  }));
+
+  it('should assign help config locale key if none exist and host exposes the browser language', async(() => {
+    let spyHelp = spyOn(mockHelpInitService, 'load');
+
+    skyAppConfig.runtime.params.has = (key: any) => key === false;
+
+    mockSkyuxHost = {
+      acceptLanguage: 'fr-ca'
+    };
+    const expectedCall = { productId: 'test-config', extends: 'bb-help', locale: mockSkyuxHost.acceptLanguage };
+    skyAppConfig.skyux.help = { productId: 'test-config', extends: 'bb-help' };
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      expect(spyHelp).not.toHaveBeenCalledWith(skyAppConfig.skyux.help);
+      expect(spyHelp).toHaveBeenCalledWith(expectedCall);
+    });
+  }));
+
+  it('should fallback to \'\' for the locale if SKYUX_HOST.acceptLanguage does not exist', async(() => {
+    let spyHelp = spyOn(mockHelpInitService, 'load');
+
+    skyAppConfig.runtime.params.has = (key: any) => key === false;
+
+    mockSkyuxHost = { };
+    const expectedCall = { productId: 'test-config', extends: 'bb-help', locale: '' };
+    skyAppConfig.skyux.help = { productId: 'test-config', extends: 'bb-help' };
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      expect(spyHelp).not.toHaveBeenCalledWith(skyAppConfig.skyux.help);
+      expect(spyHelp).toHaveBeenCalledWith(expectedCall);
+    });
+  }));
+
+  it('should not override a locale that has been passed into the config', async(() => {
+    let spyHelp = spyOn(mockHelpInitService, 'load');
+    mockSkyuxHost = {
+      acceptLanguage: 'fr-ca'
+    };
+    const expectedCall = { productId: 'test-config', extends: 'bb-help', locale: 'en-ga' };
+    skyAppConfig.skyux.help = { productId: 'test-config', extends: 'bb-help', locale: 'en-ga' };
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      expect(spyHelp).toHaveBeenCalledWith(skyAppConfig.skyux.help);
       expect(spyHelp).toHaveBeenCalledWith(expectedCall);
     });
   }));
