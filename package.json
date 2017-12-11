@@ -77,6 +77,8 @@
     "ngc-webpack": "3.0.0",
     "node-sass": "4.5.3",
     "open": "0.0.5",
+    "@pact-foundation/karma-pact": "2.1.1",
+    "pact": "4.2.1",
     "portfinder": "1.0.13",
     "progress-bar-webpack-plugin": "1.9.3",
     "protractor": "5.1.2",

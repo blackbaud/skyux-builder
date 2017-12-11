@@ -1,5 +1,6 @@
 /*jslint node: true */
 /*global ROOT_DIR*/
+/*global skyPagesConfig*/
 'use strict';
 
 /**
@@ -64,7 +65,9 @@ Object.assign(global, testing);
  * any file that ends with spec.js and get its path. By passing in true
  * we say do this recursively
  */
-var testContext = require.context(ROOT_DIR, true, /\.spec\.ts/);
+var testContext = skyPagesConfig.runtime.command === 'pact' ?
+require.context(ROOT_DIR, true, /\.pact-spec\.ts/) :
+require.context(ROOT_DIR, true, /\.spec\.ts/);
 
 /*
  * get all the files, for each file, call the context function
