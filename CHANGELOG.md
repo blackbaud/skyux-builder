@@ -1,3 +1,7 @@
+# 1.8.0 (2017-12-07)
+
+- Upgraded `@blackbaud/auth-client` to 2.2.0. [#344](https://github.com/blackbaud/skyux-builder/pull/344)
+
 # 1.7.1 (2017-11-17)
 
 - Fixed slowness and out-of-memory issues with build. [#340](https://github.com/blackbaud/skyux-builder/pull/340)

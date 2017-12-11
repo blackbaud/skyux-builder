@@ -96,7 +96,7 @@ describe('SKY UX Builder module generator', () => {
     });
 
     expect(source).toContain(
-`import {
+      `import {
   AppExtrasModule
 } from '../src/app/app-extras.module';`
     );
@@ -127,7 +127,7 @@ describe('SKY UX Builder module generator', () => {
     }`;
 
     let source = generator.getSource({
-      runtime:  runtimeUtils.getDefaultRuntime(),
+      runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
     });
 
@@ -208,27 +208,27 @@ describe('SKY UX Builder module generator', () => {
 
   it('should call `enableProdMode` if the command is build', () => {
     let source = generator.getSource({
-      runtime:  runtimeUtils.getDefaultRuntime({
+      runtime: runtimeUtils.getDefaultRuntime({
         command: 'build'
       }),
       skyux: {}
     });
 
     expect(source).toContain(
-`import { enableProdMode } from '@angular/core';
+      `import { enableProdMode } from '@angular/core';
 enableProdMode();`);
   });
 
   it('should put auth-client in mock mode if the command is e2e', () => {
     let source = generator.getSource({
-      runtime:  runtimeUtils.getDefaultRuntime({
+      runtime: runtimeUtils.getDefaultRuntime({
         command: 'e2e'
       }),
       skyux: {}
     });
 
     expect(source).toContain(
-`import { BBAuth } from '@blackbaud/auth-client';
+      `import { BBAuth } from '@blackbaud/auth-client';
 BBAuth.mock = true;`);
   });
 
@@ -321,5 +321,28 @@ BBAuth.mock = true;`);
     });
 
     expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: false });');
+  });
+
+  it('adds SkyPactService and overrides AuthTokenProvider if calling pact command', () => {
+
+    let runtime = runtimeUtils.getDefaultRuntime();
+    runtime.command = 'pact';
+
+    let source = generator.getSource({
+      runtime: runtime,
+      skyux: {
+
+      }
+    });
+
+    expect(source).toContain(`provide: SkyPactService`);
+    expect(source).toContain(`useClass: SkyPactService`);
+    expect(source).toContain(`deps: [SkyAppConfig]`);
+    expect(source).toContain('SkyPactAuthTokenProvider');
+    expect(source).toContain('SkyPactService');
+    expect(source).toContain(`{
+      provide: SkyAuthTokenProvider,
+      useClass: SkyPactAuthTokenProvider
+    }`);
   });
 });

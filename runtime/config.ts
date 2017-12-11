@@ -8,6 +8,17 @@ export interface RuntimeConfigApp {
   template: string;
 }
 
+export class SkyuxPactConfig {
+  public providers?: {
+    [provider: string]: {
+      host?: string;
+      port?: string;
+      fullUrl?: string;
+    }
+  };
+  public pactProxyServer?: string;
+}
+
 export interface RuntimeConfig {
   app: RuntimeConfigApp;
   command?: string;  // Dynamically added in "higher up" webpacks
@@ -15,6 +26,7 @@ export interface RuntimeConfig {
   componentsIgnorePattern: string;
   handle404?: boolean;  // Dynamically added in sky-pages-module-generator.js
   includeRouteModule: boolean;
+  pactConfig?: SkyuxPactConfig;
   params: SkyAppRuntimeConfigParams;
   routes?: Object[]; // Dynamically added in sky-pages-module-generator.js
   routesPattern: string;
@@ -41,7 +53,7 @@ export interface SkyuxConfigHost {
 }
 
 export interface SkyuxConfig {
-  a11y?: SkyuxConfigA11y|boolean;
+  a11y?: SkyuxConfigA11y | boolean;
   app?: SkyuxConfigApp;
   appSettings?: any;
   auth?: boolean;
@@ -53,6 +65,7 @@ export interface SkyuxConfig {
   importPath?: string;
   mode?: string;
   name?: string;
+  pacts?: any[];
   params?: SkyuxConfigParams; // List of allowed params
   plugins?: string[];
   redirects?: any;

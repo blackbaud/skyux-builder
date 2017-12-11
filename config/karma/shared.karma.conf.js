@@ -10,7 +10,6 @@ function getConfig(config) {
   // This file is spawned so we'll need to read the args again
   const minimist = require('minimist');
   const argv = minimist(process.argv.slice(2));
-
   const path = require('path');
   let testWebpackConfig = require('../webpack/test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
