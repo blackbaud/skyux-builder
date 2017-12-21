@@ -28,7 +28,8 @@ function getConfig(config) {
       pact.dir = pact.dir || path.resolve(process.cwd(), 'pacts');
       pact.host = pactServers.getPactServer(pact.provider).host;
       pact.port = pactServers.getPactServer(pact.provider).port;
-      pact.pactFileWriteMode = 'merge';
+      pact.pactFileWriteMode = pact.pactFileWriteMode || 'overwrite';
+
       i++;
     });
   } else {
@@ -37,7 +38,7 @@ function getConfig(config) {
 
   config.set({
     frameworks: config.frameworks.concat('pact'),
-    files: config.files.concat(path.resolve(process.cwd(), 'node_modules/pact/src', `pact-web.js`)),
+    files: config.files.concat(path.resolve(process.cwd(), 'node_modules/pact-web', `pact-web.js`)),
     pact: skyPagesConfig.skyux.pacts,
     plugins: config.plugins.concat('@pact-foundation/karma-pact'),
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv)
