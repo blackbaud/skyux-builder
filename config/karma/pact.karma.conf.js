@@ -28,6 +28,7 @@ function getConfig(config) {
       pact.dir = pact.dir || path.resolve(process.cwd(), 'pacts');
       pact.host = pactServers.getPactServer(pact.provider).host;
       pact.port = pactServers.getPactServer(pact.provider).port;
+      pact.pactFileWriteMode = 'merge';
       i++;
     });
   } else {
