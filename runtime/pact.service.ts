@@ -15,7 +15,7 @@ export class SkyPactService {
     Object.keys(this.appConfig.runtime.pactConfig.providers).forEach((providerName: string) => {
 
       this.pactProviders[providerName] =
-        Pact.PactWeb(
+        Pact(
           {
             host: this.appConfig.runtime.pactConfig.providers[providerName].host,
             port: this.appConfig.runtime.pactConfig.providers[providerName].port
