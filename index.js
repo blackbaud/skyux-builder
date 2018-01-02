@@ -41,6 +41,9 @@ module.exports = {
       case 'lint':
         require('./cli/lint')();
         break;
+      case 'pact':
+        require('./cli/pact')(command, argv);
+        break;
       case 'test':
       case 'watch':
         require('./cli/test')(command, argv);
