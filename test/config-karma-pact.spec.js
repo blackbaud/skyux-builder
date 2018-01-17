@@ -154,7 +154,8 @@ describe('config karma pact', () => {
   it('should add pact-web.js to files', (done) => {
     require('../config/karma/pact.karma.conf')({
       set: (config) => {
-        let pactPath = path.resolve(process.cwd(), 'node_modules/pact/src', `pact-web.js`);
+        let pactPath = path.resolve(process.cwd(), 'node_modules/@pact-foundation/pact-web',
+        `pact-web.js`);
         expect(config.files.indexOf(pactPath)).not.toEqual(-1);
         expect(watchCalled).toEqual(true);
         done();
