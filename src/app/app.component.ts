@@ -215,6 +215,7 @@ export class AppComponent implements OnInit {
   private initShellComponents() {
     const omnibarConfig = this.config.skyux.omnibar;
     const helpConfig = this.config.skyux.help;
+    const skyuxHost = (this.windowRef.nativeWindow as any).SKYUX_HOST;
 
     const loadOmnibar = (args?: SkyAppOmnibarReadyArgs) => {
       this.setParamsFromQS(omnibarConfig);
@@ -255,6 +256,11 @@ export class AppComponent implements OnInit {
 
       if (this.config.runtime.params.has('svcid')) {
         helpConfig.extends = this.config.runtime.params.get('svcid');
+      }
+
+      if (skyuxHost && !helpConfig.locale) {
+        let browserLanguages = skyuxHost.acceptLanguage || '';
+        helpConfig.locale = browserLanguages.split(',')[0];
       }
 
       this.helpInitService.load(helpConfig);

@@ -2,7 +2,7 @@
 /*global browser, element, by*/
 'use strict';
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const merge = require('../../utils/merge');
 const rimraf = require('rimraf');
@@ -14,9 +14,11 @@ const tmp = './.e2e-tmp/';
 const cwdOpts = { cwd: tmp };
 
 const skyuxConfigPath = path.resolve(process.cwd(), tmp, 'skyuxconfig.json');
+const appExtrasPath = path.resolve(process.cwd(), tmp, 'src/app/app-extras.module.ts');
 const cliPath = `../e2e/shared/cli`;
 
 let skyuxConfigOriginal;
+let appExtrasOriginal;
 let webpackServer;
 let httpServer;
 let _exitCode;
@@ -36,6 +38,10 @@ function afterAll() {
   }
 
   resetConfig();
+
+  if (appExtrasOriginal) {
+    resetAppExtras();
+  }
 };
 
 /**
@@ -242,36 +248,25 @@ function verifyAppFolder(folderPath) {
 }
 
 /**
- * Remove directory if it exists in src/app folder
+ * Remove specified file or directory and its contents if it exists in src/app folder
+ * -- Used for cleaning up after we've injected files for a specific test or group of tests
  */
-function removeAppFolder(folderPath) {
-  const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', folderPath);
-  return new Promise((resolve, reject) => {
-    if (fs.existsSync(resolvedFolderPath)) {
-      fs.rmdirSync(resolvedFolderPath);
-    }
 
-    resolve();
-  });
+function removeAppFolderItem(itemPath) {
+  const resolvedFolderPath = path.join(path.resolve(tmp), 'src', 'app', itemPath);
+  return fs.remove(resolvedFolderPath);
 }
 
-/**
- * Remove file from the src/app folder -- Used for cleaning up after we've injected
- * files for a specific test or group of tests
- */
-function removeAppFile(filePath) {
-  return new Promise((resolve, reject) => {
-    const resolvedFilePath = path.join(path.resolve(tmp), 'src', 'app', filePath);
+function writeAppExtras(content) {
+  if (!appExtrasOriginal) {
+    appExtrasOriginal = fs.readFileSync(appExtrasPath, 'utf8');
+  }
 
-    fs.unlink(resolvedFilePath, (err) => {
-      if (err) {
-        reject(err);
-        return;
-      }
+  fs.writeFileSync(appExtrasPath, content, 'utf8');
+}
 
-      resolve();
-    });
-  });
+function resetAppExtras() {
+  writeAppExtras(appExtrasOriginal);
 }
 
 module.exports = {
@@ -287,7 +282,7 @@ module.exports = {
   rimrafPromise: rimrafPromise,
   tmp: tmp,
   writeAppFile: writeAppFile,
-  removeAppFile: removeAppFile,
+  removeAppFolderItem: removeAppFolderItem,
   verifyAppFolder: verifyAppFolder,
-  removeAppFolder: removeAppFolder
+  writeAppExtras: writeAppExtras
 };

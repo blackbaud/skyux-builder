@@ -1,3 +1,16 @@
+# 1.9.0 (2018-01-17)
+
+- Added support for reading locale from SKYUX_HOST global variable. [#345](https://github.com/blackbaud/skyux-builder/pull/345)
+- Disabled standalone install for webdriver manager. [#349](https://github.com/blackbaud/skyux-builder/pull/349)
+- Using the latest release of Chrome when testing on Appveyor. [#352](https://github.com/blackbaud/skyux-builder/pull/352)
+- Removed process.exit(0) from the generate module so the generate command can be passed through to plugins. [#351](https://github.com/blackbaud/skyux-builder/pull/351)
+- Created e2e tests around integration with the help service. [#311](https://github.com/blackbaud/skyux-builder/pull/311)
+- Release `skyux pact` command to allow Pact testing without using `skyux e2e`. [#319](https://github.com/blackbaud/skyux-builder/pull/319) and [#350](https://github.com/blackbaud/skyux-builder/pull/350) Thanks [@Blackbaud-JoshLandi](https://github.com/Blackbaud-JoshLandi)!
+
+# 1.8.0 (2017-12-07)
+
+- Upgraded `@blackbaud/auth-client` to 2.2.0. [#344](https://github.com/blackbaud/skyux-builder/pull/344)
+
 # 1.7.1 (2017-11-17)
 
 - Fixed slowness and out-of-memory issues with build. [#340](https://github.com/blackbaud/skyux-builder/pull/340)

@@ -39,6 +39,10 @@ describe('@blackbaud/skyux-builder', () => {
         cmd: 'test',
         lib: 'test'
       },
+      'pact': {
+        cmd: 'pact',
+        lib: 'pact'
+      },
       'watch': {
         cmd: 'watch',
         lib: 'test'
