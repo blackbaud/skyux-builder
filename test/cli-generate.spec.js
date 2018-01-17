@@ -74,6 +74,10 @@ describe('cli generate', () => {
     });
 
     if (expectedExitCode === 0) {
+      // process.exit() should not be called on success so that other Builder
+      // plugins can tap into the generate command.
+      expect(process.exit).not.toHaveBeenCalled();
+
       expect(fsMock.ensureDirSync).toHaveBeenCalledWith(
         path.resolve('src', 'app', ...expectedPathParts)
       );
@@ -98,9 +102,9 @@ export class ${expectedClassName}`
 
       validateSpecFile(`describe('${expectedDescribe}', () => {`);
       validateSpecFile(`const fixture = TestBed.createComponent(${expectedClassName});`);
+    } else {
+      expect(process.exit).toHaveBeenCalledWith(expectedExitCode);
     }
-
-    expect(process.exit).toHaveBeenCalledWith(expectedExitCode);
   }
 
   afterEach(() => {
