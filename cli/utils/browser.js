@@ -86,6 +86,11 @@ function browser(argv, skyPagesConfig, stats, port) {
       logger.info(`Launching Host URL: ${hostUrl}`);
       open(hostUrl, argv.browser);
       break;
+
+    default:
+      logger.info(`Host URL: ${hostUrl}`);
+      logger.info(`Local URL: ${localUrl}`);
+      break;
   }
 }
 
