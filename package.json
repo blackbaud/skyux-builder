@@ -8,7 +8,7 @@
     "coverage:builder": "istanbul cover --report=html --dir=./coverage/builder ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
     "coverage:runtime": "node ./utils/cli-test.js dev-runtime",
     "coverage:src-app": "node ./utils/cli-test.js dev-src-app",
-    "e2e": "webdriver-manager update --gecko false && protractor ./config/protractor/protractor-dev.conf.js",
+    "e2e": "webdriver-manager update --standalone false --gecko false && protractor ./config/protractor/protractor-dev.conf.js",
     "jscs": "jscs cli config lib loader plugin src utils index.js",
     "jshint": "jshint cli config lib loader plugin src utils index.js",
     "lint": "npm run jshint && npm run jscs",
