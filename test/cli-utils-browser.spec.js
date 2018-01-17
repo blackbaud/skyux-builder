@@ -78,9 +78,10 @@ describe('browser utils', () => {
       settings.skyPagesConfig
     );
 
-    expect(logger.info).toHaveBeenCalledWith(`Launching Host URL: ${hostUrl}`);
-    expect(openCalled).toBe(true);
-    expect(openParamUrl).toBe(hostUrl);
+    return {
+      hostUrl: hostUrl,
+      localUrl: localUrl
+    };
   }
 
   it('should run envid and svcid through encodeURIComponent', () => {
@@ -144,11 +145,17 @@ describe('browser utils', () => {
   );
 
   it('should default --launch to host', () => {
-    testLaunchHost({});
+    const urls = testLaunchHost({});
+    expect(logger.info).toHaveBeenCalledWith(`Launching Host URL: ${urls.hostUrl}`);
+    expect(openCalled).toBe(true);
+    expect(openParamUrl).toBe(urls.hostUrl);
   });
 
   it('should log the host url and launch it when --launch host', () => {
-    testLaunchHost({ launch: 'host' });
+    const urls = testLaunchHost({ launch: 'host' });
+    expect(logger.info).toHaveBeenCalledWith(`Launching Host URL: ${urls.hostUrl}`);
+    expect(openCalled).toBe(true);
+    expect(openParamUrl).toBe(urls.hostUrl);
   });
 
   it('should log the local url and launch it when --launch local', () => {
@@ -175,14 +182,11 @@ describe('browser utils', () => {
     expect(openParamUrl).toBe(url);
   });
 
-  it('should log a done message and not launch it when --launch none', () => {
-    bind({
-      argv: {
-        launch: 'none'
-      }
-    });
-    expect(logger.info).not.toHaveBeenCalled();
-    expect(openCalled).toBe(false);
+  it('should log the local + host urls but not launch when --launch none', () => {
+    const urls = testLaunchHost({ launch: 'none' });
+    expect(logger.info).toHaveBeenCalledWith(`Host URL: ${urls.hostUrl}`);
+    expect(logger.info).toHaveBeenCalledWith(`Local URL: ${urls.localUrl}`);
+    expect(openCalled).not.toBe(true);
   });
 
   it('should pass --browser flag to open', () => {
