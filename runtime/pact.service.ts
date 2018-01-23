@@ -8,11 +8,14 @@ declare var Pact: any;
 export class SkyPactService {
 
   private pactProviders: { [providerName: string]: any } = {};
+
+  private matchersInternal: any;
+
   constructor(private appConfig: SkyAppConfig) {
     Object.keys(this.appConfig.runtime.pactConfig.providers).forEach((providerName: string) => {
 
       this.pactProviders[providerName] =
-        Pact(
+        new Pact.PactWeb(
           {
             host: this.appConfig.runtime.pactConfig.providers[providerName].host,
             port: this.appConfig.runtime.pactConfig.providers[providerName].port
@@ -20,6 +23,8 @@ export class SkyPactService {
         );
 
     });
+
+    this.matchersInternal = Pact.Matchers;
   }
 
   public addInteraction(provider: string, interaction: any) {
@@ -44,6 +49,10 @@ export class SkyPactService {
 
     return this.pactProviders[provider].verify();
 
+  }
+
+  public get matchers() {
+    return this.matchersInternal;
   }
 
 }

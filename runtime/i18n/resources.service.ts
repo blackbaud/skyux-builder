@@ -15,11 +15,16 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/observable/of';
 
 import { SkyAppAssetsService } from '@blackbaud/skyux-builder/runtime/assets.service';
-import { SkyAppLocaleProvider } from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';
-import { SkyAppLocaleInfo } from '@blackbaud/skyux-builder/runtime/i18n/locale-info';
-import { SkyAppFormat } from '@blackbaud/skyux-builder/runtime/format';
 
-const DEFAULT_LOCALE = 'en-US';
+import {
+  SkyAppLocaleProvider
+} from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';
+
+import {
+  SkyAppHostLocaleProvider
+} from '@blackbaud/skyux-builder/runtime/i18n/host-locale-provider';
+
+import { SkyAppFormat } from '@blackbaud/skyux-builder/runtime/format';
 
 const defaultResources: {[key: string]: {message: string}} = {};
 
@@ -45,7 +50,7 @@ export class SkyAppResourcesService {
     private http: Http,
     /* tslint:disable-next-line no-forward-ref */
     @Inject(forwardRef(() => SkyAppAssetsService)) private assets: SkyAppAssetsService,
-    @Optional() private localeProvider: SkyAppLocaleProvider
+    @Optional() @Inject(SkyAppHostLocaleProvider) private localeProvider: SkyAppLocaleProvider
   ) {
     this.skyAppFormat = new SkyAppFormat();
   }
@@ -56,15 +61,7 @@ export class SkyAppResourcesService {
    */
   public getString(name: string, ...args: any[]): Observable<string> {
     if (!this.resourcesObs) {
-      let localeObs: Observable<SkyAppLocaleInfo>;
-
-      if (this.localeProvider) {
-        localeObs = this.localeProvider.getLocaleInfo();
-      } else {
-        localeObs = Observable.of({
-          locale: DEFAULT_LOCALE
-        });
-      }
+      const localeObs = this.localeProvider.getLocaleInfo();
 
       this.resourcesObs = localeObs
         .switchMap((localeInfo) => {
@@ -81,7 +78,9 @@ export class SkyAppResourcesService {
           }
 
           // Finally fall back to the default locale.
-          resourcesUrl = resourcesUrl || this.getUrlForLocale(DEFAULT_LOCALE);
+          resourcesUrl = resourcesUrl || this.getUrlForLocale(
+            SkyAppHostLocaleProvider.defaultLocale
+          );
 
           if (resourcesUrl) {
             obs = this.httpObs[resourcesUrl] || this.http
@@ -97,7 +96,9 @@ export class SkyAppResourcesService {
                 // The resource file for the specified locale failed to load;
                 // fall back to the default locale if it differs from the specified
                 // locale.
-                const defaultResourcesUrl = this.getUrlForLocale(DEFAULT_LOCALE);
+                const defaultResourcesUrl = this.getUrlForLocale(
+                  SkyAppHostLocaleProvider.defaultLocale
+                );
 
                 if (defaultResourcesUrl && defaultResourcesUrl !== resourcesUrl) {
                   return this.http.get(defaultResourcesUrl);
