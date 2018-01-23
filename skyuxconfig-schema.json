@@ -115,6 +115,15 @@
       "description": "Indicates whether the application requires an authenticated Blackbaud ID",
       "type": "boolean"
     },
+    "codeCoverageThreshold": {
+      "description": "Specifies the minimum required code coverage threshold.",
+      "type": "string",
+      "enum": [
+        "none",
+        "standard",
+        "strict"
+      ]
+    },
     "compileMode": {
       "description": "Specifies how to compile the project's code.",
       "type": "string",
