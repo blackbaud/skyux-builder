@@ -1,7 +1,7 @@
 # 1.10.0 (2018-01-24)
 
 - Added support for the `codeCoverageThreshold` property in `skyuxconfig.json`. [#355](https://github.com/blackbaud/skyux-builder/pull/355)
-- Created `skyuxconfig-schema.json` in order to provide intellisense capabilities. [#347](https://github.com/blackbaud/skyux-builder/pull/347)
+- Created `skyuxconfig-schema.json` to provide IntelliSense capabilities. [#347](https://github.com/blackbaud/skyux-builder/pull/347)
 
 # 1.9.0 (2018-01-17)
 
