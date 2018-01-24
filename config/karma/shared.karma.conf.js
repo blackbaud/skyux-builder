@@ -2,6 +2,35 @@
 'use strict';
 
 /**
+ * Adds the necessary configuration for code coverage thresholds.
+ * @param {*} config
+ */
+function getCoverageThreshold(skyPagesConfig) {
+
+  function getProperty(threshold) {
+    return {
+      global: {
+        statements: threshold,
+        branches: threshold,
+        functions: threshold,
+        lines: threshold
+      }
+    };
+  }
+
+  switch (skyPagesConfig.skyux.codeCoverageThreshold) {
+    case 'none':
+      return getProperty(0);
+
+    case 'standard':
+      return getProperty(80);
+
+    case 'strict':
+      return getProperty(100);
+  }
+}
+
+/**
  * Common Karma configuration shared between local / CI testing.
  * @name getConfig
  */
@@ -43,9 +72,11 @@ function getConfig(config) {
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
+      check: getCoverageThreshold(skyPagesConfig),
       reporters: [
         { type: 'json' },
-        { type: 'html' }
+        { type: 'html' },
+        { type: 'text-summary' }
       ],
       _onWriteReport: function (collector) {
         return remapIstanbul.remap(collector.getFinalCoverage());
