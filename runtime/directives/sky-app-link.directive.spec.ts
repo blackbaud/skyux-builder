@@ -14,7 +14,6 @@ class SkyAppLinkTestComponent { }
 
 describe('SkyAppLink Directive', () => {
 
-  let component: SkyAppLinkTestComponent;
   let fixture: ComponentFixture<SkyAppLinkTestComponent>;
   let debugElement: DebugElement;
 
@@ -46,7 +45,6 @@ describe('SkyAppLink Directive', () => {
     });
 
     fixture = TestBed.createComponent(SkyAppLinkTestComponent);
-    component = fixture.componentInstance;
     debugElement = fixture.debugElement;
 
     fixture.detectChanges(); // initial binding
