@@ -155,8 +155,6 @@ function generate(argv) {
         generateComponent(name);
         break;
     }
-
-    process.exit(0);
   } catch (err) {
     process.exit(1);
   }

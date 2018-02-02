@@ -96,7 +96,15 @@ function spawnSelenium(configPath) {
         'webdriver-manager'
       );
 
-      let results = spawn.sync(webdriverManagerPath, ['update', '--gecko', 'false'], spawnOptions);
+      const results = spawn.sync(
+        webdriverManagerPath,
+        [
+          'update',
+          '--standalone', 'false',
+          '--gecko', 'false'
+        ],
+        spawnOptions
+      );
 
       if (results.error) {
         reject(results.error);
