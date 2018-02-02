@@ -6,6 +6,7 @@ const path = require('path');
 const webpackMerge = require('webpack-merge');
 const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
+const HotModuleReplacementPlugin = require('webpack/lib/HotModuleReplacementPlugin');
 
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const logger = require('../../utils/logger');
@@ -64,6 +65,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
     devServer: {
       compress: true,
       inline: true,
+      hot: argv.hmr,
       contentBase: path.join(process.cwd(), 'src', 'app'),
       headers: {
         'Access-Control-Allow-Origin': '*'
@@ -85,7 +87,8 @@ function getWebpackConfig(argv, skyPagesConfig) {
       new LoaderOptionsPlugin({
         context: __dirname,
         debug: true
-      })
+      }),
+      new HotModuleReplacementPlugin()
     ]
   });
 }
