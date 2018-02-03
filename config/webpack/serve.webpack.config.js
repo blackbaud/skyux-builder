@@ -71,7 +71,8 @@ function getWebpackConfig(argv, skyPagesConfig) {
       historyApiFallback: {
         index: skyPagesConfigUtil.getAppBase(skyPagesConfig)
       },
-      stats: 'minimal',
+      // This is handled by the SimpleProgressWebpackPlugin in common
+      stats: 'none',
       https: {
         key: fs.readFileSync(path.join(__dirname, '../../ssl/server.key')),
         cert: fs.readFileSync(path.join(__dirname, '../../ssl/server.crt'))

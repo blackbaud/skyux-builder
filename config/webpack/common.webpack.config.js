@@ -3,7 +3,7 @@
 
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
@@ -128,7 +128,9 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         'skyPagesConfig': JSON.stringify(skyPagesConfig)
       }),
 
-      new ProgressBarPlugin(),
+      new SimpleProgressWebpackPlugin({
+        format: argv.log || 'compact'
+      }),
 
       new LoaderOptionsPlugin({
         options: {
