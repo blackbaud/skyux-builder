@@ -48,6 +48,52 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       break;
   }
 
+  let plugins = [
+    // Some properties are required on the root object passed to HtmlWebpackPlugin
+    new HtmlWebpackPlugin({
+      template: skyPagesConfig.runtime.app.template,
+      inject: skyPagesConfig.runtime.app.inject,
+      runtime: skyPagesConfig.runtime,
+      skyux: skyPagesConfig.skyux
+    }),
+
+    new CommonsChunkPlugin({
+      name: ['skyux', 'vendor', 'polyfills']
+    }),
+
+    new webpack.DefinePlugin({
+      'skyPagesConfig': JSON.stringify(skyPagesConfig)
+    }),
+
+    new LoaderOptionsPlugin({
+      options: {
+        context: __dirname,
+        skyPagesConfig: skyPagesConfig
+      }
+    }),
+
+    new ContextReplacementPlugin(
+      // The (\\|\/) piece accounts for path separators in *nix and Windows
+      /angular(\\|\/)core(\\|\/)@angular/,
+      spaPath('src'),
+      {}
+    ),
+
+    // Webpack 2 behavior does not correctly return non-zero exit code.
+    new ProcessExitCode(),
+
+    new OutputKeepAlivePlugin({
+      enabled: argv['output-keep-alive']
+    })
+  ];
+
+  // Supporting a custom logging type of none
+  if (argv.log !== 'none') {
+    plugins.push(new SimpleProgressWebpackPlugin({
+      format: argv.log || 'compact'
+    }));
+  }
+
   return {
     entry: {
       polyfills: [outPath('src', 'polyfills.ts')],
@@ -111,48 +157,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         }
       ]
     },
-    plugins: [
-      // Some properties are required on the root object passed to HtmlWebpackPlugin
-      new HtmlWebpackPlugin({
-        template: skyPagesConfig.runtime.app.template,
-        inject: skyPagesConfig.runtime.app.inject,
-        runtime: skyPagesConfig.runtime,
-        skyux: skyPagesConfig.skyux
-      }),
-
-      new CommonsChunkPlugin({
-        name: ['skyux', 'vendor', 'polyfills']
-      }),
-
-      new webpack.DefinePlugin({
-        'skyPagesConfig': JSON.stringify(skyPagesConfig)
-      }),
-
-      new SimpleProgressWebpackPlugin({
-        format: argv.log || 'compact'
-      }),
-
-      new LoaderOptionsPlugin({
-        options: {
-          context: __dirname,
-          skyPagesConfig: skyPagesConfig
-        }
-      }),
-
-      new ContextReplacementPlugin(
-        // The (\\|\/) piece accounts for path separators in *nix and Windows
-        /angular(\\|\/)core(\\|\/)@angular/,
-        spaPath('src'),
-        {}
-      ),
-
-      // Webpack 2 behavior does not correctly return non-zero exit code.
-      new ProcessExitCode(),
-
-      new OutputKeepAlivePlugin({
-        enabled: argv['output-keep-alive']
-      })
-    ]
+    plugins
   };
 }
 

@@ -138,7 +138,7 @@ function prepareBuild(config) {
 
   return new Promise((resolve, reject) => {
     rimrafPromise(path.join(tmp, 'dist'))
-      .then(() => exec(`node`, [cliPath, `build`, `--log`, `expanded`], cwdOpts))
+      .then(() => exec(`node`, [cliPath, `build`, `--log`, `none`], cwdOpts))
       .then(serve)
       .then(resolve)
       .catch(err => reject(err));
