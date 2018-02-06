@@ -45,7 +45,7 @@ describe('cli utils run compiler', () => {
     runCompiler(mockWebpack, {}).then(() => {
       expect(logger.error).toHaveBeenCalledWith(errs);
       expect(logger.warn).toHaveBeenCalledWith(wrns);
-      expect(logger.info).toHaveBeenCalled();
+      expect(logger.info).not.toHaveBeenCalled();
       done();
     });
   });

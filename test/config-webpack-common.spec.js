@@ -220,4 +220,49 @@ describe('config webpack common', () => {
 
     expect(_options.enabled).toEqual(true);
   });
+
+  it('should not add the SimpleProgressWebpack plugin if --log none', () => {
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    };
+
+    const argv = { 'log': 'none' };
+    let plugin = jasmine.createSpy('simple-progress-webpack-plugin');
+    mock('simple-progress-webpack-plugin', plugin);
+
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
+    lib.getWebpackConfig(skyPagesConfig, argv);
+    expect(plugin).not.toHaveBeenCalled();
+  });
+
+  it('should pass the log flag to the SimpleProgressWebpack plugin', () => {
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    };
+
+    const argv = { 'log': 'custom-level' };
+    let plugin = jasmine.createSpy('simple-progress-webpack-plugin');
+    mock('simple-progress-webpack-plugin', plugin);
+
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
+    lib.getWebpackConfig(skyPagesConfig, argv);
+    expect(plugin).toHaveBeenCalledWith({ format: 'custom-level' });
+  });
+
+  it('should default the SimpleProgressWebpack plugin to compact', () => {
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {}
+    };
+
+    const argv = { };
+    let plugin = jasmine.createSpy('simple-progress-webpack-plugin');
+    mock('simple-progress-webpack-plugin', plugin);
+
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
+    lib.getWebpackConfig(skyPagesConfig, argv);
+    expect(plugin).toHaveBeenCalledWith({ format: 'compact' });
+  });
 });
