@@ -24,11 +24,7 @@ const runCompiler = (webpack, config) => {
         logger.warn(jsonStats.warnings);
       }
 
-      logger.info(stats.toString({
-        chunks: false,
-        colors: false
-      }));
-
+      // Normal logging is handled by SimpleProgressWebpackPlugin in common.webpack.config.js
       resolve(stats);
     });
   });
