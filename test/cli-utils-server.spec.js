@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const logger = require('winston');
+const logger = require('../utils/logger');
 const mock = require('mock-require');
 
 describe('server utils', () => {

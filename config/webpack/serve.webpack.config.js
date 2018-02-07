@@ -64,6 +64,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
     devServer: {
       compress: true,
       inline: true,
+      stats: false,
       contentBase: path.join(process.cwd(), 'src', 'app'),
       headers: {
         'Access-Control-Allow-Origin': '*'

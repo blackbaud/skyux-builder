@@ -3,11 +3,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const logger = require('winston');
 const portfinder = require('portfinder');
 const express = require('express');
 const https = require('https');
 const cors = require('cors');
+
+const logger = require('../../utils/logger');
 
 const app = express();
 
