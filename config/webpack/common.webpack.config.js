@@ -90,7 +90,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   // Supporting a custom logging type of none
   if (argv.log !== 'none') {
     const log = skyPagesConfig.runtime.command === 'serve' ? 'compact' : 'expanded';
-    const color = false;
+    const color = true;
 
     plugins.push(new SimpleProgressWebpackPlugin({
       format: argv.log || log,

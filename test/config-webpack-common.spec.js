@@ -264,8 +264,8 @@ describe('config webpack common', () => {
     expect(plugin.calls.first().args[0].color).toEqual(true);
   });
 
-  it('should default the color property to false if not specified', () => {
+  it('should default the color property to true if not specified', () => {
     const plugin = setupLogPlugin('');
-    expect(plugin.calls.first().args[0].color).toEqual(false);
+    expect(plugin.calls.first().args[0].color).toEqual(true);
   });
 });

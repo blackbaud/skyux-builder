@@ -8,9 +8,11 @@ describe('logger', () => {
     mock.stopAll();
   });
 
-  it('should configure a custom transport', () => {
+  function setupTest(argv) {
     let _transports;
     let _colorize = false;
+
+    mock('minimist', () => argv);
     mock('winston', {
       Logger: function (opts) {
         _transports = opts.transports;
@@ -22,8 +24,19 @@ describe('logger', () => {
       }
     });
 
-    const logger = mock.reRequire('../utils/logger');
-    expect(_colorize).toEqual(true);
+    mock.reRequire('../utils/logger');
     expect(_transports).toBeDefined();
+
+    return _colorize;
+  }
+
+  it('should set the default color to true', () => {
+    const colorize = setupTest({});
+    expect(colorize).toEqual(true);
+  });
+
+  it('should accept the color flag', () => {
+    const colorize = setupTest({ color: false });
+    expect(colorize).toEqual(false);
   });
 });
