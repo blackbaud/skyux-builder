@@ -221,48 +221,51 @@ describe('config webpack common', () => {
     expect(_options.enabled).toEqual(true);
   });
 
-  it('should not add the SimpleProgressWebpack plugin if --log none', () => {
+  function setupLogPlugin(command, argv = {}) {
     const skyPagesConfig = {
-      runtime: runtimeUtils.getDefaultRuntime(),
+      runtime: runtimeUtils.getDefaultRuntime({
+        command
+      }),
       skyux: {}
     };
 
-    const argv = { 'log': 'none' };
     let plugin = jasmine.createSpy('simple-progress-webpack-plugin');
     mock('simple-progress-webpack-plugin', plugin);
 
     const lib = mock.reRequire('../config/webpack/common.webpack.config');
     lib.getWebpackConfig(skyPagesConfig, argv);
+
+    return plugin;
+  }
+
+  it('should not add the log plugin if --log none', () => {
+    const plugin = setupLogPlugin('', { log: 'none' });
     expect(plugin).not.toHaveBeenCalled();
   });
 
-  it('should pass the log flag to the SimpleProgressWebpack plugin', () => {
-    const skyPagesConfig = {
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    };
-
-    const argv = { 'log': 'custom-level' };
-    let plugin = jasmine.createSpy('simple-progress-webpack-plugin');
-    mock('simple-progress-webpack-plugin', plugin);
-
-    const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    lib.getWebpackConfig(skyPagesConfig, argv);
-    expect(plugin).toHaveBeenCalledWith({ format: 'custom-level' });
+  it('should pass the log flag to the log plugin', () => {
+    const format = 'custom-format';
+    const plugin = setupLogPlugin('', { log: format });
+    expect(plugin.calls.first().args[0].format).toEqual(format);
   });
 
-  it('should default the SimpleProgressWebpack plugin to compact', () => {
-    const skyPagesConfig = {
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    };
+  it('should default the log property to compact for skyux serve', () => {
+    const plugin = setupLogPlugin('serve');
+    expect(plugin.calls.first().args[0].format).toEqual('compact');
+  });
 
-    const argv = { };
-    let plugin = jasmine.createSpy('simple-progress-webpack-plugin');
-    mock('simple-progress-webpack-plugin', plugin);
+  it('should default the log property to expanded for all other skyux commands', () => {
+    const plugin = setupLogPlugin('build');
+    expect(plugin.calls.first().args[0].format).toEqual('expanded');
+  });
 
-    const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    lib.getWebpackConfig(skyPagesConfig, argv);
-    expect(plugin).toHaveBeenCalledWith({ format: 'compact' });
+  it('should pass the color flag to the log plugin', () => {
+    const plugin = setupLogPlugin('', { color: true });
+    expect(plugin.calls.first().args[0].color).toEqual(true);
+  });
+
+  it('should default the color property to false if not specified', () => {
+    const plugin = setupLogPlugin('');
+    expect(plugin.calls.first().args[0].color).toEqual(false);
   });
 });

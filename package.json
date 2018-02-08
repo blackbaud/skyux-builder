@@ -90,7 +90,7 @@
     "sass-loader": "6.0.5",
     "selenium-standalone": "6.4.1",
     "selenium-webdriver": "3.5.0",
-    "simple-progress-webpack-plugin": "1.0.4",
+    "simple-progress-webpack-plugin": "blackbaud-bobbyearl/simple-progress-webpack-plugin",
     "source-map-inline-loader": "blackbaud-bobbyearl/source-map-inline-loader",
     "source-map-loader": "0.2.1",
     "style-loader": "0.17.0",

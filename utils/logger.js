@@ -2,6 +2,11 @@
 'use strict';
 
 const winston = require('winston');
+const minimist = require('minimist');
+
+// Read args in order to disable colors on vsts
+const argv = minimist(process.argv.splice(2));
+const color = argv.platform !== 'vsts';
 
 const logger = new winston.Logger({
   transports: [
@@ -9,7 +14,7 @@ const logger = new winston.Logger({
       level: 'debug',
       handleExceptions: true,
       json: false,
-      colorize: true,
+      colorize: color,
       showLevel: false
     })
   ]
