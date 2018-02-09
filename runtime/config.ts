@@ -58,9 +58,10 @@ export interface SkyuxConfig {
   app?: SkyuxConfigApp;
   appSettings?: any;
   auth?: boolean;
-  cssPath?: string;
+  codeCoverageThreshold?: 'none' | 'standard' | 'strict';
   command?: string;
   compileMode?: string;
+  cssPath?: string;
   help?: any;
   host?: SkyuxConfigHost;
   importPath?: string;

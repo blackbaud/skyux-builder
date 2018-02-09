@@ -46,12 +46,74 @@ describe('config karma shared', () => {
       getSkyPagesConfig: (command) => {
         expect(command).toBe(customCommand);
         done();
+
+        return {
+          skyux: {}
+        };
       }
     });
 
     mock.reRequire('../config/karma/shared.karma.conf')({
       set: () => {}
     });
+  });
+
+  function checkCodeCoverage(configValue, threshold) {
+
+    mock('../config/sky-pages/sky-pages.config.js', {
+      getSkyPagesConfig: () => ({
+        skyux: {
+          codeCoverageThreshold: configValue
+        }
+      })
+    });
+
+    mock(testConfigFilename, {
+      getWebpackConfig: () => {}
+    });
+
+    mock.reRequire('../config/karma/shared.karma.conf')({
+      set: (config) => {
+        expect(config.coverageReporter.check).toEqual({
+          global: {
+            statements: threshold,
+            branches: threshold,
+            functions: threshold,
+            lines: threshold
+          }
+        });
+      }
+    });
+  }
+
+  it('should not add the check property when codeCoverageThreshold is not defined', () => {
+    mock('../config/sky-pages/sky-pages.config.js', {
+      getSkyPagesConfig: () => ({
+        skyux: {}
+      })
+    });
+
+    mock(testConfigFilename, {
+      getWebpackConfig: () => {}
+    });
+
+    mock.reRequire('../config/karma/shared.karma.conf')({
+      set: (config) => {
+        expect(config.coverageReporter.check).toBeUndefined();
+      }
+    });
+  });
+
+  it('should handle codeCoverageThreshold set to "none"', () => {
+    checkCodeCoverage('none', 0);
+  });
+
+  it('should handle codeCoverageThreshold set to "standard"', () => {
+    checkCodeCoverage('standard', 80);
+  });
+
+  it('should handle codeCoverageThreshold set to "strict"', () => {
+    checkCodeCoverage('strict', 100);
   });
 
 });
