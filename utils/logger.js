@@ -5,7 +5,7 @@ const winston = require('winston');
 const minimist = require('minimist');
 
 // Read args in order to disable colors on vsts
-const argv = minimist(process.argv.splice(2));
+const argv = minimist(process.argv.slice(2));
 const color = argv.hasOwnProperty('color') ? argv.color : true;
 
 const logger = new winston.Logger({

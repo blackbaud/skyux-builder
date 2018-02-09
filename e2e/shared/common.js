@@ -209,7 +209,8 @@ function writeConfigServe(port) {
     });
 
     writeConfig(skyuxConfigWithPort);
-    webpackServer = childProcessSpawn(`node`, [cliPath, `serve`, `-l`, `none`], cwdOpts);
+    const args = [cliPath, `serve`, `-l`, `none`, `--log`, `none`];
+    webpackServer = childProcessSpawn(`node`, args, cwdOpts);
     resetConfig();
     resolve();
   });
