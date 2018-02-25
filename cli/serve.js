@@ -70,6 +70,7 @@ function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
 
       // This is required in order to not have HMR requests routed to host.
       config.output.publicPath = `${localUrl}${config.devServer.publicPath}`;
+      logger.info('Using hot module replacement.');
     }
 
     const compiler = webpack(config);
