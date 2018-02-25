@@ -238,19 +238,24 @@ describe('config webpack common', () => {
     return plugin;
   }
 
-  it('should not add the log plugin if --log none', () => {
-    const plugin = setupLogPlugin('', { log: 'none' });
+  it('should not add the webpack plugin if --logFormat none', () => {
+    const plugin = setupLogPlugin('', { logFormat: 'none' });
     expect(plugin).not.toHaveBeenCalled();
   });
 
-  it('should pass the log flag to the log plugin', () => {
+  it('should pass the logFormat flag to the webpack plugin', () => {
     const format = 'custom-format';
-    const plugin = setupLogPlugin('', { log: format });
+    const plugin = setupLogPlugin('', { logFormat: format });
     expect(plugin.calls.first().args[0].format).toEqual(format);
   });
 
-  it('should default the log property to compact for skyux serve', () => {
+  it('should default the webplack property to compact for skyux serve', () => {
     const plugin = setupLogPlugin('serve');
+    expect(plugin.calls.first().args[0].format).toEqual('compact');
+  });
+
+  it('should default the webplack property to compact if the --serve flag is used', () => {
+    const plugin = setupLogPlugin('build', { 'serve': true });
     expect(plugin.calls.first().args[0].format).toEqual('compact');
   });
 

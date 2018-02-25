@@ -11,6 +11,7 @@ const ProcessExitCode = require('../../plugin/process-exit-code');
 const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
+const logger = require('../../utils/logger');
 
 function spaPath() {
   return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
@@ -18,6 +19,18 @@ function spaPath() {
 
 function outPath() {
   return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+}
+
+function getLogFormat(skyPagesConfig, argv) {
+  if (argv.hasOwnProperty('logFormat')) {
+    return argv.logFormat;
+  }
+
+  if (skyPagesConfig.runtime.command === 'serve' || argv.serve) {
+    return 'compact';
+  }
+
+  return 'expanded';
 }
 
 /**
@@ -36,6 +49,8 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
+  const logFormat = getLogFormat(skyPagesConfig, argv);
+
   let appPath;
 
   switch (outConfigMode) {
@@ -88,13 +103,10 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   ];
 
   // Supporting a custom logging type of none
-  if (argv.log !== 'none') {
-    const log = skyPagesConfig.runtime.command === 'serve' ? 'compact' : 'expanded';
-    const color = true;
-
+  if (logFormat !== 'none') {
     plugins.push(new SimpleProgressWebpackPlugin({
-      format: argv.log || log,
-      color: argv.hasOwnProperty('color') ? argv.color : color
+      format: logFormat,
+      color: logger.logColor
     }));
   }
 
