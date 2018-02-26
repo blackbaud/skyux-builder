@@ -91,7 +91,7 @@
     "sass-loader": "6.0.5",
     "selenium-standalone": "6.4.1",
     "selenium-webdriver": "3.5.0",
-    "source-map-inline-loader": "blackbaud-bobbyearl/source-map-inline-loader",
+    "source-map-inline-loader": "1.0.0",
     "source-map-loader": "0.2.1",
     "style-loader": "0.17.0",
     "ts-helpers": "1.1.2",
