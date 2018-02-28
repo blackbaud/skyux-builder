@@ -19,6 +19,7 @@ function getWebpackConfig(skyPagesConfig) {
     externals: [
       /^@angular\//,
       /^@blackbaud\//,
+      /^@blackbaud\-internal\//,
       /^rxjs\//
     ],
     resolve: {
