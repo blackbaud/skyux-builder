@@ -1,36 +1,29 @@
-import { Directive, Input, HostListener, OnInit } from '@angular/core';
+import { Directive, Input } from '@angular/core';
+import { PathLocationStrategy, PlatformLocation } from '@angular/common';
 import { SkyAppWindowRef } from '../window-ref';
-import { SkyAppConfig } from '@blackbaud/skyux-builder/runtime';
-import { HttpParams } from '@angular/common/http';
+import { SkyAppConfig } from '../config';
+import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
 
 @Directive({
   selector: '[skyAppLinkExternal]'
 })
-export class SkyAppLinkExternalDirective implements OnInit {
-  @Input() private skyAppLinkExternal: string;
-  private externalSPAUrl: string;
+export class SkyAppLinkExternalDirective extends RouterLinkWithHref {
 
-  constructor(
-    private skyAppConfig: SkyAppConfig,
-    private window: SkyAppWindowRef
-  ) { }
-
-  public ngOnInit() {
-    const queryParams: any = this.skyAppConfig.runtime.params.getAll();
-    const urlParts = this.skyAppLinkExternal.split('?');
-
-    let params = new HttpParams({ fromString: urlParts[1] });
-    for (const key in queryParams) {
-      if (queryParams.hasOwnProperty(key)) {
-        params = params.append(key, queryParams[key]);
-      }
-    }
-
-    this.externalSPAUrl = `${this.skyAppConfig.skyux.host.url}${urlParts[0]}?${params.toString()}`;
+  @Input()
+  set skyAppLinkExternal(commands: any[] | string) {
+    this.routerLink = commands;
   }
 
-  @HostListener('click', ['$event'])
-  public onClick(event: MouseEvent) {
-    this.window.nativeWindow.location.href = this.externalSPAUrl;
+  constructor(
+    router: Router,
+    route: ActivatedRoute,
+    platformLocation: PlatformLocation,
+    private skyAppConfig: SkyAppConfig,
+    private window: SkyAppWindowRef
+  ) {
+    super(router, route, new PathLocationStrategy(platformLocation, skyAppConfig.skyux.host.url));
+    this.queryParamsHandling = 'merge';
+    this.queryParams = this.skyAppConfig.runtime.params.getAll();
+    this.target = this.window.nativeWindow.window.name || '_top';
   }
 }

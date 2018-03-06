@@ -1,8 +1,8 @@
 import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
 
-// import { RouterLinkWithHref } from '@angular/router';
 import { SkyAppConfig } from '../config';
 import { SkyAppLinkExternalDirective } from './sky-app-link-external.directive';
 import { SkyAppWindowRef } from '../window-ref';
@@ -14,24 +14,30 @@ class SkyAppLinkExternalTestComponent {
   public static readonly testUrl: string = 'testUrl';
 }
 
-describe('fSkyAppLink Directive', () => {
+describe('SkyAppLinkExternal Directive', () => {
   let component: SkyAppLinkExternalTestComponent;
   let fixture: ComponentFixture<SkyAppLinkExternalTestComponent>;
   let debugElement: DebugElement;
 
-  const mockWindowService = {
-    getWindow(): any {
+  class MockWindowService {
+    public get nativeWindow() {
       return {
-        setTimeout: (cb: Function) => cb()
+        window: {
+          name: ''
+        }
       };
     }
-  };
+  }
+
+  let mockWindowService = new MockWindowService();
 
   function setup(params: any) {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [SkyAppLinkExternalDirective, SkyAppLinkExternalTestComponent],
-      imports: [],
+      imports: [
+        RouterTestingModule
+      ],
       providers: [
         {
           provide: SkyAppConfig,
