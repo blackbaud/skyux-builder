@@ -93,14 +93,14 @@ module.exports = (skyPagesConfig, webpack) => {
   copyRuntime();
 
   return transpile(skyPagesConfig, webpack)
-      .then(() => {
-        cleanRuntime();
-        preparePackage();
-        cleanTemp();
-        process.exit(0);
-      })
-      .catch(() => {
-        cleanAll();
-        process.exit(1);
-      });
+    .then(() => {
+      cleanRuntime();
+      preparePackage();
+      cleanTemp();
+      process.exit(0);
+    })
+    .catch(() => {
+      cleanAll();
+      process.exit(1);
+    });
 };
