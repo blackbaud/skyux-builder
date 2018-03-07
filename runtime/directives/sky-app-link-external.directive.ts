@@ -24,6 +24,10 @@ export class SkyAppLinkExternalDirective extends RouterLinkWithHref {
     super(router, route, new PathLocationStrategy(platformLocation, skyAppConfig.skyux.host.url));
     this.queryParamsHandling = 'merge';
     this.queryParams = this.skyAppConfig.runtime.params.getAll();
-    this.target = this.window.nativeWindow.window.name || '_top';
+    if (this.window.nativeWindow.window.name && this.window.nativeWindow.window.name !== '') {
+      this.target = this.window.nativeWindow.window.name;
+    } else {
+      this.target = '_top';
+    }
   }
 }
