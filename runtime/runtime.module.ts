@@ -1,5 +1,10 @@
-import { NgModule } from '@angular/core';
-import { SkyAppLinkDirective } from './sky-app-link.directive';
+import {
+  NgModule
+} from '@angular/core';
+
+import {
+  SkyAppLinkDirective
+} from './directives';
 
 @NgModule({
   declarations: [
@@ -8,7 +13,6 @@ import { SkyAppLinkDirective } from './sky-app-link.directive';
   exports: [
     SkyAppLinkDirective
   ],
-  providers: [
-  ]
+  providers: []
 })
 export class SkyAppRuntimeModule { }
