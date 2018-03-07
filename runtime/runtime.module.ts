@@ -15,4 +15,5 @@ import {
   ],
   providers: []
 })
+/* istanbul ignore next */
 export class SkyAppRuntimeModule { }
