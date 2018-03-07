@@ -9,9 +9,23 @@ import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
 })
 export class SkyAppLinkExternalDirective extends RouterLinkWithHref {
 
+  private _queryParams: { [k: string]: any };
+
   @Input()
   set skyAppLinkExternal(commands: any[] | string) {
     this.routerLink = commands;
+  }
+
+  @Input()
+  set queryParams(params: { [k: string]: any }) {
+    this._queryParams = Object.assign(params, this.skyAppConfig.runtime.params.getAll());
+  }
+
+  get queryParams() {
+    if (!this._queryParams) {
+      this._queryParams = Object.assign({}, this.skyAppConfig.runtime.params.getAll());
+    }
+    return this._queryParams;
   }
 
   constructor(
@@ -22,8 +36,6 @@ export class SkyAppLinkExternalDirective extends RouterLinkWithHref {
     private window: SkyAppWindowRef
   ) {
     super(router, route, new PathLocationStrategy(platformLocation, skyAppConfig.skyux.host.url));
-    this.queryParamsHandling = 'merge';
-    this.queryParams = this.skyAppConfig.runtime.params.getAll();
     if (this.window.nativeWindow.window.name && this.window.nativeWindow.window.name !== '') {
       this.target = this.window.nativeWindow.window.name;
     } else {
