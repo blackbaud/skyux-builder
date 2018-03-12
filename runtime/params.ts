@@ -16,13 +16,10 @@ function getUrlSearchParams(url: string): URLSearchParams {
 }
 
 export class SkyAppRuntimeConfigParams {
+  private params: { [key: string]: string } = {};
+  private requiredParams: string[] = [];
 
-  private params: {[key: string]: string} = {};
-
-  constructor(
-    url: string,
-    configParams: SkyuxConfigParams
-  ) {
+  constructor(url: string, configParams: SkyuxConfigParams) {
     let allowed: string[];
 
     // The default params value in Builder's skyuxconfig.json has been changed
@@ -47,7 +44,12 @@ export class SkyAppRuntimeConfigParams {
           // A boolean value may be present to simply indicate that a parameter is allowed.
           // If the type is object, look for additional config properties.
           if (typeof configParam === 'object') {
+            const isRequired = configParam.required;
             const paramValue = configParam.value;
+
+            if (isRequired) {
+              this.requiredParams.push(paramName);
+            }
 
             if (paramValue) {
               this.params[paramName] = paramValue;
@@ -60,11 +62,11 @@ export class SkyAppRuntimeConfigParams {
     const urlSearchParams = getUrlSearchParams(url);
 
     // Get uppercase keys.
-    const allowedKeysUC = allowed.map(key => key.toUpperCase());
+    const allowedKeysUC = allowed.map((key) => key.toUpperCase());
     const urlSearchParamKeys = Array.from(urlSearchParams.paramsMap.keys());
 
     // Filter to allowed params and override default values.
-    urlSearchParamKeys.forEach(givenKey => {
+    urlSearchParamKeys.forEach((givenKey) => {
       const givenKeyUC = givenKey.toUpperCase();
       allowedKeysUC.forEach((allowedKeyUC, index) => {
         if (givenKeyUC === allowedKeyUC) {
@@ -114,6 +116,15 @@ export class SkyAppRuntimeConfigParams {
   }
 
   /**
+   * Returns all required params.
+   * @name getAllRequired
+   * @returns {array}
+   */
+  public getAllRequired(): string[] {
+    return this.requiredParams;
+  }
+
+  /**
    * Adds the current params to the supplied url.
    * @name getUrl
    * @param {string} url
@@ -124,7 +135,7 @@ export class SkyAppRuntimeConfigParams {
     const delimiter = url.indexOf('?') === -1 ? '?' : '&';
     let joined: string[] = [];
 
-    this.getAllKeys().forEach(key => {
+    this.getAllKeys().forEach((key) => {
       if (!urlSearchParams.has(key)) {
         joined.push(`${key}=${encodeURIComponent(this.get(key))}`);
       }
@@ -132,5 +143,4 @@ export class SkyAppRuntimeConfigParams {
 
     return joined.length === 0 ? url : `${url}${delimiter}${joined.join('&')}`;
   }
-
 }

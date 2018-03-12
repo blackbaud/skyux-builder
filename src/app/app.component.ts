@@ -1,14 +1,6 @@
-import {
-  Component,
-  NgZone,
-  OnInit,
-  Optional
-} from '@angular/core';
+import { Component, NgZone, OnInit, Optional } from '@angular/core';
 
-import {
-  NavigationEnd,
-  Router
-} from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 import {
   BBOmnibar,
@@ -85,24 +77,22 @@ export class AppComponent implements OnInit {
     @Optional() private zone?: NgZone,
     @Optional() private omnibarProvider?: SkyAppOmnibarProvider
   ) {
-    this.styleLoader.loadStyles()
-      .then((result?: any) => {
-        this.isReady = true;
+    this.styleLoader.loadStyles().then((result?: any) => {
+      this.isReady = true;
 
-        if (result && result.error) {
-          console.log(result.error.message);
-        }
+      if (result && result.error) {
+        console.log(result.error.message);
+      }
 
-        // Let the isReady property take effect on the CSS class that hides/shows
-        // content based on when styles are loaded.
-        setTimeout(() => {
-          viewport.visible.next(true);
-        });
+      // Let the isReady property take effect on the CSS class that hides/shows
+      // content based on when styles are loaded.
+      setTimeout(() => {
+        viewport.visible.next(true);
       });
+    });
   }
 
   public ngOnInit() {
-
     // Without this code, navigating to a new route doesn't cause the window to be
     // scrolled to the top like the browser does automatically with non-SPA navigation
     // when no route fragment is present.
@@ -140,11 +130,9 @@ export class AppComponent implements OnInit {
   private setNav(omnibarConfig: any) {
     const skyuxConfig = this.config.skyux;
 
-    const baseUrl =
-      (
-        skyuxConfig.host.url +
-        this.config.runtime.app.base.substr(0, this.config.runtime.app.base.length - 1)
-      ).toLowerCase();
+    const baseUrl = (
+      skyuxConfig.host.url + this.config.runtime.app.base.substr(0, this.config.runtime.app.base.length - 1)
+    ).toLowerCase();
 
     let nav: BBOmnibarNavigation;
 
@@ -215,6 +203,7 @@ export class AppComponent implements OnInit {
   private initShellComponents() {
     const omnibarConfig = this.config.skyux.omnibar;
     const helpConfig = this.config.skyux.help;
+    const requiredParams = this.config.runtime.params.getAllRequired();
     const skyuxHost = (this.windowRef.nativeWindow as any).SKYUX_HOST;
 
     const loadOmnibar = (args?: SkyAppOmnibarReadyArgs) => {
@@ -244,6 +233,17 @@ export class AppComponent implements OnInit {
       });
     };
 
+    if (requiredParams.length > 0) {
+      const hasAllRequiredParams = requiredParams.some((param: string) => {
+        return this.config.runtime.params.get(param) !== undefined;
+      });
+
+      if (!hasAllRequiredParams) {
+        this.windowRef.nativeWindow.location.href = 'https://host.nxt.blackbaud.com/errors/notfound';
+        return;
+      }
+    }
+
     if (omnibarConfig) {
       if (this.omnibarProvider) {
         this.omnibarProvider.ready().then(loadOmnibar);
@@ -253,7 +253,6 @@ export class AppComponent implements OnInit {
     }
 
     if (helpConfig && this.helpInitService) {
-
       if (this.config.runtime.params.has('svcid')) {
         helpConfig.extends = this.config.runtime.params.get('svcid');
       }
