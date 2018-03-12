@@ -19,7 +19,10 @@ export class SkyAppRuntimeConfigParams {
   private params: { [key: string]: string } = {};
   private requiredParams: string[] = [];
 
-  constructor(url: string, configParams: SkyuxConfigParams) {
+  constructor(
+    url: string,
+    configParams: SkyuxConfigParams
+  ) {
     let allowed: string[];
 
     // The default params value in Builder's skyuxconfig.json has been changed

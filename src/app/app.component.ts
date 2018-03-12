@@ -1,6 +1,14 @@
-import { Component, NgZone, OnInit, Optional } from '@angular/core';
+import {
+  Component,
+  NgZone,
+  OnInit,
+  Optional
+} from '@angular/core';
 
-import { NavigationEnd, Router } from '@angular/router';
+import {
+  NavigationEnd,
+  Router
+} from '@angular/router';
 
 import {
   BBOmnibar,
