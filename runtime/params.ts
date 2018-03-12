@@ -135,7 +135,7 @@ export class SkyAppRuntimeConfigParams {
     const delimiter = url.indexOf('?') === -1 ? '?' : '&';
     let joined: string[] = [];
 
-    this.getAllKeys().forEach((key) => {
+    this.getAllKeys().forEach((key: string) => {
       if (!urlSearchParams.has(key)) {
         joined.push(`${key}=${encodeURIComponent(this.get(key))}`);
       }
