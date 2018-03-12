@@ -31,6 +31,17 @@ function cleanAll() {
   cleanDist();
 }
 
+function copyRuntime() {
+  fs.copySync(
+    skyPagesConfigUtil.outPath('runtime'),
+    skyPagesConfigUtil.spaPathTemp('runtime')
+  );
+}
+
+function cleanRuntime() {
+  rimraf.sync(skyPagesConfigUtil.spaPath('dist', 'runtime'));
+}
+
 function writeTSConfig() {
   var config = {
     'compilerOptions': {
@@ -53,7 +64,13 @@ function writeTSConfig() {
         'node'
       ],
       'outDir': skyPagesConfigUtil.spaPath('dist'),
-      'rootDir': skyPagesConfigUtil.spaPathTemp()
+      'rootDir': skyPagesConfigUtil.spaPathTemp(),
+      'baseUrl': '.',
+      'paths': {
+        '@blackbaud/skyux-builder/*': [
+          '*'
+        ]
+      }
     },
     'files': [
       skyPagesConfigUtil.spaPathTemp('index.ts')
@@ -73,15 +90,17 @@ module.exports = (skyPagesConfig, webpack) => {
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();
+  copyRuntime();
 
   return transpile(skyPagesConfig, webpack)
-    .then(() => {
-      preparePackage();
-      cleanTemp();
-      process.exit(0);
-    })
-    .catch(() => {
-      cleanAll();
-      process.exit(1);
-    });
+      .then(() => {
+        cleanRuntime();
+        preparePackage();
+        cleanTemp();
+        process.exit(0);
+      })
+      .catch(() => {
+        cleanAll();
+        process.exit(1);
+      });
 };
