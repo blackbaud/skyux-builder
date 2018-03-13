@@ -7,16 +7,25 @@ import {
   SkyAppLinkExternalDirective
 } from './directives';
 
+import {
+  SkyAppResourcesPipe,
+  SkyAppResourcesService
+} from './i18n';
+
 @NgModule({
   declarations: [
     SkyAppLinkDirective,
-    SkyAppLinkExternalDirective
+    SkyAppLinkExternalDirective,
+    SkyAppResourcesPipe
   ],
   exports: [
     SkyAppLinkDirective,
-    SkyAppLinkExternalDirective
+    SkyAppLinkExternalDirective,
+    SkyAppResourcesPipe
   ],
-  providers: []
+  providers: [
+    SkyAppResourcesService
+  ]
 })
 /* istanbul ignore next */
 export class SkyAppRuntimeModule { }
