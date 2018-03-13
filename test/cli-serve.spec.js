@@ -61,6 +61,42 @@ describe('cli serve', () => {
     }, webpackDevServer);
   });
 
+  it('should prepend hrm url to entries if devServer.hot is set', (done) => {
+    const publicPath = '/public-path';
+    const url = 'my-url';
+    const port = 1234;
+
+    const f = '../config/webpack/serve.webpack.config';
+    spyOn(logger, 'info');
+    mock(f, {
+      getWebpackConfig: () => ({
+        output: {},
+        entry: {
+          'test': [url]
+        },
+        devServer: {
+          hot: true,
+          publicPath: publicPath,
+          port: port
+        }
+      })
+    });
+
+    function webpackDevServer() {
+      return {
+        listen: () => {}
+      };
+    }
+
+    require('../cli/serve')({}, {}, (config) => {
+      expect(config.entry.test[0]).toEqual('webpack/hot/only-dev-server');
+      expect(config.output.publicPath).toEqual(`https://localhost:${port}${publicPath}`);
+      expect(logger.info).toHaveBeenCalledWith('Using hot module replacement.');
+      mock.stop(f);
+      done();
+    }, webpackDevServer);
+  });
+
   it('should handle a webpackDevServer error', (done) => {
     const err = 'custom-error1';
     const f = '../config/webpack/serve.webpack.config';
