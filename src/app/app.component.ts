@@ -215,7 +215,6 @@ export class AppComponent implements OnInit {
   private initShellComponents() {
     const omnibarConfig = this.config.skyux.omnibar;
     const helpConfig = this.config.skyux.help;
-    const requiredParams = this.config.runtime.params.getAllRequired();
     const skyuxHost = (this.windowRef.nativeWindow as any).SKYUX_HOST;
 
     const loadOmnibar = (args?: SkyAppOmnibarReadyArgs) => {
@@ -245,15 +244,9 @@ export class AppComponent implements OnInit {
       });
     };
 
-    if (requiredParams.length > 0) {
-      const hasAllRequiredParams = requiredParams.some((param: string) => {
-        return this.config.runtime.params.get(param) !== undefined;
-      });
-
-      if (!hasAllRequiredParams) {
-        this.windowRef.nativeWindow.location.href = 'https://host.nxt.blackbaud.com/errors/notfound';
-        return;
-      }
+    if (!this.config.runtime.params.hasAllRequiredParams()) {
+      this.windowRef.nativeWindow.location.href = 'https://host.nxt.blackbaud.com/errors/notfound';
+      return;
     }
 
     if (omnibarConfig) {

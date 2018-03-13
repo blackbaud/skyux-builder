@@ -47,10 +47,9 @@ export class SkyAppRuntimeConfigParams {
           // A boolean value may be present to simply indicate that a parameter is allowed.
           // If the type is object, look for additional config properties.
           if (typeof configParam === 'object') {
-            const isRequired = configParam.required;
             const paramValue = configParam.value;
 
-            if (isRequired) {
+            if (configParam.required) {
               this.requiredParams.push(paramName);
             }
 
@@ -89,6 +88,21 @@ export class SkyAppRuntimeConfigParams {
   }
 
   /**
+   * Are all the required params defined?.
+   * @name hasAllRequiredParams
+   * @returns {array}
+   */
+  public hasAllRequiredParams(): boolean {
+    if (this.requiredParams.length === 0) {
+      return true;
+    }
+
+    return this.requiredParams.some((param: string) => {
+      return this.params[param] !== undefined;
+    });
+  }
+
+  /**
    * Returns the value of the requested param.
    * @name get
    * @param {string} key
@@ -116,15 +130,6 @@ export class SkyAppRuntimeConfigParams {
    */
   public getAllKeys(): string[] {
     return Object.keys(this.params);
-  }
-
-  /**
-   * Returns all required params.
-   * @name getAllRequired
-   * @returns {array}
-   */
-  public getAllRequired(): string[] {
-    return this.requiredParams;
   }
 
   /**
