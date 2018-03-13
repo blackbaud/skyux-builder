@@ -3,15 +3,18 @@ import {
 } from '@angular/core';
 
 import {
-  SkyAppLinkDirective
+  SkyAppLinkDirective,
+  SkyAppLinkExternalDirective
 } from './directives';
 
 @NgModule({
   declarations: [
-    SkyAppLinkDirective
+    SkyAppLinkDirective,
+    SkyAppLinkExternalDirective
   ],
   exports: [
-    SkyAppLinkDirective
+    SkyAppLinkDirective,
+    SkyAppLinkExternalDirective
   ],
   providers: []
 })
