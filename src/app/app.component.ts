@@ -85,19 +85,20 @@ export class AppComponent implements OnInit {
     @Optional() private zone?: NgZone,
     @Optional() private omnibarProvider?: SkyAppOmnibarProvider
   ) {
-    this.styleLoader.loadStyles().then((result?: any) => {
-      this.isReady = true;
+    this.styleLoader.loadStyles()
+      .then((result?: any) => {
+        this.isReady = true;
 
-      if (result && result.error) {
-        console.log(result.error.message);
-      }
+        if (result && result.error) {
+          console.log(result.error.message);
+        }
 
-      // Let the isReady property take effect on the CSS class that hides/shows
-      // content based on when styles are loaded.
-      setTimeout(() => {
-        viewport.visible.next(true);
+        // Let the isReady property take effect on the CSS class that hides/shows
+        // content based on when styles are loaded.
+        setTimeout(() => {
+          viewport.visible.next(true);
+        });
       });
-    });
   }
 
   public ngOnInit() {
@@ -138,9 +139,11 @@ export class AppComponent implements OnInit {
   private setNav(omnibarConfig: any) {
     const skyuxConfig = this.config.skyux;
 
-    const baseUrl = (
-      skyuxConfig.host.url + this.config.runtime.app.base.substr(0, this.config.runtime.app.base.length - 1)
-    ).toLowerCase();
+    const baseUrl =
+      (
+        skyuxConfig.host.url +
+        this.config.runtime.app.base.substr(0, this.config.runtime.app.base.length - 1)
+      ).toLowerCase();
 
     let nav: BBOmnibarNavigation;
 
