@@ -1,6 +1,7 @@
 /*jslint node: true */
 'use strict';
 
+const logger = require('@blackbaud/skyux-logger');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
@@ -11,7 +12,6 @@ const ProcessExitCode = require('../../plugin/process-exit-code');
 const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
-const logger = require('../../utils/logger');
 
 function spaPath() {
   return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);

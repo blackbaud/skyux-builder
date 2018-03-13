@@ -7,12 +7,13 @@
  */
 function pact(command, argv) {
   const async = require('async');
-  const configResolver = require('./utils/config-resolver');
   const karma = require('karma');
   const Server = karma.Server;
   const portfinder = require('portfinder');
   const url = require('url');
-  const logger = require('../utils/logger');
+  const logger = require('@blackbaud/skyux-logger');
+
+  const configResolver = require('./utils/config-resolver');
   const tsLinter = require('./utils/ts-linter');
   const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
   const pactServers = require('../utils/pact-servers');

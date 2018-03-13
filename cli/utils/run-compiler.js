@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('../../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 const runCompiler = (webpack, config) => {
   const compiler = webpack(config);

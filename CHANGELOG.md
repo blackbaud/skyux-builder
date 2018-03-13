@@ -1,3 +1,7 @@
+# 1.10.1 (2018-03-08)
+
+- Fixed errors that occur when building a library that imports from Builder's runtime directory. [#368](https://github.com/blackbaud/skyux-builder/pull/368)
+
 # 1.10.0 (2018-01-24)
 
 - Added support for the `codeCoverageThreshold` property in `skyuxconfig.json`. [#355](https://github.com/blackbaud/skyux-builder/pull/355)

@@ -1,7 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 const mock = require('mock-require');
 
 describe('server utils', () => {

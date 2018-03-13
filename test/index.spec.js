@@ -2,7 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 const config = require('../config/sky-pages/sky-pages.config');
 
 describe('@blackbaud/skyux-builder', () => {

@@ -3,7 +3,7 @@
 
 const path = require('path');
 const proxyquire = require('proxyquire');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('cli version', () => {
   it('should return the version from package.json', () => {

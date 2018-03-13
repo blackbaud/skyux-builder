@@ -4,7 +4,7 @@
 const url = require('url');
 const mock = require('mock-require');
 const merge = require('../utils/merge');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 const hostUtils = require('../utils/host-utils');
 const runtimeUtils = require('../utils/runtime-test-utils');

@@ -7,8 +7,7 @@ const portfinder = require('portfinder');
 const express = require('express');
 const https = require('https');
 const cors = require('cors');
-
-const logger = require('../../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 const app = express();
 
