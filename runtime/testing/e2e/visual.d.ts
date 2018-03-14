@@ -1,12 +1,11 @@
-export type SkyVisualTestBreakpoint = 'xs' | 'sm' | 'md' | 'lg';
+import { SkyHostBrowserBreakpoint } from './host-browser-breakpoint';
 
 export interface SkyCompareScreenshotConfig {
   screenshotName: string;
   selector?: string;
-  breakpoint?: SkyVisualTestBreakpoint;
+  breakpoint?: SkyHostBrowserBreakpoint;
 }
 
 export declare class SkyVisualTest {
   public static compareScreenshot(config: SkyCompareScreenshotConfig): Promise<any>;
-  public static resizeWindow(breakpoint?: SkyVisualTestBreakpoint): void;
 }
