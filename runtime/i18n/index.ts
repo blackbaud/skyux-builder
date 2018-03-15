@@ -1,3 +1,4 @@
-export { SkyAppLocaleProvider } from './locale-provider';
-export { SkyAppResourcesPipe } from './resources.pipe';
-export { SkyAppResourcesService } from './resources.service';
+export * from './host-locale-provider';
+export * from './locale-provider';
+export * from './resources.pipe';
+export * from './resources.service';

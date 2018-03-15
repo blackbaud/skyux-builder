@@ -8,6 +8,7 @@ import {
 } from './directives';
 
 import {
+  SkyAppHostLocaleProvider,
   SkyAppResourcesPipe,
   SkyAppResourcesService
 } from './i18n';
@@ -24,6 +25,7 @@ import {
     SkyAppResourcesPipe
   ],
   providers: [
+    SkyAppHostLocaleProvider,
     SkyAppResourcesService
   ]
 })
