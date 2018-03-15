@@ -18,7 +18,6 @@ describe('Screenshot comparator', () => {
 
     mockHostBrowser = {
       moveCursorOffScreen() {},
-
       setWindowBreakpoint() {}
     };
 
@@ -34,7 +33,6 @@ describe('Screenshot comparator', () => {
 
     mockLogger = {
       info() {},
-
       error() {}
     };
 
@@ -129,12 +127,10 @@ describe('Screenshot comparator', () => {
 
     const comparator = mock.reRequire('../lib/screenshot-comparator');
 
-    // try {
-      comparator.compareScreenshot().then(() => {
-        expect(comparator.compareScreenshot).toThrow();
-      }).catch(err => {
-        expect(err.message).toEqual('something bad happened');
-      });
-    // } catch (err) { }
+    comparator.compareScreenshot().then(() => {
+      expect(comparator.compareScreenshot).toThrow();
+    }).catch(err => {
+      expect(err.message).toEqual('something bad happened');
+    });
   });
 });
