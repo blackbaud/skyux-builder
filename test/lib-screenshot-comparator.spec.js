@@ -38,7 +38,7 @@ describe('Screenshot comparator', () => {
 
     mock('../lib/host-browser', mockHostBrowser);
     mock('protractor', mockProtractor);
-    mock('../utils/logger', mockLogger);
+    mock('@blackbaud/skyux-logger', mockLogger);
   });
 
   afterEach(() => {
