@@ -2,9 +2,9 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
-describe('SkyA11y', () => {
+describe('A11y analyzer', () => {
   let browser;
   let context;
 
@@ -16,7 +16,7 @@ describe('SkyA11y', () => {
     });
 
     mock('../config/axe/axe.config', {
-      getConfig: () => {
+      getConfig() {
         return {};
       }
     });
@@ -28,7 +28,7 @@ describe('SkyA11y', () => {
     };
 
     browser = {
-      getCurrentUrl: () => {
+      getCurrentUrl() {
         return Promise.resolve('http://foo.bar');
       }
     };
@@ -38,12 +38,12 @@ describe('SkyA11y', () => {
     mock.stopAll();
   });
 
-  it('should return a promise', () => {
+  it('should run and return a promise', () => {
     mock('axe-webdriverjs', function MockAxeBuilder() {
       return {
-        options: () => {
+        options() {
           return {
-            analyze: (callback) => Promise.resolve()
+            analyze: () => Promise.resolve()
           };
         }
       };
@@ -57,29 +57,10 @@ describe('SkyA11y', () => {
     expect(typeof result.then).toEqual('function');
   });
 
-  it('should return a class', () => {
-    mock('axe-webdriverjs', function MockAxeBuilder() {
-      return {
-        options: () => {
-          return {
-            analyze: (callback) => Promise.resolve()
-          };
-        }
-      };
-    });
-
-    spyOn(logger, 'info').and.returnValue();
-    spyOn(logger, 'error').and.returnValue();
-
-    const plugin = mock.reRequire('../lib/a11y-analyzer');
-    const result = new plugin();
-    expect(typeof result).toBeDefined();
-  });
-
   it('should print a message to the console', (done) => {
     mock('axe-webdriverjs', function MockAxeBuilder() {
       return {
-        options: () => {
+        options() {
           return {
             analyze: (callback) => {
               callback({
@@ -99,13 +80,13 @@ describe('SkyA11y', () => {
     spyOn(logger, 'error').and.returnValue();
 
     const plugin = mock.reRequire('../lib/a11y-analyzer');
-    const result = plugin.run();
+    plugin.run();
   });
 
   it('should log violations', (done) => {
     mock('axe-webdriverjs', function MockAxeBuilder() {
       return {
-        options: () => {
+        options() {
           return {
             analyze: (callback) => {
               callback({
@@ -133,6 +114,6 @@ describe('SkyA11y', () => {
     spyOn(logger, 'error').and.returnValue();
 
     const plugin = mock.reRequire('../lib/a11y-analyzer');
-    const result = plugin.run();
+    plugin.run();
   });
 });

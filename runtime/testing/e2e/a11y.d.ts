@@ -1,3 +1,3 @@
 export declare class SkyA11y {
-  static run(): Promise<any>;
+  static run(): Promise<number>;
 }
