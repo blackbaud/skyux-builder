@@ -97,7 +97,7 @@ export class SkyAppRuntimeConfigParams {
       return true;
     }
 
-    return this.requiredParams.some((param: string) => {
+    return this.requiredParams.every((param: string) => {
       return this.params[param] !== undefined;
     });
   }

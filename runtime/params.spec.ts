@@ -162,4 +162,21 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.hasAllRequiredParams()).toBe(true);
   });
 
+  it('should expose a `hasAllRequiredParams` method that returns false if any required params are undefined', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '',
+      {
+        a1: {
+          value: '1',
+          required: true
+        },
+        a2: {
+          required: true
+        }
+      }
+    );
+
+    expect(params.hasAllRequiredParams()).toBe(false);
+  });
+
 });
