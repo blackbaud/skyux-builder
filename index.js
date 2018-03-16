@@ -51,6 +51,9 @@ module.exports = {
       case 'version':
         require('./cli/version')();
         break;
+      case 'visual':
+        require('./cli/visual')(command, argv, getConfig(command), webpack);
+        break;
       case 'generate':
         require('./cli/generate')(argv);
         break;
