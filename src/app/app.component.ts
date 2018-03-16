@@ -244,6 +244,11 @@ export class AppComponent implements OnInit {
       });
     };
 
+    if (!this.config.runtime.params.hasAllRequiredParams()) {
+      this.windowRef.nativeWindow.location.href = 'https://host.nxt.blackbaud.com/errors/notfound';
+      return;
+    }
+
     if (omnibarConfig) {
       if (this.omnibarProvider) {
         this.omnibarProvider.ready().then(loadOmnibar);
@@ -253,7 +258,6 @@ export class AppComponent implements OnInit {
     }
 
     if (helpConfig && this.helpInitService) {
-
       if (this.config.runtime.params.has('svcid')) {
         helpConfig.extends = this.config.runtime.params.get('svcid');
       }
