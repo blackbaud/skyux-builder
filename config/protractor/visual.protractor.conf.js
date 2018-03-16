@@ -2,7 +2,6 @@
 'use strict';
 
 const path = require('path');
-const PixDiff = require('pix-diff');
 const { config } = require('./protractor.conf');
 const { SpecReporter } = require('jasmine-spec-reporter');
 
@@ -22,8 +21,6 @@ config.onPrepare = function () {
     width: 1000,
     height: 800
   };
-
-  browser.pixDiff = new PixDiff(browser.skyVisualTestConfig);
 };
 
 exports.config = config;
