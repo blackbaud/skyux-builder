@@ -6,7 +6,7 @@
  * @name test
  */
 function test(command, argv) {
-  const logger = require('../utils/logger');
+  const logger = require('@blackbaud/skyux-logger');
   const Server = require('karma').Server;
   const tsLinter = require('./utils/ts-linter');
   const configResolver = require('./utils/config-resolver');

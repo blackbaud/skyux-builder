@@ -2,8 +2,8 @@
 'use strict';
 
 const spawn = require('cross-spawn');
+const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
-const logger = require('../../utils/logger');
 
 const flags = [
   '--type-check',

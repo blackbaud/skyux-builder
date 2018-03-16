@@ -2,7 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('cli test', () => {
   let originalArgv = process.argv;

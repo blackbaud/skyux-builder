@@ -4,7 +4,7 @@
 const path = require('path');
 const glob = require('glob');
 const fs = require('fs-extra');
-const logger = require('winston');
+const logger = require('@blackbaud/skyux-logger');
 
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
