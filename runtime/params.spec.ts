@@ -124,4 +124,59 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.get('a2')).toBe('c');
   });
 
+  it('should allow queryparam values to be required', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '',
+      {
+        a1: {
+          value: 'test',
+          required: true
+        }
+      }
+    );
+
+    expect(params.hasAllRequiredParams()).toBe(true);
+  });
+
+  it('should expose a `hasAllRequiredParams` method for testing if all required params are defined', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '',
+      {
+        a1: {
+          required: true
+        }
+      }
+    );
+
+    expect(params.hasAllRequiredParams()).toBe(false);
+  });
+
+  it('should expose a `hasAllRequiredParams` method that returns true if no required params are defined', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '',
+      {
+        a1: true
+      }
+    );
+
+    expect(params.hasAllRequiredParams()).toBe(true);
+  });
+
+  it('should expose a `hasAllRequiredParams` method that returns false if any required params are undefined', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '',
+      {
+        a1: {
+          value: '1',
+          required: true
+        },
+        a2: {
+          required: true
+        }
+      }
+    );
+
+    expect(params.hasAllRequiredParams()).toBe(false);
+  });
+
 });

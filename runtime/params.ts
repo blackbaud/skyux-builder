@@ -16,8 +16,8 @@ function getUrlSearchParams(url: string): URLSearchParams {
 }
 
 export class SkyAppRuntimeConfigParams {
-
-  private params: {[key: string]: string} = {};
+  private params: { [key: string]: string } = {};
+  private requiredParams: string[] = [];
 
   constructor(
     url: string,
@@ -48,6 +48,10 @@ export class SkyAppRuntimeConfigParams {
           // If the type is object, look for additional config properties.
           if (typeof configParam === 'object') {
             const paramValue = configParam.value;
+
+            if (configParam.required) {
+              this.requiredParams.push(paramName);
+            }
 
             if (paramValue) {
               this.params[paramName] = paramValue;
@@ -81,6 +85,21 @@ export class SkyAppRuntimeConfigParams {
    */
   public has(key: string): boolean {
     return this.params && this.params.hasOwnProperty(key);
+  }
+
+  /**
+   * Are all the required params defined?.
+   * @name hasAllRequiredParams
+   * @returns {array}
+   */
+  public hasAllRequiredParams(): boolean {
+    if (this.requiredParams.length === 0) {
+      return true;
+    }
+
+    return this.requiredParams.every((param: string) => {
+      return this.params[param] !== undefined;
+    });
   }
 
   /**
@@ -132,5 +151,4 @@ export class SkyAppRuntimeConfigParams {
 
     return joined.length === 0 ? url : `${url}${delimiter}${joined.join('&')}`;
   }
-
 }
