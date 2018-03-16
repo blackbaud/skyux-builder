@@ -3,7 +3,7 @@
 
 const mock = require('mock-require');
 
-describe('cli e2e', () => {
+describe('cli visual', () => {
   let mockStartE2E;
 
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe('cli e2e', () => {
 
     const spy = spyOn(mockStartE2E, 'start').and.callThrough();
 
-    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
-    expect(spy).toHaveBeenCalledWith('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    mock.reRequire('../cli/visual')('visual', ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    expect(spy).toHaveBeenCalledWith('visual', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 });

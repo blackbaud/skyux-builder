@@ -9,6 +9,14 @@ describe('Screenshot comparator', () => {
   let mockProtractor;
   let mockLogger;
 
+  function MockPixDiff() {
+    return mockPixDiff;
+  }
+
+  MockPixDiff.THRESHOLD_PERCENT = 'percent';
+  MockPixDiff.RESULT_SIMILAR = 5;
+  MockPixDiff.RESULT_IDENTICAL = 7;
+
   beforeEach(() => {
     mockPixDiff = {
       checkRegion() {
@@ -23,7 +31,7 @@ describe('Screenshot comparator', () => {
 
     mockProtractor = {
       browser: {
-        pixDiff: mockPixDiff
+        skyVisualTestConfig: {}
       },
       by: {
         css: (selector) => selector
@@ -36,6 +44,7 @@ describe('Screenshot comparator', () => {
       error() {}
     };
 
+    mock('pix-diff', MockPixDiff);
     mock('../lib/host-browser', mockHostBrowser);
     mock('protractor', mockProtractor);
     mock('@blackbaud/skyux-logger', mockLogger);
@@ -96,7 +105,7 @@ describe('Screenshot comparator', () => {
       expect(args[2].threshold).toEqual(0.02);
       expect(expectSpy).toHaveBeenCalledWith(true);
       expect(breakpointSpy).toHaveBeenCalledWith('lg');
-    }).catch(e => console.log(e));
+    });
   });
 
   it('should handle new images being created', () => {
@@ -115,7 +124,17 @@ describe('Screenshot comparator', () => {
       breakpoint: 'sm'
     }).then(() => {
       expect(loggerSpy).toHaveBeenCalledWith('[heading]', 'saving current image');
-    }).catch(e => console.log(e));
+    });
+  });
+
+  it('should handle visual config not set', () => {
+    mockProtractor.browser.skyVisualTestConfig = undefined;
+
+    const comparator = mock.reRequire('../lib/screenshot-comparator');
+
+    comparator.compareScreenshot().catch(err => {
+      expect(err.message).toEqual('Screenshot comparator configuration not found!');
+    });
   });
 
   it('should handle errors', () => {
@@ -127,9 +146,7 @@ describe('Screenshot comparator', () => {
 
     const comparator = mock.reRequire('../lib/screenshot-comparator');
 
-    comparator.compareScreenshot().then(() => {
-      expect(comparator.compareScreenshot).toThrow();
-    }).catch(err => {
+    comparator.compareScreenshot().catch(err => {
       expect(err.message).toEqual('something bad happened');
     });
   });

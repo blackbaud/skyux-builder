@@ -147,9 +147,9 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
 }
 
 /**
- * Spawns the necessary commands for e2e.
+ * Spawns the necessary commands for e2e and visual tests.
  * Assumes build was ran.
- * @name e2e
+ * @name start
  */
 function start(command, argv, skyPagesConfig, webpack) {
   startTime = new Date().getTime();
