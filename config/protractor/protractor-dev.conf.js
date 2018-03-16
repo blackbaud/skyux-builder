@@ -2,13 +2,17 @@
 'use strict';
 
 const fs = require('fs-extra');
+const path = require('path');
 const merge = require('../../utils/merge');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
 const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
 
-const config = {
+let config = {
+  specs: [
+    path.join(process.cwd(), 'e2e', '**', '*.e2e-spec.js')
+  ],
   jasmineNodeOpts: {
     defaultTimeoutInterval: 480000 // git clone, npm install, and skyux build can be slow
   },
@@ -55,5 +59,15 @@ const config = {
   // Catch any rogue servers
   onComplete: () => common.afterAll
 };
+
+// In CI, use firefox
+if (process.env.TRAVIS) {
+  config.capabilities = {
+    browserName: 'chrome',
+    'chromeOptions': {
+      'args': ['--disable-extensions --ignore-certificate-errors']
+    }
+  };
+}
 
 exports.config = merge(commonConfig.config, config);
