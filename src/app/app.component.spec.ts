@@ -200,6 +200,7 @@ describe('AppComponent', () => {
     };
     scrollCalled = false;
     viewport = new SkyAppViewportService();
+    navigateByUrlParams = undefined;
   });
 
   it('should create component', async(() => {
@@ -573,6 +574,26 @@ describe('AppComponent', () => {
       const localLink = cb({ url: 'base.com/custom-base/new-place' });
       expect(localLink).toEqual(false);
       expect(navigateByUrlParams).toEqual('/new-place');
+    });
+  }));
+
+  it('should handle global links that start with the same base URL as the SPA', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    skyAppConfig.skyux.host.url = 'base.com/';
+    skyAppConfig.runtime.app.base = 'custom-base/';
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
+
+      let globalLink = cb({ url: 'base.com/custom-base-2' });
+      expect(globalLink).toEqual(true);
+      expect(navigateByUrlParams).not.toBeDefined();
     });
   }));
 
