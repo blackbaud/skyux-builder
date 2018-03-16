@@ -231,6 +231,7 @@ describe('config webpack common', () => {
 
     let plugin = jasmine.createSpy('simple-progress-webpack-plugin');
     mock('simple-progress-webpack-plugin', plugin);
+    mock('@blackbaud/skyux-logger', argv);
 
     const lib = mock.reRequire('../config/webpack/common.webpack.config');
     lib.getWebpackConfig(skyPagesConfig, argv);
@@ -264,13 +265,9 @@ describe('config webpack common', () => {
     expect(plugin.calls.first().args[0].format).toEqual('expanded');
   });
 
-  it('should pass the color flag to the log plugin', () => {
-    const plugin = setupLogPlugin('', { color: true });
+  it('should pass the logColor flag to the log plugin', () => {
+    const plugin = setupLogPlugin('', { logColor: true });
     expect(plugin.calls.first().args[0].color).toEqual(true);
   });
 
-  it('should default the color property to true if not specified', () => {
-    const plugin = setupLogPlugin('');
-    expect(plugin.calls.first().args[0].color).toEqual(true);
-  });
 });
