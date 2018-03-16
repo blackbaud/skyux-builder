@@ -1,3 +1,10 @@
+# 1.11.0 (2018-03-16)
+
+- Bugfix when navigating to a URL that partially matches the current base url. [#372](https://github.com/blackbaud/skyux-builder/pull/372)
+- Added support for requires params in `skyuxconfig.json`. [#370](https://github.com/blackbaud/skyux-builder/pull/370) Thanks [@Blackbaud-BrandonHare](https://github.com/Blackbaud-Brandonhare)!
+- Enabled used of Hot Module Replacement (HMR) during `skyux serve` with the `--hmr` flag. [#359](https://github.com/blackbaud/skyux-builder/pull/359)
+- Initial creation of `skyAppLinkExternal` directive. [#366](https://github.com/blackbaud/skyux-builder/pull/366) Thanks [@Blackbaud-MitchellThomas](https://github.com/Blackbaud-MitchellThomas)!
+
 # 1.10.1 (2018-03-08)
 
 - Fixed errors that occur when building a library that imports from Builder's runtime directory. [#368](https://github.com/blackbaud/skyux-builder/pull/368)
