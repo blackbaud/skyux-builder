@@ -1,9 +1,10 @@
 /*jslint node: true */
 'use strict';
 
+const logger = require('@blackbaud/skyux-logger');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
@@ -18,6 +19,18 @@ function spaPath() {
 
 function outPath() {
   return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+}
+
+function getLogFormat(skyPagesConfig, argv) {
+  if (argv.hasOwnProperty('logFormat')) {
+    return argv.logFormat;
+  }
+
+  if (skyPagesConfig.runtime.command === 'serve' || argv.serve) {
+    return 'compact';
+  }
+
+  return 'expanded';
 }
 
 /**
@@ -36,6 +49,8 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
+  const logFormat = getLogFormat(skyPagesConfig, argv);
+
   let appPath;
 
   switch (outConfigMode) {
@@ -46,6 +61,53 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     default:
       appPath = outPath('src', 'main-internal.ts');
       break;
+  }
+
+  let plugins = [
+    // Some properties are required on the root object passed to HtmlWebpackPlugin
+    new HtmlWebpackPlugin({
+      template: skyPagesConfig.runtime.app.template,
+      inject: skyPagesConfig.runtime.app.inject,
+      runtime: skyPagesConfig.runtime,
+      skyux: skyPagesConfig.skyux
+    }),
+
+    new CommonsChunkPlugin({
+      name: ['skyux', 'vendor', 'polyfills']
+    }),
+
+    new webpack.DefinePlugin({
+      'skyPagesConfig': JSON.stringify(skyPagesConfig)
+    }),
+
+    new LoaderOptionsPlugin({
+      options: {
+        context: __dirname,
+        skyPagesConfig: skyPagesConfig
+      }
+    }),
+
+    new ContextReplacementPlugin(
+      // The (\\|\/) piece accounts for path separators in *nix and Windows
+      /angular(\\|\/)core(\\|\/)@angular/,
+      spaPath('src'),
+      {}
+    ),
+
+    // Webpack 2 behavior does not correctly return non-zero exit code.
+    new ProcessExitCode(),
+
+    new OutputKeepAlivePlugin({
+      enabled: argv['output-keep-alive']
+    })
+  ];
+
+  // Supporting a custom logging type of none
+  if (logFormat !== 'none') {
+    plugins.push(new SimpleProgressWebpackPlugin({
+      format: logFormat,
+      color: logger.logColor
+    }));
   }
 
   return {
@@ -111,46 +173,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         }
       ]
     },
-    plugins: [
-      // Some properties are required on the root object passed to HtmlWebpackPlugin
-      new HtmlWebpackPlugin({
-        template: skyPagesConfig.runtime.app.template,
-        inject: skyPagesConfig.runtime.app.inject,
-        runtime: skyPagesConfig.runtime,
-        skyux: skyPagesConfig.skyux
-      }),
-
-      new CommonsChunkPlugin({
-        name: ['skyux', 'vendor', 'polyfills']
-      }),
-
-      new webpack.DefinePlugin({
-        'skyPagesConfig': JSON.stringify(skyPagesConfig)
-      }),
-
-      new ProgressBarPlugin(),
-
-      new LoaderOptionsPlugin({
-        options: {
-          context: __dirname,
-          skyPagesConfig: skyPagesConfig
-        }
-      }),
-
-      new ContextReplacementPlugin(
-        // The (\\|\/) piece accounts for path separators in *nix and Windows
-        /angular(\\|\/)core(\\|\/)@angular/,
-        spaPath('src'),
-        {}
-      ),
-
-      // Webpack 2 behavior does not correctly return non-zero exit code.
-      new ProcessExitCode(),
-
-      new OutputKeepAlivePlugin({
-        enabled: argv['output-keep-alive']
-      })
-    ]
+    plugins
   };
 }
 

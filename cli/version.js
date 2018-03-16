@@ -2,7 +2,7 @@
 'use strict';
 
 const path = require('path');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 /**
  * Returns the version from package.json.

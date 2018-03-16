@@ -2,7 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 const assetsProcessor = require('../lib/assets-processor');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
@@ -81,7 +81,7 @@ describe('cli build', () => {
         });
         expect(logger.error).toHaveBeenCalledWith(errs);
         expect(logger.warn).toHaveBeenCalledWith(wrns);
-        expect(logger.info).toHaveBeenCalled();
+        expect(logger.info).not.toHaveBeenCalled();
         done();
       }
     }));
