@@ -37,6 +37,7 @@ import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   let mockSkyuxHost: any;
+  let mockWindow: any;
   let comp: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let parseParams: any;
@@ -47,10 +48,18 @@ describe('AppComponent', () => {
   let skyAppConfig: any;
   let viewport: SkyAppViewportService;
 
-  const location = 'my-custom-location';
-
   class MockHelpInitService {
     public load() { }
+  }
+
+  class MockWindow {
+    public nativeWindow = {
+      location: {
+        href: ''
+      },
+      SKYUX_HOST: mockSkyuxHost,
+      scroll: () => scrollCalled = true
+    };
   }
 
   const mockHelpInitService = new MockHelpInitService();
@@ -61,6 +70,7 @@ describe('AppComponent', () => {
     styleLoadPromise?: Promise<any>,
     omnibarProvider?: any
   ) {
+    mockWindow = new MockWindow();
     let providers: any[] = [
       {
         provide: Router,
@@ -78,13 +88,7 @@ describe('AppComponent', () => {
       },
       {
         provide: SkyAppWindowRef,
-        useValue: {
-          nativeWindow: {
-            location: location,
-            SKYUX_HOST: mockSkyuxHost,
-            scroll: () => scrollCalled = true
-          }
-        }
+        useValue: mockWindow
       },
       {
         provide: SkyAppConfig,
@@ -131,11 +135,11 @@ describe('AppComponent', () => {
       ],
       providers: providers
     })
-    .compileComponents()
-    .then(() => {
-      fixture = TestBed.createComponent(AppComponent);
-      comp    = fixture.componentInstance;
-    });
+      .compileComponents()
+      .then(() => {
+        fixture = TestBed.createComponent(AppComponent);
+        comp = fixture.componentInstance;
+      });
   }
 
   function validateOmnibarProvider(
@@ -184,6 +188,7 @@ describe('AppComponent', () => {
         },
         params: {
           has: (key: any) => false,
+          hasAllRequiredParams: () => true,
           parse: (p: any) => parseParams = p
         }
       },
@@ -195,6 +200,7 @@ describe('AppComponent', () => {
     };
     scrollCalled = false;
     viewport = new SkyAppViewportService();
+    navigateByUrlParams = undefined;
   });
 
   it('should create component', async(() => {
@@ -438,8 +444,8 @@ describe('AppComponent', () => {
       experimental: true,
       nav: {
         services: [
-          { },
-          { }
+          {},
+          {}
         ]
       }
     };
@@ -456,7 +462,7 @@ describe('AppComponent', () => {
       experimental: true,
       nav: {
         services: [
-          { },
+          {},
           { selected: true }
         ]
       }
@@ -568,6 +574,26 @@ describe('AppComponent', () => {
       const localLink = cb({ url: 'base.com/custom-base/new-place' });
       expect(localLink).toEqual(false);
       expect(navigateByUrlParams).toEqual('/new-place');
+    });
+  }));
+
+  it('should handle global links that start with the same base URL as the SPA', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    skyAppConfig.skyux.host.url = 'base.com/';
+    skyAppConfig.runtime.app.base = 'custom-base/';
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
+
+      let globalLink = cb({ url: 'base.com/custom-base-2' });
+      expect(globalLink).toEqual(true);
+      expect(navigateByUrlParams).not.toBeDefined();
     });
   }));
 
@@ -701,7 +727,7 @@ describe('AppComponent', () => {
 
     skyAppConfig.runtime.params.has = (key: any) => key === false;
 
-    mockSkyuxHost = { };
+    mockSkyuxHost = {};
     const expectedCall = { productId: 'test-config', extends: 'bb-help', locale: '' };
     skyAppConfig.skyux.help = { productId: 'test-config', extends: 'bb-help' };
 
@@ -773,6 +799,17 @@ describe('AppComponent', () => {
     setup(skyAppConfig, false, Promise.resolve(result)).then(() => {
       expect(comp.isReady).toEqual(true);
       expect(console.log).toHaveBeenCalledWith(result.error.message);
+    });
+  }));
+
+  it('should redirect if all required params are not defined', async(() => {
+    skyAppConfig.runtime.params.hasAllRequiredParams = () => false;
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        expect(mockWindow.nativeWindow.location.href).toBe('https://host.nxt.blackbaud.com/errors/notfound');
+      });
     });
   }));
 

@@ -9,7 +9,6 @@ const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const HotModuleReplacementPlugin = require('webpack/lib/HotModuleReplacementPlugin');
 
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
-const logger = require('../../utils/logger');
 const browser = require('../../cli/utils/browser');
 
 /**
@@ -28,14 +27,13 @@ function getWebpackConfig(argv, skyPagesConfig) {
     let launched = false;
     this.plugin('done', (stats) => {
       if (!launched) {
-        logger.info('SKY UX builder is ready.');
         launched = true;
         browser(argv, skyPagesConfig, stats, this.options.devServer.port);
       }
     });
   }
 
-  const common = require('./common.webpack.config').getWebpackConfig(skyPagesConfig);
+  const common = require('./common.webpack.config').getWebpackConfig(skyPagesConfig, argv);
 
   return webpackMerge(common, {
     watch: true,
@@ -51,7 +49,8 @@ function getWebpackConfig(argv, skyPagesConfig) {
                 // an aliased file.  Webpack will still throw an error when a module
                 // cannot be resolved via a file path or alias.
                 ignoreDiagnostics: [2307],
-                transpileOnly: true
+                transpileOnly: true,
+                silent: true
               }
             },
             {
@@ -65,6 +64,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
     devServer: {
       compress: true,
       inline: true,
+      stats: false,
       hot: argv.hmr,
       contentBase: path.join(process.cwd(), 'src', 'app'),
       headers: {
@@ -73,7 +73,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
       historyApiFallback: {
         index: skyPagesConfigUtil.getAppBase(skyPagesConfig)
       },
-      stats: 'minimal',
       https: {
         key: fs.readFileSync(path.join(__dirname, '../../ssl/server.key')),
         cert: fs.readFileSync(path.join(__dirname, '../../ssl/server.crt'))

@@ -158,7 +158,13 @@ export class AppComponent implements OnInit {
     nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
       const url = item.url.toLowerCase();
 
-      if (url.indexOf(baseUrl) === 0) {
+      if (
+        url === baseUrl ||
+        // Make sure the base URL is not simply a partial match of the base URL plus additional
+        // characters after the base URL that are not "terminating" characters
+        url.indexOf(baseUrl + '/') === 0 ||
+        url.indexOf(baseUrl + '?') === 0
+      ) {
         const routePath = item.url.substring(baseUrl.length, url.length);
 
         // Since the omnibar is loaded outside Angular, navigating needs to be explicitly
@@ -244,6 +250,11 @@ export class AppComponent implements OnInit {
       });
     };
 
+    if (!this.config.runtime.params.hasAllRequiredParams()) {
+      this.windowRef.nativeWindow.location.href = 'https://host.nxt.blackbaud.com/errors/notfound';
+      return;
+    }
+
     if (omnibarConfig) {
       if (this.omnibarProvider) {
         this.omnibarProvider.ready().then(loadOmnibar);
@@ -253,7 +264,6 @@ export class AppComponent implements OnInit {
     }
 
     if (helpConfig && this.helpInitService) {
-
       if (this.config.runtime.params.has('svcid')) {
         helpConfig.extends = this.config.runtime.params.get('svcid');
       }

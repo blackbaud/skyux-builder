@@ -2,7 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('winston');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('utils/config-resolver.js', () => {
 

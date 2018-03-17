@@ -2,7 +2,7 @@
 'use strict';
 
 const mock = require('mock-require');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('SKY UX processor Webpack loader', () => {
   const preloaderPath = '../loader/sky-processor/preload';

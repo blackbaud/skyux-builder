@@ -2,7 +2,7 @@
 'use strict';
 
 const fs = require('fs-extra');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('config sky-pages', () => {
 

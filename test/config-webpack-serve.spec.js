@@ -2,35 +2,21 @@
 'use strict';
 
 const mock = require('mock-require');
-const urlLibrary = require('url');
-
-const logger = require('../utils/logger');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack serve', () => {
-
-  let paramArgv;
-
-  beforeAll(() => {
-    mock('../cli/utils/browser', (argv) => {
-      paramArgv = argv;
-    });
-  });
-
-  afterEach(() => {
-    paramArgv = undefined;
-    mock.stop('../cli/utils/browser');
-  });
 
   it('should expose a getWebpackConfig method', () => {
     const lib = require('../config/webpack/serve.webpack.config');
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
-  it('should only log the ready message once during multiple dones', () => {
+  it('should only open the browser once', () => {
 
-    spyOn(logger, 'info');
-    const lib = require('../config/webpack/serve.webpack.config');
+    let browserSpy = jasmine.createSpy('browser');
+    mock('../cli/utils/browser', browserSpy);
+
+    const lib = mock.reRequire('../config/webpack/serve.webpack.config');
     const config = lib.getWebpackConfig({}, runtimeUtils.getDefault());
 
     config.plugins.forEach(plugin => {
@@ -53,18 +39,20 @@ describe('config webpack serve', () => {
                   chunks: []
                 })
               });
+
               cb({
                 toJson: () => ({
                   chunks: []
                 })
               });
+
+              expect(browserSpy).toHaveBeenCalledTimes(1);
             }
           }
         });
       }
     });
 
-    expect(logger.info).toHaveBeenCalledWith(`SKY UX builder is ready.`);
   });
 
 });

@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('../../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 const runCompiler = (webpack, config) => {
   const compiler = webpack(config);
@@ -24,11 +24,7 @@ const runCompiler = (webpack, config) => {
         logger.warn(jsonStats.warnings);
       }
 
-      logger.info(stats.toString({
-        chunks: false,
-        colors: false
-      }));
-
+      // Normal logging is handled by SimpleProgressWebpackPlugin in common.webpack.config.js
       resolve(stats);
     });
   });

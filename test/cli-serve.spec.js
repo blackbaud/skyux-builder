@@ -3,7 +3,7 @@
 
 const mock = require('mock-require');
 const portfinder = require('portfinder');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('cli serve', () => {
 

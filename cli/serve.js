@@ -2,8 +2,7 @@
 'use strict';
 
 const portfinder = require('portfinder');
-
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 const assetsProcessor = require('../lib/assets-processor');
 
 /**

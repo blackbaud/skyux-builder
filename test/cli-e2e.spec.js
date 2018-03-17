@@ -7,7 +7,7 @@ const path = require('path');
 const mock = require('mock-require');
 const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('cli e2e', () => {
   const PORT = 1234;

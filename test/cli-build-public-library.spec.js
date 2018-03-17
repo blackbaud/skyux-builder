@@ -4,7 +4,7 @@
 const mock = require('mock-require');
 const fs = require('fs-extra');
 const rimraf = require('rimraf');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 describe('cli build-public-library', () => {
