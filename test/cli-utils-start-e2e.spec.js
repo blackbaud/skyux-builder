@@ -231,7 +231,7 @@ describe('cli utils start-e2e', () => {
 
   it('should use different specs for the visual command', (done) => {
     spyOn(glob, 'sync').and.callFake((specsPath) => {
-      expect(specsPath.indexOf('**/*.visual-spec.ts') > -1).toEqual(true);
+      expect(specsPath.indexOf('*.visual-spec.ts') > -1).toEqual(true);
       return ['test.visual-spec.ts'];
     });
 
