@@ -5,8 +5,6 @@ import {
   Optional
 } from '@angular/core';
 
-import { Http } from '@angular/http';
-
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/publishReplay';
 import 'rxjs/add/operator/switchMap';
@@ -30,9 +28,7 @@ const defaultResources: {[key: string]: {message: string}} = {};
 
 function getDefaultObs() {
   return Observable.of({
-    json: (): any => {
-      return defaultResources;
-    }
+    'en_US': defaultResources
   });
 }
 
@@ -44,10 +40,7 @@ export class SkyAppResourcesService {
   private resourcesObs: Observable<any>;
   private skyAppFormat: SkyAppFormat;
 
-  private httpObs: {[key: string]: Observable<any>} = {};
-
   constructor(
-    private http: Http,
     /* tslint:disable-next-line no-forward-ref */
     @Inject(forwardRef(() => SkyAppAssetsService)) private assets: SkyAppAssetsService,
     @Optional() @Inject(SkyAppHostLocaleProvider) private localeProvider: SkyAppLocaleProvider
@@ -66,51 +59,27 @@ export class SkyAppResourcesService {
       this.resourcesObs = localeObs
         .switchMap((localeInfo) => {
           let obs: Observable<any>;
-          let resourcesUrl: string;
+          let resources: string;
 
           const locale = localeInfo.locale;
 
           if (locale) {
-            resourcesUrl =
-              this.getUrlForLocale(locale) ||
+            resources =
+              this.getResourcesForLocale(locale) ||
               // Try falling back to the non-region-specific language.
-              this.getUrlForLocale(locale.substr(0, 2));
+              this.getResourcesForLocale(locale.substr(0, 2));
           }
 
           // Finally fall back to the default locale.
-          resourcesUrl = resourcesUrl || this.getUrlForLocale(
+          resources = resources || this.getResourcesForLocale(
             SkyAppHostLocaleProvider.defaultLocale
           );
 
-          if (resourcesUrl) {
-            obs = this.httpObs[resourcesUrl] || this.http
-              .get(resourcesUrl)
-              /* tslint:disable max-line-length */
-              // publishReplay(1).refCount() will ensure future subscribers to
-              // this observable will use a cached result.
-              // https://stackoverflow.com/documentation/rxjs/8247/common-recipes/26490/caching-http-responses#t=201612161544428695958
-              /* tslint:enable max-line-length */
-              .publishReplay(1)
-              .refCount()
-              .catch(() => {
-                // The resource file for the specified locale failed to load;
-                // fall back to the default locale if it differs from the specified
-                // locale.
-                const defaultResourcesUrl = this.getUrlForLocale(
-                  SkyAppHostLocaleProvider.defaultLocale
-                );
-
-                if (defaultResourcesUrl && defaultResourcesUrl !== resourcesUrl) {
-                  return this.http.get(defaultResourcesUrl);
-                }
-
-                return getDefaultObs();
-              });
+          if (resources) {
+            obs = Observable.of(resources);
           } else {
             obs = getDefaultObs();
           }
-
-          this.httpObs[resourcesUrl] = obs;
 
           return obs;
         })
@@ -120,16 +89,9 @@ export class SkyAppResourcesService {
         .catch(() => getDefaultObs());
     }
 
-    return this.resourcesObs.map((result): string => {
-      let resources: {[key: string]: {message: string}};
-
-      try {
-        // This can fail if the server returns a 200 but the file is invalid.
-        resources = result.json();
-      } catch (err) {
-        resources = defaultResources;
-      }
-
+    return this.resourcesObs.map((
+      resources: {[key: string]: {message: string}}
+    ): string => {
       if (name in resources) {
         return this.skyAppFormat.formatText(resources[name].message, ...args);
       }
@@ -138,7 +100,7 @@ export class SkyAppResourcesService {
     });
   }
 
-  private getUrlForLocale(locale: string): string {
-    return this.assets.getUrl(`locales/resources_${locale.replace('-', '_')}.json`);
+  private getResourcesForLocale(locale: string): any {
+    return this.assets.getResourcesForLocale(locale.replace('-', '_'));
   }
 }
