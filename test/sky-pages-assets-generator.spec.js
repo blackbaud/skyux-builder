@@ -1,32 +1,54 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const mock = require('mock-require');
+const glob = require('glob');
+const fs = require('fs-extra');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 describe('SKY UX Builder assets generator', () => {
   let generator;
 
   beforeEach(() => {
-    generator = require('../lib/sky-pages-assets-generator');
+    generator = mock.reRequire('../lib/sky-pages-assets-generator');
+  });
+
+  afterEach(() => {
+    mock.stopAll();
   });
 
   it('should emit the expected code', () => {
-    const glob = require('glob');
-
-    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((path1, path2) => {
-      let spaPath = '/root/src';
-
-      if (path2) {
-        spaPath += '/assets';
-      }
-
-      return spaPath;
+    spyOn(fs, 'readJSONSync').and.callFake(() => {
+      return {
+        'my_foo': {
+          'message': 'Foo'
+        }
+      };
     });
 
-    spyOn(glob, 'sync').and.returnValue([
-      '/root/src/assets/a/b/c/d.jpg',
-      '/root/src/assets/e/f.jpg'
-    ]);
+    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((...args) => {
+      let spaPath = '/root/';
+      return spaPath += args.join('/');
+    });
+
+    spyOn(glob, 'sync').and.callFake((expression) => {
+      if (expression.indexOf('node_modules') > -1) {
+        return [
+          '/dist/src/assets/locales/resources_en_FR.json'
+        ];
+      }
+
+      if (expression.indexOf('locales') > -1) {
+        return [
+          '/root/src/assets/locales/resources_en_FR.json'
+        ];
+      }
+
+      return [
+        '/root/src/assets/a/b/c/d.jpg',
+        '/root/src/assets/e/f.jpg'
+      ];
+    });
 
     const source = generator.getSource();
 
@@ -39,6 +61,11 @@ describe('SKY UX Builder assets generator', () => {
     };
 
     return pathMap[filePath];
+  }
+
+  public getResourcesForLocale(locale: string): any {
+    const resources: {[key: string]: any} = {"en_FR":{"my_foo":{"message":"Foo"}}};
+    return resources[locale];
   }
 }`
     );
