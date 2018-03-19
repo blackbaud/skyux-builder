@@ -507,14 +507,14 @@ describe('AppComponent', () => {
       }
     };
 
-    skyAppConfig.runtime.params.getUrl = (url: string) => url + '?svcid=abc';
+    skyAppConfig.runtime.params.getUrl = (url: string) => url + '?envid=abc';
 
     setup(skyAppConfig, false).then(() => {
       fixture.detectChanges();
       const items = spyOmnibar.calls.first().args[0].nav.services[0].items;
       expect(items[0].url).toEqual('ignored.com');
-      expect(items[1].url).toEqual('base.com/custom-base/custom-route?svcid=abc');
-      expect(items[2].items[0].url).toEqual('base.com/custom-base/another-custom-route?svcid=abc');
+      expect(items[1].url).toEqual('base.com/custom-base/custom-route?envid=abc');
+      expect(items[2].items[0].url).toEqual('base.com/custom-base/another-custom-route?envid=abc');
       expect(items[2].items[1].url).toEqual('another-ignored.com');
     });
   }));
@@ -658,13 +658,13 @@ describe('AppComponent', () => {
       ]
     };
 
-    skyAppConfig.runtime.params.getUrl = (url: string) => url + '?svcid=123';
+    skyAppConfig.runtime.params.getUrl = (url: string) => url + '?envid=123';
 
     setup(skyAppConfig, false).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar.calls.first().args[0].nav.localNavItems[0]).toEqual({
         title: 'my-name',
-        url: 'base.com/custom-base/my-route?svcid=123',
+        url: 'base.com/custom-base/my-route?envid=123',
         data: {
           global: true,
           name: 'my-name',
