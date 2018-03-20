@@ -1,13 +1,11 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const codegen = require('../utils/codegen-utils');
-
 const getModuleList = (listName, content) => {
   const listRegExp = new RegExp(`${listName}:\\s\\[([\\s\\S]*?).*?\\]`, 'g');
   const list = content.match(listRegExp);
   return list ? list[0] : [];
-}
+};
 
 describe('SKY UX Builder module generator', () => {
 
@@ -251,7 +249,6 @@ BBAuth.mock = true;`);
       return routeGeneratorGetRoutes(config);
     });
 
-
     const source = generator.getSource(config);
     expect(source).toContain(JSON.stringify(config));
   });
@@ -271,19 +268,18 @@ BBAuth.mock = true;`);
       skyux: {}
     };
 
-    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((path1, path2) => {
+    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((...args) => {
       let spaPath = '/root/src';
-
-      if (path2) {
-        spaPath += '/assets';
-      }
-
-      return spaPath;
+      return spaPath + args.join('/');
     });
 
     const glob = require('glob');
 
     spyOn(glob, 'sync').and.callFake((path) => {
+      if (path.indexOf('locales') > -1) {
+        return [];
+      }
+
       if (path.indexOf('assets') >= 0) {
         return [
           '/root/src/assets/a/b/c/d.jpg',

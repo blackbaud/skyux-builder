@@ -18,15 +18,22 @@ function makePackageFileForDist() {
 }
 
 function copyFilesToDist() {
-  fs.copySync(
-    skyPagesConfigUtil.spaPath('README.md'),
-    skyPagesConfigUtil.spaPath('dist', 'README.md')
-  );
+  try {
+    fs.copySync(
+      skyPagesConfigUtil.spaPath('README.md'),
+      skyPagesConfigUtil.spaPath('dist', 'README.md')
+    );
 
-  fs.copySync(
-    skyPagesConfigUtil.spaPath('CHANGELOG.md'),
-    skyPagesConfigUtil.spaPath('dist', 'CHANGELOG.md')
-  );
+    fs.copySync(
+      skyPagesConfigUtil.spaPath('CHANGELOG.md'),
+      skyPagesConfigUtil.spaPath('dist', 'CHANGELOG.md')
+    );
+
+    fs.copySync(
+      skyPagesConfigUtil.spaPath('src', 'assets'),
+      skyPagesConfigUtil.spaPath('dist', 'src', 'assets')
+    );
+  } catch (err) {}
 }
 
 module.exports = () => {
