@@ -46,4 +46,10 @@ describe('config protractor test', () => {
     expect(jasmine.getEnv).toHaveBeenCalled();
     expect(called).toEqual(true);
   });
+
+  it('should pass the logColor flag to the config', () => {
+    mock('@blackbaud/skyux-logger', { logColor: false });
+    const lib = mock.reRequire('../config/protractor/protractor.conf.js');
+    expect(lib.config.jasmineNodeOpts.showColors).toBe(false);
+  });
 });
