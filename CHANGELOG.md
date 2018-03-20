@@ -1,8 +1,8 @@
 # 1.11.1 (2018-03-20)
 
-- Fixed URL params not persisting when navigating to another route within the SPA. [#377](https://github.com/blackbaud/skyux-builder/pull/377)
+- Fixed an issue where URL parameters did not persist when navigating to another route within a SPA. [#377](https://github.com/blackbaud/skyux-builder/pull/377)
 - Fixed errors that occur when building a library that implements the `skyAppResources` pipe. [#371](https://github.com/blackbaud/skyux-builder/pull/371)
-- Fixed karma and protractor configs not using the correct logger. [#376](https://github.com/blackbaud/skyux-builder/pull/376)
+- Fixed an issue where Karma and Protractor configs did not use the correct logger. [#376](https://github.com/blackbaud/skyux-builder/pull/376)
 
 # 1.11.0 (2018-03-16)
 
