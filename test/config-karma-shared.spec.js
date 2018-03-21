@@ -116,4 +116,13 @@ describe('config karma shared', () => {
     checkCodeCoverage('strict', 100);
   });
 
+  it('should pass the logColor flag to the config', () => {
+    mock('@blackbaud/skyux-logger', { logColor: false });
+    mock.reRequire('../config/karma/shared.karma.conf')({
+      set: (config) => {
+        expect(config.colors).toBe(false);
+      }
+    });
+  });
+
 });

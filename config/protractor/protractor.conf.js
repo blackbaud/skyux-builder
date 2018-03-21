@@ -3,6 +3,7 @@
 
 const path = require('path');
 const { SpecReporter } = require('jasmine-spec-reporter');
+const logger = require('@blackbaud/skyux-logger');
 
 const config = {
   allScriptsTimeout: 11000,
@@ -21,7 +22,7 @@ const config = {
   directConnect: true,
   framework: 'jasmine',
   jasmineNodeOpts: {
-    showColors: true,
+    showColors: logger.logColor,
     defaultTimeoutInterval: 30000
   },
   useAllAngular2AppRoots: true,
