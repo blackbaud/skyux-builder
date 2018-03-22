@@ -39,4 +39,5 @@ jspm_packages
 
 .DS_Store
 .e2e-tmp
+.skypagestmp
 yarn.lock
