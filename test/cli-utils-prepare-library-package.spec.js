@@ -2,9 +2,7 @@
 'use strict';
 
 const fs = require('fs-extra');
-const glob = require('glob');
 const mock = require('mock-require');
-const sass = require('node-sass');
 
 describe('cli utils prepare-library-package', () => {
   let util;

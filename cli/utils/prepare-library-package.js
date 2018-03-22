@@ -2,6 +2,8 @@
 'use strict';
 
 const fs = require('fs-extra');
+const path = require('path');
+const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
 function makePackageFileForDist() {
@@ -18,22 +20,22 @@ function makePackageFileForDist() {
 }
 
 function copyFilesToDist() {
-  try {
-    fs.copySync(
-      skyPagesConfigUtil.spaPath('README.md'),
-      skyPagesConfigUtil.spaPath('dist', 'README.md')
-    );
+  const pathsToCopy = [
+    ['README.md'],
+    ['CHANGELOG.md'],
+    ['src', 'assets']
+  ];
 
-    fs.copySync(
-      skyPagesConfigUtil.spaPath('CHANGELOG.md'),
-      skyPagesConfigUtil.spaPath('dist', 'CHANGELOG.md')
-    );
-
-    fs.copySync(
-      skyPagesConfigUtil.spaPath('src', 'assets'),
-      skyPagesConfigUtil.spaPath('dist', 'src', 'assets')
-    );
-  } catch (err) {}
+  pathsToCopy.forEach(pathArr => {
+    try {
+      fs.copySync(
+        skyPagesConfigUtil.spaPath(...pathArr),
+        skyPagesConfigUtil.spaPath('dist', ...pathArr)
+      );
+    } catch (err) {
+      logger.warn(`File not found: ${path.join(...pathArr)}`);
+    }
+  });
 }
 
 module.exports = () => {
