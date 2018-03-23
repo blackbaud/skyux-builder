@@ -11,7 +11,7 @@ const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin')
 const ProcessExitCode = require('../../plugin/process-exit-code');
 const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const { outPath, spaPath } = require('../sky-pages/sky-pages.config');
-const { buildAliasList } = require('./alias-builder');
+const aliasBuilder = require('./alias-builder');
 
 function getLogFormat(skyPagesConfig, argv) {
   if (argv.hasOwnProperty('logFormat')) {
@@ -38,12 +38,10 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     outPath('node_modules')
   ];
 
-  const alias = buildAliasList(skyPagesConfig);
-  const logFormat = getLogFormat(skyPagesConfig, argv);
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
-  const outConfigMode = skyPagesConfig &&
-    skyPagesConfig.skyux &&
-    skyPagesConfig.skyux.mode;
+  const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
+  const logFormat = getLogFormat(skyPagesConfig, argv);
 
   let appPath;
 
@@ -57,7 +55,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       break;
   }
 
-  const plugins = [
+  let plugins = [
     // Some properties are required on the root object passed to HtmlWebpackPlugin
     new HtmlWebpackPlugin({
       template: skyPagesConfig.runtime.app.template,
@@ -77,7 +75,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     new LoaderOptionsPlugin({
       options: {
         context: __dirname,
-        skyPagesConfig
+        skyPagesConfig: skyPagesConfig
       }
     }),
 
@@ -139,7 +137,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
           enforce: 'pre',
           test: [
             /\.(html|s?css)$/,
-            /sky-pages\.module\.ts$/
+            /sky-pages\.module\.ts/
           ],
           loader: outPath('loader', 'sky-assets')
         },
@@ -172,5 +170,5 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
 }
 
 module.exports = {
-  getWebpackConfig
+  getWebpackConfig: getWebpackConfig
 };

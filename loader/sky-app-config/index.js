@@ -11,8 +11,8 @@ module.exports = function (source) {
   const runtimeDeclaration = `public static runtime: RuntimeConfig;`;
   const skyuxDeclaration = `public static skyux: SkyuxConfig;`;
 
-  source = source.replace(runtimeDeclaration, `${runtimeDeclaration.slice(0, -1)} = ${runtime};`);
-  source = source.replace(skyuxDeclaration, `${skyuxDeclaration.slice(0, -1)} = ${skyux};`);
+  source = source.replace(runtimeDeclaration, `${runtimeDeclaration.slice(0, -1)}  = ${runtime};`);
+  source = source.replace(skyuxDeclaration, `${skyuxDeclaration.slice(0, -1)}  = ${skyux};`);
 
   return source;
 };
