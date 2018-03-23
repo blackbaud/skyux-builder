@@ -3,8 +3,8 @@
 
 const portfinder = require('portfinder');
 const logger = require('@blackbaud/skyux-logger');
-const { setSkyAssetsLoaderUrl } = require('../lib/assets-processor');
 const { getWebpackConfig } = require('../config/webpack/serve.webpack.config');
+const { setSkyAssetsLoaderUrl } = require('../lib/assets-processor');
 const { prepareLocaleFiles } = require('../lib/locale-assets-processor');
 
 /**
