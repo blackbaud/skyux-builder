@@ -2,24 +2,17 @@
 'use strict';
 
 const path = require('path');
-const logger = require('@blackbaud/skyux-logger');
+const fs = require('fs-extra');
 
-const {
-  copySync,
-  readJsonSync,
-  writeJsonSync
-} = require('fs-extra');
-
-const {
-  spaPath
-} = require('../../config/sky-pages/sky-pages.config');
+const { warn } = require('@blackbaud/skyux-logger');
+const { spaPath } = require('../../config/sky-pages/sky-pages.config');
 
 function makePackageFileForDist() {
-  const contents = readJsonSync(spaPath('package.json'));
+  const contents = fs.readJsonSync(spaPath('package.json'));
   contents.module = 'index.js';
   contents.main = 'bundles/bundle.umd.js';
 
-  writeJsonSync(
+  fs.writeJsonSync(
     spaPath('dist', 'package.json'),
     contents,
     { spaces: 2 }
@@ -35,12 +28,12 @@ function copyFilesToDist() {
 
   pathsToCopy.forEach(pathArr => {
     try {
-      copySync(
+      fs.copySync(
         spaPath(...pathArr),
         spaPath('dist', ...pathArr)
       );
     } catch (err) {
-      logger.warn(`File not found: ${path.join(...pathArr)}`);
+      warn(`File not found: ${path.join(...pathArr)}`);
     }
   });
 }
