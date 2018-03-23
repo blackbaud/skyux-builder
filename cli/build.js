@@ -8,7 +8,6 @@ const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 const assetsProcessor = require('../lib/assets-processor');
 const pluginFileProcessor = require('../lib/plugin-file-processor');
-const { prepareLocaleFiles } = require('../lib/locale-assets-processor');
 
 const server = require('./utils/server');
 const browser = require('./utils/browser');
@@ -150,8 +149,6 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
 
   const config = buildConfig.getWebpackConfig(skyPagesConfig, argv);
   assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
-
-  prepareLocaleFiles();
 
   return runCompiler(webpack, config, isAot)
     .then(stats => {
