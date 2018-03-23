@@ -1,20 +1,27 @@
 /*jshint node: true*/
 'use strict';
 
-const fs = require('fs-extra');
 const path = require('path');
 const logger = require('@blackbaud/skyux-logger');
-const { spaPath } = require('../../config/sky-pages/sky-pages.config');
+
+const {
+  copySync,
+  readJsonSync,
+  writeJsonSync
+} = require('fs-extra');
+
+const {
+  spaPath
+} = require('../../config/sky-pages/sky-pages.config');
 
 function makePackageFileForDist() {
-  const packageJson = fs.readJSONSync(
-    spaPath('package.json')
-  );
-  packageJson.module = 'index.js';
-  packageJson.main = 'bundles/bundle.umd.js';
-  fs.writeJSONSync(
+  const contents = readJsonSync(spaPath('package.json'));
+  contents.module = 'index.js';
+  contents.main = 'bundles/bundle.umd.js';
+
+  writeJsonSync(
     spaPath('dist', 'package.json'),
-    packageJson,
+    contents,
     { spaces: 2 }
   );
 }
@@ -28,7 +35,7 @@ function copyFilesToDist() {
 
   pathsToCopy.forEach(pathArr => {
     try {
-      fs.copySync(
+      copySync(
         spaPath(...pathArr),
         spaPath('dist', ...pathArr)
       );
