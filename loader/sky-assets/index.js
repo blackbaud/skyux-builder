@@ -1,22 +1,19 @@
 /*jshint node: true*/
 'use strict';
 
-const fs = require('fs-extra');
-const loaderUtils = require('loader-utils');
-
-const assetsProcessor = require('../../lib/assets-processor');
+const { getOptions } = require('loader-utils');
+const { readFileSync } = require('fs-extra');
+const { processAssets } = require('../../lib/assets-processor');
 
 module.exports = function (content) {
-  const options = loaderUtils.getOptions(this);
+  const options = getOptions(this);
 
-  content = assetsProcessor.processAssets(
+  // Replace any references to static assets with their hashed paths.
+  content = processAssets(
     content,
     options && options.baseUrl,
     (filePathWithHash, physicalFilePath) => {
-      this.emitFile(
-        filePathWithHash,
-        fs.readFileSync(physicalFilePath)
-      );
+      this.emitFile(filePathWithHash, readFileSync(physicalFilePath));
     }
   );
 

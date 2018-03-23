@@ -3,7 +3,9 @@
 
 const portfinder = require('portfinder');
 const logger = require('@blackbaud/skyux-logger');
-const assetsProcessor = require('../lib/assets-processor');
+const { setSkyAssetsLoaderUrl } = require('../lib/assets-processor');
+const { getWebpackConfig } = require('../config/webpack/serve.webpack.config');
+const { prepareLocaleFiles } = require('../lib/locale-assets-processor');
 
 /**
  * Let users configure port via skyuxconfig.json first.
@@ -41,46 +43,46 @@ function getPort(config, skyPagesConfig) {
  * @returns null
  */
 function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
+  const webpackConfig = getWebpackConfig(argv, skyPagesConfig);
 
-  const webpackConfig = require('../config/webpack/serve.webpack.config');
-  let config = webpackConfig.getWebpackConfig(argv, skyPagesConfig);
+  getPort(webpackConfig, skyPagesConfig)
+    .then(port => {
+      const localUrl = `https://localhost:${port}`;
 
-  getPort(config, skyPagesConfig).then(port => {
-    const localUrl = `https://localhost:${port}`;
+      setSkyAssetsLoaderUrl(webpackConfig, skyPagesConfig, localUrl);
+      prepareLocaleFiles();
 
-    assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, localUrl);
+      // Save our found or defined port
+      webpackConfig.devServer.port = port;
 
-    // Save our found or defined port
-    config.devServer.port = port;
-
-    /* istanbul ignore else */
-    if (config.devServer.inline) {
-      const inline = `webpack-dev-server/client?${localUrl}`;
-      Object.keys(config.entry).forEach((entry) => {
-        config.entry[entry].unshift(inline);
-      });
-    }
-
-    if (config.devServer.hot) {
-      const hot = `webpack/hot/only-dev-server`;
-      Object.keys(config.entry).forEach((entry) => {
-        config.entry[entry].unshift(hot);
-      });
-
-      // This is required in order to not have HMR requests routed to host.
-      config.output.publicPath = `${localUrl}${config.devServer.publicPath}`;
-      logger.info('Using hot module replacement.');
-    }
-
-    const compiler = webpack(config);
-    const server = new WebpackDevServer(compiler, config.devServer);
-    server.listen(config.devServer.port, 'localhost', (err) => {
-      if (err) {
-        logger.error(err);
+      /* istanbul ignore else */
+      if (webpackConfig.devServer.inline) {
+        const inline = `webpack-dev-server/client?${localUrl}`;
+        Object.keys(webpackConfig.entry).forEach((entry) => {
+          webpackConfig.entry[entry].unshift(inline);
+        });
       }
-    });
-  }).catch(err => logger.error(err));
 
+      if (webpackConfig.devServer.hot) {
+        const hot = `webpack/hot/only-dev-server`;
+        Object.keys(webpackConfig.entry).forEach((entry) => {
+          webpackConfig.entry[entry].unshift(hot);
+        });
+
+        // This is required in order to not have HMR requests routed to host.
+        webpackConfig.output.publicPath = `${localUrl}${webpackConfig.devServer.publicPath}`;
+        logger.info('Using hot module replacement.');
+      }
+
+      const compiler = webpack(webpackConfig);
+      const server = new WebpackDevServer(compiler, webpackConfig.devServer);
+      server.listen(webpackConfig.devServer.port, 'localhost', (err) => {
+        if (err) {
+          logger.error(err);
+        }
+      });
+    })
+    .catch(err => logger.error(err));
 }
 
 module.exports = serve;
