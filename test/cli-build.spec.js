@@ -3,15 +3,21 @@
 
 const mock = require('mock-require');
 const logger = require('@blackbaud/skyux-logger');
-const assetsProcessor = require('../lib/assets-processor');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('cli build', () => {
+  let mockAssetsProcessor;
   let mockLocaleProcessor;
 
   beforeEach(() => {
     mockLocaleProcessor = {
       prepareLocaleFiles() {}
+    };
+
+    mockAssetsProcessor = {
+      setSkyAssetsLoaderUrl() {},
+      getAssetsUrl: () => '',
+      processAssets: (content) => content
     };
 
     spyOn(process, 'exit').and.callFake(() => {});
@@ -26,6 +32,7 @@ describe('cli build', () => {
       processFiles: () => {}
     });
     mock('../lib/locale-assets-processor', mockLocaleProcessor);
+    mock('../lib/assets-processor', mockAssetsProcessor);
   });
 
   afterEach(() => {
@@ -260,7 +267,7 @@ describe('cli build', () => {
       getWebpackConfig: () => ({})
     });
 
-    const setSkyAssetsLoaderUrlSpy = spyOn(assetsProcessor, 'setSkyAssetsLoaderUrl');
+    const setSkyAssetsLoaderUrlSpy = spyOn(mockAssetsProcessor, 'setSkyAssetsLoaderUrl');
 
     mock.reRequire('../cli/build')(
       {
