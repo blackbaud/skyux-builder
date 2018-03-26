@@ -14,6 +14,9 @@ describe('SKY UX Builder module generator', () => {
 
   let generator;
   beforeEach(() => {
+    mock('../lib/locale-assets-processor', {
+      isLocaleFile: () => false
+    });
     generator = mock.reRequire('../lib/sky-pages-module-generator');
   });
 
