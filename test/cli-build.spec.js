@@ -7,8 +7,13 @@ const assetsProcessor = require('../lib/assets-processor');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('cli build', () => {
+  let mockLocaleProcessor;
 
   beforeEach(() => {
+    mockLocaleProcessor = {
+      prepareLocaleFiles() {}
+    };
+
     spyOn(process, 'exit').and.callFake(() => {});
     mock('../cli/utils/ts-linter', {
       lintSync: () => {
@@ -20,6 +25,7 @@ describe('cli build', () => {
     mock('../lib/plugin-file-processor', {
       processFiles: () => {}
     });
+    mock('../lib/locale-assets-processor', mockLocaleProcessor);
   });
 
   afterEach(() => {
@@ -340,4 +346,16 @@ describe('cli build', () => {
     }));
   });
 
+  it('should call prepareLocaleFiles()', () => {
+    const spy = spyOn(mockLocaleProcessor, 'prepareLocaleFiles').and.callThrough();
+
+    mock('../config/webpack/build.webpack.config', {
+      getWebpackConfig: () => ({})
+    });
+
+    mock.reRequire('../cli/build')({}, {}, () => ({
+      run: () => {}
+    }));
+    expect(spy).toHaveBeenCalledWith();
+  });
 });

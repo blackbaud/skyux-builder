@@ -1,21 +1,24 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const codegen = require('../utils/codegen-utils');
+const mock = require('mock-require');
 
-const getModuleList = (listName, content) => {
+function getModuleList(listName, content) {
   const listRegExp = new RegExp(`${listName}:\\s\\[([\\s\\S]*?).*?\\]`, 'g');
   const list = content.match(listRegExp);
   return list ? list[0] : [];
 }
 
 describe('SKY UX Builder module generator', () => {
-
   const runtimeUtils = require('../utils/runtime-test-utils.js');
 
   let generator;
   beforeEach(() => {
-    generator = require('../lib/sky-pages-module-generator');
+    generator = mock.reRequire('../lib/sky-pages-module-generator');
+  });
+
+  afterEach(() => {
+    mock.stopAll();
   });
 
   it('should return a source string', () => {

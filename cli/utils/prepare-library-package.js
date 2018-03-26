@@ -33,7 +33,7 @@ function copyFilesToDist() {
         spaPath('dist', ...pathArr)
       );
     } catch (err) {
-      warn(`File not found: ${path.join(...pathArr)}`);
+      warn(`File(s) not found: ${path.join(...pathArr)}`);
     }
   });
 }
