@@ -271,15 +271,7 @@ BBAuth.mock = true;`);
       skyux: {}
     };
 
-    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((path1, path2) => {
-      let spaPath = '/root/src';
-
-      if (path2) {
-        spaPath += '/assets';
-      }
-
-      return spaPath;
-    });
+    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((...args) => '/root/src' + args.join('/'));
 
     const glob = require('glob');
 

@@ -26,19 +26,19 @@ describe('cli utils prepare-library-package', () => {
 
   it('should update the module property of package.json and write it to dist', () => {
     spyOn(fs, 'copySync').and.returnValue();
-    spyOn(fs, 'readJSONSync').and.returnValue({});
-    spyOn(fs, 'writeJSONSync').and.callFake((filePath, contents) => {
+    spyOn(fs, 'readJsonSync').and.returnValue({});
+    spyOn(fs, 'writeJsonSync').and.callFake((filePath, contents) => {
       expect(filePath.match('dist')).not.toEqual(null);
       expect(contents.module).toEqual('index.js');
     });
     util();
-    expect(fs.readJSONSync).toHaveBeenCalled();
-    expect(fs.writeJSONSync).toHaveBeenCalled();
+    expect(fs.readJsonSync).toHaveBeenCalled();
+    expect(fs.writeJsonSync).toHaveBeenCalled();
   });
 
   it('should copy contributing and changelog to dist', () => {
-    spyOn(fs, 'readJSONSync').and.returnValue({});
-    spyOn(fs, 'writeJSONSync').and.returnValue();
+    spyOn(fs, 'readJsonSync').and.returnValue({});
+    spyOn(fs, 'writeJsonSync').and.returnValue();
     spyOn(fs, 'copySync').and.returnValue();
     util();
     expect(fs.copySync).toHaveBeenCalledWith('README.md', 'dist/README.md');

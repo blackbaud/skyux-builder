@@ -1,33 +1,35 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const mock = require('mock-require');
+const glob = require('glob');
+// const fs = require('fs-extra');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 describe('SKY UX Builder assets generator', () => {
   let generator;
 
   beforeEach(() => {
-    generator = require('../lib/sky-pages-assets-generator');
+  });
+
+  afterEach(() => {
+    mock.stopAll();
   });
 
   it('should emit the expected code', () => {
-    const glob = require('glob');
-
-    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((path1, path2) => {
-      let spaPath = '/root/src';
-
-      if (path2) {
-        spaPath += '/assets';
-      }
-
-      return spaPath;
+    spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((...args) => {
+      const filePath = '/root/' + args.join('/');
+      return filePath;
     });
 
-    spyOn(glob, 'sync').and.returnValue([
-      '/root/src/assets/a/b/c/d.jpg',
-      '/root/src/assets/e/f.jpg'
-    ]);
+    spyOn(glob, 'sync').and.callFake(() => {
+      return [
+        '/root/src/assets/a/b/c/d.jpg',
+        '/root/src/assets/e/f.jpg'
+      ];
+    });
 
+    generator = mock.reRequire('../lib/sky-pages-assets-generator');
     const source = generator.getSource();
 
     expect(source).toBe(
