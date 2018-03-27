@@ -322,50 +322,6 @@ BBAuth.mock = true;`);
     expect(source).toContain(JSON.stringify(config));
   });
 
-  // it('should add assets to skyPagesConfig.runtime', () => {
-  //   const generator = mock.reRequire(GENERATOR_PATH);
-  //   const assetsGenerator = require('../lib/sky-pages-assets-generator');
-  //   const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
-  //   const config = {
-  //     runtime: runtimeUtils.getDefaultRuntime({
-  //       routes: [{
-  //         routePath: 'fake-path',
-  //         routeParams: [
-  //           'fake-param'
-  //         ]
-  //       }]
-  //     }),
-  //     skyux: {
-  //       params: {}
-  //     }
-  //   };
-
-  //   spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((...args) => '/root/src' + args.join('/'));
-
-  //   const glob = require('glob');
-
-  //   spyOn(glob, 'sync').and.callFake((path) => {
-  //     if (path.indexOf('assets') >= 0) {
-  //       return [
-  //         '/root/src/assets/a/b/c/d.jpg',
-  //         '/root/src/assets/e/f.jpg'
-  //       ];
-  //     }
-
-  //     return [];
-  //   });
-
-  //   const assetsSource = assetsGenerator.getSource();
-  //   const source = generator.getSource(config);
-
-  //   expect(source).toContain(assetsSource);
-
-  //   expect(source).toContain(`{
-  //     provide: SkyAppAssetsService,
-  //     useClass: SkyAppAssetsImplService
-  //   }`);
-  // });
-
   it('should add assets to skyPagesConfig.runtime', () => {
     const config = {
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -426,6 +382,4 @@ BBAuth.mock = true;`);
       useClass: SkyPactAuthTokenProvider
     }`);
   });
-
-
 });
