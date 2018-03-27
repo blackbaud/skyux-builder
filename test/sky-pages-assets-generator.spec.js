@@ -3,7 +3,6 @@
 
 const mock = require('mock-require');
 const glob = require('glob');
-const path = require('path');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 describe('SKY UX Builder assets generator', () => {
