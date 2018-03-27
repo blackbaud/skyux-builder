@@ -227,4 +227,16 @@ describe('cli test', () => {
 
     expect(process.exit).toHaveBeenCalledWith(0);
   });
+
+  it('should not continue if no e2e spec files exist', () => {
+    mock('glob', {
+      sync: path => []
+    });
+
+    mock.reRequire('../cli/test')('test');
+    expect(logger.info).toHaveBeenCalledWith(
+      'No spec files located. Stopping command from running.'
+    );
+    expect(process.exit).toHaveBeenCalledWith(0);
+  });
 });
