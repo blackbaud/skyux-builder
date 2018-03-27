@@ -3,6 +3,7 @@
 
 const mock = require('mock-require');
 const glob = require('glob');
+const path = require('path');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 describe('SKY UX Builder assets generator', () => {
@@ -67,8 +68,8 @@ describe('SKY UX Builder assets generator', () => {
 `export class SkyAppAssetsImplService {
   public getUrl(filePath: string): string {
     const pathMap: {[key: string]: any} = {
-      'locales/resources_en_US.json': '~/assets/resources_en_US.json',
-      'locales/resources_fr_CA.json': '~/assets/resources_fr_CA.json'
+      '${path.join('locales', 'resources_en_US.json')}': '${path.join('~', 'assets', 'resources_en_US.json')}',
+      '${path.join('locales', 'resources_fr_CA.json')}': '${path.join('~', 'assets', 'resources_fr_CA.json')}'
     };
 
     return pathMap[filePath];
