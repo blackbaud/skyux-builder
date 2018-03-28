@@ -9,8 +9,5 @@
   "nonew": true,
   "strict": true,
   "undef": true,
-  "unused": true,
-  "globals": {
-    "browser": true
-  }
+  "unused": true
 }

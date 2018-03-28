@@ -65,9 +65,7 @@ function spawnProtractor(configPath, chunks, port, skyPagesConfig) {
  * Spawns the selenium server if directConnect is not enabled.
  * @name spawnSelenium
  */
-function spawnSelenium(configPath) {
-  const config = require(configPath).config;
-
+function spawnSelenium(config) {
   return new Promise((resolve, reject) => {
     logger.info('Spawning selenium...');
 
@@ -155,19 +153,14 @@ function start(command, argv, skyPagesConfig, webpack) {
   startTime = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  let specsPath;
-  if (command === 'e2e') {
-    specsPath = path.resolve(process.cwd(), 'e2e/**/*.e2e-spec.ts');
-  } else {
-    specsPath = path.resolve(process.cwd(), '**/*.visual-spec.ts');
-  }
-
-  const specsGlob = glob.sync(specsPath);
-  const configPath = configResolver.resolve(command, argv);
+  const protractorConfigPath = configResolver.resolve(command, argv);
+  const protractorConfig = require(protractorConfigPath).config;
+  const specsGlob = glob.sync(protractorConfig.specs[0]);
 
   if (specsGlob.length === 0) {
     logger.info('No spec files located. Stopping command from running.');
-    return killServers(0);
+    killServers(0);
+    return;
   }
 
   server.start()
@@ -185,12 +178,12 @@ function start(command, argv, skyPagesConfig, webpack) {
         .all([
           spawnBuild(argv, skyPagesConfig, webpack),
           port,
-          spawnSelenium(configPath)
+          spawnSelenium(protractorConfig)
         ]);
     })
     .then(values => {
       spawnProtractor(
-        configPath,
+        protractorConfigPath,
         values[0],
         values[1],
         skyPagesConfig

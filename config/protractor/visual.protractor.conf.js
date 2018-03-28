@@ -1,4 +1,5 @@
 /*jshint jasmine: true, node: true */
+/* globals browser */
 'use strict';
 
 const path = require('path');
