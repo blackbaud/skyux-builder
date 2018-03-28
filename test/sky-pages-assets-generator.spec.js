@@ -12,6 +12,9 @@ describe('SKY UX Builder assets generator', () => {
     mockLocaleProcessor = {
       isLocaleFile() {
         return false;
+      },
+      parseLocaleFileBasename() {
+        return 'BASENAME';
       }
     };
 
@@ -55,7 +58,7 @@ describe('SKY UX Builder assets generator', () => {
     spyOn(mockLocaleProcessor, 'isLocaleFile').and.returnValue(true);
     spyOn(glob, 'sync').and.callFake(() => {
       return [
-        '/root/src/assets/locales/resources_en_US.json',
+        '/root/src/assets/locales/resources_en-US.json',
         '/root/src/assets/locales/resources_fr_CA.json'
       ];
     });
@@ -63,12 +66,15 @@ describe('SKY UX Builder assets generator', () => {
     const generator = mock.reRequire('../lib/sky-pages-assets-generator');
     const source = generator.getSource();
 
+    // The 'BASENAME' is provided by the locale assets processor.
+    // This test ensures that the file name (and lookup key)
+    // is governed by the locale assets processor.
     expect(source).toBe(
 `export class SkyAppAssetsImplService {
   public getUrl(filePath: string): string {
     const pathMap: {[key: string]: any} = {
-      'locales/resources_en_US.json': '~/assets/resources_en_US.json',
-      'locales/resources_fr_CA.json': '~/assets/resources_fr_CA.json'
+      'locales/BASENAME': '~/assets/BASENAME',
+      'locales/BASENAME': '~/assets/BASENAME'
     };
 
     return pathMap[filePath];

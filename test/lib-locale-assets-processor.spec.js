@@ -127,7 +127,8 @@ describe('Locale assets processor', () => {
         spa_key1: { _description: '', message: '[fr_CA] spa message 1' },
         spa_fr_key1: { _description: '', message: '[fr_CA] spa fr message' }
       },
-      '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_en_US.json': {
+      // Tests that the `en-US` format also works (along with `en_US`):
+      '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_en-US.json': {
         lib_key1: { _description: '', message: '[en_US] lib message 1' },
         lib_key2: { _description: '', message: '[en_US] lib message 2' }
       },
@@ -153,25 +154,26 @@ describe('Locale assets processor', () => {
     files['.skypageslocales/resources_fr_CA.json'] = files['src/assets/locales/resources_*.json'];
 
     spyOn(mockGlob, 'sync').and.callFake(expression => {
+      console.log('expression:', expression);
       let globFiles;
       switch (expression) {
         // Default library files
-        case 'node_modules/@blackbaud/**/src/assets/locales/resources_en_US.json':
+        case 'node_modules/@blackbaud/**/src/assets/locales/@(resources_en_US.json|resources_en-US.json)':
         globFiles = [
-          '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_en_US.json'
+          '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_en-US.json'
         ];
         break;
 
         // All library files
         case 'node_modules/@blackbaud/**/src/assets/locales/resources_*.json':
         globFiles = [
-          '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_en_US.json',
+          '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_en-US.json',
           '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_fr_CA.json'
         ];
         break;
 
         // Default internal library files
-        case 'node_modules/@blackbaud-internal/**/src/assets/locales/resources_en_US.json':
+        case 'node_modules/@blackbaud-internal/**/src/assets/locales/@(resources_en_US.json|resources_en-US.json)':
         globFiles = [
           '/node_modules/@blackbaud-internal/skyux-lib-bar/assets/locales/resources_en_US.json'
         ];
