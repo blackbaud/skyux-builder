@@ -135,7 +135,8 @@ describe('cli utils start-e2e', () => {
 
     mock(configPath, {
       config: {
-        seleniumAddress: 'asdf'
+        seleniumAddress: 'asdf',
+        specs: ['']
       }
     });
 
@@ -178,7 +179,8 @@ describe('cli utils start-e2e', () => {
   it('should catch selenium failures', (done) => {
     mock(configPath, {
       config: {
-        seleniumAddress: 'asdf'
+        seleniumAddress: 'asdf',
+        specs: ['']
       }
     });
 
@@ -227,21 +229,6 @@ describe('cli utils start-e2e', () => {
 
     mock.reRequire('../cli/utils/start-e2e')
       .start('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
-  });
-
-  it('should use different specs for the visual command', (done) => {
-    spyOn(glob, 'sync').and.callFake((specsPath) => {
-      expect(specsPath.indexOf('*.visual-spec.ts') > -1).toEqual(true);
-      return ['test.visual-spec.ts'];
-    });
-
-    spyOn(process, 'exit').and.callFake(exitCode => {
-      expect(exitCode).toEqual(0);
-      done();
-    });
-
-    mock.reRequire('../cli/utils/start-e2e')
-      .start('visual', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should accept the --no-build flag and handle errors', (done) => {
