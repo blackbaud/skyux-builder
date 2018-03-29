@@ -42,6 +42,9 @@ module.exports = {
       params: [
         'envid',
         'svcid'
+      ],
+      skyuxModules: [
+        'SkyModule'
       ]
     }, skyux);
   }
