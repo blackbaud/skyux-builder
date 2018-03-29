@@ -79,7 +79,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
       },
       publicPath: skyPagesConfigUtil.getAppBase(skyPagesConfig)
     },
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'source-map',
     plugins: [
       new NamedModulesPlugin(),
       WebpackPluginDone,
