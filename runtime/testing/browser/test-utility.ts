@@ -1,23 +1,17 @@
-export interface SkyAppTestUtilityEventArgs {
-  bubbles?: boolean;
-  cancelable?: boolean;
-}
-
-function getWindow() {
-  return window;
-}
+import { SkyAppTestUtilityDomEventOptions } from './test-utility-dom-event-options';
 
 export class SkyAppTestUtility {
   public static fireDomEvent(
     element: EventTarget,
     eventName: string,
-    args?: SkyAppTestUtilityEventArgs
+    options?: SkyAppTestUtilityDomEventOptions
   ) {
     const defaults = { bubbles: true, cancelable: true };
-    const options = Object.assign({}, defaults, args);
-    const event = getWindow().document.createEvent('CustomEvent');
+    const { bubbles, cancelable } = Object.assign({}, defaults, options);
 
-    event.initEvent(eventName, options.bubbles, options.cancelable);
+    const event = document.createEvent('CustomEvent');
+    event.initEvent(eventName, bubbles, cancelable);
+
     element.dispatchEvent(event);
   }
 }
