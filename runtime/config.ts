@@ -76,6 +76,7 @@ export interface SkyuxConfig {
   };
   omnibar?: any;
   useHashRouting?: boolean;
+  skyuxModules?: string[];
 }
 
 @Injectable()
