@@ -10,5 +10,8 @@
   "params": {
     "envid": true,
     "svcid": true
-  }
+  },
+  "skyuxModules": [
+    "SkyModule"
+  ]
 }
