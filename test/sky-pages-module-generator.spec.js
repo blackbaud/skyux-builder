@@ -14,7 +14,6 @@ function getModuleList(listName, content) {
 
 describe('SKY UX Builder module generator', () => {
   let mockComponentGenerator;
-  let mockCodeGenUtils;
   let mockAssetsGenerator;
   let mockRouteGenerator;
 
@@ -25,12 +24,6 @@ describe('SKY UX Builder module generator', () => {
           names: [],
           imports: ''
         };
-      }
-    };
-
-    mockCodeGenUtils = {
-      indent() {
-        return '    ';
       }
     };
 
@@ -56,7 +49,6 @@ describe('SKY UX Builder module generator', () => {
       }
     };
 
-    mock('../utils/codegen-utils', mockCodeGenUtils);
     mock('../lib/sky-pages-assets-generator', mockAssetsGenerator);
     mock('../lib/sky-pages-component-generator', mockComponentGenerator);
     mock('../lib/sky-pages-route-generator', mockRouteGenerator);
@@ -179,6 +171,7 @@ describe('SKY UX Builder module generator', () => {
   });
 
   it('should import individual SKY UX modules from config', () => {
+    const generator = mock.reRequire(GENERATOR_PATH);
     const source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: runtimeUtils.getDefaultSkyux({
