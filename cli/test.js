@@ -51,7 +51,7 @@ function test(command, argv) {
   };
 
   if (specsGlob.length === 0) {
-    logger.info('No spec files located. Stopping command from running.');
+    logger.info('No spec files located. Skipping test command.');
     return onExit(0);
   }
 
