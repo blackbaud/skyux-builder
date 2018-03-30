@@ -10,6 +10,7 @@ import { SkyuxConfigParams } from './config-params';
 function getUrlSearchParams(url: string): URLSearchParams {
   if (url.indexOf('?') > -1) {
     url = url.split('?')[1];
+    url = url.split('#')[0];
   }
 
   return new URLSearchParams(url);
