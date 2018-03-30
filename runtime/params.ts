@@ -8,11 +8,15 @@ import { SkyuxConfigParams } from './config-params';
  * @return {URLSearchParams} urlSearchParams
  */
 function getUrlSearchParams(url: string): URLSearchParams {
+
+  let qs = '';
+
   if (url.indexOf('?') > -1) {
-    url = url.split('?')[1];
+    qs = url.split('?')[1];
+    qs = qs.split('#')[0];
   }
 
-  return new URLSearchParams(url);
+  return new URLSearchParams(qs);
 }
 
 export class SkyAppRuntimeConfigParams {

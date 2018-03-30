@@ -179,4 +179,32 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.hasAllRequiredParams()).toBe(false);
   });
 
+  it('should handle a url with a querystring and fragment (#)', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?A1=b&A3=c#hash-better=have-my-money',
+      allowed
+    );
+    expect(params.get('a1')).toEqual('b');
+    expect(params.get('a3')).toEqual('c');
+    expect(params.getUrl('example.com')).not.toContain('hash-better=have-my-money');
+  });
+
+  it('should ignore params in a fragment', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      'https://example.com#A1=b',
+      allowed
+    );
+
+    expect(params.get('a1')).not.toEqual('b');
+  });
+
+  it('should handle a url without a querystring', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      'https://example.com',
+      allowed
+    );
+
+    expect(params.getAllKeys()).toEqual([]);
+  });
+
 });
