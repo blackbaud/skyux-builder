@@ -6,12 +6,21 @@ export class SkyAppTestUtility {
     eventName: string,
     options?: SkyAppTestUtilityDomEventOptions
   ) {
-    const defaults = { bubbles: true, cancelable: true };
-    const { bubbles, cancelable } = Object.assign({}, defaults, options);
+    const defaults = {
+      bubbles: true,
+      cancelable: true,
+      keyboardEventInit: {}
+    };
 
-    const event = document.createEvent('CustomEvent');
-    event.initEvent(eventName, bubbles, cancelable);
+    const settings = Object.assign({}, defaults, options);
 
+    // Apply keyboard event options.
+    const event = Object.assign(
+      document.createEvent('CustomEvent'),
+      settings.keyboardEventInit
+    );
+
+    event.initEvent(eventName, settings.bubbles, settings.cancelable);
     element.dispatchEvent(event);
   }
 }
