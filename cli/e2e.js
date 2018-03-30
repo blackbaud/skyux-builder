@@ -160,7 +160,7 @@ function e2e(command, argv, skyPagesConfig, webpack) {
   const configPath = configResolver.resolve(command, argv);
 
   if (specsGlob.length === 0) {
-    logger.info('No spec files located. Stopping command from running.');
+    logger.info('No spec files located. Skipping e2e command.');
     return killServers(0);
   }
 
