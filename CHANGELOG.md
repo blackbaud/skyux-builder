@@ -1,3 +1,10 @@
+# 1.12.0 (2018-03-30)
+
+- Made `skyux test` more efficient by checking for spec files before initializing. [#381](https://github.com/blackbaud/skyux-builder/pull/381)
+- Bugfix when parsing querystring parameters. [#385](https://github.com/blackbaud/skyux-builder/pull/385)
+- Added test utility from SKY UX. [#382](https://github.com/blackbaud/skyux-builder/pull/382) and [#386](https://github.com/blackbaud/skyux-builder/pull/386)
+- Added ability to import individual SKY UX modules using the `skyuxModules` prooperty in `skyuxconfig.json`. [#383](https://github.com/blackbaud/skyux-builder/pull/383)
+
 # 1.11.1 (2018-03-20)
 
 - Fixed an issue where URL parameters did not persist when navigating to another route within a SPA. [#377](https://github.com/blackbaud/skyux-builder/pull/377)
