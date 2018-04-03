@@ -8,6 +8,8 @@
 function test(command, argv) {
   const logger = require('@blackbaud/skyux-logger');
   const Server = require('karma').Server;
+  const path = require('path');
+  const glob = require('glob');
   const tsLinter = require('./utils/ts-linter');
   const configResolver = require('./utils/config-resolver');
 
@@ -17,6 +19,8 @@ function test(command, argv) {
   const karmaConfigUtil = require('karma').config;
   const karmaConfigPath = configResolver.resolve(command, argv);
   const karmaConfig = karmaConfigUtil.parseConfig(karmaConfigPath);
+  const specsPath = path.resolve(process.cwd(), 'src/app/**/*.spec.ts');
+  const specsGlob = glob.sync(specsPath);
 
   let lintResult;
 
@@ -45,6 +49,11 @@ function test(command, argv) {
     logger.info(`Karma has exited with ${exitCode}.`);
     process.exit(exitCode);
   };
+
+  if (specsGlob.length === 0) {
+    logger.info('No spec files located. Skipping test command.');
+    return onExit(0);
+  }
 
   const server = new Server(karmaConfig, onExit);
   server.on('run_start', onRunStart);
