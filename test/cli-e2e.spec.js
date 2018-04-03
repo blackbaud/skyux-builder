@@ -214,7 +214,7 @@ describe('cli e2e', () => {
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(0);
-      expect(logger.info).toHaveBeenCalledWith('No spec files located. Stopping command from running.');
+      expect(logger.info).toHaveBeenCalledWith('No spec files located. Skipping e2e command.');
       done();
     });
 
