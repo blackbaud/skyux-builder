@@ -158,7 +158,7 @@ function start(command, argv, skyPagesConfig, webpack) {
   const specsGlob = glob.sync(protractorConfig.specs[0]);
 
   if (specsGlob.length === 0) {
-    logger.info('No spec files located. Stopping command from running.');
+    logger.info(`No spec files located. Skipping ${command} command.`);
     killServers(0);
     return;
   }

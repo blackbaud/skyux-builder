@@ -218,12 +218,12 @@ describe('cli utils start-e2e', () => {
       .start('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('should not continue if no e2e spec files exist', (done) => {
+  it('should not continue if no spec files exist', (done) => {
     spyOn(glob, 'sync').and.returnValue([]);
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(0);
       expect(logger.info)
-        .toHaveBeenCalledWith('No spec files located. Stopping command from running.');
+        .toHaveBeenCalledWith('No spec files located. Skipping e2e command.');
       done();
     });
 
