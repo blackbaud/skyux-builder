@@ -17,7 +17,7 @@ class SkyAppLinkTestComponent { }
 })
 class SkyAppLinkWithParamsTestComponent { }
 
-fdescribe('SkyAppLink Directive', () => {
+describe('SkyAppLink Directive', () => {
 
   let component: SkyAppLinkTestComponent;
   let fixture: ComponentFixture<SkyAppLinkTestComponent>;
