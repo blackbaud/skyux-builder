@@ -28,13 +28,14 @@ function copyFilesToDist() {
   ];
 
   pathsToCopy.forEach(pathArr => {
-    try {
+    const sourcePath = skyPagesConfigUtil.spaPath(...pathArr);
+    if (fs.existsSync(sourcePath)) {
       fs.copySync(
-        skyPagesConfigUtil.spaPath(...pathArr),
+        sourcePath,
         skyPagesConfigUtil.spaPath('dist', ...pathArr)
       );
-    } catch (err) {
-      logger.warn(`File(s) not found: ${path.join(...pathArr)}`);
+    } else {
+      logger.warn(`File(s) not found: ${sourcePath}`);
     }
   });
 }

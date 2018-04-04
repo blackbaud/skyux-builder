@@ -36,7 +36,9 @@ describe('Locale assets processor', () => {
       emptyDirSync() {},
       ensureDirSync() {},
       ensureFileSync() {},
-      readJsonSync() {},
+      readFileSync() {
+        return Buffer.from('{}', 'utf8');
+      },
       removeSync() {},
       writeJsonSync() {}
     };
@@ -204,8 +206,8 @@ describe('Locale assets processor', () => {
       return globFiles;
     });
 
-    spyOn(mockFs, 'readJsonSync').and.callFake((filePath) => {
-      return files[filePath] || {};
+    spyOn(mockFs, 'readFileSync').and.callFake((filePath) => {
+      return Buffer.from(JSON.stringify(files[filePath] || {}), 'utf8');
     });
 
     spyOn(mockFs, 'writeJsonSync').and.callFake((filePath, contents) => {
@@ -253,12 +255,12 @@ describe('Locale assets processor', () => {
       '/src/assets/locales/resources_en_US.json'
     ]);
 
-    const readSpy = spyOn(mockFs, 'readJsonSync').and.throwError();
+    spyOn(mockFs, 'readFileSync').and.returnValue(
+      new Buffer('', 'utf8')
+    );
     const writeSpy = spyOn(mockFs, 'writeJsonSync').and.callThrough();
     const processor = mock.reRequire(PROCESSOR_PATH);
     processor.prepareLocaleFiles();
-
-    expect(readSpy).toThrow();
     expect(writeSpy).toHaveBeenCalledWith(
       '.skypageslocales/resources_en_US.json',
       {}
