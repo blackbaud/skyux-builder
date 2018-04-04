@@ -13,3 +13,4 @@ export * from './style-loader';
 export * from './viewport.service';
 export * from './omnibar-provider';
 export * from './omnibar-ready-args';
+export * from './runtime.module';
