@@ -10,8 +10,16 @@ const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const ProcessExitCode = require('../../plugin/process-exit-code');
 const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
-const { outPath, spaPath } = require('../sky-pages/sky-pages.config');
+const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
+
+function spaPath() {
+  return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
+}
+
+function outPath() {
+  return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+}
 
 function getLogFormat(skyPagesConfig, argv) {
   if (argv.hasOwnProperty('logFormat')) {

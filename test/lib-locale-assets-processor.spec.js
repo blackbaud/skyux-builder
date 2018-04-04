@@ -68,12 +68,12 @@ describe('Locale assets processor', () => {
   });
 
   it('should test if a file path is a locale file', () => {
-    const { isLocaleFile } = mock.reRequire(PROCESSOR_PATH);
+    const processor = mock.reRequire(PROCESSOR_PATH);
 
-    const test1 = isLocaleFile('resources_en_US.json');
-    const test2 = isLocaleFile('resources_en_us.json');
-    const test3 = isLocaleFile('resources-en_US.json');
-    const test4 = isLocaleFile('foo.html');
+    const test1 = processor.isLocaleFile('resources_en_US.json');
+    const test2 = processor.isLocaleFile('resources_en_us.json');
+    const test3 = processor.isLocaleFile('resources-en_US.json');
+    const test4 = processor.isLocaleFile('foo.html');
 
     expect(test1).toEqual(true);
     expect(test2).toEqual(false);
@@ -82,14 +82,14 @@ describe('Locale assets processor', () => {
   });
 
   it('should resolve the physical location of a locale file', () => {
-    const { resolvePhysicalLocaleFilePath } = mock.reRequire(PROCESSOR_PATH);
-    const filePath = resolvePhysicalLocaleFilePath('resources_en_US.json');
+    const processor = mock.reRequire(PROCESSOR_PATH);
+    const filePath = processor.resolvePhysicalLocaleFilePath('resources_en_US.json');
     expect(filePath).toEqual('.skypageslocales/resources_en_US.json');
   });
 
   it('should resolve the relative destination of a locale file', () => {
-    const { resolveRelativeLocaleFileDestination } = mock.reRequire(PROCESSOR_PATH);
-    const filePath = resolveRelativeLocaleFileDestination('resources_en_US.json');
+    const processor = mock.reRequire(PROCESSOR_PATH);
+    const filePath = processor.resolveRelativeLocaleFileDestination('resources_en_US.json');
     expect(filePath).toEqual('assets/locales/resources_en_US.json');
   });
 
@@ -104,9 +104,9 @@ describe('Locale assets processor', () => {
     );
 
     const spy = spyOn(mockFs, 'copySync').and.callThrough();
-    const { prepareLocaleFiles } = mock.reRequire(PROCESSOR_PATH);
+    const processor = mock.reRequire(PROCESSOR_PATH);
 
-    prepareLocaleFiles();
+    processor.prepareLocaleFiles();
 
     Object.keys(files).forEach((key) => {
       expect(spy).toHaveBeenCalledWith(
@@ -213,9 +213,8 @@ describe('Locale assets processor', () => {
       Object.assign(files[filePath], contents);
     });
 
-    const { prepareLocaleFiles } = mock.reRequire(PROCESSOR_PATH);
-
-    prepareLocaleFiles();
+    const processor = mock.reRequire(PROCESSOR_PATH);
+    processor.prepareLocaleFiles();
 
     expect(files['.skypageslocales/resources_en_US.json']).toEqual({
       spa_key1: { _description: '', message: '[en_US] spa message 1' },
@@ -256,9 +255,9 @@ describe('Locale assets processor', () => {
 
     const readSpy = spyOn(mockFs, 'readJsonSync').and.throwError();
     const writeSpy = spyOn(mockFs, 'writeJsonSync').and.callThrough();
-    const { prepareLocaleFiles } = mock.reRequire(PROCESSOR_PATH);
+    const processor = mock.reRequire(PROCESSOR_PATH);
+    processor.prepareLocaleFiles();
 
-    prepareLocaleFiles();
     expect(readSpy).toThrow();
     expect(writeSpy).toHaveBeenCalledWith(
       '.skypageslocales/resources_en_US.json',
