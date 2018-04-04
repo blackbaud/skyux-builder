@@ -1,21 +1,20 @@
 /*jshint node: true*/
 'use strict';
 
-const path = require('path');
 const fs = require('fs-extra');
-
+const path = require('path');
 const logger = require('@blackbaud/skyux-logger');
-const spyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
+const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
 function makePackageFileForDist() {
   const contents = fs.readJsonSync(
-    spyPagesConfigUtil.spaPath('package.json')
+    skyPagesConfigUtil.spaPath('package.json')
   );
   contents.module = 'index.js';
   contents.main = 'bundles/bundle.umd.js';
 
   fs.writeJsonSync(
-    spyPagesConfigUtil.spaPath('dist', 'package.json'),
+    skyPagesConfigUtil.spaPath('dist', 'package.json'),
     contents,
     { spaces: 2 }
   );
@@ -31,8 +30,8 @@ function copyFilesToDist() {
   pathsToCopy.forEach(pathArr => {
     try {
       fs.copySync(
-        spyPagesConfigUtil.spaPath(...pathArr),
-        spyPagesConfigUtil.spaPath('dist', ...pathArr)
+        skyPagesConfigUtil.spaPath(...pathArr),
+        skyPagesConfigUtil.spaPath('dist', ...pathArr)
       );
     } catch (err) {
       logger.warn(`File(s) not found: ${path.join(...pathArr)}`);
