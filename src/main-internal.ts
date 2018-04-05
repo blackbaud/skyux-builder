@@ -4,11 +4,14 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 
 import { SkyAppBootstrapper } from '../runtime/bootstrapper';
+import { hmrBootstrap } from './hmrBootstrap';
 
-if (module.hot) {
-  module.hot.accept();
-}
+const bootstrap = () => platformBrowserDynamic().bootstrapModule(AppModule);
 
 SkyAppBootstrapper.processBootstrapConfig().then(() => {
-  platformBrowserDynamic().bootstrapModule(AppModule);
+  if (module.hot) {
+    hmrBootstrap(module, bootstrap);
+  } else {
+    bootstrap();
+  }
 });
