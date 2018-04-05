@@ -8,12 +8,12 @@ import { SkyAppConfig } from '../config';
 import { SkyAppLinkDirective } from './sky-app-link.directive';
 
 @Component({
-  template: `<a skyAppLink='test'>Test</a>`
+  template: '<a skyAppLink="test">Test</a>'
 })
 class SkyAppLinkTestComponent { }
 
 @Component({
-  template: `<a skyAppLink='test' [queryParams]="{qp1: 1, qp2: false}">Test</a>`
+  template: '<a skyAppLink="test" [queryParams]="{qp1: 1, qp2: false}">Test</a>'
 })
 class SkyAppLinkWithParamsTestComponent { }
 
