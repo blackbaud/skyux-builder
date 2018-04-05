@@ -2,7 +2,6 @@
 'use strict';
 
 const fs = require('fs-extra');
-const path = require('path');
 const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
