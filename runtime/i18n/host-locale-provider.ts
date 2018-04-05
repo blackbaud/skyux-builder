@@ -7,7 +7,7 @@ import { Observable } from 'rxjs/Observable';
 
 import {
   SkyAppWindowRef
-} from '@blackbaud/skyux-builder/runtime';
+} from '@blackbaud/skyux-builder/runtime/window-ref';
 
 import { SkyAppLocaleInfo } from './locale-info';
 import { SkyAppLocaleProvider } from './locale-provider';
