@@ -7,10 +7,10 @@ const path = require('path');
 const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const protractorLauncher = require('protractor/built/launcher');
+const logger = require('@blackbaud/skyux-logger');
 
 const build = require('./build');
 const server = require('./utils/server');
-const logger = require('../utils/logger');
 const configResolver = require('./utils/config-resolver');
 
 // Disable this to quiet the output
@@ -160,7 +160,7 @@ function e2e(command, argv, skyPagesConfig, webpack) {
   const configPath = configResolver.resolve(command, argv);
 
   if (specsGlob.length === 0) {
-    logger.info('No spec files located. Stopping command from running.');
+    logger.info('No spec files located. Skipping e2e command.');
     return killServers(0);
   }
 

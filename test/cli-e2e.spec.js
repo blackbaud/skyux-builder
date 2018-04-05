@@ -7,7 +7,7 @@ const path = require('path');
 const mock = require('mock-require');
 const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('cli e2e', () => {
   const PORT = 1234;
@@ -214,7 +214,7 @@ describe('cli e2e', () => {
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(0);
-      expect(logger.info).toHaveBeenCalledWith('No spec files located. Stopping command from running.');
+      expect(logger.info).toHaveBeenCalledWith('No spec files located. Skipping e2e command.');
       done();
     });
 

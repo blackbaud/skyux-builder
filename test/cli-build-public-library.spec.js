@@ -4,7 +4,7 @@
 const mock = require('mock-require');
 const fs = require('fs-extra');
 const rimraf = require('rimraf');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
 describe('cli build-public-library', () => {
@@ -47,8 +47,12 @@ describe('cli build-public-library', () => {
     spyOn(skyPagesConfigUtil, 'spaPathTemp').and.callFake((fileName = '') => {
       return fileName;
     });
+    spyOn(skyPagesConfigUtil, 'outPath').and.callFake((fileName = '') => {
+      return fileName;
+    });
     spyOn(rimraf, 'sync').and.callFake(() => {});
     spyOn(fs, 'writeJSONSync').and.callFake(() => {});
+    spyOn(fs, 'copySync');
   });
 
   afterEach(() => {
@@ -58,6 +62,15 @@ describe('cli build-public-library', () => {
   it('should return a function', () => {
     const cliCommand = mock.reRequire(requirePath);
     expect(cliCommand).toEqual(jasmine.any(Function));
+  });
+
+  it('should copy the runtime folder before compiling then clean it before packaging', (done) => {
+    const cliCommand = mock.reRequire(requirePath);
+    cliCommand({}, mockWebpack).then(() => {
+      expect(fs.copySync).toHaveBeenCalledWith('runtime', 'runtime');
+      expect(rimraf.sync).toHaveBeenCalledTimes(4);
+      done();
+    });
   });
 
   it('should clean the dist and temp directories', (done) => {

@@ -1,6 +1,8 @@
 /*jslint node: true */
 'use strict';
 
+const logger = require('@blackbaud/skyux-logger');
+
 /**
  * Adds the necessary configuration for code coverage thresholds.
  * @param {*} config
@@ -93,7 +95,7 @@ function getConfig(config) {
     },
     reporters: ['mocha', 'coverage'],
     port: 9876,
-    colors: true,
+    colors: logger.logColor,
     logLevel: config.LOG_INFO,
     browserDisconnectTimeout: 3e5,
     browserDisconnectTolerance: 3,

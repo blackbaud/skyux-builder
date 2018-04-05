@@ -1,3 +1,28 @@
+# 1.12.0 (2018-03-30)
+
+- Made `skyux test` more efficient by checking for spec files before initializing. [#381](https://github.com/blackbaud/skyux-builder/pull/381)
+- Bugfix when parsing querystring parameters. [#385](https://github.com/blackbaud/skyux-builder/pull/385)
+- Added test utility from SKY UX. [#382](https://github.com/blackbaud/skyux-builder/pull/382) and [#386](https://github.com/blackbaud/skyux-builder/pull/386)
+- Added ability to import individual SKY UX modules using the `skyuxModules` property in `skyuxconfig.json`. [#383](https://github.com/blackbaud/skyux-builder/pull/383)
+
+# 1.11.1 (2018-03-20)
+
+- Fixed an issue where URL parameters did not persist when navigating to another route within a SPA. [#377](https://github.com/blackbaud/skyux-builder/pull/377)
+- Fixed errors that occur when building a library that implements the `skyAppResources` pipe. [#371](https://github.com/blackbaud/skyux-builder/pull/371)
+- Fixed an issue where Karma and Protractor configs did not use the correct logger. [#376](https://github.com/blackbaud/skyux-builder/pull/376)
+
+# 1.11.0 (2018-03-16)
+
+- Fixed an issue that occurs when navigating to a URL that partially matches the current base URL. [#372](https://github.com/blackbaud/skyux-builder/pull/372)
+- Added support for required parameters in `skyuxconfig.json`. [#370](https://github.com/blackbaud/skyux-builder/pull/370) Thanks [@Blackbaud-BrandonHare](https://github.com/Blackbaud-Brandonhare)!
+- Enabled the use of Hot Module Replacement (HMR) during `skyux serve` with the `--hmr` flag. [#359](https://github.com/blackbaud/skyux-builder/pull/359)
+- Initial creation of `skyAppLinkExternal` directive. [#366](https://github.com/blackbaud/skyux-builder/pull/366) Thanks [@Blackbaud-MitchellThomas](https://github.com/Blackbaud-MitchellThomas)!
+- Migrated all logging to use the `@blackbaud/skyux-logger` package. [#357](https://github.com/blackbaud/skyux-builder/pull/357)
+
+# 1.10.1 (2018-03-08)
+
+- Fixed errors that occur when building a library that imports from Builder's runtime directory. [#368](https://github.com/blackbaud/skyux-builder/pull/368)
+
 # 1.10.0 (2018-01-24)
 
 - Added support for the `codeCoverageThreshold` property in `skyuxconfig.json`. [#355](https://github.com/blackbaud/skyux-builder/pull/355)

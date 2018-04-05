@@ -138,7 +138,7 @@ function prepareBuild(config) {
 
   return new Promise((resolve, reject) => {
     rimrafPromise(path.join(tmp, 'dist'))
-      .then(() => exec(`node`, [cliPath, `build`], cwdOpts))
+      .then(() => exec(`node`, [cliPath, `build`, `--log`, `none`], cwdOpts))
       .then(serve)
       .then(resolve)
       .catch(err => reject(err));
@@ -209,7 +209,8 @@ function writeConfigServe(port) {
     });
 
     writeConfig(skyuxConfigWithPort);
-    webpackServer = childProcessSpawn(`node`, [cliPath, `serve`, `-l`, `none`], cwdOpts);
+    const args = [cliPath, `serve`, `-l`, `none`, `--log`, `none`];
+    webpackServer = childProcessSpawn(`node`, args, cwdOpts);
     resetConfig();
     resolve();
   });

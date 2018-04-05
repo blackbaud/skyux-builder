@@ -3,7 +3,7 @@
 
 const mock = require('mock-require');
 const path = require('path');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('config karma pact', () => {
   const watchPath = '../config/karma/watch.karma.conf';
