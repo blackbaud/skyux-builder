@@ -254,10 +254,10 @@ export class AppComponent implements OnInit {
       });
     };
 
-    if (!this.config.runtime.params.hasAllRequiredParams()) {
-      this.windowRef.nativeWindow.location.href = 'https://host.nxt.blackbaud.com/errors/notfound';
-      return;
-    }
+    // if (!this.config.runtime.params.hasAllRequiredParams()) {
+    //   this.windowRef.nativeWindow.location.href = 'https://host.nxt.blackbaud.com/errors/notfound';
+    //   return;
+    // }
 
     if (omnibarConfig) {
       if (this.omnibarProvider) {

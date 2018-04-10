@@ -22,6 +22,7 @@ function getUrlSearchParams(url: string): URLSearchParams {
 export class SkyAppRuntimeConfigParams {
   private params: { [key: string]: string } = {};
   private requiredParams: string[] = [];
+  private encodedParams: string[] = [];
 
   constructor(
     url: string,
@@ -77,6 +78,7 @@ export class SkyAppRuntimeConfigParams {
       allowedKeysUC.forEach((allowedKeyUC, index) => {
         if (givenKeyUC === allowedKeyUC) {
           this.params[allowed[index]] = urlSearchParams.get(givenKey);
+          this.encodedParams.push(givenKey);
         }
       });
     });
@@ -107,14 +109,28 @@ export class SkyAppRuntimeConfigParams {
   }
 
   /**
+   * Returns a flag indicating whether a parameter is required.
+   * @param key
+   */
+  public isRequired(key: string): boolean {
+    return this.requiredParams.indexOf(key) >= 0;
+  }
+
+  /**
    * Returns the value of the requested param.
    * @name get
    * @param {string} key
    * @returns {string}
    */
-  public get(key: string): string {
+  public get(key: string, urlDecode?: boolean): string {
     if (this.has(key)) {
-      return this.params[key];
+      let val = this.params[key];
+
+      if (urlDecode && this.encodedParams.indexOf(key) >= 0) {
+        val = decodeURIComponent(val);
+      }
+
+      return val;
     }
   }
 
