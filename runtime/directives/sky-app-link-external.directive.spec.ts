@@ -8,18 +8,16 @@ import { SkyAppLinkExternalDirective } from './sky-app-link-external.directive';
 import { SkyAppWindowRef } from '../window-ref';
 
 @Component({
-  template: `<a skyAppLinkExternal='test'>Test</a>`
+  template: '<a skyAppLinkExternal="test">Test</a>'
 })
-class SkyAppLinkExternalTestComponent {
-  public static readonly testUrl: string = 'testUrl';
-}
+class SkyAppLinkExternalTestComponent { }
 
 @Component({
-  template: `<a skyAppLinkExternal='test' [queryParams]="{qp1: 1, qp2: false}">Test</a>`
+  template: '<a skyAppLinkExternal="test" [queryParams]="{qp1: 1, qp2: false}">Test</a>'
 })
-class SkyAppLinkExternalWithParamsTestComponent {
-  public static readonly testUrl: string = 'testUrl';
-}
+class SkyAppLinkExternalWithParamsTestComponent { }
+
+const testUrl: string = 'testUrl';
 
 describe('SkyAppLinkExternal Directive', () => {
   let component: SkyAppLinkExternalTestComponent;
@@ -67,7 +65,7 @@ describe('SkyAppLinkExternal Directive', () => {
             },
             skyux: {
               host: {
-                url: SkyAppLinkExternalTestComponent.testUrl
+                url: testUrl
               }
             }
           }
