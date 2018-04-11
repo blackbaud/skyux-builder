@@ -1,6 +1,7 @@
 import {
   Component,
   NgZone,
+  OnDestroy,
   OnInit,
   Optional
 } from '@angular/core';
@@ -75,7 +76,7 @@ function fixUpNav(nav: any, baseUrl: string, config: SkyAppConfig) {
   selector: 'sky-pages-app',
   templateUrl: './app.component.html'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   public isReady = false;
 
   constructor(
@@ -118,8 +119,11 @@ export class AppComponent implements OnInit {
         }
       }
     });
-
     this.initShellComponents();
+  }
+
+  public ngOnDestroy() {
+    BBOmnibar.destroy();
   }
 
   // Only pass params that omnibar config cares about
