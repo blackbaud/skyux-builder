@@ -8,6 +8,7 @@
   },
   "compileMode": "jit",
   "params": {
+    "addin": true,
     "envid": true,
     "svcid": true
   },
