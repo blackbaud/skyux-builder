@@ -187,6 +187,7 @@ describe('AppComponent', () => {
           base: 'app-base'
         },
         params: {
+          get: (key: any) => false,
           has: (key: any) => false,
           hasAllRequiredParams: () => true,
           parse: (p: any) => parseParams = p
@@ -231,11 +232,14 @@ describe('AppComponent', () => {
   it('should not call BBOmnibar.load if config.skyux.omnibar does not exist', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     let spyOmnibarLegacy = spyOn(BBOmnibarLegacy, 'load');
+    let spyOmnibarDestroy = spyOn(BBOmnibar, 'destroy');
 
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
+      fixture.destroy();
       expect(spyOmnibar).not.toHaveBeenCalled();
       expect(spyOmnibarLegacy).not.toHaveBeenCalled();
+      expect(spyOmnibarDestroy).not.toHaveBeenCalled();
     });
   }));
 
@@ -349,6 +353,32 @@ describe('AppComponent', () => {
       });
     })
   );
+
+  it('should call omnibar destroy if it was loaded', () => {
+    let spyOmnibarLoad = spyOn(BBOmnibar, 'load');
+    let spyOmnibarDestroy = spyOn(BBOmnibar, 'destroy');
+
+    skyAppConfig.skyux.omnibar = true;
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      fixture.destroy();
+      expect(spyOmnibarLoad).toHaveBeenCalled();
+      expect(spyOmnibarDestroy).toHaveBeenCalled();
+    });
+  });
+
+  it('should not load the omnibar if the addin param is 1', () => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.runtime.params.get = (key: string) => key === 'addin' ? '1' : undefined;
+    skyAppConfig.skyux.omnibar = true;
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar).not.toHaveBeenCalled();
+    });
+  });
 
   it('should set the onSearch property if a search provider is provided', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');

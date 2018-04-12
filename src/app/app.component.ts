@@ -34,6 +34,8 @@ import {
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
 require('style-loader!./app.component.scss');
 
+let omnibarLoaded: boolean;
+
 function fixUpUrl(baseUrl: string, route: string, config: SkyAppConfig) {
   return config.runtime.params.getUrl(baseUrl + route);
 }
@@ -123,7 +125,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy() {
-    BBOmnibar.destroy();
+    if (omnibarLoaded) {
+      BBOmnibar.destroy();
+      omnibarLoaded = false;
+    }
   }
 
   // Only pass params that omnibar config cares about
@@ -255,6 +260,7 @@ export class AppComponent implements OnInit, OnDestroy {
         } else {
           BBOmnibarLegacy.load(omnibarConfig);
         }
+        omnibarLoaded = true;
       });
     };
 
@@ -263,7 +269,7 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (omnibarConfig) {
+    if (omnibarConfig && this.config.runtime.params.get('addin') !== '1') {
       if (this.omnibarProvider) {
         this.omnibarProvider.ready().then(loadOmnibar);
       } else {
