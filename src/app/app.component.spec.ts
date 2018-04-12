@@ -47,6 +47,7 @@ describe('AppComponent', () => {
   let scrollCalled: boolean = false;
   let skyAppConfig: any;
   let viewport: SkyAppViewportService;
+  let spyOmnibarDestroy: any;
 
   class MockHelpInitService {
     public load() { }
@@ -202,6 +203,11 @@ describe('AppComponent', () => {
     scrollCalled = false;
     viewport = new SkyAppViewportService();
     navigateByUrlParams = undefined;
+    spyOmnibarDestroy = spyOn(BBOmnibar, 'destroy');
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create component', async(() => {
@@ -232,7 +238,6 @@ describe('AppComponent', () => {
   it('should not call BBOmnibar.load if config.skyux.omnibar does not exist', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
     let spyOmnibarLegacy = spyOn(BBOmnibarLegacy, 'load');
-    let spyOmnibarDestroy = spyOn(BBOmnibar, 'destroy');
 
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
@@ -356,9 +361,10 @@ describe('AppComponent', () => {
 
   it('should call omnibar destroy if it was loaded', () => {
     let spyOmnibarLoad = spyOn(BBOmnibar, 'load');
-    let spyOmnibarDestroy = spyOn(BBOmnibar, 'destroy');
 
-    skyAppConfig.skyux.omnibar = true;
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
 
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
