@@ -64,6 +64,14 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.getUrl('https://mysite.com')).toEqual('https://mysite.com');
   });
 
+  it('should not add double-encoded params to a url', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?a1=%2F',
+      allowed
+    );
+    expect(params.getUrl('https://mysite.com')).toEqual('https://mysite.com?a1=%2F');
+  });
+
   it('should allow querystring param keys to be case insensitive', () => {
     const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
       '?A1=b&A3=c',
@@ -124,6 +132,27 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.get('a2')).toBe('c');
   });
 
+  it('should allow values to be decoded when retrieved from the query string', () => {
+    const params = new SkyAppRuntimeConfigParams(
+      '?a=%2F',
+      {
+        a: true,
+        b: {
+          value: '%2F'
+        }
+      }
+    );
+
+    // Preserves previous behavior of not encoding values from the query string.
+    expect(params.get('a')).toBe('%2F');
+    expect(params.get('b')).toBe('%2F');
+
+    // The second parameter tells the get() method to decode the parameter if it's from the
+    // query string.
+    expect(params.get('a', true)).toBe('/');
+    expect(params.get('b', true)).toBe('%2F');
+  });
+
   it('should allow queryparam values to be required', () => {
     const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
       '',
@@ -177,6 +206,34 @@ describe('SkyAppRuntimeConfigParams', () => {
     );
 
     expect(params.hasAllRequiredParams()).toBe(false);
+  });
+
+  it('should handle a url with a querystring and fragment (#)', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?A1=b&A3=c#hash-better=have-my-money',
+      allowed
+    );
+    expect(params.get('a1')).toEqual('b');
+    expect(params.get('a3')).toEqual('c');
+    expect(params.getUrl('example.com')).not.toContain('hash-better=have-my-money');
+  });
+
+  it('should ignore params in a fragment', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      'https://example.com#A1=b',
+      allowed
+    );
+
+    expect(params.get('a1')).not.toEqual('b');
+  });
+
+  it('should handle a url without a querystring', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      'https://example.com',
+      allowed
+    );
+
+    expect(params.getAllKeys()).toEqual([]);
   });
 
 });

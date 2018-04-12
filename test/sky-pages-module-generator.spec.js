@@ -21,7 +21,7 @@ describe('SKY UX Builder module generator', () => {
   it('should return a source string', () => {
     const source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
     expect(source).toBeDefined();
   });
@@ -31,7 +31,7 @@ describe('SKY UX Builder module generator', () => {
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     expect(source).toContain(expectedImport);
@@ -42,7 +42,7 @@ describe('SKY UX Builder module generator', () => {
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     let moduleExports = getModuleList('exports', source);
@@ -55,7 +55,7 @@ describe('SKY UX Builder module generator', () => {
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     let moduleImports = getModuleList('imports', source);
@@ -66,7 +66,7 @@ describe('SKY UX Builder module generator', () => {
   it('should add the NotFoundComponent if it does not exist', () => {
     const source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
     expect(source).toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
   });
@@ -81,7 +81,7 @@ describe('SKY UX Builder module generator', () => {
           }
         ]
       }),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
     expect(source).toContain('NotFoundComponent');
     expect(source).not.toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
@@ -92,7 +92,7 @@ describe('SKY UX Builder module generator', () => {
       runtime: runtimeUtils.getDefaultRuntime({
         skyPagesOutAlias: '..'
       }),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     expect(source).toContain(
@@ -107,11 +107,34 @@ describe('SKY UX Builder module generator', () => {
       runtime: runtimeUtils.getDefaultRuntime({
         skyuxPathAlias: 'custom'
       }),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     expect(source).toContain(
-      `import { SkyModule } from 'custom/core';`
+      `import {
+  SkyModule
+} from 'custom/core';`
+    );
+  });
+
+  it('should import individual SKY UX modules from config', () => {
+    const source = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: runtimeUtils.getDefaultSkyux({
+        skyuxModules: [
+          'SkyAlertModule',
+          'SkyErrorModule',
+          'SkyModalModule'
+        ]
+      })
+    });
+
+    expect(source).toContain(
+      `import {
+  SkyAlertModule,
+  SkyErrorModule,
+  SkyModalModule
+} from '@blackbaud/skyux/dist/core';`
     );
   });
 
@@ -128,7 +151,7 @@ describe('SKY UX Builder module generator', () => {
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     expect(source).not.toContain(expectedImport);
@@ -136,9 +159,9 @@ describe('SKY UX Builder module generator', () => {
 
     source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {
+      skyux: runtimeUtils.getDefaultSkyux({
         auth: true
-      }
+      })
     });
 
     expect(source).toContain(expectedImport);
@@ -151,7 +174,7 @@ describe('SKY UX Builder module generator', () => {
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     let moduleImports = getModuleList('imports', source);
@@ -168,9 +191,9 @@ describe('SKY UX Builder module generator', () => {
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {
+      skyux: runtimeUtils.getDefaultSkyux({
         help: {}
-      }
+      })
     });
 
     let moduleImports = getModuleList('imports', source);
@@ -186,7 +209,7 @@ describe('SKY UX Builder module generator', () => {
     const expectedImport = `routing`;
     let sourceWithRouting = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     let moduleImports = getModuleList('imports', sourceWithRouting);
@@ -198,7 +221,7 @@ describe('SKY UX Builder module generator', () => {
         runtime: runtimeUtils.getDefaultRuntime({
           includeRouteModule: false
         }),
-        skyux: {}
+        skyux: runtimeUtils.getDefaultSkyux()
       });
 
     moduleImports = getModuleList('imports', sourceWithoutRouting);
@@ -211,7 +234,7 @@ describe('SKY UX Builder module generator', () => {
       runtime: runtimeUtils.getDefaultRuntime({
         command: 'build'
       }),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     expect(source).toContain(
@@ -224,7 +247,7 @@ enableProdMode();`);
       runtime: runtimeUtils.getDefaultRuntime({
         command: 'e2e'
       }),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     expect(source).toContain(
@@ -243,7 +266,7 @@ BBAuth.mock = true;`);
           ]
         }]
       }),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     };
 
     const routeGeneratorGetRoutes = routeGenerator.getRoutes;
@@ -268,7 +291,7 @@ BBAuth.mock = true;`);
           ]
         }]
       }),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     };
 
     spyOn(skyPagesConfigUtil, 'spaPath').and.callFake((path1, path2) => {
@@ -308,7 +331,7 @@ BBAuth.mock = true;`);
   it('should use Hash routing if specified in the skyuxconfig', () => {
     const source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: { useHashRouting: true }
+      skyux: runtimeUtils.getDefaultSkyux({ useHashRouting: true })
     });
 
     expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: true });');
@@ -317,7 +340,7 @@ BBAuth.mock = true;`);
   it('should not use Hash routing if option is not specified in the skyuxconfig', () => {
     const source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: false });');
@@ -330,9 +353,7 @@ BBAuth.mock = true;`);
 
     let source = generator.getSource({
       runtime: runtime,
-      skyux: {
-
-      }
+      skyux: runtimeUtils.getDefaultSkyux()
     });
 
     expect(source).toContain(`provide: SkyPactService`);

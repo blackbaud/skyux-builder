@@ -218,6 +218,10 @@
     "useHashRouting": {
       "description": "Allows your SPA to use Angular's hash location strategy.",
       "type": "boolean"
+    },
+    "skyuxModules": {
+      "description": "The individual SKY UX modules that should be imported into the application.  Use this property for performance optimization when your application only uses a small subset of SKY UX components.",
+      "type": "array"
     }
   }
 }
