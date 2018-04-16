@@ -3,8 +3,8 @@
 
 const { start } = require('./utils/start-e2e');
 
-function e2e(command, argv, skyPagesConfig, webpack) {
+function visual(command, argv, skyPagesConfig, webpack) {
   start(command, argv, skyPagesConfig, webpack);
 }
 
-module.exports = e2e;
+module.exports = visual;
