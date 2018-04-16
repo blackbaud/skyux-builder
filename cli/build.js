@@ -8,6 +8,7 @@ const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const generator = require('../lib/sky-pages-module-generator');
 const assetsProcessor = require('../lib/assets-processor');
 const pluginFileProcessor = require('../lib/plugin-file-processor');
+const localeAssetsProcessor = require('../lib/locale-assets-processor');
 
 const server = require('./utils/server');
 const browser = require('./utils/browser');
@@ -177,6 +178,7 @@ function build(argv, skyPagesConfig, webpack) {
   if (lintResult.exitCode > 0) {
     process.exit(lintResult.exitCode);
   } else {
+    localeAssetsProcessor.prepareLocaleFiles();
     const name = argv.serve ? buildServe : buildCompiler;
     return name(argv, skyPagesConfig, webpack, isAot);
   }
