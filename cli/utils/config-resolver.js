@@ -15,10 +15,6 @@ function getPath(command, platform, root, dir) {
       filename = `config/protractor/protractor.conf.js`;
       break;
 
-    case 'visual':
-      filename = `config/protractor/visual.protractor.conf.js`;
-      break;
-
     // Defaulting to karma so dev-runtime and src-app can be passed in via our test suite.
     default:
       filename = `config/karma/${command}.karma.conf.js`;

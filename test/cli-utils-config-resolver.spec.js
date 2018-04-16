@@ -95,8 +95,9 @@ describe('utils/config-resolver.js', () => {
   });
 
   it('should handle the known protractor commands', () => {
-    expect(testCommand('e2e', {})).toBe(`config/protractor/protractor.conf.js`);
-    expect(testCommand('visual', {})).toBe(`config/protractor/visual.protractor.conf.js`);
+    ['e2e'].forEach(command => {
+      expect(testCommand(command, {})).toBe(`config/protractor/protractor.conf.js`);
+    });
   });
 
   it('should append the platform argument', () => {
