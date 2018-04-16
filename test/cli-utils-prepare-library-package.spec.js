@@ -2,18 +2,15 @@
 'use strict';
 
 const fs = require('fs-extra');
-const glob = require('glob');
 const mock = require('mock-require');
-const sass = require('node-sass');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('cli utils prepare-library-package', () => {
   let util;
 
   beforeEach(() => {
     mock('../config/sky-pages/sky-pages.config', {
-      spaPath: (...segments) => segments.join('/'),
-      spaPathTempSrc: () => '',
-      spaPathTemp: () => ''
+      spaPath: (...args) => args.join('/')
     });
     util = mock.reRequire('../cli/utils/prepare-library-package');
   });
@@ -28,22 +25,36 @@ describe('cli utils prepare-library-package', () => {
 
   it('should update the module property of package.json and write it to dist', () => {
     spyOn(fs, 'copySync').and.returnValue();
-    spyOn(fs, 'readJSONSync').and.returnValue({});
-    spyOn(fs, 'writeJSONSync').and.callFake((filePath, contents) => {
+    spyOn(fs, 'readJsonSync').and.returnValue({});
+    spyOn(fs, 'writeJsonSync').and.callFake((filePath, contents) => {
       expect(filePath.match('dist')).not.toEqual(null);
       expect(contents.module).toEqual('index.js');
     });
+    spyOn(fs, 'existsSync').and.returnValue(true);
     util();
-    expect(fs.readJSONSync).toHaveBeenCalled();
-    expect(fs.writeJSONSync).toHaveBeenCalled();
+    expect(fs.readJsonSync).toHaveBeenCalled();
+    expect(fs.writeJsonSync).toHaveBeenCalled();
   });
 
-  it('should copy contributing and changelog to dist', () => {
-    spyOn(fs, 'readJSONSync').and.returnValue({});
-    spyOn(fs, 'writeJSONSync').and.returnValue();
+  it('should copy readme, changelog, and assets to dist', () => {
+    spyOn(fs, 'readJsonSync').and.returnValue({});
+    spyOn(fs, 'writeJsonSync').and.returnValue();
     spyOn(fs, 'copySync').and.returnValue();
+    spyOn(fs, 'existsSync').and.returnValue(true);
     util();
     expect(fs.copySync).toHaveBeenCalledWith('README.md', 'dist/README.md');
     expect(fs.copySync).toHaveBeenCalledWith('CHANGELOG.md', 'dist/CHANGELOG.md');
+    expect(fs.copySync).toHaveBeenCalledWith('src/assets', 'dist/src/assets');
+  });
+
+  it('should warn consumers if they do not include a readme, changelog, or assets', () => {
+    const loggerSpy = spyOn(logger, 'warn');
+
+    spyOn(fs, 'readJsonSync').and.returnValue({});
+    spyOn(fs, 'writeJsonSync').and.returnValue();
+    spyOn(fs, 'copySync').and.callFake(() => {});
+    spyOn(fs, 'existsSync').and.returnValue(false);
+    util();
+    expect(loggerSpy).toHaveBeenCalledWith('File(s) not found: README.md');
   });
 });

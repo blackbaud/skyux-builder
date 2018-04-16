@@ -6,6 +6,26 @@ const portfinder = require('portfinder');
 const logger = require('@blackbaud/skyux-logger');
 
 describe('cli serve', () => {
+  let mockLocaleProcessor;
+  let MockWebpackDevServer;
+
+  beforeEach(() => {
+    mockLocaleProcessor = {
+      prepareLocaleFiles() {}
+    };
+
+    MockWebpackDevServer = function () {
+      return {
+        listen: () => {}
+      };
+    };
+
+    mock('../lib/locale-assets-processor', mockLocaleProcessor);
+  });
+
+  afterEach(() => {
+    mock.stopAll();
+  });
 
   it('should call getWebpackConfig', () => {
     let called = false;
@@ -19,15 +39,8 @@ describe('cli serve', () => {
       }
     });
 
-    function webpackDevServer() {
-      return {
-        listen: () => {}
-      };
-    }
-
-    require('../cli/serve')({}, {}, () => {}, webpackDevServer);
+    mock.reRequire('../cli/serve')({}, {}, () => {}, MockWebpackDevServer);
     expect(called).toEqual(true);
-    mock.stop(f);
   });
 
   it('should prepend devServer url to entries', (done) => {
@@ -46,19 +59,12 @@ describe('cli serve', () => {
       })
     });
 
-    function webpackDevServer() {
-      return {
-        listen: () => {}
-      };
-    }
-
-    require('../cli/serve')({}, {}, (config) => {
+    mock.reRequire('../cli/serve')({}, {}, (config) => {
       expect(config.entry.test.length).toEqual(2);
       expect(config.entry.test[0]).toContain(port);
       expect(config.entry.test[1]).toContain(url);
-      mock.stop(f);
       done();
-    }, webpackDevServer);
+    }, MockWebpackDevServer);
   });
 
   it('should prepend hrm url to entries if devServer.hot is set', (done) => {
@@ -82,19 +88,12 @@ describe('cli serve', () => {
       })
     });
 
-    function webpackDevServer() {
-      return {
-        listen: () => {}
-      };
-    }
-
-    require('../cli/serve')({}, {}, (config) => {
+    mock.reRequire('../cli/serve')({}, {}, (config) => {
       expect(config.entry.test[0]).toEqual('webpack/hot/only-dev-server');
       expect(config.output.publicPath).toEqual(`https://localhost:${port}${publicPath}`);
       expect(logger.info).toHaveBeenCalledWith('Using hot module replacement.');
-      mock.stop(f);
       done();
-    }, webpackDevServer);
+    }, MockWebpackDevServer);
   });
 
   it('should handle a webpackDevServer error', (done) => {
@@ -113,13 +112,12 @@ describe('cli serve', () => {
         listen: (port, host, cb) => {
           cb(err);
           expect(logger.error).toHaveBeenCalledWith(err);
-          mock.stop(f);
           done();
         }
       };
     }
 
-    require('../cli/serve')({}, {}, () => {}, webpackDevServer);
+    mock.reRequire('../cli/serve')({}, {}, () => {}, webpackDevServer);
   });
 
   it('should handle a webpackDevServer without error', (done) => {
@@ -137,13 +135,12 @@ describe('cli serve', () => {
         listen: (port, host, cb) => {
           cb();
           expect(logger.error).not.toHaveBeenCalled();
-          mock.stop(f);
           done();
         }
       };
     }
 
-    require('../cli/serve')({}, {}, () => {}, webpackDevServer);
+    mock.reRequire('../cli/serve')({}, {}, () => {}, webpackDevServer);
   });
 
   it('should read port from skyuxconfig.json if it exists first', (done) => {
@@ -167,13 +164,12 @@ describe('cli serve', () => {
       return {
         listen: (p) => {
           expect(p).toEqual(port);
-          mock.stop(f);
           done();
         }
       };
     }
 
-    require('../cli/serve')({}, skyPagesConfig, () => {}, webpackDevServer);
+    mock.reRequire('../cli/serve')({}, skyPagesConfig, () => {}, webpackDevServer);
   });
 
   it('should read port from config.devServer.port if it exists second', (done) => {
@@ -192,13 +188,12 @@ describe('cli serve', () => {
       return {
         listen: (p) => {
           expect(p).toEqual(port);
-          mock.stop(f);
           done();
         }
       };
     }
 
-    require('../cli/serve')({}, {}, () => {}, webpackDevServer);
+    mock.reRequire('../cli/serve')({}, {}, () => {}, webpackDevServer);
   });
 
   it('should find a dynamic port if not in skyuxconfig.json or devServer.port', (done) => {
@@ -221,13 +216,12 @@ describe('cli serve', () => {
       return {
         listen: (p) => {
           expect(p).toEqual(port);
-          mock.stop(f);
           done();
         }
       };
     }
 
-    require('../cli/serve')({}, {}, () => {}, webpackDevServer);
+    mock.reRequire('../cli/serve')({}, {}, () => {}, webpackDevServer);
   });
 
   it('should throw an error if unable to find a port', (done) => {
@@ -240,10 +234,8 @@ describe('cli serve', () => {
       })
     });
 
-
     spyOn(logger, 'error').and.callFake((e) => {
       expect(e).toEqual(err);
-      mock.stop(f);
       done();
     });
 
@@ -253,13 +245,29 @@ describe('cli serve', () => {
       });
     });
 
+    mock.reRequire('../cli/serve')({}, {}, () => {}, MockWebpackDevServer);
+  });
+
+  it('should call prepareLocaleFiles()', (done) => {
+    const spy = spyOn(mockLocaleProcessor, 'prepareLocaleFiles').and.callThrough();
+
+    mock('../config/webpack/serve.webpack.config', {
+      getWebpackConfig: () => {
+        return {
+          devServer: {}
+        };
+      }
+    });
+
     function webpackDevServer() {
       return {
-        listen: () => {}
+        listen() {
+          expect(spy).toHaveBeenCalledWith();
+          done();
+        }
       };
     }
 
-    require('../cli/serve')({}, {}, () => {}, webpackDevServer);
+    mock.reRequire('../cli/serve')({}, {}, () => {}, webpackDevServer);
   });
-
 });
