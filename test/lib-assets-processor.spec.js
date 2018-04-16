@@ -2,10 +2,11 @@
 'use strict';
 
 const mock = require('mock-require');
+const path = require('path');
 
 describe('SKY assets configuration module', () => {
-  let processor;
   let skyPagesConfig;
+  let mockLocaleProcessor;
 
   beforeEach(() => {
     skyPagesConfig = {
@@ -16,13 +17,27 @@ describe('SKY assets configuration module', () => {
       }
     };
 
+    mockLocaleProcessor = {
+      isLocaleFile() {
+        return false;
+      },
+      resolvePhysicalLocaleFilePath(filePath) {
+        return filePath;
+      },
+      resolveRelativeLocaleFileDestination(filePath) {
+        return filePath;
+      }
+    };
+
     mock('../utils/assets-utils', {
-      getFilePathWithHash: function () {
-        return 'a/b/c.abcdefg.jpg';
+      getFilePathWithHash: function (filePath) {
+        const dirname = path.dirname(filePath);
+        const basename = path.basename(filePath);
+        return `${dirname}/[HASH]${basename}`;
       }
     });
 
-    processor = mock.reRequire('../lib/assets-processor');
+    mock('../lib/locale-assets-processor', mockLocaleProcessor);
   });
 
   afterEach(() => {
@@ -30,6 +45,7 @@ describe('SKY assets configuration module', () => {
   });
 
   it('should set the base URL for the SKY assets loader rule', () => {
+    const processor = mock.reRequire('../lib/assets-processor');
     const config = {
       module: {
         rules: [
@@ -59,6 +75,7 @@ describe('SKY assets configuration module', () => {
   });
 
   it('should build an assets URL based on the app\'s root directory', () => {
+    const processor = mock.reRequire('../lib/assets-processor');
     const url = processor.getAssetsUrl(
       {
         runtime: {
@@ -74,15 +91,17 @@ describe('SKY assets configuration module', () => {
   });
 
   it('should process assets referenced in a file', () => {
+    const processor = mock.reRequire('../lib/assets-processor');
     const content = processor.processAssets(
       '~/assets/a/b/c.jpg',
       processor.getAssetsUrl(skyPagesConfig, 'https://example.com')
     );
 
-    expect(content).toBe('https://example.com/base/a/b/c.abcdefg.jpg');
+    expect(content).toBe('https://example.com/base/assets/a/b/[HASH]c.jpg');
   });
 
   it('should handle trailing content after an asset match', () => {
+    const processor = mock.reRequire('../lib/assets-processor');
     const content = processor.processAssets(
 `<img src="~/assets/images/image.svg" (click)="someMethod()" [class.some-style="condition"]>
 <img src="~/assets/measure.png" />, such as to compare their performance.`,
@@ -91,10 +110,26 @@ describe('SKY assets configuration module', () => {
 
     expect(content).toBe(
       // jscs:disable maximumLineLength
-`<img src="https://example.com/base/a/b/c.abcdefg.jpg" (click)="someMethod()" [class.some-style="condition"]>
-<img src="https://example.com/base/a/b/c.abcdefg.jpg" />, such as to compare their performance.`
+`<img src="https://example.com/base/assets/images/[HASH]image.svg" (click)="someMethod()" [class.some-style="condition"]>
+<img src="https://example.com/base/assets/[HASH]measure.png" />, such as to compare their performance.`
       // jscs:enable
     );
+  });
+
+  it('should remap locale files to their actual location on disk', () => {
+    spyOn(mockLocaleProcessor, 'isLocaleFile').and.returnValue(true);
+    const physicalLocationSpy = spyOn(mockLocaleProcessor, 'resolvePhysicalLocaleFilePath').and.callThrough();
+    const relativeLocationSpy = spyOn(mockLocaleProcessor, 'resolveRelativeLocaleFileDestination').and.callThrough();
+
+    const processor = mock.reRequire('../lib/assets-processor');
+
+    processor.processAssets(
+      '~/assets/resources_en_US.json',
+      processor.getAssetsUrl(skyPagesConfig, 'https://example.com')
+    );
+
+    expect(physicalLocationSpy).toHaveBeenCalledWith('~/assets/resources_en_US.json');
+    expect(relativeLocationSpy).toHaveBeenCalledWith('~/assets/[HASH]resources_en_US.json');
   });
 
 });

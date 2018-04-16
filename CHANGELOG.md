@@ -1,3 +1,13 @@
+# 1.13.0 (2018-04-13)
+
+- Added support for the `addin` parameter.  [#396](https://github.com/blackbaud/skyux-builder/pull/396)
+- Added support for JSON files when using `require`. [#395](https://github.com/blackbaud/skyux-builder/pull/395)
+- Bugfix to properly encode and decode parameters. [#394](https://github.com/blackbaud/skyux-builder/pull/394)
+- Bugfix to prevent new instances of the omnibar when HMR is enabled. [#393](https://github.com/blackbaud/skyux-builder/pull/393) Thanks [@Blackbaud-MitchellThomas](https://github.com/Blackbaud-MitchellThomas)!
+- Bugfix to make `skyAppLink` respect the `queryParams` attribute. [#390](https://github.com/blackbaud/skyux-builder/pull/390) Thanks [@Blackbaud-MitchellThomas](https://github.com/Blackbaud-MitchellThomas)!
+- Bugfix in `toHaveText` test method. [#392](https://github.com/blackbaud/skyux-builder/pull/392)
+- Exposed `SkyAppRuntimeModule` through `@blackbaud/skyux-builder/runtime`. [#391](https://github.com/blackbaud/skyux-builder/pull/391)
+
 # 1.12.0 (2018-03-30)
 
 - Made `skyux test` more efficient by checking for spec files before initializing. [#381](https://github.com/blackbaud/skyux-builder/pull/381)
