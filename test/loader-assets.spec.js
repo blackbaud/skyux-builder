@@ -6,6 +6,7 @@ const mock = require('mock-require');
 describe('SKY UX assets Webpack loader', () => {
 
   let loader;
+  let mockLocaleProcessor;
 
   beforeEach(() => {
     mock('fs-extra', {
@@ -27,6 +28,11 @@ describe('SKY UX assets Webpack loader', () => {
         };
       }
     });
+
+    mockLocaleProcessor = {
+      isLocaleFile: () => false
+    };
+    mock('../lib/locale-assets-processor', mockLocaleProcessor);
 
     mock.reRequire('../lib/assets-processor');
     loader = mock.reRequire('../loader/sky-assets/index');

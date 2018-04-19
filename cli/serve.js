@@ -4,6 +4,7 @@
 const portfinder = require('portfinder');
 const logger = require('@blackbaud/skyux-logger');
 const assetsProcessor = require('../lib/assets-processor');
+const localeAssetsProcessor = require('../lib/locale-assets-processor');
 
 /**
  * Let users configure port via skyuxconfig.json first.
@@ -49,6 +50,7 @@ function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
     const localUrl = `https://localhost:${port}`;
 
     assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, localUrl);
+    localeAssetsProcessor.prepareLocaleFiles();
 
     // Save our found or defined port
     config.devServer.port = port;

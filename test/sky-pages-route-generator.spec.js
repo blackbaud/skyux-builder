@@ -1,15 +1,16 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-describe('SKY UX Builder route generator', () => {
+const fs = require('fs');
+const glob = require('glob');
+const path = require('path');
+const mock = require('mock-require');
 
-  const fs = require('fs');
-  const glob = require('glob');
-  const path = require('path');
+describe('SKY UX Builder route generator', () => {
   let generator;
 
   beforeEach(() => {
-    generator = require('../lib/sky-pages-route-generator');
+    generator = mock.reRequire('../lib/sky-pages-route-generator');
   });
 
   it('should auto generate a component name', () => {
@@ -339,5 +340,19 @@ describe('SKY UX Builder route generator', () => {
 }`);
 
     expect(redirectIndex).toBeLessThan(rootIndex);
+  });
+
+  it('should add the NotFoundComponent if route does not exist', () => {
+    spyOn(glob, 'sync').and.returnValue(['index.html']);
+    spyOn(path, 'join').and.returnValue('');
+    spyOn(fs, 'readFileSync').and.returnValue('');
+    const routes = generator.getRoutes({
+      runtime: {
+        srcPath: '',
+        handle404: true
+      }
+    });
+    expect(routes.definitions)
+      .toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
   });
 });
