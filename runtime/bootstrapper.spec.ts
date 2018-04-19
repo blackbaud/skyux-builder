@@ -12,43 +12,6 @@ describe('bootstrapper', () => {
   let historyReplaceStateSpy: jasmine.Spy;
   let getUrlSpy: jasmine.Spy;
 
-  beforeEach(() => {
-    getTokenSpy = spyOn(BBAuth, 'getToken');
-    ensureContext = spyOn(BBContextProvider,  'ensureContext');
-    historyReplaceStateSpy = spyOn(history, 'replaceState').and.callThrough();
-    getUrlSpy = spyOn(SkyAppBootstrapper as any, 'getUrl').and.callThrough();
-  });
-
-  afterEach(() => {
-    getTokenSpy.and.stub();
-    ensureContext.and.stub();
-    historyReplaceStateSpy.and.callThrough();
-    getUrlSpy.and.callThrough();
-  });
-
-  it('should immediately resolve if SkyAppConfig.config.skyux.auth is not set', (done) => {
-    SkyAppBootstrapper.config = {
-      params: []
-    };
-
-    SkyAppBootstrapper.processBootstrapConfig().then(done);
-  });
-
-  it('should call if BBAuth.getToken if SkyAppConfig.config.skyux.auth is set', (done) => {
-    getTokenSpy.and.returnValue(Promise.resolve());
-    ensureContext.and.returnValue(Promise.resolve({}));
-
-    SkyAppBootstrapper.config = {
-      auth: true,
-      params: []
-    };
-
-    SkyAppBootstrapper.processBootstrapConfig().then(() => {
-      expect(getTokenSpy).toHaveBeenCalled();
-      done();
-    });
-  });
-
   function validateContextProvided(testEnvId: string, testUrl: string, expectedUrl: string) {
     let contextPromiseResolve: any;
 
@@ -85,6 +48,43 @@ describe('bootstrapper', () => {
       });
     });
   }
+
+  beforeEach(() => {
+    getTokenSpy = spyOn(BBAuth, 'getToken');
+    ensureContext = spyOn(BBContextProvider,  'ensureContext');
+    historyReplaceStateSpy = spyOn(history, 'replaceState').and.callThrough();
+    getUrlSpy = spyOn(SkyAppBootstrapper as any, 'getUrl').and.callThrough();
+  });
+
+  afterEach(() => {
+    getTokenSpy.and.stub();
+    ensureContext.and.stub();
+    historyReplaceStateSpy.and.callThrough();
+    getUrlSpy.and.callThrough();
+  });
+
+  it('should immediately resolve if SkyAppConfig.config.skyux.auth is not set', (done) => {
+    SkyAppBootstrapper.config = {
+      params: []
+    };
+
+    SkyAppBootstrapper.processBootstrapConfig().then(done);
+  });
+
+  it('should call if BBAuth.getToken if SkyAppConfig.config.skyux.auth is set', (done) => {
+    getTokenSpy.and.returnValue(Promise.resolve());
+    ensureContext.and.returnValue(Promise.resolve({}));
+
+    SkyAppBootstrapper.config = {
+      auth: true,
+      params: []
+    };
+
+    SkyAppBootstrapper.processBootstrapConfig().then(() => {
+      expect(getTokenSpy).toHaveBeenCalled();
+      done();
+    });
+  });
 
   it('should wait for context from BBContextProvider to provide the required context', (done) => {
     validateContextProvided(
