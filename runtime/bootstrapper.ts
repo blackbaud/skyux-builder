@@ -5,7 +5,7 @@ import {
 
 import { SkyuxConfig } from './config';
 
-import { SkyAppRuntimeConfigParams } from '../runtime';
+import { SkyAppRuntimeConfigParams } from './params';
 
 function addQSParam(url: string, name: string, value: string): string {
   const urlAndFragment = url.split('#');
