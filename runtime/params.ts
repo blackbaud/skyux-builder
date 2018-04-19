@@ -109,6 +109,14 @@ export class SkyAppRuntimeConfigParams {
   }
 
   /**
+   * Returns a flag indicating whether a parameter is required.
+   * @param key
+   */
+  public isRequired(key: string): boolean {
+    return this.requiredParams.indexOf(key) >= 0;
+  }
+
+  /**
    * Returns the value of the requested param.
    * @name get
    * @param {string} key The parameter's key.
