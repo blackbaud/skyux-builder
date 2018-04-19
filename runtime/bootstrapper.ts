@@ -1,6 +1,5 @@
 import {
   BBAuth,
-  BBContextArgs,
   BBContextProvider
 } from '@blackbaud/auth-client';
 
@@ -9,17 +8,12 @@ import { SkyuxConfig } from './config';
 import { SkyAppRuntimeConfigParams } from '../runtime';
 
 function addQSParam(url: string, name: string, value: string): string {
-  const parts = url.split('#');
+  const urlAndFragment = url.split('#');
 
-  if (parts[0].indexOf('?')) {
-    parts[0] += '&';
-  } else {
-    parts[0] += '?';
-  }
+  urlAndFragment[0] += urlAndFragment[0].indexOf('?') >= 0 ? '&' : '?';
+  urlAndFragment[0] += `${name}=${encodeURIComponent(value)}`;
 
-  parts[0] += `${name}=${encodeURIComponent(value)}`;
-
-  return parts.join('#');
+  return urlAndFragment.join('#');
 }
 
 export class SkyAppBootstrapper {
@@ -30,37 +24,41 @@ export class SkyAppBootstrapper {
     if (SkyAppBootstrapper.config && SkyAppBootstrapper.config.auth) {
       return BBAuth.getToken()
         .then((token) => {
+          const url = this.getUrl();
+
           const params = new SkyAppRuntimeConfigParams(
-            window.location.toString(),
+            url,
             this.config.params
           );
 
-          const envId = params.get('envid');
+          const currentEnvId = params.get('envid');
 
-          const promise = new Promise((resolve) => {
-            BBContextProvider.ensureContext({
-              envId: params.get('envid'),
-              envIdRequired: params.isRequired('envid'),
-              svcId: params.get('svcid'),
-              svcIdRequired: params.isRequired('svcid'),
-              url: window.location.href
-            }).then((args: BBContextArgs) => {
-              if (args.envId && !envId) {
-                history.replaceState(
-                  {},
-                  '',
-                  addQSParam(window.location.href, 'envid', args.envId)
-                );
-              }
-
-              resolve(token);
-            });
+          return BBContextProvider.ensureContext({
+            envId: currentEnvId,
+            envIdRequired: params.isRequired('envid'),
+            svcId: params.get('svcid'),
+            svcIdRequired: params.isRequired('svcid'),
+            url: url
+          }).then(({ envId }) => {
+            // The context provider was able to provide an environment ID when none
+            // was supplied to the app; add it to the URL's query string and continue
+            // loading the app.  Downstream constructors of SkyAppRuntimeConfigParams
+            // will then pick up the environment ID from the query string.
+            if (!currentEnvId && envId) {
+              history.replaceState(
+                {},
+                '',
+                addQSParam(url, 'envid', envId)
+              );
+            }
           });
-
-          return promise;
         });
     } else {
       return Promise.resolve();
     }
+  }
+
+  private static getUrl(): string {
+    return window.location.href;
   }
 }
