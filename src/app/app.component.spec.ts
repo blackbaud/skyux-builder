@@ -842,17 +842,6 @@ describe('AppComponent', () => {
     });
   }));
 
-  it('should redirect if all required params are not defined', async(() => {
-    skyAppConfig.runtime.params.hasAllRequiredParams = () => false;
-
-    setup(skyAppConfig).then(() => {
-      fixture.detectChanges();
-      fixture.whenStable().then(() => {
-        expect(mockWindow.nativeWindow.location.href).toBe('https://host.nxt.blackbaud.com/errors/notfound');
-      });
-    });
-  }));
-
   it(
     'should load the omnibar when the omnibar provider\'s ready() promise is resolved',
     fakeAsync(() => {
