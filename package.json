@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
