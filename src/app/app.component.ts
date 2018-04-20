@@ -264,11 +264,6 @@ export class AppComponent implements OnInit, OnDestroy {
       });
     };
 
-    if (!this.config.runtime.params.hasAllRequiredParams()) {
-      this.windowRef.nativeWindow.location.href = 'https://host.nxt.blackbaud.com/errors/notfound';
-      return;
-    }
-
     if (omnibarConfig && this.config.runtime.params.get('addin') !== '1') {
       if (this.omnibarProvider) {
         this.omnibarProvider.ready().then(loadOmnibar);
