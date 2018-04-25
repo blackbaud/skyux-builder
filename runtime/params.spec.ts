@@ -132,6 +132,27 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.get('a2')).toBe('c');
   });
 
+  it('should support excluding default values in getAll() if specified', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?a2=a2Value&a3=a3CustomValue',
+      {
+        // Allowed with simple boolean flag
+        a1: {
+          value: 'a1DefaultValue'
+        },
+        a2: true,
+        a3: {
+          value: 'a3DefaultValue'
+        }
+      }
+    );
+
+    expect(params.getAll(true)).toEqual({
+      a2: 'a2Value',
+      a3: 'a3CustomValue'
+    });
+  });
+
   it('should allow values to be decoded when retrieved from the query string', () => {
     const params = new SkyAppRuntimeConfigParams(
       '?a=%2F',
