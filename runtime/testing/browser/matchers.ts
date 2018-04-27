@@ -1,7 +1,7 @@
 let _global: any = (typeof window === 'undefined' ? global : window);
 
 interface SkyMatchResult {
-  pass: boolean;
+  pass: any;
   message: string;
 }
 
@@ -116,6 +116,39 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
         result.message = result.pass ?
           'Expected element not to exist' :
           'Expected element to exist';
+
+        return result;
+      }
+    };
+  },
+
+  toPassA11y: () => {
+    const axe = require('axe-core');
+    const axeConfig = (_global as any).SKY_APP_A11Y_CONFIG;
+
+    return {
+      compare: (el: any): any => {
+        const result: any = {
+          message: '',
+          pass: new Promise(() => {
+            console.log(`Starting accessibility checks...`);
+
+            axe.run(axeConfig, (error: Error, results: any) => {
+              if (error) {
+                throw error;
+              }
+
+              const numViolations = results.violations.length;
+              const subject = (numViolations === 1) ? 'violation' : 'violations';
+
+              console.log(`Accessibility checks finished with ${numViolations} ${subject}.\n`);
+
+              if (numViolations > 0) {
+                _global.fail('Expected element to pass accessibility checks.');
+              }
+            });
+          })
+        };
 
         return result;
       }
