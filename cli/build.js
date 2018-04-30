@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('fs-extra');
+const logger = require('@blackbaud/skyux-logger');
 const merge = require('../utils/merge');
 
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
@@ -152,12 +153,10 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
   assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
 
   return runCompiler(webpack, config, isAot)
-    .then(stats => {
+    .then((stats) => {
       if (isAot) {
         cleanupAot();
       }
-
-      return stats;
     });
 }
 
@@ -167,8 +166,9 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
  * @param {*} skyPagesConfig
  * @param {*} webpack
  * @param {*} isAot
+ * @param {*} cancelProcessExit
  */
-function build(argv, skyPagesConfig, webpack) {
+function build(argv, skyPagesConfig, webpack, imported) {
 
   const lintResult = tsLinter.lintSync();
   const isAot = skyPagesConfig &&
@@ -180,7 +180,19 @@ function build(argv, skyPagesConfig, webpack) {
   } else {
     localeAssetsProcessor.prepareLocaleFiles();
     const name = argv.serve ? buildServe : buildCompiler;
-    return name(argv, skyPagesConfig, webpack, isAot);
+
+    return name(argv, skyPagesConfig, webpack, isAot)
+      .catch(err => {
+
+        // Conditionally calling process.exit so it can bubble up if being called from e2e
+        if (!imported) {
+          logger.error(err);
+          process.exit(1);
+        }
+
+        // Let any other consumers handle the rejection
+        return Promise.reject(err);
+      });
   }
 }
 

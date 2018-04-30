@@ -89,6 +89,7 @@ describe('cli e2e', () => {
     });
 
     spyOn(logger, 'info');
+    spyOn(logger, 'error');
   });
 
   afterEach(() => {
@@ -161,6 +162,8 @@ describe('cli e2e', () => {
 
   it('should catch selenium failures', (done) => {
 
+    let error;
+
     mock(configPath, {
       config: {
         seleniumAddress: 'asdf'
@@ -172,12 +175,13 @@ describe('cli e2e', () => {
     });
 
     spyOn(selenium, 'start').and.callFake((cb) => {
-      let error = new Error('Selenium start failed.');
+      error = new Error('Selenium start failed.');
       cb(error, {});
     });
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(1);
+      expect(logger.error).toHaveBeenCalledWith(error);
       done();
     });
 

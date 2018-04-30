@@ -54,8 +54,9 @@ describe('cli build', () => {
     expect(called).toEqual(true);
   });
 
-  it('should call webpack and handle fatal error', (done) => {
+  it('should handle a fatal error and log it if not imported', (done) => {
     spyOn(logger, 'error');
+
     mock('../config/webpack/build.webpack.config', {
       getWebpackConfig: () => ({})
     });
@@ -64,15 +65,36 @@ describe('cli build', () => {
     mock.reRequire('../cli/build')({}, {}, () => ({
       run: (cb) => {
         cb(customError);
-        expect(logger.error).toHaveBeenCalledWith(customError);
       }
     })).then(() => {}, (err) => {
       expect(err).toEqual(customError);
+      expect(logger.error).toHaveBeenCalledWith(customError);
+      expect(process.exit).toHaveBeenCalledWith(1);
       done();
     });
   });
 
-  it('should call webpack and handle stats errors and warnings', (done) => {
+  it('should handle a fatal error but not log it if imported', (done) => {
+    spyOn(logger, 'error');
+
+    mock('../config/webpack/build.webpack.config', {
+      getWebpackConfig: () => ({})
+    });
+
+    const customError = 'custom-error2';
+    mock.reRequire('../cli/build')({}, {}, () => ({
+      run: (cb) => {
+        cb(customError);
+      }
+    }), true).then(() => {}, (err) => {
+      expect(err).toBe(customError);
+      expect(logger.error).not.toHaveBeenCalledWith(customError);
+      expect(process.exit).not.toHaveBeenCalledWith(1);
+      done();
+    });
+  });
+
+  it('should call webpack and handle stats warnings', (done) => {
     const errs = ['custom-error2'];
     const wrns = ['custom-warning1'];
 
@@ -88,11 +110,10 @@ describe('cli build', () => {
       run: (cb) => {
         cb(null, {
           toJson: () => ({
-            errors: errs,
+            errors: [],
             warnings: wrns
           })
         });
-        expect(logger.error).toHaveBeenCalledWith(errs);
         expect(logger.warn).toHaveBeenCalledWith(wrns);
         expect(logger.info).not.toHaveBeenCalled();
         done();

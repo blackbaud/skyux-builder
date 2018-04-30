@@ -137,7 +137,7 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
     }
 
     logger.info('Running build...');
-    build(argv, skyPagesConfig, webpack)
+    build(argv, skyPagesConfig, webpack, true)
       .then(stats => {
         logger.info('Build complete.');
         resolve(stats.toJson().chunks);
@@ -191,7 +191,7 @@ function e2e(command, argv, skyPagesConfig, webpack) {
       );
     })
     .catch(err => {
-      logger.warn(`ERROR [skyux e2e]: ${err.message}`);
+      logger.error(err);
       killServers(1);
     });
 }
