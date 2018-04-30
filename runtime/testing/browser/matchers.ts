@@ -126,6 +126,29 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
     const axe = require('axe-core');
     const axeConfig = (_global as any).SKY_APP_A11Y_CONFIG;
 
+    function parseMessageFromViolations(violations: any[]) {
+      let message = '';
+      violations.forEach((violation: any) => {
+        const wcagTags = violation.tags
+          .filter((tag: any) => tag.match(/wcag\d{3}|^best*/gi))
+          .join(', ');
+
+        const html = violation.nodes.reduce((accumulator: string, node: any) => {
+          return `${accumulator}\n${node.html}\n`;
+        }, '       Elements:\n');
+
+        const error = [
+          `aXe - [Rule: \'${violation.id}\'] ${violation.help} - WCAG: ${wcagTags}`,
+          `       Get help at: ${violation.helpUrl}\n`,
+          `${html}\n\n`
+        ].join('\n');
+
+        message += `${error}\n`;
+      });
+
+      return message;
+    }
+
     return {
       compare: (el: any): any => {
         const result: any = {
@@ -144,7 +167,9 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
               console.log(`Accessibility checks finished with ${numViolations} ${subject}.\n`);
 
               if (numViolations > 0) {
-                _global.fail('Expected element to pass accessibility checks.');
+                const message = 'Expected element to pass accessibility checks.\n\n' +
+                  parseMessageFromViolations(results.violations);
+                _global.fail(message);
               }
             });
           })
