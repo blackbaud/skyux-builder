@@ -1,0 +1,8 @@
+instrumentation:
+  root: ./.coverage-runtime-testing-temp
+  excludes: ['**/*.spec.js', '**/fixtures/*.js']
+reporting:
+  print: none
+  reports:
+    - json
+  dir: ./coverage/runtime-testing
