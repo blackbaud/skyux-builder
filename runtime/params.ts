@@ -21,7 +21,7 @@ function getUrlSearchParams(url: string): URLSearchParams {
 
 export class SkyAppRuntimeConfigParams {
   private params: { [key: string]: string } = {};
-  private paramsSansDefaults: { [key: string]: string } = {};
+  private defaultParamValues: { [key: string]: string } = {};
   private requiredParams: string[] = [];
   private encodedParams: string[] = [];
 
@@ -61,6 +61,7 @@ export class SkyAppRuntimeConfigParams {
 
             if (paramValue) {
               this.params[paramName] = paramValue;
+              this.defaultParamValues[paramName] = paramValue;
             }
           }
         }
@@ -78,9 +79,7 @@ export class SkyAppRuntimeConfigParams {
       const givenKeyUC = givenKey.toUpperCase();
       allowedKeysUC.forEach((allowedKeyUC, index) => {
         if (givenKeyUC === allowedKeyUC) {
-          const givenValue: string = urlSearchParams.get(givenKey);
-          this.params[allowed[index]] = givenValue;
-          this.paramsSansDefaults[allowed[index]] = givenValue;
+          this.params[allowed[index]] = urlSearchParams.get(givenKey);
           this.encodedParams.push(givenKey);
         }
       });
@@ -147,7 +146,17 @@ export class SkyAppRuntimeConfigParams {
    * @returns {Object}
    */
   public getAll(excludeDefaults?: boolean): Object {
-    return excludeDefaults ? this.paramsSansDefaults : this.params;
+    const filter = (key: string) => excludeDefaults ?
+      this.params[key] !== this.defaultParamValues[key] : true;
+
+    const reduce = (params: { [key: string]: string }, key: string) => {
+      params[key] = this.params[key];
+      return params;
+    };
+
+    return this.getAllKeys()
+      .filter(filter)
+      .reduce(reduce, {});
   }
 
   /**
