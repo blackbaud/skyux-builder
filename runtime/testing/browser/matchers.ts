@@ -153,12 +153,15 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
       compare: (el: any): any => {
         const result: any = {
           message: '',
-          pass: new Promise(() => {
+          pass: new Promise((resolve: Function, reject: Function) => {
             console.log(`Starting accessibility checks...`);
 
             axe.run(axeConfig, (error: Error, results: any) => {
+              // Fail the test if axe encounters an error.
               if (error) {
-                throw error;
+                _global.fail(error.message);
+                reject(error);
+                return;
               }
 
               const numViolations = results.violations.length;
@@ -171,6 +174,8 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
                   parseMessageFromViolations(results.violations);
                 _global.fail(message);
               }
+
+              resolve();
             });
           })
         };
