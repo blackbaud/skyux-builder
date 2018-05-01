@@ -1,9 +1,6 @@
 export abstract class SkyA11yUtil {
   public static parseMessage(violations: any[]): string {
-    const numViolations = violations.length;
-    const subject = (numViolations === 1) ? 'violation' : 'violations';
-
-    let message = `Accessibility checks finished with ${numViolations} ${subject}:\n`;
+    let message = '';
     violations.forEach((violation: any) => {
       const wcagTags = violation.tags
         .filter((tag: any) => tag.match(/wcag\d{3}|^best*/gi))
