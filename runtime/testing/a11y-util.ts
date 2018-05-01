@@ -1,6 +1,7 @@
 export abstract class SkyA11yUtil {
   public static parseMessage(violations: any[]): string {
     let message = '';
+
     violations.forEach((violation: any) => {
       const wcagTags = violation.tags
         .filter((tag: any) => tag.match(/wcag\d{3}|^best*/gi))

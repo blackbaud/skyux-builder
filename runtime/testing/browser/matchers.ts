@@ -1,4 +1,4 @@
-let _global: any = (typeof window === 'undefined' ? global : window);
+let _global: any = window;
 
 import { SkyA11yUtil } from '../a11y-util';
 

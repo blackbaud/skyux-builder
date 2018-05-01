@@ -4,12 +4,11 @@ const logger = require('@blackbaud/skyux-logger');
 const axeBuilder = require('axe-webdriverjs');
 const protractor = require('protractor');
 
-const axeConfig = require('../../../config/axe/axe.config');
-
 export abstract class SkyA11y {
   public static run(): Promise<any> {
     return protractor.browser.getCurrentUrl()
       .then((url: string) => new Promise((resolve) => {
+        const axeConfig = require('../../../config/axe/axe.config');
         const config = axeConfig.getConfig();
 
         axeBuilder(protractor.browser.driver)

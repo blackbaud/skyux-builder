@@ -118,6 +118,7 @@
     "json-loader": "0.5.7",
     "mock-require": "2.0.2",
     "proxyquire": "1.8.0",
+    "rewiremock": "3.7.1",
     "rimraf": "2.6.1"
   }
 }
