@@ -4,9 +4,10 @@
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
-    "coverage": "npm run coverage:builder && npm run coverage:runtime && npm run coverage:src-app",
+    "coverage": "npm run coverage:builder && npm run coverage:runtime && npm run coverage:runtime:testing && npm run coverage:src-app",
     "coverage:builder": "istanbul cover --report=html --dir=./coverage/builder ./node_modules/jasmine/bin/jasmine.js JASMINE_CONFIG_PATH=jasmine.json",
     "coverage:runtime": "node ./utils/cli-test.js dev-runtime",
+    "coverage:runtime:testing": "./node_modules/.bin/tslint --project ./config/typescript/tsconfig.runtime-testing.json && rimraf .coverage-runtime-testing-temp && ./node_modules/.bin/tsc --project ./config/typescript/tsconfig.runtime-testing.json && ./node_modules/.bin/istanbul cover --config ./config/istanbul/.istanbul.runtime-testing.yml ./node_modules/.bin/jasmine JASMINE_CONFIG_PATH=./config/jasmine/jasmine.runtime-testing.json && node ./cli/utils/remap-coverage.js",
     "coverage:src-app": "node ./utils/cli-test.js dev-src-app",
     "e2e": "webdriver-manager update --standalone false --gecko false && protractor ./config/protractor/protractor-dev.conf.js",
     "jscs": "jscs cli config lib loader plugin src utils index.js",
@@ -56,6 +57,7 @@
     "@types/node": "7.0.18",
     "angular2-template-loader": "0.6.2",
     "awesome-typescript-loader": "3.1.3",
+    "axe-core": "2.6.1",
     "axe-webdriverjs": "1.1.3",
     "codelyzer": "3.0.1",
     "core-js": "2.4.1",
@@ -116,6 +118,7 @@
     "json-loader": "0.5.7",
     "mock-require": "2.0.2",
     "proxyquire": "1.8.0",
+    "rewiremock": "3.7.1",
     "rimraf": "2.6.1"
   }
 }

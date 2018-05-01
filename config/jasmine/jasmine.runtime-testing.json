@@ -1,0 +1,8 @@
+{
+  "spec_dir": ".coverage-runtime-testing-temp",
+  "spec_files": [
+    "**/*.spec.js"
+  ],
+  "stopSpecOnExpectationFailure": false,
+  "random": false
+}

@@ -1,7 +1,9 @@
-let _global: any = (typeof window === 'undefined' ? global : window);
+let _global: any = window;
+
+import { SkyA11yUtil } from '../a11y-util';
 
 interface SkyMatchResult {
-  pass: boolean;
+  pass: any;
   message: string;
 }
 
@@ -116,6 +118,43 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
         result.message = result.pass ?
           'Expected element not to exist' :
           'Expected element to exist';
+
+        return result;
+      }
+    };
+  },
+
+  toPassA11y: () => {
+    const axe = require('axe-core');
+    const axeConfig = (_global as any).SKY_APP_A11Y_CONFIG;
+
+    return {
+      compare: (el: any): any => {
+        const result: any = {
+          message: '',
+          pass: new Promise((resolve: Function, reject: Function) => {
+            axe.run(axeConfig, (error: Error, results: any) => {
+              // Fail the test if axe encounters an error.
+              if (error) {
+                _global.fail(error.message);
+                reject(error);
+                return;
+              }
+
+              const numViolations = results.violations.length;
+              const subject = (numViolations === 1) ? 'violation' : 'violations';
+              console.log(`Accessibility checks finished with ${numViolations} ${subject}.\n`);
+
+              if (numViolations > 0) {
+                const message = 'Expected element to pass accessibility checks.\n\n' +
+                  SkyA11yUtil.parseMessage(results.violations);
+                _global.fail(message);
+              }
+
+              resolve();
+            });
+          })
+        };
 
         return result;
       }

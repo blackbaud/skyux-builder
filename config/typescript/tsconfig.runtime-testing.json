@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "../../.coverage-runtime-testing-temp"
+  },
+  "files": [
+    "../../runtime/testing/a11y-util.ts",
+    "../../runtime/testing/browser/index.ts",
+    "../../runtime/testing/e2e/index.ts"
+  ],
+  "include": [
+    "../../test-ts/**/*.spec.ts"
+  ]
+}
