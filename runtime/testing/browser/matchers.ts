@@ -1,5 +1,7 @@
 let _global: any = (typeof window === 'undefined' ? global : window);
 
+import { SkyA11yUtil } from '../a11y-util';
+
 interface SkyMatchResult {
   pass: any;
   message: string;
@@ -126,36 +128,11 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
     const axe = require('axe-core');
     const axeConfig = (_global as any).SKY_APP_A11Y_CONFIG;
 
-    function parseMessageFromViolations(violations: any[]) {
-      let message = '';
-      violations.forEach((violation: any) => {
-        const wcagTags = violation.tags
-          .filter((tag: any) => tag.match(/wcag\d{3}|^best*/gi))
-          .join(', ');
-
-        const html = violation.nodes.reduce((accumulator: string, node: any) => {
-          return `${accumulator}\n${node.html}\n`;
-        }, '       Elements:\n');
-
-        const error = [
-          `aXe - [Rule: \'${violation.id}\'] ${violation.help} - WCAG: ${wcagTags}`,
-          `       Get help at: ${violation.helpUrl}\n`,
-          `${html}\n\n`
-        ].join('\n');
-
-        message += `${error}\n`;
-      });
-
-      return message;
-    }
-
     return {
       compare: (el: any): any => {
         const result: any = {
           message: '',
           pass: new Promise((resolve: Function, reject: Function) => {
-            console.log(`Starting accessibility checks...`);
-
             axe.run(axeConfig, (error: Error, results: any) => {
               // Fail the test if axe encounters an error.
               if (error) {
@@ -166,12 +143,11 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
 
               const numViolations = results.violations.length;
               const subject = (numViolations === 1) ? 'violation' : 'violations';
-
               console.log(`Accessibility checks finished with ${numViolations} ${subject}.\n`);
 
               if (numViolations > 0) {
                 const message = 'Expected element to pass accessibility checks.\n\n' +
-                  parseMessageFromViolations(results.violations);
+                  SkyA11yUtil.parseMessage(results.violations);
                 _global.fail(message);
               }
 
