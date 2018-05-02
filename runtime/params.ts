@@ -146,17 +146,15 @@ export class SkyAppRuntimeConfigParams {
    * @returns {Object}
    */
   public getAll(excludeDefaults?: boolean): Object {
-    const filter = (key: string) => excludeDefaults ?
-      this.params[key] !== this.defaultParamValues[key] : true;
+    const filteredParams: { [key: string]: string} = {};
 
-    const reduce = (params: { [key: string]: string }, key: string) => {
-      params[key] = this.params[key];
-      return params;
-    };
+    this.getAllKeys().forEach(key => {
+      if (!excludeDefaults || this.params[key] !== this.defaultParamValues[key]) {
+        filteredParams[key] = this.params[key];
+      }
+    });
 
-    return this.getAllKeys()
-      .filter(filter)
-      .reduce(reduce, {});
+    return filteredParams;
   }
 
   /**
