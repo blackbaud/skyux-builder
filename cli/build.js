@@ -152,10 +152,12 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
   assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, assetsBaseUrl, assetsRel);
 
   return runCompiler(webpack, config, isAot)
-    .then(() => {
+    .then(stats => {
       if (isAot) {
         cleanupAot();
       }
+
+      return stats;
     });
 }
 
