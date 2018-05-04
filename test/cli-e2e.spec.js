@@ -2,10 +2,9 @@
 'use strict';
 
 const fs = require('fs-extra');
-const glob = require('glob');
 const path = require('path');
+const glob = require('glob');
 const mock = require('mock-require');
-const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const logger = require('@blackbaud/skyux-logger');
 
@@ -45,29 +44,37 @@ describe('cli e2e', () => {
   let PROTRACTOR_CB;
   let PROTRACTOR_CONFIG_FILE;
   let PROTRACTOR_CONFIG_ARGS;
+  let mockBuild;
+  let mockCrossSpawn;
 
   beforeEach(() => {
     EXIT_CODE = 0;
-
-    mock('../cli/build', () => new Promise(resolve => {
+    mockBuild = new Promise(resolve => {
       resolve({
         toJson: () => ({
           chunks: CHUNKS
         })
       });
-    }));
-
-    mock('cross-spawn', {
-      sync: () => ({ })
     });
+
+    mockCrossSpawn = {
+      spawn() {
+        return {};
+      },
+      sync() {
+        return {};
+      }
+    };
+
+    mock('../cli/build', () => {
+      return mockBuild;
+    });
+
+    mock('cross-spawn', mockCrossSpawn);
 
     mock('../cli/utils/server', {
       start: () => Promise.resolve(PORT),
       stop: () => {}
-    });
-
-    mock('glob', {
-      sync: path => ['test.e2e-spec.ts']
     });
 
     mock('protractor/built/launcher', {
@@ -97,6 +104,7 @@ describe('cli e2e', () => {
   });
 
   it('should spawn protractor after build, server, and selenium, then kill servers', (done) => {
+    spyOn(glob, 'sync').and.returnValue(['test.e2e-spec.ts']);
     spyOn(logger, 'warn');
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(EXIT_CODE);
@@ -108,6 +116,7 @@ describe('cli e2e', () => {
   });
 
   it('should catch protractor kitchen sink error', (done) => {
+    spyOn(glob, 'sync').and.returnValue(['test.e2e-spec.ts']);
     spyOn(logger, 'warn');
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(logger.warn).toHaveBeenCalledWith('Supressing protractor\'s "kitchen sink" error 199');
@@ -124,9 +133,12 @@ describe('cli e2e', () => {
 
     mock(configPath, {
       config: {
-        seleniumAddress: 'asdf'
+        seleniumAddress: 'asdf',
+        specs: ['']
       }
     });
+
+    spyOn(glob, 'sync').and.returnValue(['test.e2e-spec.ts']);
 
     spyOn(selenium, 'install').and.callFake((config, cb) => {
       cb();
@@ -149,8 +161,9 @@ describe('cli e2e', () => {
   });
 
   it('should catch build failures', (done) => {
-    mock('../cli/build', () => Promise.reject(new Error('Build failed.')));
+    mockBuild = Promise.reject(new Error('Build failed.'));
 
+    spyOn(glob, 'sync').and.returnValue(['test.e2e-spec.ts']);
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(1);
       done();
@@ -160,13 +173,14 @@ describe('cli e2e', () => {
   });
 
   it('should catch selenium failures', (done) => {
-
     mock(configPath, {
       config: {
-        seleniumAddress: 'asdf'
+        seleniumAddress: 'asdf',
+        specs: ['']
       }
     });
 
+    spyOn(glob, 'sync').and.returnValue(['test.e2e-spec.ts']);
     spyOn(selenium, 'install').and.callFake((config, cb) => {
       cb();
     });
@@ -185,18 +199,9 @@ describe('cli e2e', () => {
   });
 
   it('should catch protractor\'s selenium failures', (done) => {
-
-    mock('cross-spawn', {
-      spawn: () => {
-        return {
-          on: () => { }
-        };
-      },
-      sync: () => {
-        return {
-          error: new Error('Webdriver update failed.')
-        };
-      }
+    spyOn(glob, 'sync').and.returnValue(['test.e2e-spec.ts']);
+    spyOn(mockCrossSpawn, 'sync').and.returnValue({
+      error: new Error('Webdriver update failed.')
     });
 
     spyOn(process, 'exit').and.callFake(exitCode => {
@@ -207,14 +212,12 @@ describe('cli e2e', () => {
     mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('should not continue if no e2e spec files exist', (done) => {
-    mock('glob', {
-      sync: path => []
-    });
-
+  it('should not continue if no spec files exist', (done) => {
+    spyOn(glob, 'sync').and.returnValue([]);
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(0);
-      expect(logger.info).toHaveBeenCalledWith('No spec files located. Skipping e2e command.');
+      expect(logger.info)
+        .toHaveBeenCalledWith('No spec files located. Skipping e2e command.');
       done();
     });
 
@@ -222,10 +225,8 @@ describe('cli e2e', () => {
   });
 
   it('should accept the --no-build flag and handle errors', (done) => {
-
+    spyOn(glob, 'sync').and.returnValue(['test.e2e-spec.ts']);
     spyOn(fs, 'existsSync').and.returnValue(false);
-
-    mock.reRequire('../cli/e2e')('e2e', { build: false }, SKY_PAGES_CONFIG, WEBPACK);
     spyOn(process, 'exit').and.callFake(() => {
       const calls = logger.info.calls.allArgs();
       const message = `Unable to skip build step.  "dist/metadata.json" not found.`;
@@ -233,15 +234,15 @@ describe('cli e2e', () => {
       done();
     });
 
+    mock.reRequire('../cli/e2e')('e2e', { build: false }, SKY_PAGES_CONFIG, WEBPACK);
   });
 
   it('should accept the --no-build flag and handle errors', (done) => {
     const metadata = [{ name: 'file1.js' }];
 
+    spyOn(glob, 'sync').and.returnValue(['test.e2e-spec.ts']);
     spyOn(fs, 'existsSync').and.returnValue(true);
     const fsSpy = spyOn(fs, 'readJsonSync').and.returnValue(metadata);
-
-    mock.reRequire('../cli/e2e')('e2e', { build: false }, SKY_PAGES_CONFIG, WEBPACK);
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(fsSpy).toHaveBeenCalledWith('dist/metadata.json');
       expect(PROTRACTOR_CONFIG_ARGS.params.chunks).toEqual({
@@ -251,5 +252,6 @@ describe('cli e2e', () => {
       done();
     });
 
+    mock.reRequire('../cli/e2e')('e2e', { build: false }, SKY_PAGES_CONFIG, WEBPACK);
   });
 });

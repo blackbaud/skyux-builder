@@ -95,7 +95,7 @@ describe('utils/config-resolver.js', () => {
   });
 
   it('should handle the known protractor commands', () => {
-    ['e2e', 'visual'].forEach(command => {
+    ['e2e'].forEach(command => {
       expect(testCommand(command, {})).toBe(`config/protractor/protractor.conf.js`);
     });
   });

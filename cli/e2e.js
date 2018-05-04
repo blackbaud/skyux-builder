@@ -17,7 +17,7 @@ const configResolver = require('./utils/config-resolver');
 const spawnOptions = { stdio: 'inherit' };
 
 let seleniumServer;
-let start;
+let startTime;
 
 /**
  * Handles killing off the selenium and webpack servers.
@@ -39,7 +39,7 @@ function killServers(exitCode) {
   }
 
   server.stop();
-  logger.info(`Execution Time: ${(new Date().getTime() - start) / 1000} seconds`);
+  logger.info(`Execution Time: ${(new Date().getTime() - startTime) / 1000} seconds`);
   logger.info(`Exiting process with ${exitCode}`);
   process.exit(exitCode || 0);
 }
@@ -65,9 +65,7 @@ function spawnProtractor(configPath, chunks, port, skyPagesConfig) {
  * Spawns the selenium server if directConnect is not enabled.
  * @name spawnSelenium
  */
-function spawnSelenium(configPath) {
-  const config = require(configPath).config;
-
+function spawnSelenium(config) {
   return new Promise((resolve, reject) => {
     logger.info('Spawning selenium...');
 
@@ -152,16 +150,17 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
  * @name e2e
  */
 function e2e(command, argv, skyPagesConfig, webpack) {
-  start = new Date().getTime();
+  startTime = new Date().getTime();
   process.on('SIGINT', killServers);
 
-  const specsPath = path.resolve(process.cwd(), 'e2e/**/*.e2e-spec.ts');
-  const specsGlob = glob.sync(specsPath);
-  const configPath = configResolver.resolve(command, argv);
+  const protractorConfigPath = configResolver.resolve(command, argv);
+  const protractorConfig = require(protractorConfigPath).config;
+  const specsGlob = glob.sync(protractorConfig.specs[0]);
 
   if (specsGlob.length === 0) {
-    logger.info('No spec files located. Skipping e2e command.');
-    return killServers(0);
+    logger.info(`No spec files located. Skipping ${command} command.`);
+    killServers(0);
+    return;
   }
 
   server.start()
@@ -179,19 +178,19 @@ function e2e(command, argv, skyPagesConfig, webpack) {
         .all([
           spawnBuild(argv, skyPagesConfig, webpack),
           port,
-          spawnSelenium(configPath)
+          spawnSelenium(protractorConfig)
         ]);
     })
     .then(values => {
       spawnProtractor(
-        configPath,
+        protractorConfigPath,
         values[0],
         values[1],
         skyPagesConfig
       );
     })
     .catch(err => {
-      logger.warn(`ERROR [skyux e2e]: ${err.message}`);
+      logger.warn(`ERROR [skyux ${command}]: ${err.message}`);
       killServers(1);
     });
 }

@@ -12,7 +12,6 @@ function getPath(command, platform, root, dir) {
   let filename;
   switch (command) {
     case 'e2e':
-    case 'visual':
       filename = `config/protractor/protractor.conf.js`;
       break;
 
