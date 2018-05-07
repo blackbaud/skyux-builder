@@ -16,12 +16,12 @@ export class SkyAppLinkDirective extends RouterLinkWithHref {
 
   @Input()
   set queryParams(params: { [k: string]: any }) {
-    this._queryParams = Object.assign(params, this.skyAppConfig.runtime.params.getAll());
+    this._queryParams = Object.assign(params, this.skyAppConfig.runtime.params.getAll(true));
   }
 
   get queryParams() {
     if (!this._queryParams) {
-      this._queryParams = Object.assign({}, this.skyAppConfig.runtime.params.getAll());
+      this._queryParams = Object.assign({}, this.skyAppConfig.runtime.params.getAll(true));
     }
     return this._queryParams;
   }

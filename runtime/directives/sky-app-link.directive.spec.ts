@@ -22,6 +22,7 @@ describe('SkyAppLink Directive', () => {
   let component: SkyAppLinkTestComponent;
   let fixture: ComponentFixture<SkyAppLinkTestComponent>;
   let debugElement: DebugElement;
+  let getAllParam: boolean;
 
   function setup(params: any, useQueryParams: boolean) {
     let componentToUse = useQueryParams ?
@@ -46,7 +47,10 @@ describe('SkyAppLink Directive', () => {
           useValue: {
             runtime: {
               params: {
-                getAll: () => params
+                getAll: (p?: boolean) => {
+                  getAllParam = p;
+                  return params;
+                }
               }
             },
             skyux: {}
@@ -94,5 +98,11 @@ describe('SkyAppLink Directive', () => {
     const directive = debugElement.query(By.directive(SkyAppLinkDirective));
     expect(directive.attributes['skyAppLink']).toEqual('test');
     expect(directive.properties['href']).toEqual('/test?qp1=1&qp2=false&asdf=123&jkl=mno');
+  });
+
+  it('should call getAll with excludeDefaults set to true', () => {
+    setup({}, true);
+    debugElement.query(By.directive(SkyAppLinkDirective));
+    expect(getAllParam).toBe(true);
   });
 });
