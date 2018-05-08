@@ -21,6 +21,7 @@ function getUrlSearchParams(url: string): URLSearchParams {
 
 export class SkyAppRuntimeConfigParams {
   private params: { [key: string]: string } = {};
+  private defaultParamValues: { [key: string]: string } = {};
   private requiredParams: string[] = [];
   private encodedParams: string[] = [];
 
@@ -60,6 +61,7 @@ export class SkyAppRuntimeConfigParams {
 
             if (paramValue) {
               this.params[paramName] = paramValue;
+              this.defaultParamValues[paramName] = paramValue;
             }
           }
         }
@@ -140,10 +142,19 @@ export class SkyAppRuntimeConfigParams {
   /**
    * Returns the params object
    * @name getAll
+   * @param {boolean} excludeDefaults Exclude params that have default values
    * @returns {Object}
    */
-  public getAll(): Object {
-    return this.params;
+  public getAll(excludeDefaults?: boolean): Object {
+    const filteredParams: { [key: string]: string} = {};
+
+    this.getAllKeys().forEach(key => {
+      if (!excludeDefaults || this.params[key] !== this.defaultParamValues[key]) {
+        filteredParams[key] = this.params[key];
+      }
+    });
+
+    return filteredParams;
   }
 
   /**
