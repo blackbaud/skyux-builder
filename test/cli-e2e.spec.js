@@ -49,7 +49,7 @@ describe('cli e2e', () => {
   beforeEach(() => {
     EXIT_CODE = 0;
 
-    mock('../cli/build', () => new Promise(resolve => {
+    mock('../cli/utils/run-build', () => new Promise(resolve => {
       resolve({
         toJson: () => ({
           chunks: CHUNKS
@@ -150,7 +150,7 @@ describe('cli e2e', () => {
   });
 
   it('should catch build failures', (done) => {
-    mock('../cli/build', () => Promise.reject(new Error('Build failed.')));
+    mock('../cli/utils/run-build', () => Promise.reject(new Error('Build failed.')));
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(1);
