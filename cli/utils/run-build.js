@@ -2,7 +2,6 @@
 'use strict';
 
 const fs = require('fs-extra');
-const logger = require('@blackbaud/skyux-logger');
 const merge = require('../../utils/merge');
 
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
@@ -170,7 +169,7 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
  * @param {*} isAot
  * @param {*} cancelProcessExit
  */
-function build(argv, skyPagesConfig, webpack, imported) {
+function build(argv, skyPagesConfig, webpack) {
 
   const lintResult = tsLinter.lintSync();
   const isAot = skyPagesConfig &&
