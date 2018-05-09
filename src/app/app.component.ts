@@ -134,12 +134,17 @@ export class AppComponent implements OnInit, OnDestroy {
   // Only pass params that omnibar config cares about
   // Internally we store as envid/svcid but auth-client wants envId/svcId
   private setParamsFromQS(omnibarConfig: any) {
-    if (this.config.runtime.params.has('envid')) {
-      omnibarConfig.envId = this.config.runtime.params.get('envid');
-    }
-    if (this.config.runtime.params.has('svcid')) {
-      omnibarConfig.svcId = this.config.runtime.params.get('svcid');
-    }
+    const map: { [key: string]: string } = {
+      envid: 'envId',
+      leid: 'leId',
+      svcid: 'svcId'
+    };
+
+    Object.keys(map).forEach((key: string) => {
+      if (this.config.runtime.params.has(key)) {
+        omnibarConfig[map[key]] = this.config.runtime.params.get(key);
+      }
+    });
   }
 
   private setOnSearch(omnibarConfig: any) {
