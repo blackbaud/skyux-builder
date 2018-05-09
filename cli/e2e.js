@@ -135,7 +135,8 @@ function spawnBuild(argv, skyPagesConfig, webpack) {
     }
   }
 
-  return build(argv, skyPagesConfig, webpack);
+  return build(argv, skyPagesConfig, webpack)
+    .then(stats => stats.toJson().chunks);
 }
 
 /**
@@ -174,11 +175,11 @@ function e2e(command, argv, skyPagesConfig, webpack) {
           spawnSelenium(configPath)
         ]);
     })
-    .then(values => {
+    .then(([chunks, port]) => {
       spawnProtractor(
         configPath,
-        values[0],
-        values[1],
+        chunks,
+        port,
         skyPagesConfig
       );
     })

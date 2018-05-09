@@ -254,6 +254,13 @@ describe('cli e2e', () => {
       expect(exitCode).toBe(0);
       done();
     });
+  });
 
+  it('should pass chunks from the build stats to selenium', () => {
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(PROTRACTOR_CONFIG_ARGS.params.chunks).toEqual(CHUNKS);
+      done();
+    });
   });
 });
