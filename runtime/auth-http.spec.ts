@@ -33,6 +33,7 @@ describe('SkyAuthHttp', () => {
           runtime: {
             params: new SkyAppRuntimeConfigParams(url, [
               'envid',
+              'leid',
               'svcid'
             ])
           }
@@ -72,8 +73,19 @@ describe('SkyAuthHttp', () => {
     });
   });
 
-  it('should include svc if it is in the current url', (done) => {
+  it('should include svcid if it is in the current url', (done) => {
     const search = '?svcid=1234';
+    spyOn(BBAuth, 'getToken').and.returnValue(Promise.resolve());
+
+    setupInjector(search);
+    skyAuthHttp.get('example.com').subscribe(() => {
+      expect(lastConnection.request.url).toContain(search);
+      done();
+    });
+  });
+
+  it('should include leid if it is in the current url', (done) => {
+    const search = '?leid=1234';
     spyOn(BBAuth, 'getToken').and.returnValue(Promise.resolve());
 
     setupInjector(search);
@@ -85,6 +97,17 @@ describe('SkyAuthHttp', () => {
 
   it('should include envid and svcid if they are in the current url', (done) => {
     const search = '?envid=1234&svcid=5678';
+    spyOn(BBAuth, 'getToken').and.returnValue(Promise.resolve());
+
+    setupInjector(search);
+    skyAuthHttp.get('example.com').subscribe(() => {
+      expect(lastConnection.request.url).toContain(search);
+      done();
+    });
+  });
+
+  it('should include envid, svcid, and leid if they are in the current url', (done) => {
+    const search = '?envid=123&svcid=456&leid=789';
     spyOn(BBAuth, 'getToken').and.returnValue(Promise.resolve());
 
     setupInjector(search);

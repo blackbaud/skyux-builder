@@ -445,7 +445,7 @@ describe('AppComponent', () => {
       experimental: true
     };
 
-    skyAppConfig.skyux.params = ['envid', 'svcid'];
+    skyAppConfig.skyux.params = ['envid', 'svcid', 'leid'];
     skyAppConfig.runtime.params.has = (key: any) => true;
     skyAppConfig.runtime.params.get = (key: any) => key + 'Value';
     setup(skyAppConfig, true).then(() => {
@@ -456,6 +456,9 @@ describe('AppComponent', () => {
 
       // Notice svcid => svcId
       expect(spyOmnibar.calls.first().args[0].svcId).toEqual('svcidValue');
+
+      // Notice svcid => svcId
+      expect(spyOmnibar.calls.first().args[0].leId).toEqual('leidValue');
     });
   }));
 
