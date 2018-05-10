@@ -3,6 +3,7 @@
 
 const fs = require('fs-extra');
 const rimraf = require('rimraf');
+const logger = require('@blackbaud/skyux-logger');
 
 const stageTypeScriptFiles = require('./utils/stage-library-ts');
 const preparePackage = require('./utils/prepare-library-package');
@@ -99,8 +100,9 @@ module.exports = (skyPagesConfig, webpack) => {
         cleanTemp();
         process.exit(0);
       })
-      .catch(() => {
+      .catch((err) => {
         cleanAll();
+        logger.error(err);
         process.exit(1);
       });
 };

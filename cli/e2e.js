@@ -9,7 +9,7 @@ const selenium = require('selenium-standalone');
 const protractorLauncher = require('protractor/built/launcher');
 const logger = require('@blackbaud/skyux-logger');
 
-const build = require('./build');
+const build = require('./utils/run-build');
 const server = require('./utils/server');
 const configResolver = require('./utils/config-resolver');
 
@@ -121,29 +121,22 @@ function spawnSelenium(configPath) {
  * Spawns the build process.  Captures the config used.
  */
 function spawnBuild(argv, skyPagesConfig, webpack) {
-  return new Promise((resolve, reject) => {
 
-    if (argv.build === false) {
-      logger.info('Skipping build step');
+  if (argv.build === false) {
+    logger.info('Skipping build step');
 
-      const file = 'dist/metadata.json';
-      if (!fs.existsSync(file)) {
-        logger.info(`Unable to skip build step.  "${file}" not found.`);
-      } else {
-        return resolve({
-          metadata: fs.readJsonSync(file)
-        });
-      }
+    const file = 'dist/metadata.json';
+    if (!fs.existsSync(file)) {
+      logger.info(`Unable to skip build step.  "${file}" not found.`);
+    } else {
+      return Promise.resolve({
+        metadata: fs.readJsonSync(file)
+      });
     }
+  }
 
-    logger.info('Running build...');
-    build(argv, skyPagesConfig, webpack)
-      .then(stats => {
-        logger.info('Build complete.');
-        resolve(stats.toJson().chunks);
-      })
-      .catch(reject);
-  });
+  return build(argv, skyPagesConfig, webpack)
+    .then(stats => stats.toJson().chunks);
 }
 
 /**
@@ -182,16 +175,16 @@ function e2e(command, argv, skyPagesConfig, webpack) {
           spawnSelenium(configPath)
         ]);
     })
-    .then(values => {
+    .then(([chunks, port]) => {
       spawnProtractor(
         configPath,
-        values[0],
-        values[1],
+        chunks,
+        port,
         skyPagesConfig
       );
     })
     .catch(err => {
-      logger.warn(`ERROR [skyux e2e]: ${err.message}`);
+      logger.error(err);
       killServers(1);
     });
 }
