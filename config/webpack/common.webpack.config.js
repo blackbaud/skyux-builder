@@ -8,7 +8,6 @@ const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
-const ProcessExitCode = require('../../plugin/process-exit-code');
 const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
@@ -93,9 +92,6 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       spaPath('src'),
       {}
     ),
-
-    // Webpack 2 behavior does not correctly return non-zero exit code.
-    new ProcessExitCode(),
 
     new OutputKeepAlivePlugin({
       enabled: argv['output-keep-alive']

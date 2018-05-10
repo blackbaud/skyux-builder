@@ -4,7 +4,6 @@
 const mock = require('mock-require');
 const path = require('path');
 const fs = require('fs');
-const ProcessExitCode = require('../plugin/process-exit-code');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack common', () => {
@@ -99,106 +98,6 @@ describe('config webpack common', () => {
 
   it('should allow for an app-extras module to be provided by the SPA project', () => {
     validateAppExtras(true);
-  });
-
-  it('should not bind to beforeExit if no errors', () => {
-    const processOnSpy = spyOn(process, 'on');
-    const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    const config = lib.getWebpackConfig({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    });
-
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'processExitCode') {
-        plugin.apply({
-          plugin: (evt, cb) => {
-            switch (evt) {
-              case 'run':
-                cb(() => {}, () => {});
-              break;
-              case 'done':
-                cb({
-                  compilation: {}
-                });
-              break;
-            }
-          }
-        });
-      }
-    });
-
-    expect(processOnSpy).not.toHaveBeenCalled();
-  });
-
-  it('should set process.exitCode to 1 if compilation errors', () => {
-    const processOnSpy = spyOn(process, 'on').and.callFake((evt, cb) => {
-      if (evt === 'exit') {
-        cb();
-      }
-    });
-    const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    const config = lib.getWebpackConfig({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    });
-
-    config.plugins.forEach(plugin => {
-      if (plugin instanceof ProcessExitCode) {
-        plugin.apply({
-          plugin: (evt, cb) => {
-            switch (evt) {
-              case 'done':
-                cb({
-                  compilation: {
-                    errors: [
-                      'test-error'
-                    ]
-                  }
-                });
-              break;
-            }
-          }
-        });
-      }
-    });
-
-    expect(processOnSpy).toHaveBeenCalled();
-    expect(process.exitCode).toEqual(1);
-  });
-
-  it('should not set process.exit listener if no compilation errors', () => {
-
-    // Reset process.exitCode from any previous tests
-    process.exitCode = 0;
-
-    const processOnSpy = spyOn(process, 'on');
-    const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    const config = lib.getWebpackConfig({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    });
-
-    config.plugins.forEach(plugin => {
-      if (plugin instanceof ProcessExitCode) {
-        plugin.apply({
-          plugin: (evt, cb) => {
-            switch (evt) {
-              case 'done':
-                cb({
-                  compilation: {
-                    errors: []
-                  }
-                });
-              break;
-            }
-          }
-        });
-      }
-    });
-
-    expect(processOnSpy).not.toHaveBeenCalled();
-    expect(process.exitCode).not.toEqual(1);
   });
 
   it('should pass --output-keep-alive to OutputKeepAlivePlugin', () => {

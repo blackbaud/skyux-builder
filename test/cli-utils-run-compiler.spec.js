@@ -9,6 +9,10 @@ describe('cli utils run compiler', () => {
   let mockWebpack;
 
   beforeEach(() => {
+    spyOn(logger, 'error');
+    spyOn(logger, 'warn');
+    spyOn(logger, 'info');
+
     mockWebpack = () => {
       return {
         run: (cb) => cb(null, {
@@ -21,40 +25,68 @@ describe('cli utils run compiler', () => {
     };
   });
 
-  it('should handle stats errors and warnings', (done) => {
+  it('should reject compilation errors', (done) => {
+    const err = ['custom-error1'];
+    mockWebpack = () => {
+      return {
+        run: (cb) => cb(err)
+      };
+    };
+
+    const runCompiler = mock.reRequire(requirePath);
+    runCompiler(mockWebpack, {}).catch(e => {
+      expect(e).toBe(err);
+      expect(logger.error).not.toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should reject stats errors', (done) => {
     const errs = ['custom-error2'];
-    const wrns = ['custom-warning1'];
 
     mockWebpack = () => {
       return {
         run: (cb) => cb(null, {
           toJson: () => ({
             errors: errs,
+            warnings: []
+          })
+        })
+      };
+    };
+
+    const runCompiler = mock.reRequire(requirePath);
+
+    runCompiler(mockWebpack, {}).catch((e) => {
+      expect(e).toBe(errs);
+      expect(logger.error).not.toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should handle stats warnings', (done) => {
+    const wrns = ['custom-warning1'];
+
+    mockWebpack = () => {
+      return {
+        run: (cb) => cb(null, {
+          toJson: () => ({
+            errors: [],
             warnings: wrns
           })
         })
       };
     };
 
-    spyOn(logger, 'error');
-    spyOn(logger, 'warn');
-    spyOn(logger, 'info');
-
     const runCompiler = mock.reRequire(requirePath);
 
     runCompiler(mockWebpack, {}).then(() => {
-      expect(logger.error).toHaveBeenCalledWith(errs);
       expect(logger.warn).toHaveBeenCalledWith(wrns);
-      expect(logger.info).not.toHaveBeenCalled();
       done();
     });
   });
 
   it('should handle no stats errors and warnings', (done) => {
-    spyOn(logger, 'error');
-    spyOn(logger, 'warn');
-    spyOn(logger, 'info');
-
     const runCompiler = mock.reRequire(requirePath);
 
     runCompiler(mockWebpack, {}).then(() => {

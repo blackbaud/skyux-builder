@@ -4,7 +4,6 @@
 const webpack = require('webpack');
 const ngcWebpack = require('ngc-webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
-const ProcessExitCode = require('../../plugin/process-exit-code');
 
 function getWebpackConfig(skyPagesConfig) {
   const libraryName = skyPagesConfig.skyux.name || 'SkyAppLibrary';
@@ -55,10 +54,7 @@ function getWebpackConfig(skyPagesConfig) {
         comments: false,
         compress: { warnings: false },
         mangle: { screw_ie8: true, keep_fnames: true }
-      }),
-
-      // Webpack 2 behavior does not correctly return non-zero exit code.
-      new ProcessExitCode()
+      })
     ]
   };
 }
