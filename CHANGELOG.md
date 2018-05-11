@@ -1,3 +1,10 @@
+# 1.15.0 (2018-05-11)
+
+- Bugfix to properly fail `skyux e2e` if build step fails. [#404](https://github.com/blackbaud/skyux-builder/pull/404)
+- Updated `skyAppLink` directive to not include parameters whose current values match their default values. [#402](https://github.com/blackbaud/skyux-builder/pull/402)
+- Upgraded `auth-client` to `2.5.0`. [#407](https://github.com/blackbaud/skyux-builder/pull/407)
+- Upgraded `skyux-lib-help` to `1.3.0`. [#401](https://github.com/blackbaud/skyux-builder/pull/401), [#405](https://github.com/blackbaud/skyux-builder/pull/405)
+
 # 1.14.0 (2018-04-19)
 
 - SKY UX libraries can now define their own locale files for localizing strings.  [#379](https://github.com/blackbaud/skyux-builder/pull/379)
