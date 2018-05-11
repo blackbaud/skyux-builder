@@ -1,4 +1,4 @@
-# 1.15.0 (2018-05-14)
+# 1.15.0 (2018-05-11)
 
 - Bugfix to properly fail `skyux e2e` if build step fails. [#404](https://github.com/blackbaud/skyux-builder/pull/404)
 - Updated `skyAppLink` directive to not include parameters whose current values match their default values. [#402](https://github.com/blackbaud/skyux-builder/pull/402)
