@@ -7,7 +7,10 @@ const ngcWebpack = require('ngc-webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
 function parseRegExp(name) {
-  const escaped = name.replace('/', String.raw`\/`).replace('-', String.raw`\-`);
+  const escaped = name
+    .replace(/\./g, String.raw`\.`)
+    .replace(/\//g, String.raw`\/`)
+    .replace(/\-/g, String.raw`\-`);
   return new RegExp(`^${escaped}`);
 }
 
@@ -22,11 +25,17 @@ function getWebpackConfig(skyPagesConfig) {
     skyPagesConfigUtil.spaPath('package.json')
   );
 
-  const builderDependencies = Object.keys(builderPackageJson.dependencies)
-    .map(key => parseRegExp(key));
+  let builderDependencies = [];
+  if (builderPackageJson.dependencies) {
+    builderDependencies = Object.keys(builderPackageJson.dependencies)
+      .map(key => parseRegExp(key));
+  }
 
-  const spaDependencies = Object.keys(spaPackageJson.dependencies)
-    .map(key => parseRegExp(key));
+  let spaDependencies = [];
+  if (spaPackageJson.dependencies) {
+    spaDependencies = Object.keys(spaPackageJson.dependencies)
+      .map(key => parseRegExp(key));
+  }
 
   const externals = builderDependencies.concat(spaDependencies);
 
