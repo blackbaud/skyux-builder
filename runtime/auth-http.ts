@@ -71,8 +71,8 @@ export class SkyAuthHttp extends Http {
     url: string | Request,
     options?: RequestOptionsArgs
   ): Observable<Response> {
-    let tokenArgs: BBAuthGetTokenArgs = {};
-    let leId: string = this.getLeId();
+    const tokenArgs: BBAuthGetTokenArgs = {};
+    const leId: string = this.getLeId();
 
     // See if this call was chained to withScope(), and if so, provide it when
     // retrieving a token.
