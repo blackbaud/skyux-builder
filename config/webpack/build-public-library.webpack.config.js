@@ -1,12 +1,35 @@
 /*jslint node: true */
 'use strict';
 
+const fs = require('fs-extra');
 const webpack = require('webpack');
 const ngcWebpack = require('ngc-webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
+function parseRegExp(name) {
+  const escaped = name.replace('/', String.raw`\/`).replace('-', String.raw`\-`);
+  return new RegExp(`^${escaped}`);
+}
+
 function getWebpackConfig(skyPagesConfig) {
   const libraryName = skyPagesConfig.skyux.name || 'SkyAppLibrary';
+
+  const builderPackageJson = fs.readJsonSync(
+    skyPagesConfigUtil.outPath('package.json')
+  );
+
+  const spaPackageJson = fs.readJsonSync(
+    skyPagesConfigUtil.spaPath('package.json')
+  );
+
+  const builderDependencies = Object.keys(builderPackageJson.dependencies)
+    .map(key => parseRegExp(key));
+
+  const spaDependencies = Object.keys(spaPackageJson.dependencies)
+    .map(key => parseRegExp(key));
+
+  const externals = builderDependencies.concat(spaDependencies);
+
   return {
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
     output: {
@@ -15,11 +38,7 @@ function getWebpackConfig(skyPagesConfig) {
       libraryTarget: 'umd',
       library: libraryName
     },
-    externals: [
-      /^@angular\//,
-      /^@blackbaud\//,
-      /^rxjs\//
-    ],
+    externals,
     resolve: {
       extensions: ['.js', '.ts']
     },
