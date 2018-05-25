@@ -256,7 +256,7 @@ describe('cli e2e', () => {
     });
   });
 
-  it('should pass chunks from the build stats to selenium', () => {
+  it('should pass chunks from the build stats to selenium', (done) => {
     mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(PROTRACTOR_CONFIG_ARGS.params.chunks).toEqual(CHUNKS);
