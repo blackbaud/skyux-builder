@@ -10,6 +10,7 @@
   "params": {
     "addin": true,
     "envid": true,
+    "leid": true,
     "svcid": true
   },
   "skyuxModules": [
