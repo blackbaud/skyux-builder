@@ -1,3 +1,8 @@
+# 1.16.0 (2018-05-31)
+
+- Updated `auth-client` to `2.6.0`. [#406](https://github.com/blackbaud/skyux-builder/pull/406)
+- Added support for `leid` by passing it to `SkyAuthHttp` and the Omnibar. [#406](https://github.com/blackbaud/skyux-builder/pull/406)
+
 # 1.15.0 (2018-05-11)
 
 - Bugfix to properly fail `skyux e2e` if build step fails. [#404](https://github.com/blackbaud/skyux-builder/pull/404)
