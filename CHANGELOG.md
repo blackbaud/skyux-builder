@@ -1,3 +1,7 @@
+# 1.16.0 (2018-05-31)
+
+- Updated `auth-client` to `2.6.0` to support passing `leid` to the omnibar, to automatically include `leid` in `SkyAuthHttp` requests, and to add an `leid` flag for `skyux serve` that adds a legal entity ID to the Host URL. [#406](https://github.com/blackbaud/skyux-builder/pull/406)
+
 # 1.15.0 (2018-05-11)
 
 - Bugfix to properly fail `skyux e2e` if build step fails. [#404](https://github.com/blackbaud/skyux-builder/pull/404)
@@ -368,7 +372,7 @@ To opt into this new behavior, simply add the following to your `skyuxconfig.jso
 # 1.0.0-beta.14 (2017-03-22)
 
 - Merging `skyuxconfig.{current-skyux-command}.json`, if it exists, into the `skyuxconfig.json` file.  For example, `skyuxconfig.serve.json`.
-- Adding `--envid` and `--svcid` to be specificed via the CLI and added to the Host URL opened when running `skyux serve`.  For example, `skyux serve --envid 1234`
+- Adding `--envid` and `--svcid` to be specified via the CLI and added to the Host URL opened when running `skyux serve`.  For example, `skyux serve --envid 1234`
 - SKY UX styles are now loaded when running unit tests so CSS rules defined in SKY UX take effect during tests. This allows you to check the the expected computed style of an element when using things like the HTML `hidden` property that only take effect when SKY UX styles are loaded.
 
 # 1.0.0-beta.13 (2017-03-06)
