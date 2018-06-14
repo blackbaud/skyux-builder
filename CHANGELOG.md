@@ -1,3 +1,7 @@
+# 1.17.0 (2018-06-14)
+
+- Updated `auth-client` to `2.7.0` which supports omnibar theming. [#412](https://github.com/blackbaud/skyux-builder/pull/412)
+
 # 1.16.0 (2018-05-31)
 
 - Updated `auth-client` to `2.6.0` to support passing `leid` to the omnibar, to automatically include `leid` in `SkyAuthHttp` requests, and to add an `leid` flag for `skyux serve` that adds a legal entity ID to the Host URL. [#406](https://github.com/blackbaud/skyux-builder/pull/406)
