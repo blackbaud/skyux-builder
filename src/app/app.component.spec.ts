@@ -42,6 +42,7 @@ describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let parseParams: any;
   let searchArgs: BBOmnibarSearchArgs;
+  let navigateParams: any;
   let navigateByUrlParams: any;
   let subscribeHandler: any;
   let scrollCalled: boolean = false;
@@ -80,6 +81,7 @@ describe('AppComponent', () => {
           events: {
             subscribe: (handler: any) => subscribeHandler = handler
           },
+          navigate: (params: any) => navigateParams = params,
           navigateByUrl: (url: string) => navigateByUrlParams = url,
           parseUrl: (url: string) => {
             return {
@@ -203,6 +205,7 @@ describe('AppComponent', () => {
     };
     scrollCalled = false;
     viewport = new SkyAppViewportService();
+    navigateParams = undefined;
     navigateByUrlParams = undefined;
     spyOmnibarDestroy = spyOn(BBOmnibar, 'destroy');
   });
@@ -906,7 +909,7 @@ describe('AppComponent', () => {
         }
       });
 
-      expect(navigateByUrlParams).toEqual(goodUrl);
+      expect(navigateParams).toEqual(goodUrl);
 
       // Trigger an invalid message
       eventListener({
@@ -916,7 +919,7 @@ describe('AppComponent', () => {
         }
       });
 
-      expect(navigateByUrlParams).not.toEqual(badUrl);
+      expect(navigateParams).not.toEqual(badUrl);
     });
   }));
 
