@@ -59,7 +59,8 @@ describe('AppComponent', () => {
         href: ''
       },
       SKYUX_HOST: mockSkyuxHost,
-      scroll: () => scrollCalled = true
+      scroll: () => scrollCalled = true,
+      addEventListener: () => {}
     };
   }
 
@@ -877,6 +878,46 @@ describe('AppComponent', () => {
         envId: jasmine.anything()
       }
     );
+  }));
+
+  it('should add message event listener during e2e', async(() => {
+    skyAppConfig.runtime.command = 'e2e';
+
+    setup(skyAppConfig, false).then(() => {
+      const spyEventListener = spyOn(mockWindow.nativeWindow, 'addEventListener');
+      fixture.detectChanges();
+
+      const goodUrl = 'some-route';
+      const goodMessageType = 'navigate-e2e';
+      const badUrl = 'some-other-route';
+      const badMessageType = 'navigate';
+
+      const message = spyEventListener.calls.first().args[0];
+      const eventListener = spyEventListener.calls.first().args[1];
+
+      expect(message).toEqual('message');
+      expect(spyEventListener).toHaveBeenCalled();
+
+      // Trigger a valid message
+      eventListener({
+        data: {
+          messageType: goodMessageType,
+          url: goodUrl
+        }
+      });
+
+      expect(navigateByUrlParams).toEqual(goodUrl);
+
+      // Trigger an invalid message
+      eventListener({
+        data: {
+          messageType: badMessageType,
+          url: badUrl
+        }
+      });
+
+      expect(navigateByUrlParams).not.toEqual(badUrl);
+    });
   }));
 
 });

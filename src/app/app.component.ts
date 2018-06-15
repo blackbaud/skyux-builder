@@ -272,7 +272,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.config.runtime.command === 'e2e') {
       this.windowRef.nativeWindow.addEventListener('message', (event: MessageEvent) => {
         if (event.data.messageType === 'navigate-e2e') {
-          this.router.navigate(event.data.url);
+          this.router.navigateByUrl(event.data.url);
         }
       });
     }
