@@ -1,7 +1,9 @@
 /*jshint node: true*/
 'use strict';
 
+const spawn = require('cross-spawn');
 const fs = require('fs-extra');
+const path = require('path');
 const rimraf = require('rimraf');
 const logger = require('@blackbaud/skyux-logger');
 
@@ -81,9 +83,39 @@ function writeTSConfig() {
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);
 }
 
-function transpile(skyPagesConfig, webpack) {
+/**
+ * Generates a UMD JavaScript bundle to be included with the NPM package.
+ * @param {*} skyPagesConfig
+ * @param {*} webpack
+ */
+function createBundle(skyPagesConfig, webpack) {
   const config = webpackConfig.getWebpackConfig(skyPagesConfig);
   return runCompiler(webpack, config);
+}
+
+/**
+ * Transpiles TypeScript files into JavaScript files
+ * to be included with the NPM package.
+ */
+function transpile() {
+  return new Promise((resolve, reject) => {
+    const result = spawn.sync(
+      'node',
+      [
+        path.join('node_modules', '.bin', 'ngc'),
+        '--project',
+        skyPagesConfigUtil.spaPathTemp('tsconfig.json')
+      ],
+      { stdio: 'inherit' }
+    );
+
+    if (result.err) {
+      reject(result.err);
+      return;
+    }
+
+    resolve();
+  });
 }
 
 module.exports = (skyPagesConfig, webpack) => {
@@ -93,16 +125,17 @@ module.exports = (skyPagesConfig, webpack) => {
   writeTSConfig();
   copyRuntime();
 
-  return transpile(skyPagesConfig, webpack)
-      .then(() => {
-        cleanRuntime();
-        preparePackage();
-        cleanTemp();
-        process.exit(0);
-      })
-      .catch((err) => {
-        cleanAll();
-        logger.error(err);
-        process.exit(1);
-      });
+  return createBundle(skyPagesConfig, webpack)
+    .then(() => transpile())
+    .then(() => {
+      cleanRuntime();
+      preparePackage();
+      cleanTemp();
+      process.exit(0);
+    })
+    .catch((err) => {
+      cleanAll();
+      logger.error(err);
+      process.exit(1);
+    });
 };

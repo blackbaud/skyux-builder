@@ -32,6 +32,7 @@
     "@blackbaud/skyux": "^2.0.0"
   },
   "dependencies": {
+    "@angular-devkit/build-optimizer": "0.6.8",
     "@angular/animations": "4.3.6",
     "@angular/common": "4.3.6",
     "@angular/compiler": "4.3.6",
@@ -79,7 +80,7 @@
     "karma-webpack": "2.0.3",
     "loader-utils": "1.1.0",
     "lodash.mergewith": "4.6.0",
-    "ngc-webpack": "3.1.0",
+    "ngc-webpack": "3.2.2",
     "node-sass": "4.5.3",
     "open": "0.0.5",
     "portfinder": "1.0.13",
