@@ -22,7 +22,7 @@ function deleteNonDistFiles() {
 
 function inlineHtmlCss() {
   const templateUrlRegEx = /templateUrl\:\s*'(.+?\.html)'/gi;
-  const styleUrlsRegEx = /styleUrls\:\s*\[\s*'(.+?\.scss)']/gi;
+  const styleUrlsRegEx = /styleUrls\:\s*\[\s*'(.+?\.scss)'\s*]/gi;
 
   let files = glob.sync(`${spaPathTempSrc}/**/*.ts`);
 
