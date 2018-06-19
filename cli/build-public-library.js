@@ -91,7 +91,7 @@ export class SkyLibPlaceholderModule {}
 `;
 
   fs.writeFileSync(skyPagesConfigUtil.spaPathTemp('main.ts'), content, {
-    encoding: 'utf-8'
+    encoding: 'utf8'
   });
 }
 
