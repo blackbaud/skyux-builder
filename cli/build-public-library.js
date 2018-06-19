@@ -83,6 +83,18 @@ function writeTSConfig() {
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);
 }
 
+function writePlaceholderModule() {
+  const content = `import { NgModule } from '@angular/core';
+import './index';
+@NgModule({})
+export class SkyLibPlaceholderModule {}
+`;
+
+  fs.writeFileSync(skyPagesConfigUtil.spaPathTemp('main.ts'), content, {
+    encoding: 'utf-8'
+  });
+}
+
 /**
  * Generates a UMD JavaScript bundle to be included with the NPM package.
  * @param {*} skyPagesConfig
@@ -123,6 +135,7 @@ module.exports = (skyPagesConfig, webpack) => {
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();
+  writePlaceholderModule();
   copyRuntime();
 
   return createBundle(skyPagesConfig, webpack)

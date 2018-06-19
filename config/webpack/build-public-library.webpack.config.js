@@ -3,8 +3,8 @@
 
 const fs = require('fs-extra');
 const webpack = require('webpack');
-// const ngcWebpack = require('ngc-webpack');
 const ngtools = require('@ngtools/webpack');
+
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
 function parseRegExp(name) {
@@ -57,36 +57,15 @@ function getWebpackConfig(skyPagesConfig) {
         {
           test: /\.ts$/,
           loader: '@ngtools/webpack'
-        },
-        // {
-        //   test: /\.ts$/,
-        //   use: ['awesome-typescript-loader', 'angular2-template-loader'],
-        //   exclude: [/\.(spec|e2e)\.ts$/]
-        // },
-        // {
-        //   test: /\.html$/,
-        //   use: 'raw-loader'
-        // },
-        // {
-        //   test: /\.scss$/,
-        //   use: ['raw-loader', 'sass-loader']
-        // },
-        // {
-        //   test: /\.css$/,
-        //   use: ['raw-loader', 'style-loader']
-        // }
+        }
       ]
     },
     plugins: [
       new ngtools.AotPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTemp('index') + '#FooModule',
+        entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
         sourceMap: true
       }),
-
-      // new ngcWebpack.NgcWebpackPlugin({
-      //   tsConfig: skyPagesConfigUtil.spaPathTemp('tsconfig.json')
-      // }),
 
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,
