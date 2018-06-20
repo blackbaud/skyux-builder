@@ -1,6 +1,14 @@
-import { Injectable } from '@angular/core';
-import { SkyAppRuntimeConfigParams } from './params';
-import { SkyuxConfigParams } from './config-params';
+import {
+  Injectable
+} from '@angular/core';
+
+import {
+  SkyuxConfigParams
+} from './config-params';
+
+import {
+  SkyAppRuntimeConfigParams
+} from './params';
 
 export interface RuntimeConfigApp {
   base: string;

@@ -12,14 +12,21 @@ import {
   Response
 } from '@angular/http';
 
-import { Observable } from 'rxjs/Observable';
+import {
+  BBAuthGetTokenArgs
+} from '@blackbaud/auth-client';
+
+import {
+  SkyAppConfig,
+  SkyAuthTokenProvider
+} from '@blackbaud/skyux-builder/runtime';
+
+import {
+  Observable
+} from 'rxjs/Observable';
+
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/mergeMap';
-
-import { BBAuthGetTokenArgs } from '@blackbaud/auth-client';
-
-import { SkyAppConfig } from '@blackbaud/skyux-builder/runtime/config';
-import { SkyAuthTokenProvider } from '@blackbaud/skyux-builder/runtime/auth-token-provider';
 
 /**
  * Makes authenticated web requests to Blackbaud web services using a BBID token.
@@ -112,11 +119,11 @@ export class SkyAuthHttp extends Http {
       });
   }
 
-  private getEnvId() {
+  private getEnvId(): string {
     return this.skyAppConfig.runtime.params.get('envid');
   }
 
-  private getLeId() {
+  private getLeId(): string {
     return this.skyAppConfig.runtime.params.get('leid');
   }
 }

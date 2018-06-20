@@ -1,7 +1,21 @@
-import { Directive, Input } from '@angular/core';
-import { LocationStrategy } from '@angular/common';
-import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
-import { SkyAppConfig } from '../config';
+import {
+  Directive,
+  Input
+} from '@angular/core';
+
+import {
+  LocationStrategy
+} from '@angular/common';
+
+import {
+  ActivatedRoute,
+  Router,
+  RouterLinkWithHref
+} from '@angular/router';
+
+import {
+  SkyAppConfig
+} from '../config';
 
 @Directive({
   selector: '[skyAppLink]'

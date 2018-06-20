@@ -1,11 +1,29 @@
-import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { By } from '@angular/platform-browser';
+import {
+  Component,
+  DebugElement,
+  NO_ERRORS_SCHEMA
+} from '@angular/core';
 
-// import { RouterLinkWithHref } from '@angular/router';
-import { SkyAppConfig } from '../config';
-import { SkyAppLinkDirective } from './sky-app-link.directive';
+import {
+  ComponentFixture,
+  TestBed
+} from '@angular/core/testing';
+
+import {
+  By
+} from '@angular/platform-browser';
+
+import {
+  RouterTestingModule
+} from '@angular/router/testing';
+
+import {
+  SkyAppConfig
+} from '../config';
+
+import {
+  SkyAppLinkDirective
+} from './sky-app-link.directive';
 
 @Component({
   template: '<a skyAppLink="test">Test</a>'
@@ -18,14 +36,12 @@ class SkyAppLinkTestComponent { }
 class SkyAppLinkWithParamsTestComponent { }
 
 describe('SkyAppLink Directive', () => {
-
-  let component: SkyAppLinkTestComponent;
   let fixture: ComponentFixture<SkyAppLinkTestComponent>;
   let debugElement: DebugElement;
   let getAllParam: boolean;
 
   function setup(params: any, useQueryParams: boolean) {
-    let componentToUse = useQueryParams ?
+    const componentToUse = useQueryParams ?
       SkyAppLinkWithParamsTestComponent :
       SkyAppLinkTestComponent;
 
@@ -60,7 +76,6 @@ describe('SkyAppLink Directive', () => {
     });
 
     fixture = TestBed.createComponent(componentToUse);
-    component = fixture.componentInstance;
     debugElement = fixture.debugElement;
 
     fixture.detectChanges(); // initial binding

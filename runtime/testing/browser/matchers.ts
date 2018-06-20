@@ -1,15 +1,15 @@
-let _global: any = (typeof window === 'undefined' ? global : window);
+const _global: any = (typeof window === 'undefined' ? global : window);
 
 interface SkyMatchResult {
   pass: boolean;
   message: string;
 }
 
-let skyMatchers: jasmine.CustomMatcherFactories = {
+const skyMatchers: jasmine.CustomMatcherFactories = {
   toBeVisible: () => {
     return {
       compare: (el: Element): SkyMatchResult => {
-        let result = {
+        const result = {
           pass: false,
           message: ''
         };
@@ -28,7 +28,7 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
   toHaveText: () => {
     return {
       compare: (el: any, expectedText: string, trimWhitespace = true): SkyMatchResult => {
-        let result = {
+        const result = {
           pass: false,
           message: ''
         };
@@ -54,7 +54,7 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
   toHaveCssClass: () => {
     return {
       compare: (el: any, expectedCls: string): SkyMatchResult => {
-        let result = {
+        const result = {
           pass: false,
           message: ''
         };
@@ -77,14 +77,14 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
   toHaveStyle: () => {
     return {
       compare: (el: any, expectedStyle: any): SkyMatchResult => {
-        let result = {
+        const result = {
           pass: false,
           message: ''
         };
 
-        for (let p in expectedStyle) {
+        for (const p in expectedStyle) {
           if (expectedStyle.hasOwnProperty(p)) {
-            let actualStyle = (getComputedStyle(el) as any)[p];
+            const actualStyle = (getComputedStyle(el) as any)[p];
 
             if (actualStyle !== expectedStyle[p]) {
               if (result.message) {
@@ -106,7 +106,7 @@ let skyMatchers: jasmine.CustomMatcherFactories = {
   toExist: () => {
     return {
       compare: (el: any): SkyMatchResult => {
-        let result = {
+        const result = {
           pass: false,
           message: ''
         };
