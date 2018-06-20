@@ -13,7 +13,6 @@ import {
 
 import {
   BBOmnibar,
-  BBOmnibarLegacy,
   BBOmnibarNavigation,
   BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
@@ -258,13 +257,7 @@ export class AppComponent implements OnInit, OnDestroy {
       // triggers change detection on each interval.  Loading the omnibar outside
       // Angular will keep change detection from being triggered during each interval.
       this.zone.runOutsideAngular(() => {
-        if (omnibarConfig.experimental) {
-          // auth-client 2.0 made the "experimental" omnibar the default; maintain
-          // previous behavior until skyux-builder 2.0.
-          BBOmnibar.load(omnibarConfig);
-        } else {
-          BBOmnibarLegacy.load(omnibarConfig);
-        }
+        BBOmnibar.load(omnibarConfig);
         omnibarLoaded = true;
       });
     };
