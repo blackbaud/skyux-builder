@@ -2,10 +2,10 @@ import { SkyAppRuntimeConfigParams } from './params';
 
 describe('SkyAppRuntimeConfigParams', () => {
 
-  const allowed = [
-    'a1',
-    'a3'
-  ];
+  const allowed = {
+    'a1': true,
+    'a3': true
+  };
 
   it('should parse allowed params from a url', () => {
     const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
@@ -250,5 +250,4 @@ describe('SkyAppRuntimeConfigParams', () => {
 
     expect(params.getAllKeys()).toEqual([]);
   });
-
 });

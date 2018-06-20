@@ -31,11 +31,11 @@ describe('SkyAuthHttp', () => {
         provide: SkyAppConfig,
         useValue: {
           runtime: {
-            params: new SkyAppRuntimeConfigParams(url, [
-              'envid',
-              'leid',
-              'svcid'
-            ])
+            params: new SkyAppRuntimeConfigParams(url, {
+              'envid': true,
+              'leid': true,
+              'svcid': true
+            })
           }
         }
       }
