@@ -32,7 +32,7 @@ function setSpaAlias(alias, moduleName, path) {
 }
 
 module.exports = {
-  buildAliasList: function (skyPagesConfig) {
+  buildAliasList: function () {
     let alias = {
       'sky-pages-spa/src': spaPath('src'),
       'sky-pages-internal/runtime': outPath('runtime')
