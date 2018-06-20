@@ -891,7 +891,7 @@ describe('AppComponent', () => {
       fixture.detectChanges();
 
       const goodUrl = 'some-route';
-      const goodMessageType = 'navigate-e2e';
+      const goodMessageType = 'sky-navigate-e2e';
       const badUrl = 'some-other-route';
       const badMessageType = 'navigate';
 
