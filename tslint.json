@@ -3,14 +3,17 @@
     "codelyzer"
   ],
   "rules": {
+    "import-spacing": true,
     "member-access": true,
     "member-ordering": [
       true,
       {
         "order": [
-          "static-field",
-          "instance-field",
-          "constructor",
+          "public-static-field",
+          "public-instance-field",
+          "private-static-field",
+          "private-instance-field",
+          "public-constructor",
           "public-instance-method",
           "protected-instance-method",
           "private-instance-method"
@@ -22,6 +25,13 @@
     "no-internal-module": true,
     "no-reference": true,
     "no-var-requires": false,
+    "ordered-imports": [
+      true,
+      {
+        "grouped-imports": true
+      }
+    ],
+    "prefer-const": true,
     "typedef": [false],
     "typedef-whitespace": [
       true,
