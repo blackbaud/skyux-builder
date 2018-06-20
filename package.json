@@ -32,7 +32,6 @@
     "@blackbaud/skyux": "^2.0.0"
   },
   "dependencies": {
-    "@angular-devkit/build-optimizer": "0.6.8",
     "@angular/animations": "4.3.6",
     "@angular/common": "4.3.6",
     "@angular/compiler": "4.3.6",
