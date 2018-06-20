@@ -74,10 +74,6 @@ function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
     }
   };
 
-  if (skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.importPath) {
-    skyPagesConfigOverrides.runtime.skyuxPathAlias = '../../' + skyPagesConfig.skyux.importPath;
-  }
-
   const spaPathTempSrc = skyPagesConfigUtil.spaPathTempSrc();
 
   fs.ensureDirSync(spaPathTempSrc);

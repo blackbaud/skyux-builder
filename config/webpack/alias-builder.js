@@ -38,16 +38,6 @@ module.exports = {
       'sky-pages-internal/runtime': outPath('runtime')
     };
 
-    // Order here is very important; the more specific CSS alias must go before
-    // the more generic dist one.
-    if (skyPagesConfig.skyux.cssPath) {
-      alias['@blackbaud/skyux/dist/css/sky.css'] = spaPath(skyPagesConfig.skyux.cssPath);
-    }
-
-    if (skyPagesConfig.skyux.importPath) {
-      alias['@blackbaud/skyux/dist'] = spaPath(skyPagesConfig.skyux.importPath);
-    }
-
     setSpaAlias(
       alias,
       'src/app/app-extras.module',

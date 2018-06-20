@@ -19,6 +19,7 @@ function lintSync() {
   logger.info('Starting TSLint...');
 
   const spawnResult = spawn.sync('./node_modules/.bin/tslint', flags);
+  console.log('result?', spawnResult);
 
   // Convert buffers to strings.
   let output = [];
