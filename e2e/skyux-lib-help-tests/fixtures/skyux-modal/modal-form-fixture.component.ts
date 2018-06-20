@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import {
+  Component
+} from '@angular/core';
 
-import { SkyModalInstance } from '@blackbaud/skyux/dist/core';
+import {
+  SkyModalInstance
+} from '@blackbaud/skyux/dist/modules/modal';
 
 @Component({
   selector: 'sky-modal-form',
@@ -18,5 +22,7 @@ import { SkyModalInstance } from '@blackbaud/skyux/dist/core';
     </sky-modal>`
 })
 export class SkyModalDemoFormComponent {
-  constructor(public instance: SkyModalInstance) { }
+  constructor(
+    public instance: SkyModalInstance
+  ) { }
 }
