@@ -9,7 +9,6 @@ describe('config webpack build public library', () => {
   const configPath = '../config/webpack/build-public-library.webpack.config';
 
   let mockFs;
-  let mockNgTools;
   let skyPagesConfig;
 
   beforeEach(() => {
@@ -17,10 +16,6 @@ describe('config webpack build public library', () => {
       readJsonSync() {
         return {};
       }
-    };
-
-    mockNgTools = {
-      AotPlugin: function () {}
     };
 
     skyPagesConfig = {
@@ -43,7 +38,6 @@ describe('config webpack build public library', () => {
     });
 
     mock('fs-extra', mockFs);
-    mock('@ngtools/webpack', mockNgTools);
   });
 
   afterEach(() => {
@@ -108,18 +102,5 @@ describe('config webpack build public library', () => {
     const lib = mock.reRequire(configPath);
     const config = lib.getWebpackConfig(skyPagesConfig);
     expect(config.externals).toEqual([]);
-  });
-
-  it('should setup AOT compilation', () => {
-    const lib = mock.reRequire(configPath);
-    const spy = spyOn(mockNgTools, 'AotPlugin').and.callThrough();
-
-    lib.getWebpackConfig(skyPagesConfig);
-
-    expect(spy).toHaveBeenCalledWith({
-      tsConfigPath: 'temp',
-      entryModule: 'temp#SkyLibPlaceholderModule',
-      sourceMap: true
-    });
   });
 });

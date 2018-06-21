@@ -3,8 +3,7 @@
 
 const fs = require('fs-extra');
 const webpack = require('webpack');
-const ngtools = require('@ngtools/webpack');
-
+const ngcWebpack = require('ngc-webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
 function parseRegExp(name) {
@@ -56,15 +55,21 @@ function getWebpackConfig(skyPagesConfig) {
       rules: [
         {
           test: /\.ts$/,
-          loader: '@ngtools/webpack'
+          use: [
+            {
+              loader: '@ngtools/webpack',
+              options: {
+                tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json')
+              }
+            }
+          ],
+          exclude: [/\.(spec|e2e)\.ts$/]
         }
       ]
     },
     plugins: [
-      new ngtools.AotPlugin({
-        tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
-        sourceMap: true
+      new ngcWebpack.NgcWebpackPlugin({
+        tsConfig: skyPagesConfigUtil.spaPathTemp('tsconfig.json')
       }),
 
       new webpack.optimize.UglifyJsPlugin({
