@@ -1,7 +1,7 @@
 # 1.18.0 (2018-06-21)
 
 - Added LCOV code coverage output when running `skyux test`. [#416](https://github.com/blackbaud/skyux-builder/pull/416)
-- Added support "tilde imports" in SCSS files in libraries. [#415](https://github.com/blackbaud/skyux-builder/pull/415)
+- Added support to use tildes for imports in SCSS files in libraries. [#415](https://github.com/blackbaud/skyux-builder/pull/415)
 - Added support for route navigation during `skyux e2e`. [#414](https://github.com/blackbaud/skyux-builder/pull/414)
 - Bugfix to properly handle multiline entry of `styleUrls`. [#418](https://github.com/blackbaud/skyux-builder/pull/418)
 
