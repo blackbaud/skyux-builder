@@ -28,7 +28,6 @@ module.exports = {
       srcPath: 'src/app/',
       spaPathAlias: 'sky-pages-spa',
       skyPagesOutAlias: 'sky-pages-internal',
-      skyuxPathAlias: '@blackbaud/skyux/dist',
       useTemplateUrl: false
     }, runtime);
   },
@@ -42,9 +41,6 @@ module.exports = {
       params: [
         'envid',
         'svcid'
-      ],
-      skyuxModules: [
-        'SkyModule'
       ]
     }, skyux);
   }

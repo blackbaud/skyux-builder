@@ -35,7 +35,7 @@ let config = {
       } else {
 
         const url = 'https://github.com/blackbaud/skyux-template';
-        const branch = 'builder-dev';
+        const branch = 'builder-dev-rc';
 
         console.log('Running command using full install.');
         common.rimrafPromise(common.tmp)

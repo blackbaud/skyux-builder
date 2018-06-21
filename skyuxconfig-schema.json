@@ -133,10 +133,6 @@
       ],
       "default": "aot"
     },
-    "cssPath": {
-      "description": "Specifies a path to reference CSS styles. This property is specific to the SKY UX docs site and is for internal Blackbaud use only.",
-      "type": "string"
-    },
     "help": {
       "description": " Indicates whether to automatically include the help widget in the application to identify the current page and display relevant help content. This property is for internal Blackbaud use only.",
       "type": [
@@ -154,10 +150,6 @@
           "default": "https://host.nxt.blackbaud.com"
         }
       }
-    },
-    "importPath": {
-      "description": "Specifies a path to reference SKY UX components in Angular. This property is specific to the SKY UX docs site and is for internal Blackbaud use only.",
-      "type": "string"
     },
     "mode": {
       "description": "Controls how much boilerplate code to generate automatically.",
@@ -212,10 +204,6 @@
     "useHashRouting": {
       "description": "Allows your SPA to use Angular's hash location strategy.",
       "type": "boolean"
-    },
-    "skyuxModules": {
-      "description": "The individual SKY UX modules that should be imported into the application.  Use this property for performance optimization when your application only uses a small subset of SKY UX components.",
-      "type": "array"
     }
   }
 }
