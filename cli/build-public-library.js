@@ -81,6 +81,18 @@ function writeTSConfig() {
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);
 }
 
+function writePlaceholderModule() {
+  const content = `import { NgModule } from '@angular/core';
+import './index';
+@NgModule({})
+export class SkyLibPlaceholderModule {}
+`;
+
+  fs.writeFileSync(skyPagesConfigUtil.spaPathTemp('main.ts'), content, {
+    encoding: 'utf8'
+  });
+}
+
 function transpile(skyPagesConfig, webpack) {
   const config = webpackConfig.getWebpackConfig(skyPagesConfig);
   return runCompiler(webpack, config);
@@ -91,6 +103,7 @@ module.exports = (skyPagesConfig, webpack) => {
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();
+  writePlaceholderModule();
   copyRuntime();
 
   return transpile(skyPagesConfig, webpack)
