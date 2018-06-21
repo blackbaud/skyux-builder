@@ -110,7 +110,6 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     entry: {
       polyfills: [outPath('src', 'polyfills.ts')],
       vendor: [outPath('src', 'vendor.ts')],
-      skyux: [outPath('src', 'skyux.ts')],
       app: [appPath]
     },
     output: {

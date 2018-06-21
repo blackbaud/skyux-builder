@@ -19,7 +19,9 @@ import {
   BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
 
-import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
+import {
+  HelpInitializationService
+} from '@blackbaud/skyux-lib-help';
 
 import {
   SkyAppConfig,
@@ -31,7 +33,6 @@ import {
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
 
-require('style-loader!@blackbaud/skyux/dist/css/sky.css');
 require('style-loader!./app.component.scss');
 
 let omnibarLoaded: boolean;

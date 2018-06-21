@@ -1,10 +1,18 @@
-import { Component } from '@angular/core';
+import {
+  Component
+} from '@angular/core';
 
-import { SkyModalService } from '@blackbaud/skyux/dist/core';
+import {
+  SkyModalService
+} from '@blackbaud/skyux/dist/modules/modal';
 
-import { SkyModalDemoFormComponent } from './modal-form-fixture.component';
+import {
+  HelpWidgetService
+} from '@blackbaud/skyux-lib-help';
 
-import { HelpWidgetService } from '@blackbaud/skyux-lib-help';
+import {
+  SkyModalDemoFormComponent
+} from './modal-form-fixture.component';
 
 @Component({
   selector: 'help-modal-launcher',

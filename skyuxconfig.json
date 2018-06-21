@@ -12,8 +12,5 @@
     "envid": true,
     "leid": true,
     "svcid": true
-  },
-  "skyuxModules": [
-    "SkyModule"
-  ]
+  }
 }
