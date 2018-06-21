@@ -31,14 +31,13 @@ function getWebpackConfig(skyPagesConfig, argv) {
     entry: {
       polyfills: [skyPagesConfigUtil.spaPathTempSrc('polyfills.ts')],
       vendor: [skyPagesConfigUtil.spaPathTempSrc('vendor.ts')],
-      skyux: [skyPagesConfigUtil.spaPathTempSrc('skyux.ts')],
       app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
-    
+
     // Disable sourcemaps for production:
     // https://webpack.js.org/configuration/devtool/#production
     devtool: undefined,
-    
+
     module: {
       rules: [
         {

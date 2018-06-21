@@ -41,7 +41,6 @@ export interface RuntimeConfig {
   runtimeAlias: string;
   spaPathAlias: string;
   skyPagesOutAlias: string;
-  skyuxPathAlias: string;
   srcPath: string;
   useTemplateUrl: boolean;
 }
@@ -68,10 +67,8 @@ export interface SkyuxConfig {
   codeCoverageThreshold?: 'none' | 'standard' | 'strict';
   command?: string;
   compileMode?: string;
-  cssPath?: string;
   help?: any;
   host?: SkyuxConfigHost;
-  importPath?: string;
   mode?: string;
   name?: string;
   pacts?: any[];
@@ -84,7 +81,6 @@ export interface SkyuxConfig {
   };
   omnibar?: any;
   useHashRouting?: boolean;
-  skyuxModules?: string[];
 }
 
 @Injectable()
