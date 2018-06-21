@@ -154,44 +154,6 @@ describe('SKY UX Builder module generator', () => {
     );
   });
 
-  it('should allow the SKY UX path alias to be overridden', () => {
-    const generator = mock.reRequire(GENERATOR_PATH);
-    const source = generator.getSource({
-      runtime: runtimeUtils.getDefaultRuntime({
-        skyuxPathAlias: 'custom'
-      }),
-      skyux: runtimeUtils.getDefaultSkyux()
-    });
-
-    expect(source).toContain(
-      `import {
-  SkyModule
-} from 'custom/core';`
-    );
-  });
-
-  it('should import individual SKY UX modules from config', () => {
-    const generator = mock.reRequire(GENERATOR_PATH);
-    const source = generator.getSource({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: runtimeUtils.getDefaultSkyux({
-        skyuxModules: [
-          'SkyAlertModule',
-          'SkyErrorModule',
-          'SkyModalModule'
-        ]
-      })
-    });
-
-    expect(source).toContain(
-      `import {
-  SkyAlertModule,
-  SkyErrorModule,
-  SkyModalModule
-} from '@blackbaud/skyux/dist/core';`
-    );
-  });
-
   it('should only provide the SkyAuthHttp service if the app is configured to use auth', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     // Other items can exist so we're leaving out "import""

@@ -38,7 +38,6 @@ describe('skyux serve', () => {
         [
           'polyfills.js',
           'vendor.js',
-          'skyux.js',
           'app.js'
         ].forEach(file => {
           const currentIndex = source.indexOf(`<script src="${file}"></script>`);
