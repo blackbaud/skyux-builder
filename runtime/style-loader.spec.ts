@@ -1,7 +1,10 @@
 /* tslint:disable:no-console */
 
-import { SkyAppStyleLoader } from './style-loader';
 import * as FontFaceObserver from 'fontfaceobserver';
+
+import {
+  SkyAppStyleLoader
+} from './style-loader';
 
 describe('Style loader', () => {
   it('should resolve a promise after loading fonts', (done) => {

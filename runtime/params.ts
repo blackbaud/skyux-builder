@@ -1,5 +1,10 @@
-import { URLSearchParams } from '@angular/http';
-import { SkyuxConfigParams } from './config-params';
+import {
+  URLSearchParams
+} from '@angular/http';
+
+import {
+  SkyuxConfigParams
+} from './config-params';
 
 /**
  * Given a "url" (could be just querystring, or fully qualified),
@@ -154,7 +159,7 @@ export class SkyAppRuntimeConfigParams {
   public getUrl(url: string): string {
     const urlSearchParams = getUrlSearchParams(url);
     const delimiter = url.indexOf('?') === -1 ? '?' : '&';
-    let joined: string[] = [];
+    const joined: string[] = [];
 
     this.getAllKeys().forEach(key => {
       if (!urlSearchParams.has(key)) {

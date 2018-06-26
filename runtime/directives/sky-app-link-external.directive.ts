@@ -1,8 +1,26 @@
-import { Directive, Input } from '@angular/core';
-import { PathLocationStrategy, PlatformLocation } from '@angular/common';
-import { SkyAppWindowRef } from '../window-ref';
-import { SkyAppConfig } from '../config';
-import { ActivatedRoute, Router, RouterLinkWithHref } from '@angular/router';
+import {
+  Directive,
+  Input
+} from '@angular/core';
+
+import {
+  PathLocationStrategy,
+  PlatformLocation
+} from '@angular/common';
+
+import {
+  ActivatedRoute,
+  Router,
+  RouterLinkWithHref
+} from '@angular/router';
+
+import {
+  SkyAppConfig
+} from '../config';
+
+import {
+  SkyAppWindowRef
+} from '../window-ref';
 
 @Directive({
   selector: '[skyAppLinkExternal]'

@@ -1,14 +1,39 @@
-import { ReflectiveInjector } from '@angular/core';
-import { BaseRequestOptions, ConnectionBackend, RequestOptions } from '@angular/http';
-import { Response, ResponseOptions } from '@angular/http';
-import { MockBackend, MockConnection } from '@angular/http/testing';
+import {
+  ReflectiveInjector
+} from '@angular/core';
 
-import { BBAuth } from '@blackbaud/auth-client';
-import { SkyAuthHttp } from './auth-http';
+import {
+  BaseRequestOptions,
+  ConnectionBackend,
+  RequestOptions,
+  Response,
+  ResponseOptions
+} from '@angular/http';
 
-import { SkyAppConfig } from './config';
-import { SkyAppRuntimeConfigParams } from './params';
-import { SkyAuthTokenProvider } from './auth-token-provider';
+import {
+  MockBackend,
+  MockConnection
+} from '@angular/http/testing';
+
+import {
+  BBAuth
+} from '@blackbaud/auth-client';
+
+import {
+  SkyAuthHttp
+} from './auth-http';
+
+import {
+  SkyAuthTokenProvider
+} from './auth-token-provider';
+
+import {
+  SkyAppConfig
+} from './config';
+
+import {
+  SkyAppRuntimeConfigParams
+} from './params';
 
 describe('SkyAuthHttp', () => {
 

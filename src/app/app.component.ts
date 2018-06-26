@@ -13,7 +13,6 @@ import {
 
 import {
   BBOmnibar,
-  BBOmnibarLegacy,
   BBOmnibarNavigation,
   BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
@@ -210,7 +209,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (globalRoutes) {
         const localNavItems: BBOmnibarNavigationItem[] = [];
 
-        for (let route of globalRoutes) {
+        for (const route of globalRoutes) {
           localNavItems.push({
             title: route.name,
             url: fixUpUrl(baseUrl, route.route, this.config),
@@ -259,13 +258,7 @@ export class AppComponent implements OnInit, OnDestroy {
       // triggers change detection on each interval.  Loading the omnibar outside
       // Angular will keep change detection from being triggered during each interval.
       this.zone.runOutsideAngular(() => {
-        if (omnibarConfig.experimental) {
-          // auth-client 2.0 made the "experimental" omnibar the default; maintain
-          // previous behavior until skyux-builder 2.0.
-          BBOmnibar.load(omnibarConfig);
-        } else {
-          BBOmnibarLegacy.load(omnibarConfig);
-        }
+        BBOmnibar.load(omnibarConfig);
         omnibarLoaded = true;
       });
     };
@@ -284,7 +277,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
 
       if (skyuxHost && !helpConfig.locale) {
-        let browserLanguages = skyuxHost.acceptLanguage || '';
+        const browserLanguages = skyuxHost.acceptLanguage || '';
         helpConfig.locale = browserLanguages.split(',')[0];
       }
 

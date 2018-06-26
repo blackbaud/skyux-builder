@@ -1,9 +1,20 @@
 declare var module: any;
 
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { NgModuleRef } from '@angular/core';
-import { AppModule } from './app/app.module';
-import { SkyAppBootstrapper } from '../runtime/bootstrapper';
+import {
+  NgModuleRef
+} from '@angular/core';
+
+import {
+  platformBrowserDynamic
+} from '@angular/platform-browser-dynamic';
+
+import {
+  SkyAppBootstrapper
+} from '../runtime/bootstrapper';
+
+import {
+  AppModule
+} from './app/app.module';
 
 SkyAppBootstrapper
   .processBootstrapConfig()

@@ -5,16 +5,27 @@ import {
   Optional
 } from '@angular/core';
 
-import { Http } from '@angular/http';
+import {
+  Http
+} from '@angular/http';
 
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/publishReplay';
-import 'rxjs/add/operator/switchMap';
+import {
+  Observable
+} from 'rxjs/Observable';
+
+import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/observable/of';
+import 'rxjs/add/operator/publishReplay';
+import 'rxjs/add/operator/switchMap';
 
-import { SkyAppAssetsService } from '@blackbaud/skyux-builder/runtime/assets.service';
+import {
+  SkyAppAssetsService
+} from '@blackbaud/skyux-builder/runtime/assets.service';
+
+import {
+  SkyAppFormat
+} from '@blackbaud/skyux-builder/runtime/format';
 
 import {
   SkyAppLocaleProvider
@@ -23,8 +34,6 @@ import {
 import {
   SkyAppHostLocaleProvider
 } from '@blackbaud/skyux-builder/runtime/i18n/host-locale-provider';
-
-import { SkyAppFormat } from '@blackbaud/skyux-builder/runtime/format';
 
 const defaultResources: {[key: string]: {message: string}} = {};
 
