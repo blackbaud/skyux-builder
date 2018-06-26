@@ -203,4 +203,17 @@ describe('SkyAuthHttp', () => {
     });
   });
 
+  it('should include the envId regardless of permission scope', () => {
+    const search = '?envid=1234';
+    const getTokenSpy = spyOn(BBAuth, 'getToken');
+
+    setupInjector(search);
+    skyAuthHttp
+      .get('example.com');
+
+    expect(getTokenSpy).toHaveBeenCalledWith({
+      envId: '1234'
+    });
+  });
+
 });

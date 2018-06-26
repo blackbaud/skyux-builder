@@ -84,9 +84,11 @@ export class SkyAuthHttp extends Http {
     // See if this call was chained to withScope(), and if so, provide it when
     // retrieving a token.
     if (this.permissionScope) {
-      tokenArgs.envId = this.getEnvId();
       tokenArgs.permissionScope = this.permissionScope;
     }
+
+    // Always provide the environment ID.
+    tokenArgs.envId = this.getEnvId();
 
     if (leId) {
       tokenArgs.leId = leId;
