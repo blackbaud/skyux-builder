@@ -10,20 +10,15 @@ import {
   tick
 } from '@angular/core/testing';
 
-import { RouterTestingModule } from '@angular/router/testing';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import {
+  NavigationEnd,
+  NavigationStart,
+  Router
+} from '@angular/router';
 
 import {
-  SkyAppConfig,
-  SkyAppOmnibarProvider,
-  SkyAppOmnibarReadyArgs,
-  SkyAppSearchResultsProvider,
-  SkyAppStyleLoader,
-  SkyAppWindowRef,
-  SkyAppViewportService
-} from '@blackbaud/skyux-builder/runtime';
-
-import { HelpInitializationService } from '@blackbaud/skyux-lib-help';
+  RouterTestingModule
+} from '@angular/router/testing';
 
 import {
   BBOmnibar,
@@ -32,7 +27,23 @@ import {
   BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
 
-import { AppComponent } from './app.component';
+import {
+  SkyAppConfig,
+  SkyAppOmnibarProvider,
+  SkyAppOmnibarReadyArgs,
+  SkyAppSearchResultsProvider,
+  SkyAppStyleLoader,
+  SkyAppViewportService,
+  SkyAppWindowRef
+} from '@blackbaud/skyux-builder/runtime';
+
+import {
+  HelpInitializationService
+} from '@blackbaud/skyux-lib-help';
+
+import {
+  AppComponent
+} from './app.component';
 
 describe('AppComponent', () => {
   let mockSkyuxHost: any;
@@ -71,7 +82,7 @@ describe('AppComponent', () => {
     omnibarProvider?: any
   ) {
     mockWindow = new MockWindow();
-    let providers: any[] = [
+    const providers: any[] = [
       {
         provide: Router,
         useValue: {
@@ -146,7 +157,7 @@ describe('AppComponent', () => {
     readyArgs: SkyAppOmnibarReadyArgs,
     expectedNotCalledWith?: any
   ) {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
 
@@ -233,7 +244,7 @@ describe('AppComponent', () => {
   }));
 
   it('should not call BBOmnibar.load if config.skyux.omnibar does not exist', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
@@ -327,7 +338,7 @@ describe('AppComponent', () => {
   );
 
   it('should call omnibar destroy if it was loaded', () => {
-    let spyOmnibarLoad = spyOn(BBOmnibar, 'load');
+    const spyOmnibarLoad = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
 
@@ -340,7 +351,7 @@ describe('AppComponent', () => {
   });
 
   it('should not load the omnibar if the addin param is 1', () => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.runtime.params.get = (key: string) => key === 'addin' ? '1' : undefined;
     skyAppConfig.skyux.omnibar = true;
@@ -352,7 +363,7 @@ describe('AppComponent', () => {
   });
 
   it('should set the onSearch property if a search provider is provided', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
 
@@ -363,7 +374,7 @@ describe('AppComponent', () => {
   }));
 
   it('should call the search provider getSearchResults in the onSearch callback', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
 
@@ -380,7 +391,7 @@ describe('AppComponent', () => {
   }));
 
   it('should set the allow anonymous flag based on the app\'s auth configuration', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
 
@@ -398,7 +409,7 @@ describe('AppComponent', () => {
   }));
 
   it('should set the known params on the omnibar config if they exist', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
 
@@ -420,7 +431,7 @@ describe('AppComponent', () => {
   }));
 
   it('should not create BBOmnibarNavigation if omnibar.nav is set', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
       nav: {
         junk: true
@@ -434,7 +445,7 @@ describe('AppComponent', () => {
   }));
 
   it('should mark first service as selected if no omnibar.nav.services are selected', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
       nav: {
         services: [
@@ -451,7 +462,7 @@ describe('AppComponent', () => {
   }));
 
   it('should not mark the first service as selected if another one is already marked', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
     skyAppConfig.skyux.omnibar = {
       nav: {
         services: [
@@ -468,7 +479,7 @@ describe('AppComponent', () => {
   }));
 
   it('should recursively set the url property to omnibar.nav.services.items', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.host.url = 'base.com/';
     skyAppConfig.runtime.app.base = 'custom-base/';
@@ -512,7 +523,7 @@ describe('AppComponent', () => {
   }));
 
   it('should add the beforeNavCallback', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
     skyAppConfig.skyux.host.url = 'base.com/';
@@ -525,7 +536,7 @@ describe('AppComponent', () => {
   }));
 
   it('should enable help for the omnibar when help config is present', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
     skyAppConfig.skyux.help = {
@@ -542,7 +553,7 @@ describe('AppComponent', () => {
   }));
 
   it('should call navigateByUrl, return false in the beforeNavCallback if local link', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
     skyAppConfig.skyux.host.url = 'base.com/';
@@ -563,7 +574,7 @@ describe('AppComponent', () => {
   }));
 
   it('should handle global links that start with the same base URL as the SPA', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
     skyAppConfig.skyux.host.url = 'base.com/';
@@ -573,14 +584,14 @@ describe('AppComponent', () => {
       fixture.detectChanges();
       const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
 
-      let globalLink = cb({ url: 'base.com/custom-base-2' });
+      const globalLink = cb({ url: 'base.com/custom-base-2' });
       expect(globalLink).toEqual(true);
       expect(navigateByUrlParams).not.toBeDefined();
     });
   }));
 
   it('should use the original url casing if calling navigateByUrl', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
     skyAppConfig.skyux.host.url = 'base.com/';
@@ -597,7 +608,7 @@ describe('AppComponent', () => {
   }));
 
   it('should handle no public routes during serve', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
     skyAppConfig.runtime.command = 'serve';
@@ -610,7 +621,7 @@ describe('AppComponent', () => {
   }));
 
   it('should add global public routes as localNavItems during serve', async(() => {
-    let spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyOmnibar = spyOn(BBOmnibar, 'load');
 
     skyAppConfig.skyux.omnibar = {};
     skyAppConfig.skyux.host.url = 'base.com/';
@@ -646,7 +657,7 @@ describe('AppComponent', () => {
   }));
 
   it('should not call HelpInitializationService.load if help config does not exist', async(() => {
-    let spyHelp = spyOn(mockHelpInitService, 'load');
+    const spyHelp = spyOn(mockHelpInitService, 'load');
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyHelp).not.toHaveBeenCalled();
@@ -654,7 +665,7 @@ describe('AppComponent', () => {
   }));
 
   it('should pass help config to HelpInitializationService.load', async(() => {
-    let spyHelp = spyOn(mockHelpInitService, 'load');
+    const spyHelp = spyOn(mockHelpInitService, 'load');
     skyAppConfig.skyux.help = { productId: 'test-config' };
     skyAppConfig.runtime.params.has = (key: any) => false;
     setup(skyAppConfig).then(() => {
@@ -664,7 +675,7 @@ describe('AppComponent', () => {
   }));
 
   it('should assign help config extends key to the svcid if one exists', async(() => {
-    let spyHelp = spyOn(mockHelpInitService, 'load');
+    const spyHelp = spyOn(mockHelpInitService, 'load');
     const expectedCall = { productId: 'test-config', extends: 'help-extend' };
     skyAppConfig.skyux.help = { productId: 'test-config' };
 
@@ -680,7 +691,7 @@ describe('AppComponent', () => {
   }));
 
   it('should assign help config locale key if none exist and host exposes the browser language', async(() => {
-    let spyHelp = spyOn(mockHelpInitService, 'load');
+    const spyHelp = spyOn(mockHelpInitService, 'load');
 
     skyAppConfig.runtime.params.has = (key: any) => key === false;
 
@@ -698,7 +709,7 @@ describe('AppComponent', () => {
   }));
 
   it('should fallback to \'\' for the locale if SKYUX_HOST.acceptLanguage does not exist', async(() => {
-    let spyHelp = spyOn(mockHelpInitService, 'load');
+    const spyHelp = spyOn(mockHelpInitService, 'load');
 
     skyAppConfig.runtime.params.has = (key: any) => key === false;
 
@@ -714,7 +725,7 @@ describe('AppComponent', () => {
   }));
 
   it('should not override a locale that has been passed into the config', async(() => {
-    let spyHelp = spyOn(mockHelpInitService, 'load');
+    const spyHelp = spyOn(mockHelpInitService, 'load');
     mockSkyuxHost = {
       acceptLanguage: 'fr-ca'
     };

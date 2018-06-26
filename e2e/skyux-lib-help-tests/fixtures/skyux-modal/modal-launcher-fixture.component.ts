@@ -28,11 +28,11 @@ import {
 export class HelpModalDemoComponent {
   constructor(
     private helpService: HelpWidgetService,
-    private modal: SkyModalService) { }
+    private modal: SkyModalService
+  ) { }
 
-  public openModal(modalType: string) {
-
-    let modalOptions = {
+  public openModal(modalType: string): void {
+    const modalOptions = {
       fullPage: false,
       helpKey: 'modal-header'
     };
@@ -45,7 +45,10 @@ export class HelpModalDemoComponent {
         break;
     }
 
-    let modalInstance = this.modal.open(SkyModalDemoFormComponent, modalOptions);
+    const modalInstance = this.modal.open(
+      SkyModalDemoFormComponent,
+      modalOptions
+    );
 
     modalInstance.helpOpened.subscribe((helpKey: string) => {
       this.helpService.openToHelpKey(helpKey);

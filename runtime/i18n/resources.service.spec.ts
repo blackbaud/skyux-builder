@@ -14,19 +14,24 @@ import {
   MockBackend
 } from '@angular/http/testing';
 
-import { Observable } from 'rxjs/Observable';
-
-import { SkyAppWindowRef } from '@blackbaud/skyux-builder/runtime';
-
-import { SkyAppResourcesService } from '@blackbaud/skyux-builder/runtime/i18n/resources.service';
-import { SkyAppAssetsService } from '@blackbaud/skyux-builder/runtime/assets.service';
-import { SkyAppLocaleProvider } from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';
+import {
+  Observable
+} from 'rxjs/Observable';
 
 import {
-  SkyAppHostLocaleProvider
-} from '@blackbaud/skyux-builder/runtime/i18n/host-locale-provider';
+  SkyAppAssetsService,
+  SkyAppWindowRef
+} from '@blackbaud/skyux-builder/runtime';
 
-import { SkyAppFormat } from '@blackbaud/skyux-builder/runtime/format';
+import {
+  SkyAppHostLocaleProvider,
+  SkyAppLocaleProvider,
+  SkyAppResourcesService
+} from '@blackbaud/skyux-builder/runtime/i18n';
+
+import {
+  SkyAppFormat
+} from '@blackbaud/skyux-builder/runtime/format';
 
 describe('Resources service', () => {
   let resources: SkyAppResourcesService;
