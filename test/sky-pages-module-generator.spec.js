@@ -358,4 +358,29 @@ BBAuth.mock = true;`);
       useClass: SkyPactAuthTokenProvider
     }`);
   });
+
+  it('should add require statements for stylesheets', () => {
+    const generator = mock.reRequire(GENERATOR_PATH);
+    const expectedRequire = `
+require('style-loader!@foo/bar/style.scss');
+require('style-loader!src/styles/custom.css');
+`;
+    const config = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: runtimeUtils.getDefaultSkyux()
+    };
+
+    config.skyux.app = {
+      styles: [
+        '@foo/bar/style.scss',
+        'src/styles/custom.css',
+        'https://google.com/styles.css'
+      ]
+    };
+
+    const source = generator.getSource(config);
+
+    expect(source).toContain(expectedRequire);
+    expect(source).not.toContain(`require('style-loader!https://google.com/styles.css');`);
+  });
 });
