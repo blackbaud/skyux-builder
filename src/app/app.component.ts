@@ -210,7 +210,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (globalRoutes) {
         const localNavItems: BBOmnibarNavigationItem[] = [];
 
-        for (let route of globalRoutes) {
+        for (const route of globalRoutes) {
           localNavItems.push({
             title: route.name,
             url: fixUpUrl(baseUrl, route.route, this.config),
@@ -284,7 +284,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
 
       if (skyuxHost && !helpConfig.locale) {
-        let browserLanguages = skyuxHost.acceptLanguage || '';
+        const browserLanguages = skyuxHost.acceptLanguage || '';
         helpConfig.locale = browserLanguages.split(',')[0];
       }
 

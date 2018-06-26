@@ -1,11 +1,33 @@
-import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { By } from '@angular/platform-browser';
+import {
+  Component,
+  DebugElement,
+  NO_ERRORS_SCHEMA
+} from '@angular/core';
 
-import { SkyAppConfig } from '../config';
-import { SkyAppLinkExternalDirective } from './sky-app-link-external.directive';
-import { SkyAppWindowRef } from '../window-ref';
+import {
+  ComponentFixture,
+  TestBed
+} from '@angular/core/testing';
+
+import {
+  By
+} from '@angular/platform-browser';
+
+import {
+  RouterTestingModule
+} from '@angular/router/testing';
+
+import {
+  SkyAppConfig
+} from '../config';
+
+import {
+  SkyAppWindowRef
+} from '../window-ref';
+
+import {
+  SkyAppLinkExternalDirective
+} from './sky-app-link-external.directive';
 
 @Component({
   template: '<a skyAppLinkExternal="test">Test</a>'
@@ -20,7 +42,6 @@ class SkyAppLinkExternalWithParamsTestComponent { }
 const testUrl: string = 'testUrl';
 
 describe('SkyAppLinkExternal Directive', () => {
-  let component: SkyAppLinkExternalTestComponent;
   let fixture: ComponentFixture<SkyAppLinkExternalTestComponent>;
   let debugElement: DebugElement;
 
@@ -39,8 +60,8 @@ describe('SkyAppLinkExternal Directive', () => {
   }
 
   function setup(params: any, windowName: string, useQueryParams: boolean) {
-    let mockWindowService = new MockWindowService(windowName);
-    let componentToUse = useQueryParams ?
+    const mockWindowService = new MockWindowService(windowName);
+    const componentToUse = useQueryParams ?
       SkyAppLinkExternalWithParamsTestComponent :
       SkyAppLinkExternalTestComponent;
 
@@ -75,7 +96,6 @@ describe('SkyAppLinkExternal Directive', () => {
     });
 
     fixture = TestBed.createComponent(componentToUse);
-    component = fixture.componentInstance;
     debugElement = fixture.debugElement;
 
     fixture.detectChanges(); // initial binding
