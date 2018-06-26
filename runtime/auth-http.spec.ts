@@ -208,8 +208,7 @@ describe('SkyAuthHttp', () => {
     const getTokenSpy = spyOn(BBAuth, 'getToken');
 
     setupInjector(search);
-    skyAuthHttp
-      .get('example.com');
+    skyAuthHttp.get('example.com');
 
     expect(getTokenSpy).toHaveBeenCalledWith({
       envId: '1234'
