@@ -34,7 +34,7 @@ export class SkyAppRuntimeConfigParams {
     url: string,
     configParams: SkyuxConfigParams
   ) {
-    let allowed: string[] = [];
+    const allowed: string[] = [];
 
     for (const paramName of Object.keys(configParams)) {
       const configParam = configParams[paramName];
