@@ -5,7 +5,12 @@ const path = require('path');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 const logger = require('@blackbaud/skyux-logger');
 
+// See minimist documentation regarding `argv._` https://github.com/substack/minimist
+const argv = minimist(process.argv.slice(2));
+const skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
+
 exports.config = {
+  skyPagesConfig: skyPagesConfig,
   allScriptsTimeout: 11000,
   specs: [
     path.join(
