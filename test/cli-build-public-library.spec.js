@@ -2,7 +2,6 @@
 'use strict';
 
 const mock = require('mock-require');
-const fs = require('fs-extra');
 const rimraf = require('rimraf');
 const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
@@ -11,8 +10,15 @@ describe('cli build-public-library', () => {
   const requirePath = '../cli/build-public-library';
   let webpackConfig;
   let mockWebpack;
+  let mockFs;
 
   beforeEach(() => {
+    mockFs = {
+      writeJSONSync() {},
+      writeFileSync() {},
+      copySync() {}
+    };
+
     mockWebpack = () => {
       return {
         run: (cb) => {
@@ -42,6 +48,9 @@ describe('cli build-public-library', () => {
         return webpackConfig;
       }
     });
+
+    mock('fs-extra', mockFs);
+
     spyOn(process, 'exit').and.callFake(() => {});
     spyOn(skyPagesConfigUtil, 'spaPath').and.returnValue('');
     spyOn(skyPagesConfigUtil, 'spaPathTemp').and.callFake((fileName = '') => {
@@ -51,8 +60,6 @@ describe('cli build-public-library', () => {
       return fileName;
     });
     spyOn(rimraf, 'sync').and.callFake(() => {});
-    spyOn(fs, 'writeJSONSync').and.callFake(() => {});
-    spyOn(fs, 'copySync');
   });
 
   afterEach(() => {
@@ -66,8 +73,9 @@ describe('cli build-public-library', () => {
 
   it('should copy the runtime folder before compiling then clean it before packaging', (done) => {
     const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(mockFs, 'copySync').and.callThrough();
     cliCommand({}, mockWebpack).then(() => {
-      expect(fs.copySync).toHaveBeenCalledWith('runtime', 'runtime');
+      expect(spy).toHaveBeenCalledWith('runtime', 'runtime');
       expect(rimraf.sync).toHaveBeenCalledTimes(4);
       done();
     });
@@ -85,9 +93,25 @@ describe('cli build-public-library', () => {
 
   it('should write a tsconfig.json file', (done) => {
     const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(mockFs, 'writeJSONSync').and.callThrough();
     cliCommand({}, mockWebpack).then(() => {
-      const firstArg = fs.writeJSONSync.calls.argsFor(0)[0];
+      const firstArg = spy.calls.argsFor(0)[0];
       expect(firstArg).toEqual('tsconfig.json');
+      done();
+    });
+  });
+
+  it('should write a placeholder module file', (done) => {
+    const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(mockFs, 'writeFileSync').and.callThrough();
+    cliCommand({}, mockWebpack).then(() => {
+      const args = spy.calls.argsFor(0);
+      expect(args[0]).toEqual('main.ts');
+      expect(args[1]).toEqual(`import { NgModule } from '@angular/core';
+import './index';
+@NgModule({})
+export class SkyLibPlaceholderModule {}
+`);
       done();
     });
   });
