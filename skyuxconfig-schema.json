@@ -2,6 +2,27 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "JSON schema for SKY UX CLI skyuxconfig.json",
   "definitions": {
+    "browserProperties": {
+      "type": "object",
+      "properties": {
+        "os": {
+          "description": "Name of the operating system.",
+          "type": "string"
+        },
+        "osVersion": {
+          "description": "Version of the operating system.",
+          "type": "string"
+        },
+        "browser": {
+          "description": "Name of the browser.",
+          "type": "string"
+        },
+        "browserVersion": {
+          "description": "Version of the browser.",
+          "type": "string"
+        }
+      }
+    },
     "externalFileCSS": {
       "type": "object",
       "properties": {
@@ -222,6 +243,38 @@
     "skyuxModules": {
       "description": "The individual SKY UX modules that should be imported into the application.  Use this property for performance optimization when your application only uses a small subset of SKY UX components.",
       "type": "array"
+    },
+    "testSettings": {
+      "description": "Container for controlling test settings.",
+      "type": "object",
+      "properties": {
+        "e2e": {
+          "description": "Test settings specific to the skyux e2e command.",
+          "type": "object",
+          "properties": {
+            "browsers": {
+              "description": "An array of browsers to test against.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/browserProperties"
+              }
+            }
+          }
+        },
+        "unit": {
+          "description": "Test settings specific to the skyux test command.",
+          "type": "object",
+          "properties": {
+            "browsers": {
+              "description": "An array of browsers to test against.",
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/browserProperties"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

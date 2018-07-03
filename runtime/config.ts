@@ -19,6 +19,26 @@ export class SkyuxPactConfig {
   public pactProxyServer?: string;
 }
 
+export interface SkyuxConfigBrowserTestSettings {
+  os?: string;
+  osVersion?: string;
+  browser?: string;
+  browserVersion?: string;
+}
+
+export interface SkyuxConfigE2eTestSettings {
+  browsers?: BrowserTestSettings[];
+}
+
+export interface SkyuxConfigUnitTestSettings {
+  browsers?: BrowserTestSettings[];
+}
+
+export interface SkyuxConfigTestSettings {
+  e2e?: SkyuxConfigE2eTestSettings;
+  unit?: SkyuxConfigUnitTestSettings;
+}
+
 export interface RuntimeConfig {
   app: RuntimeConfigApp;
   command?: string;  // Dynamically added in "higher up" webpacks
@@ -74,6 +94,7 @@ export interface SkyuxConfig {
     public?: any[],
     referenced?: any[]
   };
+  testSettings?: SkyuxConfigTestSettings;
   omnibar?: any;
   useHashRouting?: boolean;
   skyuxModules?: string[];

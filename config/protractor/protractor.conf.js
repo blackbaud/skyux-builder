@@ -2,6 +2,7 @@
 'use strict';
 
 const path = require('path');
+const minimist = require('minimist');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 const logger = require('@blackbaud/skyux-logger');
 
