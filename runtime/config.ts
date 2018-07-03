@@ -29,11 +29,11 @@ export interface SkyuxConfigBrowserTestSettings {
 }
 
 export interface SkyuxConfigE2eTestSettings {
-  browsers?: BrowserTestSettings[];
+  browsers?: SkyuxConfigBrowserTestSettings[];
 }
 
 export interface SkyuxConfigUnitTestSettings {
-  browsers?: BrowserTestSettings[];
+  browsers?: SkyuxConfigBrowserTestSettings[];
 }
 
 export interface SkyuxConfigTestSettings {
