@@ -20,6 +20,10 @@
         "browserVersion": {
           "description": "Version of the browser.",
           "type": "string"
+        },
+        "device": {
+          "description": "Physical device to test on.",
+          "type": "string"
         }
       }
     },
