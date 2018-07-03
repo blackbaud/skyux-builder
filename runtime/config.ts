@@ -25,6 +25,7 @@ export interface SkyuxConfigBrowserTestSettings {
   browser?: string;
   browserVersion?: string;
   device?: string;
+  [key: string]: any;
 }
 
 export interface SkyuxConfigE2eTestSettings {
