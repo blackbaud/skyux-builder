@@ -79,16 +79,18 @@ export class SkyAuthHttp extends Http {
     options?: RequestOptionsArgs
   ): Observable<Response> {
     const tokenArgs: BBAuthGetTokenArgs = {};
-    const leId: string = this.getLeId();
+    const leId = this.getLeId();
+    const envId = this.getEnvId();
 
-    // See if this call was chained to withScope(), and if so, provide it when
-    // retrieving a token.
+    // See if this call was chained to withScope(), and if so,
+    // provide it when retrieving a token.
     if (this.permissionScope) {
       tokenArgs.permissionScope = this.permissionScope;
     }
 
-    // Always provide the environment ID.
-    tokenArgs.envId = this.getEnvId();
+    if (envId) {
+      tokenArgs.envId = envId;
+    }
 
     if (leId) {
       tokenArgs.leId = leId;

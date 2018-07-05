@@ -215,4 +215,13 @@ describe('SkyAuthHttp', () => {
     });
   });
 
+  it('should not include the envId if undefined', () => {
+    const getTokenSpy = spyOn(BBAuth, 'getToken');
+
+    setupInjector('');
+    skyAuthHttp.get('example.com');
+
+    expect(getTokenSpy).toHaveBeenCalledWith({});
+  });
+
 });
