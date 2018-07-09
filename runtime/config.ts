@@ -29,10 +29,12 @@ export interface SkyuxConfigBrowserTestSettings {
 }
 
 export interface SkyuxConfigE2eTestSettings {
+  supported?: boolean;
   browsers?: SkyuxConfigBrowserTestSettings[];
 }
 
 export interface SkyuxConfigUnitTestSettings {
+  supported?: boolean;
   browsers?: SkyuxConfigBrowserTestSettings[];
 }
 

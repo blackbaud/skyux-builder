@@ -262,6 +262,10 @@
               "items": {
                 "$ref": "#/definitions/browserProperties"
               }
+            },
+            "supported": {
+              "description": "Automatically injects the currently supported SKY UX browsers. Overrides the 'browsers' property.",
+              "type": "boolean"
             }
           }
         },
@@ -275,6 +279,10 @@
               "items": {
                 "$ref": "#/definitions/browserProperties"
               }
+            },
+            "supported": {
+              "description": "Automatically injects the currently supported SKY UX browsers. Overrides the 'browsers' property.",
+              "type": "boolean"
             }
           }
         }
