@@ -367,7 +367,6 @@ BBAuth.mock = true;`);
 
   it('should add require statements for style sheets', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
-    const spy = spyOn(mockLogger, 'warn').and.callThrough();
     const expectedRequire = `
 require('style-loader!@foo/bar/style.scss');
 require('style-loader!src/styles/custom.css');
@@ -380,7 +379,26 @@ require('style-loader!src/styles/custom.css');
     config.skyux.app = {
       styles: [
         '@foo/bar/style.scss',
-        'src/styles/custom.css',
+        'src/styles/custom.css'
+      ]
+    };
+
+    const source = generator.getSource(config);
+
+    expect(source).toContain(expectedRequire);
+  });
+
+  it('should ignore external style sheets', () => {
+    const generator = mock.reRequire(GENERATOR_PATH);
+    const spy = spyOn(mockLogger, 'warn').and.callThrough();
+    const expectedRequire = '';
+    const config = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: runtimeUtils.getDefaultSkyux()
+    };
+
+    config.skyux.app = {
+      styles: [
         'https://google.com/styles.css'
       ]
     };
