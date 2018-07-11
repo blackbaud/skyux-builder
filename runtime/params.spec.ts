@@ -2,10 +2,10 @@ import { SkyAppRuntimeConfigParams } from './params';
 
 describe('SkyAppRuntimeConfigParams', () => {
 
-  const allowed = [
-    'a1',
-    'a3'
-  ];
+  const allowed = {
+    'a1': true,
+    'a3': true
+  };
 
   it('should parse allowed params from a url', () => {
     const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
@@ -153,7 +153,7 @@ describe('SkyAppRuntimeConfigParams', () => {
     });
   });
 
-  it('should allow values to be decoded when retrieved from the query string', () => {
+  it('should decode values when retrieved from the query string', () => {
     const params = new SkyAppRuntimeConfigParams(
       '?a=%2F',
       {
@@ -164,14 +164,8 @@ describe('SkyAppRuntimeConfigParams', () => {
       }
     );
 
-    // Preserves previous behavior of not encoding values from the query string.
-    expect(params.get('a')).toBe('%2F');
-    expect(params.get('b')).toBe('%2F');
-
-    // The second parameter tells the get() method to decode the parameter if it's from the
-    // query string.
-    expect(params.get('a', true)).toBe('/');
-    expect(params.get('b', true)).toBe('%2F');
+    expect(params.get('a')).toBe('/');
+    expect(params.get('b')).toBe('/');
   });
 
   it('should allow queryparam values to be required', () => {
@@ -256,5 +250,4 @@ describe('SkyAppRuntimeConfigParams', () => {
 
     expect(params.getAllKeys()).toEqual([]);
   });
-
 });

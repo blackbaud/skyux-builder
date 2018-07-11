@@ -56,11 +56,11 @@ describe('SkyAuthHttp', () => {
         provide: SkyAppConfig,
         useValue: {
           runtime: {
-            params: new SkyAppRuntimeConfigParams(url, [
-              'envid',
-              'leid',
-              'svcid'
-            ])
+            params: new SkyAppRuntimeConfigParams(url, {
+              'envid': true,
+              'leid': true,
+              'svcid': true
+            })
           }
         }
       }
@@ -201,6 +201,27 @@ describe('SkyAuthHttp', () => {
       envId: '1234',
       permissionScope: 'abc'
     });
+  });
+
+  it('should include the envId regardless of permission scope', () => {
+    const search = '?envid=1234';
+    const getTokenSpy = spyOn(BBAuth, 'getToken');
+
+    setupInjector(search);
+    skyAuthHttp.get('example.com');
+
+    expect(getTokenSpy).toHaveBeenCalledWith({
+      envId: '1234'
+    });
+  });
+
+  it('should not include the envId if undefined', () => {
+    const getTokenSpy = spyOn(BBAuth, 'getToken');
+
+    setupInjector('');
+    skyAuthHttp.get('example.com');
+
+    expect(getTokenSpy).toHaveBeenCalledWith({});
   });
 
 });
