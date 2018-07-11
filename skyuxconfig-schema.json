@@ -104,6 +104,10 @@
               }
             }
           }
+        },
+        "styles": {
+          "description": "An array of CSS or SCSS files to be bundled with the SPA.",
+          "type": "array"
         }
       }
     },
