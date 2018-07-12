@@ -252,37 +252,18 @@
       "description": "Container for controlling test settings.",
       "type": "object",
       "properties": {
-        "e2e": {
-          "description": "Test settings specific to the skyux e2e command.",
-          "type": "object",
-          "properties": {
-            "browsers": {
-              "description": "An array of browsers to test against.",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/browserProperties"
-              }
-            },
-            "supported": {
-              "description": "Automatically injects the currently supported SKY UX browsers. Overrides the 'browsers' property.",
-              "type": "boolean"
-            }
-          }
-        },
         "unit": {
           "description": "Test settings specific to the skyux test command.",
           "type": "object",
           "properties": {
             "browsers": {
-              "description": "An array of browsers to test against.",
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/browserProperties"
-              }
-            },
-            "supported": {
-              "description": "Automatically injects the currently supported SKY UX browsers. Overrides the 'browsers' property.",
-              "type": "boolean"
+              "description": "The named set of browsers to run against.",
+              "type": "string",
+              "enum": [
+                "speedy",
+                "quirky",
+                "paranoid"
+              ]
             }
           }
         }

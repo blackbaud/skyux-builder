@@ -19,27 +19,17 @@ export class SkyuxPactConfig {
   public pactProxyServer?: string;
 }
 
-export interface SkyuxConfigBrowserTestSettings {
-  os?: string;
-  osVersion?: string;
-  browser?: string;
-  browserVersion?: string;
-  device?: string;
-  [key: string]: any;
-}
-
-export interface SkyuxConfigE2eTestSettings {
-  supported?: boolean;
-  browsers?: SkyuxConfigBrowserTestSettings[];
+export enum SkyuxConfigBrowserSet {
+  speedy,
+  quirky,
+  paranoid
 }
 
 export interface SkyuxConfigUnitTestSettings {
-  supported?: boolean;
-  browsers?: SkyuxConfigBrowserTestSettings[];
+  browserSet?: SkyuxConfigBrowserSet;
 }
 
 export interface SkyuxConfigTestSettings {
-  e2e?: SkyuxConfigE2eTestSettings;
   unit?: SkyuxConfigUnitTestSettings;
 }
 
