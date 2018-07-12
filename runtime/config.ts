@@ -19,14 +19,8 @@ export class SkyuxPactConfig {
   public pactProxyServer?: string;
 }
 
-export enum SkyuxConfigBrowserSet {
-  speedy,
-  quirky,
-  paranoid
-}
-
 export interface SkyuxConfigUnitTestSettings {
-  browserSet?: SkyuxConfigBrowserSet;
+  browserSet?: 'speedy' | 'quirky' | 'paranoid';
 }
 
 export interface SkyuxConfigTestSettings {
