@@ -2,31 +2,6 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "JSON schema for SKY UX CLI skyuxconfig.json",
   "definitions": {
-    "browserProperties": {
-      "type": "object",
-      "properties": {
-        "os": {
-          "description": "Name of the operating system.",
-          "type": "string"
-        },
-        "osVersion": {
-          "description": "Version of the operating system.",
-          "type": "string"
-        },
-        "browser": {
-          "description": "Name of the browser.",
-          "type": "string"
-        },
-        "browserVersion": {
-          "description": "Version of the browser.",
-          "type": "string"
-        },
-        "device": {
-          "description": "Physical device to test on.",
-          "type": "string"
-        }
-      }
-    },
     "externalFileCSS": {
       "type": "object",
       "properties": {
@@ -256,7 +231,7 @@
           "description": "Test settings specific to the skyux test command.",
           "type": "object",
           "properties": {
-            "browsers": {
+            "browserSet": {
               "description": "The named set of browsers to run against.",
               "type": "string",
               "enum": [
