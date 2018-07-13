@@ -1,6 +1,7 @@
 /*jslint node: true */
 'use strict';
 
+const ngtools = require('@ngtools/webpack');
 const fs = require('fs-extra');
 const webpack = require('webpack');
 const ngcWebpack = require('ngc-webpack');
@@ -73,8 +74,16 @@ function getWebpackConfig(skyPagesConfig) {
       ]
     },
     plugins: [
+      // Generate transpiled source files.
       new ngcWebpack.NgcWebpackPlugin({
         tsConfig: skyPagesConfigUtil.spaPathTemp('tsconfig.json')
+      }),
+
+      // Generates an aot JavaScript bundle.
+      new ngtools.AotPlugin({
+        tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
+        entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
+        sourceMap: true
       }),
 
       new webpack.optimize.UglifyJsPlugin({
