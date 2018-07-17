@@ -71,6 +71,7 @@ function getConfig(config) {
       }
     ],
     preprocessors: preprocessors,
+    skyPagesConfig: skyPagesConfig,
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
