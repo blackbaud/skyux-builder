@@ -1,6 +1,14 @@
-import { PactWeb } from '@pact-foundation/pact-web';
-import { InteractionObject } from '@pact-foundation/pact-web/dsl/interaction';
-import { SkyAppConfig } from '@blackbaud/skyux-builder/runtime/config';
+import {
+  SkyAppConfig
+} from '@blackbaud/skyux-builder/runtime/config';
+
+import {
+  PactWeb
+} from '@pact-foundation/pact-web';
+
+import {
+  InteractionObject
+} from '@pact-foundation/pact-web/dsl/interaction';
 
 declare var Pact: any;
 
