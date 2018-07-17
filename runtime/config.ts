@@ -61,6 +61,7 @@ export interface SkyuxConfigHost {
 }
 
 export interface SkyuxConfig {
+  $schema?: string;
   a11y?: SkyuxConfigA11y | boolean;
   app?: SkyuxConfigApp;
   appSettings?: any;
