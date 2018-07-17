@@ -2,9 +2,9 @@
 'use strict';
 
 const portfinder = require('portfinder');
-
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 const assetsProcessor = require('../lib/assets-processor');
+const localeAssetsProcessor = require('../lib/locale-assets-processor');
 
 /**
  * Let users configure port via skyuxconfig.json first.
@@ -50,16 +50,28 @@ function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
     const localUrl = `https://localhost:${port}`;
 
     assetsProcessor.setSkyAssetsLoaderUrl(config, skyPagesConfig, localUrl);
+    localeAssetsProcessor.prepareLocaleFiles();
 
     // Save our found or defined port
     config.devServer.port = port;
 
     /* istanbul ignore else */
     if (config.devServer.inline) {
-      const hot = `webpack-dev-server/client?${localUrl}`;
+      const inline = `webpack-dev-server/client?${localUrl}`;
+      Object.keys(config.entry).forEach((entry) => {
+        config.entry[entry].unshift(inline);
+      });
+    }
+
+    if (config.devServer.hot) {
+      const hot = `webpack/hot/only-dev-server`;
       Object.keys(config.entry).forEach((entry) => {
         config.entry[entry].unshift(hot);
       });
+
+      // This is required in order to not have HMR requests routed to host.
+      config.output.publicPath = `${localUrl}${config.devServer.publicPath}`;
+      logger.info('Using hot module replacement.');
     }
 
     const compiler = webpack(config);

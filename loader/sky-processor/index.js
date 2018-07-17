@@ -1,7 +1,7 @@
 /*jshint node: true*/
 'use strict';
 
-const logger = require('../../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 let plugins;
 
 const getPluginContents = (skyPagesConfig) => {

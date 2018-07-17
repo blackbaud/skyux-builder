@@ -1,6 +1,7 @@
 import {
   Component,
   NgZone,
+  OnDestroy,
   OnInit,
   Optional
 } from '@angular/core';
@@ -33,19 +34,25 @@ import {
 require('style-loader!@blackbaud/skyux/dist/css/sky.css');
 require('style-loader!./app.component.scss');
 
-function fixUpNavItems(items: any[], baseUrl: string) {
+let omnibarLoaded: boolean;
+
+function fixUpUrl(baseUrl: string, route: string, config: SkyAppConfig) {
+  return config.runtime.params.getUrl(baseUrl + route);
+}
+
+function fixUpNavItems(items: any[], baseUrl: string, config: SkyAppConfig) {
   for (const item of items) {
     if (!item.url && item.route) {
-      item.url = baseUrl + item.route;
+      item.url = fixUpUrl(baseUrl, item.route, config);
     }
 
     if (item.items) {
-      fixUpNavItems(item.items, baseUrl);
+      fixUpNavItems(item.items, baseUrl, config);
     }
   }
 }
 
-function fixUpNav(nav: any, baseUrl: string) {
+function fixUpNav(nav: any, baseUrl: string, config: SkyAppConfig) {
   const services = nav.services;
 
   if (services && services.length > 0) {
@@ -53,7 +60,7 @@ function fixUpNav(nav: any, baseUrl: string) {
 
     for (const service of services) {
       if (service.items) {
-        fixUpNavItems(service.items, baseUrl);
+        fixUpNavItems(service.items, baseUrl, config);
       }
 
       if (service.selected) {
@@ -71,7 +78,7 @@ function fixUpNav(nav: any, baseUrl: string) {
   selector: 'sky-pages-app',
   templateUrl: './app.component.html'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   public isReady = false;
 
   constructor(
@@ -114,19 +121,30 @@ export class AppComponent implements OnInit {
         }
       }
     });
-
     this.initShellComponents();
+  }
+
+  public ngOnDestroy() {
+    if (omnibarLoaded) {
+      BBOmnibar.destroy();
+      omnibarLoaded = false;
+    }
   }
 
   // Only pass params that omnibar config cares about
   // Internally we store as envid/svcid but auth-client wants envId/svcId
   private setParamsFromQS(omnibarConfig: any) {
-    if (this.config.runtime.params.has('envid')) {
-      omnibarConfig.envId = this.config.runtime.params.get('envid');
-    }
-    if (this.config.runtime.params.has('svcid')) {
-      omnibarConfig.svcId = this.config.runtime.params.get('svcid');
-    }
+    const map: { [key: string]: string } = {
+      envid: 'envId',
+      leid: 'leId',
+      svcid: 'svcId'
+    };
+
+    Object.keys(map).forEach((key: string) => {
+      if (this.config.runtime.params.has(key)) {
+        omnibarConfig[map[key]] = this.config.runtime.params.get(key);
+      }
+    });
   }
 
   private setOnSearch(omnibarConfig: any) {
@@ -150,7 +168,7 @@ export class AppComponent implements OnInit {
 
     if (omnibarConfig.nav) {
       nav = omnibarConfig.nav;
-      fixUpNav(nav, baseUrl);
+      fixUpNav(nav, baseUrl, this.config);
     } else {
       nav = omnibarConfig.nav = {};
     }
@@ -158,7 +176,13 @@ export class AppComponent implements OnInit {
     nav.beforeNavCallback = (item: BBOmnibarNavigationItem) => {
       const url = item.url.toLowerCase();
 
-      if (url.indexOf(baseUrl) === 0) {
+      if (
+        url === baseUrl ||
+        // Make sure the base URL is not simply a partial match of the base URL plus additional
+        // characters after the base URL that are not "terminating" characters
+        url.indexOf(baseUrl + '/') === 0 ||
+        url.indexOf(baseUrl + '?') === 0
+      ) {
         const routePath = item.url.substring(baseUrl.length, url.length);
 
         // Since the omnibar is loaded outside Angular, navigating needs to be explicitly
@@ -188,7 +212,7 @@ export class AppComponent implements OnInit {
         for (let route of globalRoutes) {
           localNavItems.push({
             title: route.name,
-            url: baseUrl + route.route,
+            url: fixUpUrl(baseUrl, route.route, this.config),
             data: route
           });
         }
@@ -241,10 +265,19 @@ export class AppComponent implements OnInit {
         } else {
           BBOmnibarLegacy.load(omnibarConfig);
         }
+        omnibarLoaded = true;
       });
     };
 
-    if (omnibarConfig) {
+    if (this.config.runtime.command === 'e2e') {
+      this.windowRef.nativeWindow.addEventListener('message', (event: MessageEvent) => {
+        if (event.data.messageType === 'sky-navigate-e2e') {
+          this.router.navigate(event.data.url);
+        }
+      });
+    }
+
+    if (omnibarConfig && this.config.runtime.params.get('addin') !== '1') {
       if (this.omnibarProvider) {
         this.omnibarProvider.ready().then(loadOmnibar);
       } else {
@@ -253,7 +286,6 @@ export class AppComponent implements OnInit {
     }
 
     if (helpConfig && this.helpInitService) {
-
       if (this.config.runtime.params.has('svcid')) {
         helpConfig.extends = this.config.runtime.params.get('svcid');
       }

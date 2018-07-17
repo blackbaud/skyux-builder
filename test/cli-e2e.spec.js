@@ -7,7 +7,7 @@ const path = require('path');
 const mock = require('mock-require');
 const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
-const logger = require('../utils/logger');
+const logger = require('@blackbaud/skyux-logger');
 
 describe('cli e2e', () => {
   const PORT = 1234;
@@ -49,7 +49,7 @@ describe('cli e2e', () => {
   beforeEach(() => {
     EXIT_CODE = 0;
 
-    mock('../cli/build', () => new Promise(resolve => {
+    mock('../cli/utils/run-build', () => new Promise(resolve => {
       resolve({
         toJson: () => ({
           chunks: CHUNKS
@@ -89,6 +89,7 @@ describe('cli e2e', () => {
     });
 
     spyOn(logger, 'info');
+    spyOn(logger, 'error');
   });
 
   afterEach(() => {
@@ -149,7 +150,7 @@ describe('cli e2e', () => {
   });
 
   it('should catch build failures', (done) => {
-    mock('../cli/build', () => Promise.reject(new Error('Build failed.')));
+    mock('../cli/utils/run-build', () => Promise.reject(new Error('Build failed.')));
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(1);
@@ -160,6 +161,8 @@ describe('cli e2e', () => {
   });
 
   it('should catch selenium failures', (done) => {
+
+    let error;
 
     mock(configPath, {
       config: {
@@ -172,12 +175,13 @@ describe('cli e2e', () => {
     });
 
     spyOn(selenium, 'start').and.callFake((cb) => {
-      let error = new Error('Selenium start failed.');
+      error = new Error('Selenium start failed.');
       cb(error, {});
     });
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(1);
+      expect(logger.error).toHaveBeenCalledWith(error);
       done();
     });
 
@@ -214,7 +218,7 @@ describe('cli e2e', () => {
 
     spyOn(process, 'exit').and.callFake(exitCode => {
       expect(exitCode).toEqual(0);
-      expect(logger.info).toHaveBeenCalledWith('No spec files located. Stopping command from running.');
+      expect(logger.info).toHaveBeenCalledWith('No spec files located. Skipping e2e command.');
       done();
     });
 
@@ -250,6 +254,13 @@ describe('cli e2e', () => {
       expect(exitCode).toBe(0);
       done();
     });
+  });
 
+  it('should pass chunks from the build stats to selenium', (done) => {
+    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
+    spyOn(process, 'exit').and.callFake(exitCode => {
+      expect(PROTRACTOR_CONFIG_ARGS.params.chunks).toEqual(CHUNKS);
+      done();
+    });
   });
 });

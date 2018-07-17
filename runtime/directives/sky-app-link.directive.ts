@@ -7,10 +7,23 @@ import { SkyAppConfig } from '../config';
   selector: '[skyAppLink]'
 })
 export class SkyAppLinkDirective extends RouterLinkWithHref {
+  private _queryParams: { [k: string]: any };
 
   @Input()
-  set skyAppLink(commands: any[]|string) {
+  set skyAppLink(commands: any[] | string) {
     this.routerLink = commands;
+  }
+
+  @Input()
+  set queryParams(params: { [k: string]: any }) {
+    this._queryParams = Object.assign(params, this.skyAppConfig.runtime.params.getAll(true));
+  }
+
+  get queryParams() {
+    if (!this._queryParams) {
+      this._queryParams = Object.assign({}, this.skyAppConfig.runtime.params.getAll(true));
+    }
+    return this._queryParams;
   }
 
   constructor(
@@ -20,6 +33,5 @@ export class SkyAppLinkDirective extends RouterLinkWithHref {
     private skyAppConfig: SkyAppConfig
   ) {
     super(router, route, locationStrategy);
-    this.queryParams = this.skyAppConfig.runtime.params.getAll();
   }
 }

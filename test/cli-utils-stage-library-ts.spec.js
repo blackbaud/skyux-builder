@@ -85,4 +85,45 @@ describe('cli utils prepare-library-package', () => {
     expect(finalContents.match('<p></p>')).not.toEqual(null);
     expect(finalContents.match('p { color: black; }')).not.toEqual(null);
   });
+
+  it('should handle multiline styleUrls array', () => {
+    let finalContents;
+
+    spyOn(glob, 'sync').and.callFake(pattern => {
+      if (pattern.match('.spec.')) {
+        return [];
+      } else {
+        return ['index.component.ts'];
+      }
+    });
+
+    spyOn(fs, 'readFileSync').and.callFake(filePath => {
+      if (filePath === 'index.component.ts') {
+        return `
+          @Component({
+            templateUrl: 'template.component.html',
+            styleUrls: [
+              'template.component.scss'
+            ]
+          })
+          export class SampleComponent { }
+        `;
+      }
+
+      if (filePath === 'template.component.html') {
+        return '<p></p>';
+      }
+    });
+
+    spyOn(fs, 'writeFileSync').and.callFake((file, contents) => {
+      finalContents = contents;
+    });
+
+    spyOn(sass, 'renderSync').and.returnValue({
+      css: 'p { color: black; }'
+    });
+
+    util();
+    expect(finalContents.match('p { color: black; }')).not.toEqual(null);
+  });
 });

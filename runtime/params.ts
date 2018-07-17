@@ -8,16 +8,22 @@ import { SkyuxConfigParams } from './config-params';
  * @return {URLSearchParams} urlSearchParams
  */
 function getUrlSearchParams(url: string): URLSearchParams {
+
+  let qs = '';
+
   if (url.indexOf('?') > -1) {
-    url = url.split('?')[1];
+    qs = url.split('?')[1];
+    qs = qs.split('#')[0];
   }
 
-  return new URLSearchParams(url);
+  return new URLSearchParams(qs);
 }
 
 export class SkyAppRuntimeConfigParams {
-
-  private params: {[key: string]: string} = {};
+  private params: { [key: string]: string } = {};
+  private defaultParamValues: { [key: string]: string } = {};
+  private requiredParams: string[] = [];
+  private encodedParams: string[] = [];
 
   constructor(
     url: string,
@@ -49,8 +55,13 @@ export class SkyAppRuntimeConfigParams {
           if (typeof configParam === 'object') {
             const paramValue = configParam.value;
 
+            if (configParam.required) {
+              this.requiredParams.push(paramName);
+            }
+
             if (paramValue) {
               this.params[paramName] = paramValue;
+              this.defaultParamValues[paramName] = paramValue;
             }
           }
         }
@@ -69,6 +80,7 @@ export class SkyAppRuntimeConfigParams {
       allowedKeysUC.forEach((allowedKeyUC, index) => {
         if (givenKeyUC === allowedKeyUC) {
           this.params[allowed[index]] = urlSearchParams.get(givenKey);
+          this.encodedParams.push(givenKey);
         }
       });
     });
@@ -84,24 +96,65 @@ export class SkyAppRuntimeConfigParams {
   }
 
   /**
+   * Are all the required params defined?.
+   * @name hasAllRequiredParams
+   * @returns {array}
+   */
+  public hasAllRequiredParams(): boolean {
+    if (this.requiredParams.length === 0) {
+      return true;
+    }
+
+    return this.requiredParams.every((param: string) => {
+      return this.params[param] !== undefined;
+    });
+  }
+
+  /**
+   * Returns a flag indicating whether a parameter is required.
+   * @param key
+   */
+  public isRequired(key: string): boolean {
+    return this.requiredParams.indexOf(key) >= 0;
+  }
+
+  /**
    * Returns the value of the requested param.
    * @name get
-   * @param {string} key
+   * @param {string} key The parameter's key.
+   * @param {boolean} urlDecode A flag indicating whether the value should be URL-decoded.
+   * Specify true when you anticipate the value of the parameter coming from the page's URL.
    * @returns {string}
    */
-  public get(key: string): string {
+  public get(key: string, urlDecode?: boolean): string {
     if (this.has(key)) {
-      return this.params[key];
+      let val = this.params[key];
+
+      // This should be changed to always decode encoded params in skyux-builder 2.0.
+      if (urlDecode && this.encodedParams.indexOf(key) >= 0) {
+        val = decodeURIComponent(val);
+      }
+
+      return val;
     }
   }
 
   /**
    * Returns the params object
    * @name getAll
+   * @param {boolean} excludeDefaults Exclude params that have default values
    * @returns {Object}
    */
-  public getAll(): Object {
-    return this.params;
+  public getAll(excludeDefaults?: boolean): Object {
+    const filteredParams: { [key: string]: string} = {};
+
+    this.getAllKeys().forEach(key => {
+      if (!excludeDefaults || this.params[key] !== this.defaultParamValues[key]) {
+        filteredParams[key] = this.params[key];
+      }
+    });
+
+    return filteredParams;
   }
 
   /**
@@ -126,11 +179,10 @@ export class SkyAppRuntimeConfigParams {
 
     this.getAllKeys().forEach(key => {
       if (!urlSearchParams.has(key)) {
-        joined.push(`${key}=${encodeURIComponent(this.get(key))}`);
+        joined.push(`${key}=${encodeURIComponent(this.get(key, true))}`);
       }
     });
 
     return joined.length === 0 ? url : `${url}${delimiter}${joined.join('&')}`;
   }
-
 }

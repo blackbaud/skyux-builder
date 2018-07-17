@@ -1,6 +1,8 @@
 /*jslint node: true */
 'use strict';
 
+const logger = require('@blackbaud/skyux-logger');
+
 /**
  * Adds the necessary configuration for code coverage thresholds.
  * @param {*} config
@@ -69,6 +71,7 @@ function getConfig(config) {
       }
     ],
     preprocessors: preprocessors,
+    skyPagesConfig: skyPagesConfig,
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
@@ -76,7 +79,8 @@ function getConfig(config) {
       reporters: [
         { type: 'json' },
         { type: 'html' },
-        { type: 'text-summary' }
+        { type: 'text-summary' },
+        { type: 'lcov' }
       ],
       _onWriteReport: function (collector) {
         return remapIstanbul.remap(collector.getFinalCoverage());
@@ -93,7 +97,7 @@ function getConfig(config) {
     },
     reporters: ['mocha', 'coverage'],
     port: 9876,
-    colors: true,
+    colors: logger.logColor,
     logLevel: config.LOG_INFO,
     browserDisconnectTimeout: 3e5,
     browserDisconnectTolerance: 3,

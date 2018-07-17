@@ -37,20 +37,32 @@ import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   let mockSkyuxHost: any;
+  let mockWindow: any;
   let comp: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let parseParams: any;
   let searchArgs: BBOmnibarSearchArgs;
+  let navigateParams: any;
   let navigateByUrlParams: any;
   let subscribeHandler: any;
   let scrollCalled: boolean = false;
   let skyAppConfig: any;
   let viewport: SkyAppViewportService;
-
-  const location = 'my-custom-location';
+  let spyOmnibarDestroy: any;
 
   class MockHelpInitService {
     public load() { }
+  }
+
+  class MockWindow {
+    public nativeWindow = {
+      location: {
+        href: ''
+      },
+      SKYUX_HOST: mockSkyuxHost,
+      scroll: () => scrollCalled = true,
+      addEventListener: () => {}
+    };
   }
 
   const mockHelpInitService = new MockHelpInitService();
@@ -61,6 +73,7 @@ describe('AppComponent', () => {
     styleLoadPromise?: Promise<any>,
     omnibarProvider?: any
   ) {
+    mockWindow = new MockWindow();
     let providers: any[] = [
       {
         provide: Router,
@@ -68,6 +81,7 @@ describe('AppComponent', () => {
           events: {
             subscribe: (handler: any) => subscribeHandler = handler
           },
+          navigate: (params: any) => navigateParams = params,
           navigateByUrl: (url: string) => navigateByUrlParams = url,
           parseUrl: (url: string) => {
             return {
@@ -78,13 +92,7 @@ describe('AppComponent', () => {
       },
       {
         provide: SkyAppWindowRef,
-        useValue: {
-          nativeWindow: {
-            location: location,
-            SKYUX_HOST: mockSkyuxHost,
-            scroll: () => scrollCalled = true
-          }
-        }
+        useValue: mockWindow
       },
       {
         provide: SkyAppConfig,
@@ -131,11 +139,11 @@ describe('AppComponent', () => {
       ],
       providers: providers
     })
-    .compileComponents()
-    .then(() => {
-      fixture = TestBed.createComponent(AppComponent);
-      comp    = fixture.componentInstance;
-    });
+      .compileComponents()
+      .then(() => {
+        fixture = TestBed.createComponent(AppComponent);
+        comp = fixture.componentInstance;
+      });
   }
 
   function validateOmnibarProvider(
@@ -183,7 +191,9 @@ describe('AppComponent', () => {
           base: 'app-base'
         },
         params: {
+          get: (key: any) => false,
           has: (key: any) => false,
+          hasAllRequiredParams: () => true,
           parse: (p: any) => parseParams = p
         }
       },
@@ -195,6 +205,13 @@ describe('AppComponent', () => {
     };
     scrollCalled = false;
     viewport = new SkyAppViewportService();
+    navigateParams = undefined;
+    navigateByUrlParams = undefined;
+    spyOmnibarDestroy = spyOn(BBOmnibar, 'destroy');
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create component', async(() => {
@@ -228,8 +245,10 @@ describe('AppComponent', () => {
 
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
+      fixture.destroy();
       expect(spyOmnibar).not.toHaveBeenCalled();
       expect(spyOmnibarLegacy).not.toHaveBeenCalled();
+      expect(spyOmnibarDestroy).not.toHaveBeenCalled();
     });
   }));
 
@@ -344,6 +363,33 @@ describe('AppComponent', () => {
     })
   );
 
+  it('should call omnibar destroy if it was loaded', () => {
+    let spyOmnibarLoad = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      fixture.destroy();
+      expect(spyOmnibarLoad).toHaveBeenCalled();
+      expect(spyOmnibarDestroy).toHaveBeenCalled();
+    });
+  });
+
+  it('should not load the omnibar if the addin param is 1', () => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.runtime.params.get = (key: string) => key === 'addin' ? '1' : undefined;
+    skyAppConfig.skyux.omnibar = true;
+
+    setup(skyAppConfig).then(() => {
+      fixture.detectChanges();
+      expect(spyOmnibar).not.toHaveBeenCalled();
+    });
+  });
+
   it('should set the onSearch property if a search provider is provided', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
 
@@ -403,7 +449,7 @@ describe('AppComponent', () => {
       experimental: true
     };
 
-    skyAppConfig.skyux.params = ['envid', 'svcid'];
+    skyAppConfig.skyux.params = ['envid', 'svcid', 'leid'];
     skyAppConfig.runtime.params.has = (key: any) => true;
     skyAppConfig.runtime.params.get = (key: any) => key + 'Value';
     setup(skyAppConfig, true).then(() => {
@@ -414,6 +460,9 @@ describe('AppComponent', () => {
 
       // Notice svcid => svcId
       expect(spyOmnibar.calls.first().args[0].svcId).toEqual('svcidValue');
+
+      // Notice svcid => svcId
+      expect(spyOmnibar.calls.first().args[0].leId).toEqual('leidValue');
     });
   }));
 
@@ -438,8 +487,8 @@ describe('AppComponent', () => {
       experimental: true,
       nav: {
         services: [
-          { },
-          { }
+          {},
+          {}
         ]
       }
     };
@@ -456,7 +505,7 @@ describe('AppComponent', () => {
       experimental: true,
       nav: {
         services: [
-          { },
+          {},
           { selected: true }
         ]
       }
@@ -501,12 +550,14 @@ describe('AppComponent', () => {
       }
     };
 
+    skyAppConfig.runtime.params.getUrl = (url: string) => url + '?envid=abc';
+
     setup(skyAppConfig, false).then(() => {
       fixture.detectChanges();
       const items = spyOmnibar.calls.first().args[0].nav.services[0].items;
       expect(items[0].url).toEqual('ignored.com');
-      expect(items[1].url).toEqual('base.com/custom-base/custom-route');
-      expect(items[2].items[0].url).toEqual('base.com/custom-base/another-custom-route');
+      expect(items[1].url).toEqual('base.com/custom-base/custom-route?envid=abc');
+      expect(items[2].items[0].url).toEqual('base.com/custom-base/another-custom-route?envid=abc');
       expect(items[2].items[1].url).toEqual('another-ignored.com');
     });
   }));
@@ -571,6 +622,26 @@ describe('AppComponent', () => {
     });
   }));
 
+  it('should handle global links that start with the same base URL as the SPA', async(() => {
+    let spyOmnibar = spyOn(BBOmnibar, 'load');
+
+    skyAppConfig.skyux.omnibar = {
+      experimental: true
+    };
+
+    skyAppConfig.skyux.host.url = 'base.com/';
+    skyAppConfig.runtime.app.base = 'custom-base/';
+
+    setup(skyAppConfig, false).then(() => {
+      fixture.detectChanges();
+      const cb = spyOmnibar.calls.first().args[0].nav.beforeNavCallback;
+
+      let globalLink = cb({ url: 'base.com/custom-base-2' });
+      expect(globalLink).toEqual(true);
+      expect(navigateByUrlParams).not.toBeDefined();
+    });
+  }));
+
   it('should use the original url casing if calling navigateByUrl', async(() => {
     let spyOmnibar = spyOn(BBOmnibar, 'load');
 
@@ -630,11 +701,13 @@ describe('AppComponent', () => {
       ]
     };
 
+    skyAppConfig.runtime.params.getUrl = (url: string) => url + '?envid=123';
+
     setup(skyAppConfig, false).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar.calls.first().args[0].nav.localNavItems[0]).toEqual({
         title: 'my-name',
-        url: 'base.com/custom-base/my-route',
+        url: 'base.com/custom-base/my-route?envid=123',
         data: {
           global: true,
           name: 'my-name',
@@ -701,7 +774,7 @@ describe('AppComponent', () => {
 
     skyAppConfig.runtime.params.has = (key: any) => key === false;
 
-    mockSkyuxHost = { };
+    mockSkyuxHost = {};
     const expectedCall = { productId: 'test-config', extends: 'bb-help', locale: '' };
     skyAppConfig.skyux.help = { productId: 'test-config', extends: 'bb-help' };
 
@@ -808,6 +881,46 @@ describe('AppComponent', () => {
         envId: jasmine.anything()
       }
     );
+  }));
+
+  it('should add message event listener during e2e', async(() => {
+    skyAppConfig.runtime.command = 'e2e';
+
+    setup(skyAppConfig, false).then(() => {
+      const spyEventListener = spyOn(mockWindow.nativeWindow, 'addEventListener');
+      fixture.detectChanges();
+
+      const goodUrl = 'some-route';
+      const goodMessageType = 'sky-navigate-e2e';
+      const badUrl = 'some-other-route';
+      const badMessageType = 'navigate';
+
+      const message = spyEventListener.calls.first().args[0];
+      const eventListener = spyEventListener.calls.first().args[1];
+
+      expect(message).toEqual('message');
+      expect(spyEventListener).toHaveBeenCalled();
+
+      // Trigger a valid message
+      eventListener({
+        data: {
+          messageType: goodMessageType,
+          url: goodUrl
+        }
+      });
+
+      expect(navigateParams).toEqual(goodUrl);
+
+      // Trigger an invalid message
+      eventListener({
+        data: {
+          messageType: badMessageType,
+          url: badUrl
+        }
+      });
+
+      expect(navigateParams).not.toEqual(badUrl);
+    });
   }));
 
 });

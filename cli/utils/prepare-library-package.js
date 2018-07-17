@@ -2,31 +2,41 @@
 'use strict';
 
 const fs = require('fs-extra');
+const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
 function makePackageFileForDist() {
-  const packageJson = fs.readJSONSync(
+  const contents = fs.readJsonSync(
     skyPagesConfigUtil.spaPath('package.json')
   );
-  packageJson.module = 'index.js';
-  packageJson.main = 'bundles/bundle.umd.js';
-  fs.writeJSONSync(
+  contents.module = 'index.js';
+  contents.main = 'bundles/bundle.umd.js';
+
+  fs.writeJsonSync(
     skyPagesConfigUtil.spaPath('dist', 'package.json'),
-    packageJson,
+    contents,
     { spaces: 2 }
   );
 }
 
 function copyFilesToDist() {
-  fs.copySync(
-    skyPagesConfigUtil.spaPath('README.md'),
-    skyPagesConfigUtil.spaPath('dist', 'README.md')
-  );
+  const pathsToCopy = [
+    ['README.md'],
+    ['CHANGELOG.md'],
+    ['src', 'assets']
+  ];
 
-  fs.copySync(
-    skyPagesConfigUtil.spaPath('CHANGELOG.md'),
-    skyPagesConfigUtil.spaPath('dist', 'CHANGELOG.md')
-  );
+  pathsToCopy.forEach(pathArr => {
+    const sourcePath = skyPagesConfigUtil.spaPath(...pathArr);
+    if (fs.existsSync(sourcePath)) {
+      fs.copySync(
+        sourcePath,
+        skyPagesConfigUtil.spaPath('dist', ...pathArr)
+      );
+    } else {
+      logger.warn(`File(s) not found: ${sourcePath}`);
+    }
+  });
 }
 
 module.exports = () => {

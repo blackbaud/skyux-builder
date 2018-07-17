@@ -4,7 +4,6 @@
 const mock = require('mock-require');
 const path = require('path');
 const fs = require('fs');
-const ProcessExitCode = require('../plugin/process-exit-code');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack common', () => {
@@ -101,106 +100,6 @@ describe('config webpack common', () => {
     validateAppExtras(true);
   });
 
-  it('should not bind to beforeExit if no errors', () => {
-    const processOnSpy = spyOn(process, 'on');
-    const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    const config = lib.getWebpackConfig({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    });
-
-    config.plugins.forEach(plugin => {
-      if (plugin.name === 'processExitCode') {
-        plugin.apply({
-          plugin: (evt, cb) => {
-            switch (evt) {
-              case 'run':
-                cb(() => {}, () => {});
-              break;
-              case 'done':
-                cb({
-                  compilation: {}
-                });
-              break;
-            }
-          }
-        });
-      }
-    });
-
-    expect(processOnSpy).not.toHaveBeenCalled();
-  });
-
-  it('should set process.exitCode to 1 if compilation errors', () => {
-    const processOnSpy = spyOn(process, 'on').and.callFake((evt, cb) => {
-      if (evt === 'exit') {
-        cb();
-      }
-    });
-    const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    const config = lib.getWebpackConfig({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    });
-
-    config.plugins.forEach(plugin => {
-      if (plugin instanceof ProcessExitCode) {
-        plugin.apply({
-          plugin: (evt, cb) => {
-            switch (evt) {
-              case 'done':
-                cb({
-                  compilation: {
-                    errors: [
-                      'test-error'
-                    ]
-                  }
-                });
-              break;
-            }
-          }
-        });
-      }
-    });
-
-    expect(processOnSpy).toHaveBeenCalled();
-    expect(process.exitCode).toEqual(1);
-  });
-
-  it('should not set process.exit listener if no compilation errors', () => {
-
-    // Reset process.exitCode from any previous tests
-    process.exitCode = 0;
-
-    const processOnSpy = spyOn(process, 'on');
-    const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    const config = lib.getWebpackConfig({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: {}
-    });
-
-    config.plugins.forEach(plugin => {
-      if (plugin instanceof ProcessExitCode) {
-        plugin.apply({
-          plugin: (evt, cb) => {
-            switch (evt) {
-              case 'done':
-                cb({
-                  compilation: {
-                    errors: []
-                  }
-                });
-              break;
-            }
-          }
-        });
-      }
-    });
-
-    expect(processOnSpy).not.toHaveBeenCalled();
-    expect(process.exitCode).not.toEqual(1);
-  });
-
   it('should pass --output-keep-alive to OutputKeepAlivePlugin', () => {
     let _options;
 
@@ -220,4 +119,54 @@ describe('config webpack common', () => {
 
     expect(_options.enabled).toEqual(true);
   });
+
+  function setupLogPlugin(command, argv = {}) {
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime({
+        command
+      }),
+      skyux: {}
+    };
+
+    let plugin = jasmine.createSpy('simple-progress-webpack-plugin');
+    mock('simple-progress-webpack-plugin', plugin);
+    mock('@blackbaud/skyux-logger', argv);
+
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
+    lib.getWebpackConfig(skyPagesConfig, argv);
+
+    return plugin;
+  }
+
+  it('should not add the webpack plugin if --logFormat none', () => {
+    const plugin = setupLogPlugin('', { logFormat: 'none' });
+    expect(plugin).not.toHaveBeenCalled();
+  });
+
+  it('should pass the logFormat flag to the webpack plugin', () => {
+    const format = 'custom-format';
+    const plugin = setupLogPlugin('', { logFormat: format });
+    expect(plugin.calls.first().args[0].format).toEqual(format);
+  });
+
+  it('should default the webplack property to compact for skyux serve', () => {
+    const plugin = setupLogPlugin('serve');
+    expect(plugin.calls.first().args[0].format).toEqual('compact');
+  });
+
+  it('should default the webplack property to compact if the --serve flag is used', () => {
+    const plugin = setupLogPlugin('build', { 'serve': true });
+    expect(plugin.calls.first().args[0].format).toEqual('compact');
+  });
+
+  it('should default the log property to expanded for all other skyux commands', () => {
+    const plugin = setupLogPlugin('build');
+    expect(plugin.calls.first().args[0].format).toEqual('expanded');
+  });
+
+  it('should pass the logColor flag to the log plugin', () => {
+    const plugin = setupLogPlugin('', { logColor: true });
+    expect(plugin.calls.first().args[0].color).toEqual(true);
+  });
+
 });
