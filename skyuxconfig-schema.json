@@ -211,6 +211,27 @@
     "useHashRouting": {
       "description": "Allows your SPA to use Angular's hash location strategy.",
       "type": "boolean"
+    },
+    "testSettings": {
+      "description": "Container for controlling test settings.",
+      "type": "object",
+      "properties": {
+        "unit": {
+          "description": "Test settings specific to the skyux test command.",
+          "type": "object",
+          "properties": {
+            "browserSet": {
+              "description": "The named set of browsers to run against.",
+              "type": "string",
+              "enum": [
+                "speedy",
+                "quirky",
+                "paranoid"
+              ]
+            }
+          }
+        }
+      }
     }
   }
 }
