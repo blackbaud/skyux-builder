@@ -192,6 +192,9 @@
         "array",
         "object"
       ],
+      "items": {
+        "type": "string"
+      },
       "patternProperties": {
         "^.*$": {
           "type": [
