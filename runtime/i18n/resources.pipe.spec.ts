@@ -4,11 +4,11 @@ import {
 
 import {
   SkyAppResourcesPipe
-} from '@blackbaud/skyux-builder/runtime/i18n/resources.pipe';
+} from '@skyux-sdk/builder/runtime/i18n/resources.pipe';
 
 import {
   SkyAppResourcesService
-} from '@blackbaud/skyux-builder/runtime/i18n/resources.service';
+} from '@skyux-sdk/builder/runtime/i18n/resources.service';
 
 describe('Resources pipe', () => {
   let resources: SkyAppResourcesService;

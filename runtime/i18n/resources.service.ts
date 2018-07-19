@@ -21,19 +21,19 @@ import 'rxjs/add/operator/switchMap';
 
 import {
   SkyAppAssetsService
-} from '@blackbaud/skyux-builder/runtime/assets.service';
+} from '@skyux-sdk/builder/runtime/assets.service';
 
 import {
   SkyAppFormat
-} from '@blackbaud/skyux-builder/runtime/format';
+} from '@skyux-sdk/builder/runtime/format';
 
 import {
   SkyAppLocaleProvider
-} from '@blackbaud/skyux-builder/runtime/i18n/locale-provider';
+} from '@skyux-sdk/builder/runtime/i18n/locale-provider';
 
 import {
   SkyAppHostLocaleProvider
-} from '@blackbaud/skyux-builder/runtime/i18n/host-locale-provider';
+} from '@skyux-sdk/builder/runtime/i18n/host-locale-provider';
 
 const defaultResources: {[key: string]: {message: string}} = {};
 

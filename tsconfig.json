@@ -24,8 +24,8 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@blackbaud/skyux-builder/*": [
-        "./node_modules/@blackbaud/skyux-builder/*",
+      "@skyux-sdk/builder/*": [
+        "./node_modules/@skyux-sdk/builder/*",
         "./*"
       ]
     }

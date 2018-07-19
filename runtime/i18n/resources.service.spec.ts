@@ -21,17 +21,17 @@ import {
 import {
   SkyAppAssetsService,
   SkyAppWindowRef
-} from '@blackbaud/skyux-builder/runtime';
+} from '@skyux-sdk/builder/runtime';
 
 import {
   SkyAppHostLocaleProvider,
   SkyAppLocaleProvider,
   SkyAppResourcesService
-} from '@blackbaud/skyux-builder/runtime/i18n';
+} from '@skyux-sdk/builder/runtime/i18n';
 
 import {
   SkyAppFormat
-} from '@blackbaud/skyux-builder/runtime/format';
+} from '@skyux-sdk/builder/runtime/format';
 
 describe('Resources service', () => {
   let resources: SkyAppResourcesService;

@@ -2,7 +2,7 @@ import { Observable } from 'rxjs/Observable';
 
 import {
   SkyAppHostLocaleProvider
-} from '@blackbaud/skyux-builder/runtime/i18n/host-locale-provider';
+} from '@skyux-sdk/builder/runtime/i18n/host-locale-provider';
 
 describe('Host locale provider', () => {
 

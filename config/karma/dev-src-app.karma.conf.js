@@ -36,7 +36,7 @@ function getConfig(config) {
   // This is needed exclusively for internal runtime unit tests,
   // which is why it's here instead of alias-builder or the shared test.webpack.config.js
   // It's relative from src/app/
-  webpackConfig.resolve.alias['@blackbaud/skyux-builder/runtime'] = runtimePath;
+  webpackConfig.resolve.alias['@skyux-sdk/builder/runtime'] = runtimePath;
 
   // Instead of adding skyux2 as a dependency of skyux-builder
   webpackConfig.resolve.alias['@blackbaud/skyux/dist/css/sky.css'] =

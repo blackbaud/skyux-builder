@@ -30,7 +30,7 @@ import {
   SkyAppStyleLoader,
   SkyAppViewportService,
   SkyAppWindowRef
-} from '@blackbaud/skyux-builder/runtime';
+} from '@skyux-sdk/builder/runtime';
 
 require('style-loader!./app.component.scss');
 

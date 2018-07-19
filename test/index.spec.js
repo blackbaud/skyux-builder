@@ -5,7 +5,7 @@ const mock = require('mock-require');
 const logger = require('@blackbaud/skyux-logger');
 const config = require('../config/sky-pages/sky-pages.config');
 
-describe('@blackbaud/skyux-builder', () => {
+describe('@skyux-sdk/builder', () => {
 
   it('should expose a runCommand method', () => {
     const lib = require('../index');
