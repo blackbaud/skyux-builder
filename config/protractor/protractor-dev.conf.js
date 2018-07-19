@@ -48,9 +48,7 @@ let config = {
             common.tmp
           ]))
           .then(() => common.exec('npm', ['install'], common.cwdOpts))
-          .then(() => common.exec('npm', ['install'], {
-            cwd: process.cwd()
-          }))
+          .then(() => common.exec('npm', ['install', '../'], common.cwdOpts))
           .then(resolve)
           .catch(reject);
 
