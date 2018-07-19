@@ -24,6 +24,7 @@ function writeTSConfig() {
       'emitDecoratorMetadata': true,
       'experimentalDecorators': true,
       'sourceMap': true,
+      'importHelpers': true,
       'noEmitHelpers': true,
       'noImplicitAny': true,
       'rootDir': '.',
