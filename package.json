@@ -1,5 +1,5 @@
 {
-  "name": "@blackbaud/skyux-builder",
+  "name": "@skyux-sdk/builder",
   "version": "1.17.0",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
