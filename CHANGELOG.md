@@ -1,3 +1,19 @@
+# 1.19.0 (2018-07-18)
+
+- Updated the `skyux build-public-library` command to use same compiler as `skyux build`. [#417](https://github.com/blackbaud/skyux-builder/pull/417)
+- Added better type info and documentation to `SkyPactService`. [#430](https://github.com/blackbaud/skyux-builder/pull/430) Thanks [@Blackbaud-KrisMahon](https://github.com/Blackbaud-KrisMahon)!
+- Exposed `skyuxconfig.json` to `skyux test` and `skyux e2e` configuration files. [#431](https://github.com/blackbaud/skyux-builder/pull/431)
+- Created the `$schema` property in `skyuxconfig.json` to allow for better IDE intergration.  The value of `./node_modules/@blackbaud/skyux-builder/skyuxconfig-schema.json`is applied to the default template and can be retroactively added to older SPAs. [#358](https://github.com/blackbaud/skyux-builder/pull/358)
+- Created the `browserSet` property in `skyuxconfig.json` to control which browsers to use during testing.  Applicable values are `speedy`, `quirky`, and `paranoid`. [#431](https://github.com/blackbaud/skyux-builder/pull/431)
+- Created the `excludeFromRequest` property in `skyuxconfig.json` to exlude parameters from requests. [#432](https://github.com/blackbaud/skyux-builder/pull/432)
+
+# 1.18.0 (2018-06-21)
+
+- Added LCOV code coverage output when running `skyux test`. [#416](https://github.com/blackbaud/skyux-builder/pull/416)
+- Added support to use tildes for imports in SCSS files in libraries. [#415](https://github.com/blackbaud/skyux-builder/pull/415)
+- Added support for route navigation during `skyux e2e`. [#414](https://github.com/blackbaud/skyux-builder/pull/414)
+- Bugfix to properly handle multiline entry of `styleUrls`. [#418](https://github.com/blackbaud/skyux-builder/pull/418)
+
 # 1.17.0 (2018-06-14)
 
 - Updated `auth-client` to `2.7.0` which supports omnibar theming. [#412](https://github.com/blackbaud/skyux-builder/pull/412)

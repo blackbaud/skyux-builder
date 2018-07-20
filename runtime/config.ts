@@ -27,6 +27,14 @@ export class SkyuxPactConfig {
   public pactProxyServer?: string;
 }
 
+export interface SkyuxConfigUnitTestSettings {
+  browserSet?: 'speedy' | 'quirky' | 'paranoid';
+}
+
+export interface SkyuxConfigTestSettings {
+  unit?: SkyuxConfigUnitTestSettings;
+}
+
 export interface RuntimeConfig {
   app: RuntimeConfigApp;
   command?: string;  // Dynamically added in "higher up" webpacks
@@ -61,6 +69,7 @@ export interface SkyuxConfigHost {
 }
 
 export interface SkyuxConfig {
+  $schema?: string;
   a11y?: SkyuxConfigA11y | boolean;
   app?: SkyuxConfigApp;
   appSettings?: any;
@@ -80,6 +89,7 @@ export interface SkyuxConfig {
     public?: any[],
     referenced?: any[]
   };
+  testSettings?: SkyuxConfigTestSettings;
   omnibar?: any;
   useHashRouting?: boolean;
 }
