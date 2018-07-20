@@ -40,6 +40,23 @@ describe('SkyAppRuntimeConfigParams', () => {
     expect(params.getUrl('https://mysite.com?c=d')).toEqual('https://mysite.com?c=d&a1=b');
   });
 
+  it('should exclude certain parameters from being added to a url\'s querystring', () => {
+    const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
+      '?a1=b&b2=c3&z4=y',
+      {
+        'a1': true,
+        'b2': {
+          required: true
+        },
+        'z4': {
+          excludeFromRequests: true
+        }
+      }
+    );
+
+    expect(params.getUrl('https://mysite.com?c=d')).toEqual('https://mysite.com?c=d&a1=b&b2=c3');
+  });
+
   it('should not add a current param if the url already has it', () => {
     const params: SkyAppRuntimeConfigParams = new SkyAppRuntimeConfigParams(
       '?a1=b',
