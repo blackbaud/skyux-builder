@@ -1,6 +1,7 @@
 export type SkyuxConfigParams = {
   [key: string]: boolean | {
     value?: any;
-    required?: boolean
+    required?: boolean;
+    excludeFromRequests?: boolean;
   }
 };

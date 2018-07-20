@@ -184,7 +184,32 @@
       "type": [
         "array",
         "object"
-      ]
+      ],
+      "items": {
+        "type": "string"
+      },
+      "patternProperties": {
+        "^.*$": {
+          "type": [
+            "boolean",
+            "object"
+          ],
+          "properties": {
+            "required": {
+              "description": "Indicates the parameter must be supplied to the application in order to function.",
+              "type": "boolean"
+            },
+            "value": {
+              "description": "The default value of the parameter. This value may be overridden at runtime by the query string or other future sources of parameter values."
+            },
+            "excludeFromRequests": {
+              "description": "Indicates whether the parameter should be excluded from the parameters automatically added to the query string of URLs requested with SkyAuthHttp.",
+              "type": "boolean",
+              "default": true
+            }
+          }
+        }
+      }
     },
     "plugins": {
       "description": "Specifies plugins to expand on existing SKY UX Builder functionality and create new functionality.",
@@ -211,6 +236,27 @@
     "useHashRouting": {
       "description": "Allows your SPA to use Angular's hash location strategy.",
       "type": "boolean"
+    },
+    "testSettings": {
+      "description": "Container for controlling test settings.",
+      "type": "object",
+      "properties": {
+        "unit": {
+          "description": "Test settings specific to the skyux test command.",
+          "type": "object",
+          "properties": {
+            "browserSet": {
+              "description": "The named set of browsers to run against.",
+              "type": "string",
+              "enum": [
+                "speedy",
+                "quirky",
+                "paranoid"
+              ]
+            }
+          }
+        }
+      }
     }
   }
 }
