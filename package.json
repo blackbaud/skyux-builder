@@ -79,7 +79,6 @@
     "karma-webpack": "2.0.3",
     "loader-utils": "1.1.0",
     "lodash.mergewith": "4.6.0",
-    "ngc-webpack": "3.0.0",
     "node-sass": "4.5.3",
     "node-sass-tilde-importer": "1.0.2",
     "open": "0.0.5",
