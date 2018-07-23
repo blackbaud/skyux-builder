@@ -115,11 +115,10 @@ describe('cli build-public-library', () => {
     cliCommand({}, mockWebpack).then(() => {
       const args = spy.calls.argsFor(0);
       expect(args[0]).toEqual('main.ts');
-      expect(args[1]).toEqual(`
-import { NgModule } from '@angular/core';
-@NgModule({})
-export abstract class SkyLibPlaceholderModule {}
+      expect(args[1]).toEqual(`import { NgModule } from '@angular/core';
 export * from './index';
+@NgModule({})
+export class SkyLibPlaceholderModule {}
 `);
       done();
     });

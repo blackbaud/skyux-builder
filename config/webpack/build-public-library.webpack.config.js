@@ -48,7 +48,7 @@ function getWebpackConfig(skyPagesConfig) {
     .map(key => parseRegExp(key));
 
   return {
-    entry: skyPagesConfigUtil.spaPathTemp('main.ts'),
+    entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
     output: {
       path: skyPagesConfigUtil.spaPath('dist', 'bundles'),
       filename: 'bundle.umd.js',

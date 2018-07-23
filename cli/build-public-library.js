@@ -73,7 +73,7 @@ function writeTSConfig() {
         ]
       }
     },
-    files: [
+    'files': [
       skyPagesConfigUtil.spaPathTemp('index.ts')
     ]
   };
@@ -87,11 +87,10 @@ function writeTSConfig() {
  * we should require a module name be provided by the consumer.
  */
 function writePlaceholderModule() {
-  const content = `
-import { NgModule } from '@angular/core';
-@NgModule({})
-export abstract class SkyLibPlaceholderModule {}
+  const content = `import { NgModule } from '@angular/core';
 export * from './index';
+@NgModule({})
+export class SkyLibPlaceholderModule {}
 `;
 
   fs.writeFileSync(skyPagesConfigUtil.spaPathTemp('main.ts'), content, {
