@@ -11,12 +11,19 @@ describe('cli build-public-library', () => {
   let webpackConfig;
   let mockWebpack;
   let mockFs;
+  let mockSpawn;
 
   beforeEach(() => {
     mockFs = {
       writeJSONSync() {},
       writeFileSync() {},
       copySync() {}
+    };
+
+    mockSpawn = {
+      sync() {
+        return {};
+      }
     };
 
     mockWebpack = () => {
@@ -50,6 +57,7 @@ describe('cli build-public-library', () => {
     });
 
     mock('fs-extra', mockFs);
+    mock('cross-spawn', mockSpawn);
 
     spyOn(process, 'exit').and.callFake(() => {});
     spyOn(skyPagesConfigUtil, 'spaPath').and.returnValue('');
@@ -152,6 +160,18 @@ export class SkyLibPlaceholderModule {}
     const cliCommand = mock.reRequire(requirePath);
     cliCommand({}, mockWebpack).then(() => {
       expect(process.exit).toHaveBeenCalledWith(1);
+      done();
+    });
+  });
+
+  it('should handle transpilation errors', (done) => {
+    const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(logger, 'error').and.callThrough();
+    spyOn(mockSpawn, 'sync').and.returnValue({
+      err: 'something bad happened'
+    });
+    cliCommand({}, mockWebpack).then(() => {
+      expect(spy).toHaveBeenCalledWith('something bad happened');
       done();
     });
   });

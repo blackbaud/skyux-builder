@@ -82,6 +82,9 @@ describe('config webpack build public library', () => {
             '@angular/common': '4.3.6',
             '@pact-foundation/pact-web': '5.3.0',
             'zone.js': '0.8.10'
+          },
+          peerDependencies: {
+            '@angular/core': '4.3.6'
           }
         };
       }
@@ -90,6 +93,9 @@ describe('config webpack build public library', () => {
         dependencies: {
           '@blackbaud/skyux': '2.13.0',
           '@blackbaud-internal/skyux-lib-testing': 'latest'
+        },
+        peerDependencies: {
+          '@angular/core': '4.3.6'
         }
       };
     });
@@ -99,6 +105,7 @@ describe('config webpack build public library', () => {
       /^@angular\/common/,
       /^@pact\-foundation\/pact\-web/,
       /^zone\.js/,
+      /^@angular\/core/,
       /^@blackbaud\/skyux/,
       /^@blackbaud\-internal\/skyux\-lib\-testing/
     ]);
