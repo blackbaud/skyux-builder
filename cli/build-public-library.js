@@ -73,19 +73,25 @@ function writeTSConfig() {
         ]
       }
     },
-    'exclude': [
-      skyPagesConfigUtil.spaPathTemp('runtime')
+    files: [
+      skyPagesConfigUtil.spaPathTemp('index.ts')
     ]
   };
 
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);
 }
 
+/**
+ * Create a "placeholder" module for Angular AoT compiler.
+ * This is needed to avoid breaking changes; in the future,
+ * we should require a module name be provided by the consumer.
+ */
 function writePlaceholderModule() {
-  const content = `import { NgModule } from '@angular/core';
-import './index';
+  const content = `
+import { NgModule } from '@angular/core';
 @NgModule({})
-export class SkyLibPlaceholderModule {}
+export abstract class SkyLibPlaceholderModule {}
+export * from './index';
 `;
 
   fs.writeFileSync(skyPagesConfigUtil.spaPathTemp('main.ts'), content, {
