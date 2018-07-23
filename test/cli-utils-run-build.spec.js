@@ -11,6 +11,12 @@ describe('cli utils run build', () => {
 
   beforeEach(() => {
     mockLocaleProcessor = {
+      isLocaleFile() {
+        return true;
+      },
+      parseLocaleFileBasename() {
+        return '';
+      },
       prepareLocaleFiles() {}
     };
 
