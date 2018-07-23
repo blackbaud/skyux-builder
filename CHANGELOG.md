@@ -1,3 +1,7 @@
+# 1.19.1 (2018-07-23)
+
+- Bugfix to allow component libraries to properly consume external components. [#439](https://github.com/blackbaud/skyux-builder/pull/439)
+
 # 1.19.0 (2018-07-18)
 
 - Updated the `skyux build-public-library` command to use same compiler as `skyux build`. [#417](https://github.com/blackbaud/skyux-builder/pull/417)
