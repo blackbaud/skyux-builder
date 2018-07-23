@@ -56,7 +56,6 @@ function getWebpackConfig(skyPagesConfig) {
       library: libraryName
     },
     externals,
-    devtool: 'source-map',
     resolve: {
       extensions: ['.js', '.ts']
     },
