@@ -8,7 +8,7 @@ import { SkyPagesModule } from '../../../src/app/sky-pages.module';
 
 import { SkyAppResourcesService } from '@skyux/i18n';
 
-import { SkyAppResourcesTestService } from '@skyux/i18n/testing';
+import { SkyAppResourcesTestService } from '@skyux/i18n/src/app/public/testing';
 
 @NgModule({
   imports: [
