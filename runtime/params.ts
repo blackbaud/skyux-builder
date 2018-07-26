@@ -40,7 +40,6 @@ export class SkyAppRuntimeConfigParams {
     url: string,
     configParams: SkyuxConfigParams
   ) {
-<<<<<<< HEAD
     const allowed: string[] = [];
 
     for (const paramName of Object.keys(configParams)) {
@@ -67,46 +66,6 @@ export class SkyAppRuntimeConfigParams {
 
           if (configParam.excludeFromRequests) {
             this.excludeFromRequestsParams.push(paramName);
-=======
-    let allowed: string[];
-
-    // The default params value in Builder's skyuxconfig.json has been changed
-    // from an array to an object to support more metadata about each parameter,
-    // including the parameter's default value and possible future properties
-    // like required. Check for an array first to maintain backwards compatibility
-    // with the previous default value and any consumers who may be overriding the
-    // value until we release builder 2.0.
-    if (Array.isArray(configParams)) {
-      allowed = configParams;
-    } else {
-      allowed = [];
-
-      for (const paramName of Object.keys(configParams)) {
-        const configParam = configParams[paramName];
-
-        // The config param could be present but be set to false/undefined indicating
-        // an override of the default parameter.
-        if (configParam) {
-          allowed.push(paramName);
-
-          // A boolean value may be present to simply indicate that a parameter is allowed.
-          // If the type is object, look for additional config properties.
-          if (typeof configParam === 'object') {
-            const paramValue = configParam.value;
-
-            if (configParam.required) {
-              this.requiredParams.push(paramName);
-            }
-
-            if (paramValue) {
-              this.params[paramName] = paramValue;
-              this.defaultParamValues[paramName] = paramValue;
-            }
-
-            if (configParam.excludeFromRequests) {
-              this.excludeFromRequestsParams.push(paramName);
-            }
->>>>>>> master
           }
         }
       }
