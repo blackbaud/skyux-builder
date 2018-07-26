@@ -90,13 +90,6 @@ function getWebpackConfig(skyPagesConfig) {
         sourceMap: true
       }),
 
-      // Generates an aot JavaScript bundle.
-      new ngtools.AotPlugin({
-        tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
-        sourceMap: true
-      }),
-
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,
         comments: false,
