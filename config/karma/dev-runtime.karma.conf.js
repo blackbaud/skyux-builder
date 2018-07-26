@@ -39,7 +39,6 @@ function getConfig(config) {
   // This is needed exclusively for internal runtime unit tests,
   // which is why it's here instead of alias-builder or the shared test.webpack.config.js
   addRuntimeAlias(webpackConfig, runtimePath, '');
-  addRuntimeAlias(webpackConfig, runtimePath, '/i18n');
 
   // Remove sky-style-loader
   delete config.preprocessors['../../utils/spec-styles.js'];

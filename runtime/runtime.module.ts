@@ -7,26 +7,14 @@ import {
   SkyAppLinkExternalDirective
 } from './directives';
 
-import {
-  SkyAppHostLocaleProvider,
-  SkyAppResourcesPipe,
-  SkyAppResourcesService
-} from './i18n';
-
 @NgModule({
   declarations: [
     SkyAppLinkDirective,
-    SkyAppLinkExternalDirective,
-    SkyAppResourcesPipe
+    SkyAppLinkExternalDirective
   ],
   exports: [
     SkyAppLinkDirective,
-    SkyAppLinkExternalDirective,
-    SkyAppResourcesPipe
-  ],
-  providers: [
-    SkyAppHostLocaleProvider,
-    SkyAppResourcesService
+    SkyAppLinkExternalDirective
   ]
 })
 /* istanbul ignore next */
