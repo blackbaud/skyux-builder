@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   SkyAppConfig
 } from '@blackbaud/skyux-builder/runtime/config';
@@ -9,6 +10,11 @@ import {
 import {
   InteractionObject
 } from '@pact-foundation/pact-web/dsl/interaction';
+=======
+import { PactWeb } from '@pact-foundation/pact-web';
+import { InteractionObject } from '@pact-foundation/pact-web/dsl/interaction';
+import { SkyAppConfig } from '@blackbaud/skyux-builder/runtime/config';
+>>>>>>> master
 
 declare var Pact: any;
 
