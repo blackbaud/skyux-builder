@@ -2,8 +2,6 @@
 
 'use strict';
 
-require('style-loader!@blackbaud/skyux/dist/css/sky.css');
-
 var FontFaceObserver = require('fontfaceobserver');
 
 var stylesAreLoaded = false;
