@@ -176,11 +176,7 @@ export class SkyAppRuntimeConfigParams {
         this.excludeFromRequestsParams.indexOf(key) === -1 &&
         !urlSearchParams.has(key)
       ) {
-<<<<<<< HEAD
         joined.push(`${key}=${encodeURIComponent(this.get(key))}`);
-=======
-        joined.push(`${key}=${encodeURIComponent(this.get(key, true))}`);
->>>>>>> master
       }
     });
 
