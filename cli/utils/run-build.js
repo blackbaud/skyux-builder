@@ -65,12 +65,6 @@ function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
     runtime: {
       spaPathAlias: '../..',
       skyPagesOutAlias: '../..',
-      // These files won't be copied to the temp folder because the consuming project will
-      // be referencing it by its Node package name.  Make sure this code also references its
-      // Node package name rather than a local path; otherwise TypeScript will treat them as
-      // different types and Angular will throw an error when trying to inject an instance
-      // of a class (such as SkyAuthHttp) by its type.
-      runtimeAlias: '@blackbaud/skyux-builder/runtime',
       useTemplateUrl: true
     }
   };

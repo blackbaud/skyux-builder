@@ -24,7 +24,6 @@ module.exports = {
       includeRouteModule: true,
       routes: [],
       routesPattern: '**/index.html',
-      runtimeAlias: 'sky-pages-internal/runtime',
       srcPath: 'src/app/',
       spaPathAlias: 'sky-pages-spa',
       skyPagesOutAlias: 'sky-pages-internal',

@@ -9,7 +9,6 @@ const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
 /**
  * Returns the querystring base for parameters allowed to be passed through.
- * PLEASE NOTE: The method is nearly duplicated in `runtime/params.ts`.
  * @name getQueryStringFromArgv
  * @param {Object} argv
  * @param {SkyPagesConfig} skyPagesConfig

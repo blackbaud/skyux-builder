@@ -74,9 +74,12 @@ function generateComponentSpec(pathParts, fileName, name, nameSnakeCase) {
 } from '@angular/core/testing';
 
 import {
-  expect,
+  expect
+} from '@skyux/core/testing';
+
+import {
   SkyAppTestModule
-} from '@blackbaud/skyux-builder/runtime/testing/browser';
+} from '@skyux/builder-utils/testing';
 
 import {
   ${name}

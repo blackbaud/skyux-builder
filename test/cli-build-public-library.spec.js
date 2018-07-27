@@ -71,16 +71,6 @@ describe('cli build-public-library', () => {
     expect(cliCommand).toEqual(jasmine.any(Function));
   });
 
-  it('should copy the runtime folder before compiling then clean it before packaging', (done) => {
-    const cliCommand = mock.reRequire(requirePath);
-    const spy = spyOn(mockFs, 'copySync').and.callThrough();
-    cliCommand({}, mockWebpack).then(() => {
-      expect(spy).toHaveBeenCalledWith('runtime', 'runtime');
-      expect(rimraf.sync).toHaveBeenCalledTimes(4);
-      done();
-    });
-  });
-
   it('should clean the dist and temp directories', (done) => {
     const cliCommand = mock.reRequire(requirePath);
     cliCommand({}, mockWebpack).then(() => {

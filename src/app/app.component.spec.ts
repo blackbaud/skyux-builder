@@ -35,7 +35,7 @@ import {
   SkyAppStyleLoader,
   SkyAppViewportService,
   SkyAppWindowRef
-} from '@blackbaud/skyux-builder/runtime';
+} from '@skyux/builder-utils';
 
 import {
   HelpInitializationService

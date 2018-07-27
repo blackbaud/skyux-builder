@@ -1,10 +1,6 @@
 /*jshint node: true*/
 'use strict';
 
-function addRuntimeAlias(webpackConfig, runtimePath, path) {
-  webpackConfig.resolve.alias['@blackbaud/skyux-builder/runtime' + path] = runtimePath + path;
-}
-
 /**
  * Requires the shared karma config and sets any local properties.
  * @name getConfig
@@ -19,26 +15,11 @@ function getConfig(config) {
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
   const testKarmaConf = require('./test.karma.conf');
 
-  const runtimePath = path.resolve(process.cwd(), 'runtime');
   const skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig('test');
   let webpackConfig = testWebpackConfig.getWebpackConfig(skyPagesConfig);
 
   // Import shared karma config
   testKarmaConf(config);
-
-  // First DefinePlugin wins so we want to override the normal src/app/ value in ROOT_DIR
-  webpackConfig.plugins.unshift(
-    new DefinePlugin({
-      'ROOT_DIR': JSON.stringify(runtimePath)
-    })
-  );
-
-  // Adjust the loader src path.
-  webpackConfig.module.rules[webpackConfig.module.rules.length - 1].include = runtimePath;
-
-  // This is needed exclusively for internal runtime unit tests,
-  // which is why it's here instead of alias-builder or the shared test.webpack.config.js
-  addRuntimeAlias(webpackConfig, runtimePath, '');
 
   // Remove sky-style-loader
   delete config.preprocessors['../../utils/spec-styles.js'];

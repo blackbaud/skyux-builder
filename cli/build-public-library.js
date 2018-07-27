@@ -32,17 +32,6 @@ function cleanAll() {
   cleanDist();
 }
 
-function copyRuntime() {
-  fs.copySync(
-    skyPagesConfigUtil.outPath('runtime'),
-    skyPagesConfigUtil.spaPathTemp('runtime')
-  );
-}
-
-function cleanRuntime() {
-  rimraf.sync(skyPagesConfigUtil.spaPath('dist', 'runtime'));
-}
-
 function writeTSConfig() {
   var config = {
     'compilerOptions': {
@@ -106,11 +95,9 @@ module.exports = (skyPagesConfig, webpack) => {
   stageTypeScriptFiles();
   writeTSConfig();
   writePlaceholderModule();
-  copyRuntime();
 
   return transpile(skyPagesConfig, webpack)
     .then(() => {
-      cleanRuntime();
       preparePackage();
       cleanTemp();
       process.exit(0);
