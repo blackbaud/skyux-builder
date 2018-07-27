@@ -116,9 +116,8 @@ function createBundle(skyPagesConfig, webpack) {
 function transpile() {
   return new Promise((resolve, reject) => {
     const result = spawn.sync(
-      'node',
+      skyPagesConfigUtil.spaPath('node_modules', '.bin', 'ngc'),
       [
-        skyPagesConfigUtil.spaPath('node_modules', '.bin', 'ngc'),
         '--project',
         skyPagesConfigUtil.spaPathTemp('tsconfig.json')
       ],
