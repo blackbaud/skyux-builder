@@ -38,14 +38,17 @@ function getConfig(config) {
 
   config.set({
     frameworks: config.frameworks.concat('pact'),
-    files: config.files.concat(path.resolve(process.cwd(), 'node_modules/@pact-foundation/pact-web',
-    `pact-web.js`)),
+    files: config.files.concat(
+      path.resolve(
+        process.cwd(),
+        'node_modules/@pact-foundation/pact-web',
+        'pact-web.js'
+      )
+    ),
     pact: skyPagesConfig.skyux.pacts,
     plugins: config.plugins.concat('@pact-foundation/karma-pact'),
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv)
-
   });
-
 }
 
 module.exports = getConfig;
