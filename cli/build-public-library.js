@@ -132,7 +132,7 @@ function transpile() {
 
     // Catch non-zero status codes.
     if (result.status !== 0) {
-      reject(new Error(`Child process exited with status code ${result.status}.`));
+      reject(new Error(`Angular compiler (ngc) exited with status code ${result.status}.`));
       return;
     }
 

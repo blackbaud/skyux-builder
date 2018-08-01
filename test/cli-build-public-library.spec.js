@@ -186,7 +186,9 @@ export class SkyLibPlaceholderModule {}
       status: 1
     });
     cliCommand({}, mockWebpack).then(() => {
-      expect(spy).toHaveBeenCalledWith(new Error(`Child process exited with status code 1.`));
+      expect(spy).toHaveBeenCalledWith(
+        new Error(`Angular compiler (ngc) exited with status code 1.`)
+      );
       done();
     });
   });
