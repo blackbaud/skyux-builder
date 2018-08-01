@@ -30,9 +30,6 @@ require('zone.js/dist/jasmine-patch');
 
 require('reflect-metadata');
 
-// RxJS
-require('rxjs/Rx');
-
 var testing = require('@angular/core/testing');
 var browser = require('@angular/platform-browser-dynamic/testing');
 
