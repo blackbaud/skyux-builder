@@ -1,3 +1,8 @@
+# 1.19.2 (2018-08-02)
+
+- Reverted stricter type information for `SkyPactService`. [#446](https://github.com/blackbaud/skyux-builder/pull/446)
+- Bugfix for `skyux build-public-library` command to successfully run on Windows. [#445](https://github.com/blackbaud/skyux-builder/pull/445)
+
 # 1.19.1 (2018-07-23)
 
 - Bugfix to allow component libraries to properly consume external components. [#439](https://github.com/blackbaud/skyux-builder/pull/439)
