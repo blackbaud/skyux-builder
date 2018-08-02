@@ -22,7 +22,9 @@ describe('cli build-public-library', () => {
 
     mockSpawn = {
       sync() {
-        return {};
+        return {
+          status: 0
+        };
       }
     };
 
@@ -172,6 +174,21 @@ export class SkyLibPlaceholderModule {}
     });
     cliCommand({}, mockWebpack).then(() => {
       expect(spy).toHaveBeenCalledWith('something bad happened');
+      done();
+    });
+  });
+
+  it('should catch non-zero status codes during transpilation', (done) => {
+    const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(logger, 'error').and.returnValue();
+    spyOn(mockSpawn, 'sync').and.returnValue({
+      err: null,
+      status: 1
+    });
+    cliCommand({}, mockWebpack).then(() => {
+      expect(spy).toHaveBeenCalledWith(
+        new Error(`Angular compiler (ngc) exited with status code 1.`)
+      );
       done();
     });
   });
