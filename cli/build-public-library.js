@@ -116,17 +116,23 @@ function createBundle(skyPagesConfig, webpack) {
 function transpile() {
   return new Promise((resolve, reject) => {
     const result = spawn.sync(
-      'node',
+      skyPagesConfigUtil.spaPath('node_modules', '.bin', 'ngc'),
       [
-        skyPagesConfigUtil.spaPath('node_modules', '.bin', 'ngc'),
         '--project',
         skyPagesConfigUtil.spaPathTemp('tsconfig.json')
       ],
       { stdio: 'inherit' }
     );
 
+    // Catch ngc errors.
     if (result.err) {
       reject(result.err);
+      return;
+    }
+
+    // Catch non-zero status codes.
+    if (result.status !== 0) {
+      reject(new Error(`Angular compiler (ngc) exited with status code ${result.status}.`));
       return;
     }
 
