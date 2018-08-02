@@ -18,6 +18,8 @@ import {
   Observable
 } from 'rxjs/Observable';
 
+import 'rxjs/add/observable/throw';
+
 import {
   SkyAppAssetsService,
   SkyAppWindowRef
