@@ -96,16 +96,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         },
         {
           test: /\.s?css$/,
-          use: [{
-            loader: 'raw-loader'
-          }, {
-            loader: 'sass-loader',
-            options: {
-              includePaths: [
-                outPath('node_modules')
-              ]
-            }
-          }],
+          use: ['raw-loader', 'sass-loader']
         },
         {
           test: /\.html$/,
