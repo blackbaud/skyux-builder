@@ -20,7 +20,13 @@ function getWebpackConfig(skyPagesConfig, argv) {
   const runCoverage = (!argv || argv.coverage !== false);
   skyPagesConfig.runtime.includeRouteModule = false;
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
-  const srcPath = path.resolve(process.cwd(), 'src', 'app');
+
+  let srcPath;
+  if (argv && argv.coverage === 'library') {
+    srcPath = path.resolve(process.cwd(), 'src', 'app', 'public');
+  } else {
+    srcPath = path.resolve(process.cwd(), 'src', 'app');
+  }
 
   const resolves = [
     process.cwd(),

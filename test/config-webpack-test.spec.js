@@ -1,6 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const path = require('path');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack test', () => {
@@ -103,5 +104,19 @@ describe('config webpack test', () => {
 
       expect(foundMatch).toBe(true);
     }
+  });
+
+  it('should run coverage differently for libraries', () => {
+    let instrumentLoader = getInstrumentLoader();
+    let index = instrumentLoader.include.indexOf(path.resolve('src', 'app'));
+
+    expect(index > -1).toEqual(true);
+
+    instrumentLoader = getInstrumentLoader({
+      coverage: 'library'
+    });
+
+    index = instrumentLoader.include.indexOf(path.resolve('src', 'app', 'public'));
+    expect(index > -1).toEqual(true);
   });
 });
