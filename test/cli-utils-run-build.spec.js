@@ -11,7 +11,8 @@ describe('cli utils run build', () => {
 
   beforeEach(() => {
     mockLocaleProcessor = {
-      prepareLocaleFiles() {}
+      prepareLocaleFiles() {},
+      isLocaleFile() {},
     };
 
     mockAssetsProcessor = {
