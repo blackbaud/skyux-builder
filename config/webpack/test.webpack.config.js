@@ -17,12 +17,13 @@ function outPath() {
 }
 
 function getWebpackConfig(skyPagesConfig, argv) {
-  const runCoverage = (!argv || argv.coverage !== false);
-  skyPagesConfig.runtime.includeRouteModule = false;
   const ENV = process.env.ENV = process.env.NODE_ENV = 'test';
+  const argvCoverage = (argv) ? argv.coverage : true;
+  const runCoverage = (argvCoverage !== false);
 
   let srcPath;
-  if (argv && argv.coverage === 'library') {
+  // The source path is different for libraries.
+  if (argvCoverage === 'library') {
     srcPath = path.resolve(process.cwd(), 'src', 'app', 'public');
   } else {
     srcPath = path.resolve(process.cwd(), 'src', 'app');
@@ -38,6 +39,8 @@ function getWebpackConfig(skyPagesConfig, argv) {
     spaPath('node_modules'),
     outPath('node_modules')
   ];
+
+  skyPagesConfig.runtime.includeRouteModule = false;
 
   let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
