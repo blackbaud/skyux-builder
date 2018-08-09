@@ -6,10 +6,6 @@ import {
   PactWeb
 } from '@pact-foundation/pact-web';
 
-import {
-  InteractionObject
-} from '@pact-foundation/pact-web/dsl/interaction';
-
 declare var Pact: any;
 
 /**
@@ -42,7 +38,7 @@ export class SkyPactService {
    * @param provider The name of the provider service.
    * @param interaction The provider interaction.
    */
-  public addInteraction(provider: string, interaction: InteractionObject): Promise<string> {
+  public addInteraction(provider: string, interaction: any): Promise<string> {
     return this.pactProviders[provider].addInteraction(interaction);
   }
 
