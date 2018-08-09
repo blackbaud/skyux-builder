@@ -45,8 +45,6 @@ import {
   SkyModalDemoFormComponent
 } from './modal-fixtures/modal-form-fixture.component';
 
-require('style-loader!@blackbaud/skyux/dist/css/sky.css');
-
 @NgModule({
   imports: [
     SkyAlertModule,
