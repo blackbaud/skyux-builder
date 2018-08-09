@@ -22,7 +22,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
   const runCoverage = (argvCoverage !== false);
 
   let srcPath;
-  // The source path is different for libraries.
   if (argvCoverage === 'library') {
     srcPath = path.resolve(process.cwd(), 'src', 'app', 'public');
   } else {
