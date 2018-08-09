@@ -32,7 +32,6 @@ import {
   SkyAppOmnibarProvider,
   SkyAppOmnibarReadyArgs,
   SkyAppSearchResultsProvider,
-  SkyAppStyleLoader,
   SkyAppViewportService,
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
@@ -40,6 +39,10 @@ import {
 import {
   HelpInitializationService
 } from '@blackbaud/skyux-lib-help';
+
+import {
+  SkyAppStyleLoader
+} from '@skyux/theme';
 
 import {
   AppComponent
