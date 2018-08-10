@@ -4,12 +4,14 @@
 const mock = require('mock-require');
 const glob = require('glob');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
+const localeAssetsProcessor = require('../lib/locale-assets-processor');
 
 describe('SKY UX Builder assets generator', () => {
   let mockLocaleProcessor;
 
   beforeEach(() => {
     mockLocaleProcessor = {
+      getDefaultLocaleFiles: localeAssetsProcessor.getDefaultLocaleFiles,
       isLocaleFile() {
         return false;
       },
