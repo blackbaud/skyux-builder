@@ -48,8 +48,12 @@ function getConfig(config) {
   // See minimist documentation regarding `argv._` https://github.com/substack/minimist
   let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
 
+  // Default command to test (easier than updates lots of tests)
+  const command = (skyPagesConfig && skyPagesConfig.runtime && skyPagesConfig.runtime.command)
+    ? skyPagesConfig.runtime.command : 'test';
+
   // Using __dirname so this file can be extended from other configuration file locations
-  const specBundle = `${__dirname}/../../utils/spec-bundle.js`;
+  const specBundle = `${__dirname}/../../utils/spec-bundle-${command}.js`;
   const specStyles = `${__dirname}/../../utils/spec-styles.js`;
   let preprocessors = {};
 
