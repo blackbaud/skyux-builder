@@ -123,7 +123,8 @@ describe('Locale assets processor', () => {
     const files = {
       'src/assets/locales/resources_en_US.json': {
         spa_key1: { _description: '', message: '[en_US] spa message 1' },
-        spa_key2: { _description: '', message: '[en_US] spa message 2' }
+        spa_key2: { _description: '', message: '[en_US] spa message 2' },
+        lib_override_key1: { _description: '', message: '[en_US] lib overridden by SPA' }
       },
       'src/assets/locales/resources_*.json': {
         spa_key1: { _description: '', message: '[fr_CA] spa message 1' },
@@ -132,7 +133,8 @@ describe('Locale assets processor', () => {
       // Tests that the `en-US` format also works (along with `en_US`):
       '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_en-US.json': {
         lib_key1: { _description: '', message: '[en_US] lib message 1' },
-        lib_key2: { _description: '', message: '[en_US] lib message 2' }
+        lib_key2: { _description: '', message: '[en_US] lib message 2' },
+        lib_override_key1: { _description: '', message: '[en_US] lib message to override' }
       },
       '/node_modules/@blackbaud/skyux-lib-foo/assets/locales/resources_fr_CA.json': {
         lib_fr_key: { _description: '', message: '[fr_CA] lib fr message' },
@@ -224,7 +226,8 @@ describe('Locale assets processor', () => {
       lib_key1: { _description: '', message: '[en_US] lib message 1' },
       lib_key2: { _description: '', message: '[en_US] lib message 2' },
       lib_internal_key1: { _description: '', message: '[en_US] lib internal message 1' },
-      lib_internal_key2: { _description: '', message: '[en_US] lib internal message 2' }
+      lib_internal_key2: { _description: '', message: '[en_US] lib internal message 2' },
+      lib_override_key1: { _description: '', message: '[en_US] lib overridden by SPA' }
     });
 
     expect(files['.skypageslocales/resources_fr_CA.json']).toEqual({
@@ -236,7 +239,8 @@ describe('Locale assets processor', () => {
       lib_internal_key1: { _description: '', message: '[en_US] lib internal message 1' },
       lib_internal_key2: { _description: '', message: '[fr_CA] lib internal message 2' },
       lib_fr_key: { _description: '', message: '[fr_CA] lib fr message' },
-      lib_internal_fr_key: { _description: '', message: '[fr_CA] lib internal fr message' }
+      lib_internal_fr_key: { _description: '', message: '[fr_CA] lib internal fr message' },
+      lib_override_key1: { _description: '', message: '[en_US] lib overridden by SPA' }
     });
 
     expect(files['.skypageslocales/resources_en_CA.json']).toEqual({
@@ -246,7 +250,8 @@ describe('Locale assets processor', () => {
       lib_key2: { _description: '', message: '[en_US] lib message 2' },
       lib_internal_key1: { _description: '', message: '[en_US] lib internal message 1' },
       lib_internal_key2: { _description: '', message: '[en_US] lib internal message 2' },
-      lib_internal_en_ca_key: { _description: '', message: '[en_CA] lib internal en_CA message' }
+      lib_internal_en_ca_key: { _description: '', message: '[en_CA] lib internal en_CA message' },
+      lib_override_key1: { _description: '', message: '[en_US] lib overridden by SPA' }
     });
   });
 
