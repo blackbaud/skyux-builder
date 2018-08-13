@@ -4,6 +4,7 @@
 const mock = require('mock-require');
 const logger = require('@blackbaud/skyux-logger');
 const runtimeUtils = require('../utils/runtime-test-utils');
+const localeAssetsProcessor = require('../lib/locale-assets-processor');
 
 describe('cli utils run build', () => {
   let mockAssetsProcessor;
@@ -11,7 +12,9 @@ describe('cli utils run build', () => {
 
   beforeEach(() => {
     mockLocaleProcessor = {
-      prepareLocaleFiles() {}
+      getDefaultLocaleFiles: localeAssetsProcessor.getDefaultLocaleFiles,
+      prepareLocaleFiles() {},
+      isLocaleFile() {},
     };
 
     mockAssetsProcessor = {
