@@ -11,12 +11,21 @@ describe('cli build-public-library', () => {
   let webpackConfig;
   let mockWebpack;
   let mockFs;
+  let mockSpawn;
 
   beforeEach(() => {
     mockFs = {
       writeJSONSync() {},
       writeFileSync() {},
       copySync() {}
+    };
+
+    mockSpawn = {
+      sync() {
+        return {
+          status: 0
+        };
+      }
     };
 
     mockWebpack = () => {
@@ -50,6 +59,7 @@ describe('cli build-public-library', () => {
     });
 
     mock('fs-extra', mockFs);
+    mock('cross-spawn', mockSpawn);
 
     spyOn(process, 'exit').and.callFake(() => {});
     spyOn(skyPagesConfigUtil, 'spaPath').and.returnValue('');
@@ -108,7 +118,7 @@ describe('cli build-public-library', () => {
       const args = spy.calls.argsFor(0);
       expect(args[0]).toEqual('main.ts');
       expect(args[1]).toEqual(`import { NgModule } from '@angular/core';
-import './index';
+export * from './index';
 @NgModule({})
 export class SkyLibPlaceholderModule {}
 `);
@@ -152,6 +162,33 @@ export class SkyLibPlaceholderModule {}
     const cliCommand = mock.reRequire(requirePath);
     cliCommand({}, mockWebpack).then(() => {
       expect(process.exit).toHaveBeenCalledWith(1);
+      done();
+    });
+  });
+
+  it('should handle transpilation errors', (done) => {
+    const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(logger, 'error').and.callThrough();
+    spyOn(mockSpawn, 'sync').and.returnValue({
+      err: 'something bad happened'
+    });
+    cliCommand({}, mockWebpack).then(() => {
+      expect(spy).toHaveBeenCalledWith('something bad happened');
+      done();
+    });
+  });
+
+  it('should catch non-zero status codes during transpilation', (done) => {
+    const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(logger, 'error').and.returnValue();
+    spyOn(mockSpawn, 'sync').and.returnValue({
+      err: null,
+      status: 1
+    });
+    cliCommand({}, mockWebpack).then(() => {
+      expect(spy).toHaveBeenCalledWith(
+        new Error(`Angular compiler (ngc) exited with status code 1.`)
+      );
       done();
     });
   });

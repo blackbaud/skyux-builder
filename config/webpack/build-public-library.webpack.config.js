@@ -4,7 +4,6 @@
 const ngtools = require('@ngtools/webpack');
 const fs = require('fs-extra');
 const webpack = require('webpack');
-const ngcWebpack = require('ngc-webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
 function parseRegExp(name) {
@@ -26,19 +25,27 @@ function getWebpackConfig(skyPagesConfig) {
     skyPagesConfigUtil.spaPath('package.json')
   );
 
-  let builderDependencies = [];
+  let dependencies = [];
   if (builderPackageJson.dependencies) {
-    builderDependencies = Object.keys(builderPackageJson.dependencies)
-      .map(key => parseRegExp(key));
+    dependencies = Object.keys(builderPackageJson.dependencies);
   }
 
-  let spaDependencies = [];
+  if (builderPackageJson.peerDependencies) {
+    dependencies = dependencies.concat(Object.keys(builderPackageJson.peerDependencies));
+  }
+
   if (spaPackageJson.dependencies) {
-    spaDependencies = Object.keys(spaPackageJson.dependencies)
-      .map(key => parseRegExp(key));
+    dependencies = dependencies.concat(Object.keys(spaPackageJson.dependencies));
   }
 
-  const externals = builderDependencies.concat(spaDependencies);
+  if (spaPackageJson.peerDependencies) {
+    dependencies = dependencies.concat(Object.keys(spaPackageJson.peerDependencies));
+  }
+
+  // Remove duplicates from array.
+  // https://stackoverflow.com/questions/1960473/get-all-unique-values-in-a-javascript-array-remove-duplicates
+  const externals = [...new Set(dependencies)]
+    .map(key => parseRegExp(key));
 
   return {
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
@@ -74,12 +81,9 @@ function getWebpackConfig(skyPagesConfig) {
       ]
     },
     plugins: [
-      // Generate transpiled source files.
-      new ngcWebpack.NgcWebpackPlugin({
-        tsConfig: skyPagesConfigUtil.spaPathTemp('tsconfig.json')
-      }),
-
-      // Generates an aot JavaScript bundle.
+      // Generates an AoT JavaScript bundle.
+      // TODO: Remove this in favor of Angular's native library bundler,
+      // once we've upgraded to Angular version 6.
       new ngtools.AotPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
         entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
