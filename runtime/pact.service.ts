@@ -3,10 +3,6 @@ import {
 } from '@pact-foundation/pact-web';
 
 import {
-  InteractionObject
-} from '@pact-foundation/pact-web/dsl/interaction';
-
-import {
   SkyAppConfig
 } from '@skyux/builder-utils';
 
