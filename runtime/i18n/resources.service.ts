@@ -21,7 +21,7 @@ import 'rxjs/add/operator/switchMap';
 
 import {
   SkyAppAssetsService
-} from '@blackbaud/skyux-builder/runtime/assets.service';
+} from '@skyux/builder-utils/assets.service';
 
 import {
   SkyAppFormat

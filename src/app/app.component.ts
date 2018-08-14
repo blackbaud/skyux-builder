@@ -23,16 +23,19 @@ import {
 } from '@blackbaud/skyux-lib-help';
 
 import {
-  SkyAppConfig,
-  SkyAppOmnibarProvider,
-  SkyAppOmnibarReadyArgs,
-  SkyAppSearchResultsProvider,
-  SkyAppViewportService,
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
 
 import {
-  SkyAppStyleLoader
+  SkyAppConfig,
+  SkyAppOmnibarProvider,
+  SkyAppOmnibarReadyArgs,
+  SkyAppSearchResultsProvider
+} from '@skyux/builder-utils';
+
+import {
+  SkyAppStyleLoader,
+  SkyAppViewportService
 } from '@skyux/theme';
 
 require('style-loader!./app.component.scss');

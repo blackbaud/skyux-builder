@@ -21,9 +21,12 @@ import {
 import 'rxjs/add/observable/throw';
 
 import {
-  SkyAppAssetsService,
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
+
+import {
+  SkyAppAssetsService
+} from '@skyux/builder-utils';
 
 import {
   SkyAppHostLocaleProvider,

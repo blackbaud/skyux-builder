@@ -28,11 +28,6 @@ import {
 } from '@blackbaud/auth-client';
 
 import {
-  SkyAppConfig,
-  SkyAppOmnibarProvider,
-  SkyAppOmnibarReadyArgs,
-  SkyAppSearchResultsProvider,
-  SkyAppViewportService,
   SkyAppWindowRef
 } from '@blackbaud/skyux-builder/runtime';
 
@@ -41,7 +36,15 @@ import {
 } from '@blackbaud/skyux-lib-help';
 
 import {
-  SkyAppStyleLoader
+  SkyAppConfig,
+  SkyAppOmnibarProvider,
+  SkyAppOmnibarReadyArgs,
+  SkyAppSearchResultsProvider
+} from '@skyux/builder-utils';
+
+import {
+  SkyAppStyleLoader,
+  SkyAppViewportService
 } from '@skyux/theme';
 
 import {

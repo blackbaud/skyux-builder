@@ -20,20 +20,17 @@ import {
 } from '@blackbaud/auth-client';
 
 import {
+  SkyAppConfig,
+  SkyAppRuntimeConfigParams
+} from '@skyux/builder-utils';
+
+import {
   SkyAuthHttp
 } from './auth-http';
 
 import {
   SkyAuthTokenProvider
 } from './auth-token-provider';
-
-import {
-  SkyAppConfig
-} from './config';
-
-import {
-  SkyAppRuntimeConfigParams
-} from './params';
 
 describe('SkyAuthHttp', () => {
 

@@ -17,9 +17,12 @@ import {
 } from '@blackbaud/auth-client';
 
 import {
-  SkyAppConfig,
   SkyAuthTokenProvider
 } from '@blackbaud/skyux-builder/runtime';
+
+import {
+  SkyAppConfig
+} from '@skyux/builder-utils';
 
 import {
   Observable

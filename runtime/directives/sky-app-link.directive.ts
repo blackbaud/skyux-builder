@@ -15,7 +15,7 @@ import {
 
 import {
   SkyAppConfig
-} from '../config';
+} from '@skyux/builder-utils';
 
 @Directive({
   selector: '[skyAppLink]'
