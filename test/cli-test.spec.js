@@ -165,7 +165,8 @@ describe('cli test', () => {
           callback();
         };
         this.start = () => {};
-      }
+      },
+      stopper: { stop: () => {} }
     });
     const test = mock.reRequire('../cli/test');
     test('test');
@@ -197,7 +198,8 @@ describe('cli test', () => {
           callback();
         };
         this.start = () => {};
-      }
+      },
+      stopper: { stop: () => {} }
     });
     const test = mock.reRequire('../cli/test');
     test('test');
@@ -224,7 +226,8 @@ describe('cli test', () => {
         _onExit = onExit;
         this.on = (hook, callback) => callback();
         this.start = () => {};
-      }
+      },
+      stopper: { stop: () => {} }
     });
 
     const test = mock.reRequire('../cli/test');
@@ -260,7 +263,8 @@ describe('cli test', () => {
           callback();
         };
         this.start = () => {};
-      }
+      },
+      stopper: { stop: () => {} }
     });
     mock.reRequire('../cli/test')('test');
     _onExit(0);
@@ -273,20 +277,24 @@ describe('cli test', () => {
         parseConfig: () => {}
       },
       Server: function (config, callback) {
-        callback(0);
         this.on = (hook, cb) => {
           if (hook === 'browser_error') {
             cb();
           }
         };
         this.start = () => {};
+      },
+      stopper: {
+        stop: (config, callback) => {
+          callback();
+        }
       }
     });
     const test = mock.reRequire('../cli/test');
     test('test');
     expect(logger.info).toHaveBeenCalledWith(
-      'Karma has exited with 0.'
+      'Karma has exited with 1.'
     );
-    expect(process.exit).toHaveBeenCalledWith(0);
+    expect(process.exit).toHaveBeenCalledWith(1);
   });
 });
