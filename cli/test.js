@@ -12,6 +12,7 @@ function test(command, argv) {
   const glob = require('glob');
   const tsLinter = require('./utils/ts-linter');
   const configResolver = require('./utils/config-resolver');
+  const localeAssetsProcessor = require('../lib/locale-assets-processor');
 
   argv = argv || process.argv;
   argv.command = command;
@@ -25,6 +26,7 @@ function test(command, argv) {
   let lintResult;
 
   const onRunStart = () => {
+    localeAssetsProcessor.prepareLocaleFiles();
     lintResult = tsLinter.lintSync();
   };
 
