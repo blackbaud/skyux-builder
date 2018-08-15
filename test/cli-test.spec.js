@@ -266,4 +266,27 @@ describe('cli test', () => {
     _onExit(0);
     expect(spy).toHaveBeenCalled();
   });
+
+  it('should handle browser errors', () => {
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, callback) {
+        callback(0);
+        this.on = (hook, cb) => {
+          if (hook === 'browser_error') {
+            cb();
+          }
+        };
+        this.start = () => {};
+      }
+    });
+    const test = mock.reRequire('../cli/test');
+    test('test');
+    expect(logger.info).toHaveBeenCalledWith(
+      'Karma has exited with 0.'
+    );
+    expect(process.exit).toHaveBeenCalledWith(0);
+  });
 });
