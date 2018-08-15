@@ -12,6 +12,7 @@ function test(command, argv) {
   const glob = require('glob');
   const tsLinter = require('./utils/ts-linter');
   const configResolver = require('./utils/config-resolver');
+  const localeAssetsProcessor = require('../lib/locale-assets-processor');
 
   argv = argv || process.argv;
   argv.command = command;
@@ -24,7 +25,13 @@ function test(command, argv) {
 
   let lintResult;
 
+  function exit(exitCode) {
+    logger.info(`Karma has exited with ${exitCode}.`);
+    process.exit(exitCode);
+  }
+
   const onRunStart = () => {
+    localeAssetsProcessor.prepareLocaleFiles();
     lintResult = tsLinter.lintSync();
   };
 
@@ -46,8 +53,11 @@ function test(command, argv) {
       }
     }
 
-    logger.info(`Karma has exited with ${exitCode}.`);
-    process.exit(exitCode);
+    exit(exitCode);
+  };
+
+  const onBrowserError = () => {
+    exit(1);
   };
 
   if (specsGlob.length === 0) {
@@ -58,6 +68,7 @@ function test(command, argv) {
   const server = new Server(karmaConfig, onExit);
   server.on('run_start', onRunStart);
   server.on('run_complete', onRunComplete);
+  server.on('browser_error', onBrowserError);
   server.start();
 }
 

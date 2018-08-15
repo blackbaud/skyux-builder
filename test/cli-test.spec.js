@@ -6,6 +6,7 @@ const logger = require('@blackbaud/skyux-logger');
 
 describe('cli test', () => {
   let originalArgv = process.argv;
+  let mockLocaleAssetsProcessor;
 
   function MockServer() { }
 
@@ -13,6 +14,10 @@ describe('cli test', () => {
   MockServer.prototype.start = function () {};
 
   beforeEach(() => {
+    mockLocaleAssetsProcessor = {
+      prepareLocaleFiles: () => {}
+    };
+
     spyOn(global, 'setTimeout').and.callFake(cb => cb());
     spyOn(process, 'exit').and.returnValue();
     spyOn(logger, 'info').and.returnValue();
@@ -34,6 +39,8 @@ describe('cli test', () => {
     mock('../cli/utils/config-resolver', {
       resolve: (command) => `${command}-config.js`
     });
+
+    mock('../lib/locale-assets-processor', mockLocaleAssetsProcessor);
   });
 
   afterEach(() => {
@@ -236,6 +243,49 @@ describe('cli test', () => {
     mock.reRequire('../cli/test')('test');
     expect(logger.info).toHaveBeenCalledWith(
       'No spec files located. Skipping test command.'
+    );
+    expect(process.exit).toHaveBeenCalledWith(0);
+  });
+
+  it('should generate locale files before each karma run', () => {
+    const spy = spyOn(mockLocaleAssetsProcessor, 'prepareLocaleFiles').and.callThrough();
+    let _onExit;
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, onExit) {
+        _onExit = onExit;
+        this.on = (hook, callback) => {
+          callback();
+        };
+        this.start = () => {};
+      }
+    });
+    mock.reRequire('../cli/test')('test');
+    _onExit(0);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should handle browser errors', () => {
+    mock('karma', {
+      config: {
+        parseConfig: () => {}
+      },
+      Server: function (config, callback) {
+        callback(0);
+        this.on = (hook, cb) => {
+          if (hook === 'browser_error') {
+            cb();
+          }
+        };
+        this.start = () => {};
+      }
+    });
+    const test = mock.reRequire('../cli/test');
+    test('test');
+    expect(logger.info).toHaveBeenCalledWith(
+      'Karma has exited with 0.'
     );
     expect(process.exit).toHaveBeenCalledWith(0);
   });
