@@ -25,11 +25,6 @@ function test(command, argv) {
 
   let lintResult;
 
-  function exit(exitCode) {
-    logger.info(`Karma has exited with ${exitCode}.`);
-    process.exit(exitCode);
-  }
-
   const onRunStart = () => {
     localeAssetsProcessor.prepareLocaleFiles();
     lintResult = tsLinter.lintSync();
@@ -53,11 +48,13 @@ function test(command, argv) {
       }
     }
 
-    exit(exitCode);
+    logger.info(`Karma has exited with ${exitCode}.`);
+    process.exit(exitCode);
   };
 
   const onBrowserError = () => {
-    exit(1);
+    const stopper = require('karma').stopper;
+    stopper.stop({}, () => onExit(1));
   };
 
   if (specsGlob.length === 0) {
