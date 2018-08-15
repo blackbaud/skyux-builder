@@ -150,6 +150,9 @@ describe('Locale assets processor', () => {
       },
       '/node_modules/@blackbaud-internal/skyux-lib-bar/assets/locales/resources_en_CA.json': {
         lib_internal_en_ca_key: { _description: '', message: '[en_CA] lib internal en_CA message' }
+      },
+      '/node_modules/@skyux/core/assets/locales/resources_en_US.json': {
+        lib_core_key: { _description: '', message: '[en_US] lib core message' }
       }
     };
 
@@ -158,7 +161,6 @@ describe('Locale assets processor', () => {
     files['.skypageslocales/resources_fr_CA.json'] = files['src/assets/locales/resources_*.json'];
 
     spyOn(mockGlob, 'sync').and.callFake(expression => {
-      console.log('expression:', expression);
       let globFiles;
       switch (expression) {
         // Default library files
@@ -183,6 +185,12 @@ describe('Locale assets processor', () => {
         ];
         break;
 
+        case 'node_modules/@skyux/**/src/assets/locales/@(resources_en_US.json|resources_en-US.json)':
+        globFiles = [
+          '/node_modules/@skyux/core/assets/locales/resources_en_US.json'
+        ];
+        break;
+
         // All internal library files
         case 'node_modules/@blackbaud-internal/**/src/assets/locales/resources_*.json':
         globFiles = [
@@ -200,6 +208,7 @@ describe('Locale assets processor', () => {
         ];
         break;
 
+        default:
         case '.skypageslocales/resources_*.json':
         globFiles = [];
         break;
@@ -221,6 +230,7 @@ describe('Locale assets processor', () => {
     processor.prepareLocaleFiles();
 
     expect(files['.skypageslocales/resources_en_US.json']).toEqual({
+      lib_core_key: { _description: '', message: '[en_US] lib core message' },
       spa_key1: { _description: '', message: '[en_US] spa message 1' },
       spa_key2: { _description: '', message: '[en_US] spa message 2' },
       lib_key1: { _description: '', message: '[en_US] lib message 1' },
@@ -231,6 +241,7 @@ describe('Locale assets processor', () => {
     });
 
     expect(files['.skypageslocales/resources_fr_CA.json']).toEqual({
+      lib_core_key: { _description: '', message: '[en_US] lib core message' },
       spa_key1: { _description: '', message: '[fr_CA] spa message 1' },
       spa_key2: { _description: '', message: '[en_US] spa message 2' },
       spa_fr_key1: { _description: '', message: '[fr_CA] spa fr message' },
@@ -244,6 +255,7 @@ describe('Locale assets processor', () => {
     });
 
     expect(files['.skypageslocales/resources_en_CA.json']).toEqual({
+      lib_core_key: { _description: '', message: '[en_US] lib core message' },
       spa_key1: { _description: '', message: '[en_US] spa message 1' },
       spa_key2: { _description: '', message: '[en_US] spa message 2' },
       lib_key1: { _description: '', message: '[en_US] lib message 1' },
