@@ -1,7 +1,7 @@
 # 1.19.3 (2018-08-16)
 
-- Bugfix to allow SPAs to reference library locale files even if the SPA fails to include its own resource file. [#449](https://github.com/blackbaud/skyux-builder/pull/449)
-- Bugfix to catch browser JavaScript errors during unit tests. [#452](https://github.com/blackbaud/skyux-builder/pull/452)
+- Bugfix to allow SPAs to reference resource files in libraries even if the SPAs do not include resource files. [#449](https://github.com/blackbaud/skyux-builder/pull/449)
+- Bugfix to catch JavaScript errors in browsers during unit tests. [#452](https://github.com/blackbaud/skyux-builder/pull/452)
 
 # 1.19.2 (2018-08-02)
 
