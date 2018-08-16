@@ -1,3 +1,8 @@
+# 1.19.3 (2018-08-16)
+
+- Bugfix to allow SPAs to reference resource files in libraries even if the SPAs do not include resource files. [#449](https://github.com/blackbaud/skyux-builder/pull/449)
+- Bugfix to catch JavaScript errors in browsers during unit tests. [#452](https://github.com/blackbaud/skyux-builder/pull/452)
+
 # 1.19.2 (2018-08-02)
 
 - Reverted stricter type information for `SkyPactService`. [#446](https://github.com/blackbaud/skyux-builder/pull/446)
@@ -250,7 +255,7 @@ To opt into this new behavior, simply add the following to your `skyuxconfig.jso
 
 - Bugfix to allow `redirects` property in `skyuxconfig.json`. [#224](https://github.com/blackbaud/skyux-builder/pull/224)
 - Bugfix that caused plugins to process files twice during AOT compilation.  [#225](https://github.com/blackbaud/skyux-builder/pull/225)
-- Implemented a better caching strategy and fallback to non-region-specific languages.  [#226](https://github.com/blackbaud/skyux-builder/pull/226) 
+- Implemented a better caching strategy and fallback to non-region-specific languages.  [#226](https://github.com/blackbaud/skyux-builder/pull/226)
 - Upgraded `@blackbaud/auth-client` to 1.9.1. [#227](https://github.com/blackbaud/skyux-builder/pull/227)
 
 # 1.0.0-rc.7 (2017-07-13)
@@ -264,7 +269,7 @@ To opt into this new behavior, simply add the following to your `skyuxconfig.jso
 # 1.0.0-rc.6 (2017-07-05)
 
   - Updated the auth client library to pick up logic for showing the search button based on whether search has been implemented by the SPA author. [#214](https://github.com/blackbaud/skyux-builder/pull/214)
-  
+
 # 1.0.0-rc.5 (2017-07-03)
 
   - Added web-animations polyfill to support Angular animations in more browsers. [#204](https://github.com/blackbaud/skyux-builder/pull/204)
@@ -294,7 +299,7 @@ To opt into this new behavior, simply add the following to your `skyuxconfig.jso
 
 # 1.0.0-rc.0 (2017-06-16)
 
-- Added support for Angular v4.1.3 and SKY UX 2.0.0-rc.0. 
+- Added support for Angular v4.1.3 and SKY UX 2.0.0-rc.0.
 
 # 1.0.0-beta.33 (2017-06-15)
 
