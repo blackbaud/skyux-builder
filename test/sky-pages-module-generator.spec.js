@@ -163,7 +163,7 @@ describe('SKY UX Builder module generator', () => {
   it('should only provide the SkyAuthHttp service if the app is configured to use auth', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     // Other items can exist so we're leaving out "import""
-    const expectedImport = `, SkyAuthHttp } from 'sky-pages-internal/runtime';`;
+    const expectedImport = `import { SkyAuthHttp } from '@skyux/http';`;
 
     const expectedProvider = `{
       provide: SkyAuthHttp,

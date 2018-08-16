@@ -19,7 +19,7 @@ import {
 
 import {
   SkyAppConfig
-} from '../config';
+} from '@skyux/builder-utils';
 
 import {
   SkyAppLinkDirective
