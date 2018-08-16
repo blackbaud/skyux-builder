@@ -26,6 +26,9 @@
       "@blackbaud/skyux-builder/*": [
         "./node_modules/@blackbaud/skyux-builder/*",
         "./*"
+      ],
+      ".skypageslocales/*": [
+        ".skypageslocales/*"
       ]
     }
   },
