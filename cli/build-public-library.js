@@ -72,6 +72,9 @@ function writeTSConfig() {
       'paths': {
         '@blackbaud/skyux-builder/*': [
           '*'
+        ],
+        '.skypageslocales/*': [
+          '../src/assets/locales/*'
         ]
       }
     },
