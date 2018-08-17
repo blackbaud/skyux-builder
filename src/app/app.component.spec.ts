@@ -18,7 +18,6 @@ import {
   SkyAppOmnibarProvider,
   SkyAppOmnibarReadyArgs,
   SkyAppSearchResultsProvider,
-  SkyAppStyleLoader,
   SkyAppWindowRef,
   SkyAppViewportService
 } from '@blackbaud/skyux-builder/runtime';
@@ -32,6 +31,10 @@ import {
   BBOmnibarNavigationItem,
   BBOmnibarSearchArgs
 } from '@blackbaud/auth-client';
+
+import {
+  SkyAppStyleLoader
+} from '@skyux/theme';
 
 import { AppComponent } from './app.component';
 

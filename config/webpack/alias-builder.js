@@ -41,7 +41,7 @@ module.exports = {
     // Order here is very important; the more specific CSS alias must go before
     // the more generic dist one.
     if (skyPagesConfig.skyux.cssPath) {
-      alias['@blackbaud/skyux/dist/css/sky.css'] = spaPath(skyPagesConfig.skyux.cssPath);
+      alias['@skyux/theme/css/sky.css'] = spaPath(skyPagesConfig.skyux.cssPath);
     }
 
     if (skyPagesConfig.skyux.importPath) {
