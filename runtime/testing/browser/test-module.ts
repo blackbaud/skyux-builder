@@ -1,13 +1,26 @@
-import { NgModule } from '@angular/core';
+import {
+  NgModule
+} from '@angular/core';
 
-import { APP_BASE_HREF } from '@angular/common';
+import {
+  APP_BASE_HREF
+} from '@angular/common';
 
-import { RouterTestingModule } from '@angular/router/testing';
+import {
+  RouterTestingModule
+} from '@angular/router/testing';
 
-import { SkyPagesModule } from '../../../src/app/sky-pages.module';
+import {
+  SkyAppResourcesService
+} from '@skyux/i18n';
 
-import { SkyAppResourcesService } from '../../../runtime/i18n';
-import { SkyAppResourcesTestService } from './i18n/resources-test.service';
+import {
+  SkyAppResourcesTestService
+} from '@skyux/i18n/testing';
+
+import {
+  SkyPagesModule
+} from '../../../src/app/sky-pages.module';
 
 @NgModule({
   imports: [

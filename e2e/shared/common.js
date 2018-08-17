@@ -54,9 +54,15 @@ function bindServe() {
     webpackServer.stderr.on('data', data => log(data));
     webpackServer.stdout.on('data', data => {
       const dataAsString = log(data);
+
+      if (dataAsString.indexOf('webpack: Compiled with warnings.') > -1) {
+        resolve(_port);
+      }
+
       if (dataAsString.indexOf('webpack: Compiled successfully.') > -1) {
         resolve(_port);
       }
+
       if (dataAsString.indexOf('webpack: Failed to compile.') > -1) {
         reject(dataAsString);
       }

@@ -18,8 +18,7 @@
     "types": [
       "core-js",
       "node",
-      "jasmine",
-      "fontfaceobserver"
+      "jasmine"
     ],
     "baseUrl": ".",
     "paths": {
