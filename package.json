@@ -55,7 +55,7 @@
     "@skyux/builder-utils": "3.0.0-alpha.2",
     "@skyux/core": "3.0.0-alpha.4",
     "@skyux/http": "3.0.0-alpha.1",
-    "@skyux/i18n": "3.0.0-alpha.0",
+    "@skyux/i18n": "3.0.0-alpha.2",
     "@skyux/router": "3.0.0-alpha.0",
     "@skyux/theme": "3.0.0-alpha.4",
     "@types/core-js": "0.9.41",
