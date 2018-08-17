@@ -157,7 +157,6 @@ function prepareBuild(config) {
 function prepareServe() {
 
   if (webpackServer) {
-    console.log('THERE"S SFJSDLKFJDSFLKSDJF');
     return bindServe();
   } else {
     return new Promise((resolve, reject) => {
