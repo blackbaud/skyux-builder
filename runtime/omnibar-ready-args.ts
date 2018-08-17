@@ -1,7 +1,3 @@
-export interface SkyAppOmnibarReadyArgs {
-
-  envId?: string;
-
-  svcId?: string;
-
-}
+export {
+  SkyAppOmnibarReadyArgs
+} from '@skyux/builder-utils/omnibar-ready-args';
