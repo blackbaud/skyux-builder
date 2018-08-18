@@ -3,9 +3,8 @@ import {
 } from '@angular/core';
 
 import {
-  SkyAppLinkDirective,
-  SkyAppLinkExternalDirective
-} from './directives';
+  SkyAppRouterLinkModule
+} from '@skyux/router/modules/link/link.module';
 
 import {
   SkyI18nModule
@@ -13,17 +12,12 @@ import {
 
 @NgModule({
   imports: [
+    SkyAppRouterLinkModule,
     SkyI18nModule
   ],
-  declarations: [
-    SkyAppLinkDirective,
-    SkyAppLinkExternalDirective
-  ],
   exports: [
-    SkyAppLinkDirective,
-    SkyAppLinkExternalDirective,
+    SkyAppRouterLinkModule,
     SkyI18nModule
   ]
 })
-/* istanbul ignore next */
 export class SkyAppRuntimeModule { }

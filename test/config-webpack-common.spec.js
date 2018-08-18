@@ -88,7 +88,7 @@ describe('config webpack common', () => {
     alias = config.resolve.alias;
 
     expect(
-      alias['@blackbaud/skyux/dist/css/sky.css']
+      alias['@skyux/theme/css/sky.css']
     ).toBe(path.join(process.cwd(), cssPath));
   });
 
