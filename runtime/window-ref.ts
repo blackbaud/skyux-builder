@@ -1,9 +1,3 @@
-function getWindow() {
-  return window;
-}
-
-export class SkyAppWindowRef {
-  public get nativeWindow() {
-    return getWindow();
-  }
-}
+export {
+  SkyAppWindowRef
+} from '@skyux/core/modules/window/window-ref';

@@ -22,6 +22,12 @@ function lintSync() {
 
   // Convert buffers to strings.
   let output = [];
+  if (!spawnResult.output) {
+    console.log(spawnResult);
+    return {
+      exitCode: 0
+    };
+  }
   spawnResult.output.forEach((buffer) => {
     if (buffer === null) {
       return;

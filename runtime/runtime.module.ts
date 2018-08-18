@@ -8,25 +8,21 @@ import {
 } from './directives';
 
 import {
-  SkyAppHostLocaleProvider,
-  SkyAppResourcesPipe,
-  SkyAppResourcesService
-} from './i18n';
+  SkyI18nModule
+} from '@skyux/i18n/i18n.module';
 
 @NgModule({
+  imports: [
+    SkyI18nModule
+  ],
   declarations: [
     SkyAppLinkDirective,
-    SkyAppLinkExternalDirective,
-    SkyAppResourcesPipe
+    SkyAppLinkExternalDirective
   ],
   exports: [
     SkyAppLinkDirective,
     SkyAppLinkExternalDirective,
-    SkyAppResourcesPipe
-  ],
-  providers: [
-    SkyAppHostLocaleProvider,
-    SkyAppResourcesService
+    SkyI18nModule
   ]
 })
 /* istanbul ignore next */
