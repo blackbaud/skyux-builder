@@ -1,3 +1,3 @@
 export {
   SkyAppRuntimeConfigParams
-} from '@skyux/builder-utils/params';
+} from '@skyux/config/params';

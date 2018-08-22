@@ -1,3 +1,3 @@
 export {
   SkyAppOmnibarReadyArgs
-} from '@skyux/builder-utils/omnibar-ready-args';
+} from '@skyux/omnibar-interop/omnibar-ready-args';

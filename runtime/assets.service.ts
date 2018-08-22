@@ -1,3 +1,3 @@
 export {
   SkyAppAssetsService
-} from '@skyux/builder-utils/assets.service';
+} from '@skyux/assets/assets.service';
