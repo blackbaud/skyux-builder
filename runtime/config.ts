@@ -9,4 +9,4 @@ export {
   SkyuxConfigTestSettings,
   SkyuxConfigUnitTestSettings,
   SkyuxPactConfig
-} from '@skyux/builder-utils';
+} from '@skyux/config';

@@ -1,3 +1,3 @@
 export {
   SkyuxConfigParams
-} from '@skyux/builder-utils/config-params';
+} from '@skyux/config/config-params';

@@ -1,3 +1,3 @@
 export {
   SkyAppOmnibarProvider
-} from '@skyux/builder-utils/omnibar-provider';
+} from '@skyux/omnibar-interop/omnibar-provider';
