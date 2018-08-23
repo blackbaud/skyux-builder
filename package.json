@@ -108,6 +108,7 @@
   },
   "devDependencies": {
     "@blackbaud/skyux": "^2.0.0",
+    "@skyux/theme": "3.0.0-alpha.9",
     "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
     "jasmine": "2.6.0",
