@@ -39,7 +39,7 @@ function getConfig(config) {
   webpackConfig.resolve.alias['@blackbaud/skyux-builder/runtime'] = runtimePath;
 
   // Instead of adding skyux2 as a dependency of skyux-builder
-  webpackConfig.resolve.alias['@blackbaud/skyux/dist/css/sky.css'] =
+  webpackConfig.resolve.alias['@skyux/theme/css/sky.css'] =
     '../../utils/runtime-test-skyux.css';
 
   // Remove sky-style-loader
