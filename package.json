@@ -29,9 +29,7 @@
   },
   "homepage": "https://github.com/blackbaud/skyux-builder#readme",
   "peerDependencies": {
-    "@blackbaud/skyux": "^2.0.0",
-    "@skyux/core": ">=3.0.0-alpha.0",
-    "@skyux/theme": ">=3.0.0-alpha.0"
+    "@blackbaud/skyux": "^2.21.0"
   },
   "dependencies": {
     "@angular/animations": "4.3.6",
@@ -55,6 +53,7 @@
     "@skyux-sdk/testing": "3.0.0-alpha.1",
     "@skyux/assets": "3.0.0-alpha.0",
     "@skyux/config": "3.0.0-alpha.0",
+    "@skyux/core": "3.0.0-alpha.5",
     "@skyux/http": "3.0.0-alpha.3",
     "@skyux/i18n": "3.0.0-alpha.4",
     "@skyux/omnibar-interop": "3.0.0-alpha.0",
@@ -115,7 +114,6 @@
   },
   "devDependencies": {
     "@blackbaud/skyux": "^2.0.0",
-    "@skyux/core": "3.0.0-alpha.5",
     "@skyux/theme": "3.0.0-alpha.9",
     "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
