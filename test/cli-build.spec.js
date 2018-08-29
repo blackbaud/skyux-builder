@@ -16,6 +16,15 @@ describe('cli build', () => {
     });
   });
 
+  it('should return build stats when the build is completed successful', (done) => {
+    mock('../cli/utils/run-build', () => Promise.resolve({ foo: 'bar' }));
+
+    mock.reRequire('../cli/build')('build', {}, {}).then((stats) => {
+      expect(stats.foo).toEqual('bar');
+      done();
+    });
+  });
+
   it('should log errors and set exit code to 1', (done) => {
     const errors = 'errors';
 
