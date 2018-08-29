@@ -25,7 +25,6 @@ export class SkyAppBootstrapper {
       return BBAuth.getToken()
         .then(() => {
           const currentUrl = this.getUrl();
-          console.log('CURRENT URL: ' + currentUrl);
 
           const params = new SkyAppRuntimeConfigParams(
             currentUrl,
