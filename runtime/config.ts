@@ -19,14 +19,12 @@ export class SkyuxPactConfig {
   public pactProxyServer?: string;
 }
 
-export type SkyuxConfigTestSettingsBrowserSet = 'speedy' | 'quirky' | 'paranoid';
-
 export interface SkyuxConfigE2ETestSettings {
-  browserSet?: SkyuxConfigTestSettingsBrowserSet;
+  browserSet?: 'speedy';
 }
 
 export interface SkyuxConfigUnitTestSettings {
-  browserSet?: SkyuxConfigTestSettingsBrowserSet;
+  browserSet?: 'speedy' | 'quirky' | 'paranoid';
 }
 
 export interface SkyuxConfigTestSettings {
