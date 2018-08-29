@@ -6,12 +6,21 @@ const logger = require('@blackbaud/skyux-logger');
 
 describe('cli build', () => {
 
-  it('should log when the build is completed successful', (done) => {
+  it('should log when the build is completed successfully', (done) => {
     spyOn(logger, 'info');
     mock('../cli/utils/run-build', () => Promise.resolve());
 
     mock.reRequire('../cli/build')('build', {}, {}).then(() => {
       expect(logger.info).toHaveBeenCalledWith('Build successfully completed.');
+      done();
+    });
+  });
+
+  it('should return build stats when the build is completed successfully', (done) => {
+    mock('../cli/utils/run-build', () => Promise.resolve({ foo: 'bar' }));
+
+    mock.reRequire('../cli/build')('build', {}, {}).then((stats) => {
+      expect(stats.foo).toEqual('bar');
       done();
     });
   });
