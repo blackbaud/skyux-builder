@@ -252,6 +252,19 @@
       "description": "Container for controlling test settings.",
       "type": "object",
       "properties": {
+        "e2e": {
+          "description": "Test settings specific to the skyux e2e command.",
+          "type": "object",
+          "properties": {
+            "browserSet": {
+              "description": "The named set of browsers to run against.",
+              "type": "string",
+              "enum": [
+                "speedy"
+              ]
+            }
+          }
+        },
         "unit": {
           "description": "Test settings specific to the skyux test command.",
           "type": "object",
