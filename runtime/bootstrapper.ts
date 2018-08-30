@@ -1,20 +1,20 @@
+//#region imports
+
 import {
   BBAuth,
+  BBContextArgs,
   BBContextProvider
 } from '@blackbaud/auth-client';
 
-import { SkyuxConfig } from './config';
+import {
+  SkyuxConfig
+} from './config';
 
-import { SkyAppRuntimeConfigParams } from './params';
+import {
+  SkyAppRuntimeConfigParams
+} from './params';
 
-function addQSParam(url: string, name: string, value: string): string {
-  const urlAndFragment = url.split('#');
-
-  urlAndFragment[0] += urlAndFragment[0].indexOf('?') >= 0 ? '&' : '?';
-  urlAndFragment[0] += `${name}=${encodeURIComponent(value)}`;
-
-  return urlAndFragment.join('#');
-}
+//#endregion
 
 export class SkyAppBootstrapper {
 
@@ -23,35 +23,36 @@ export class SkyAppBootstrapper {
   public static processBootstrapConfig(): Promise<any> {
     if (SkyAppBootstrapper.config && SkyAppBootstrapper.config.auth) {
       return BBAuth.getToken()
-        .then((token) => {
-          const url = this.getUrl();
+        .then(() => {
+          const currentUrl = this.getUrl();
 
           const params = new SkyAppRuntimeConfigParams(
-            url,
+            currentUrl,
             this.config.params
           );
 
-          const currentEnvId = params.get('envid');
-
-          return BBContextProvider.ensureContext({
-            envId: currentEnvId,
+          const ensureContextArgs: BBContextArgs = {
+            envId: params.get('envid'),
             envIdRequired: params.isRequired('envid'),
+            leId: params.get('leid'),
+            leIdRequired: params.isRequired('leid'),
             svcId: params.get('svcid'),
             svcIdRequired: params.isRequired('svcid'),
-            url: url
-          }).then(({ envId }) => {
-            // The context provider was able to provide an environment ID when none
-            // was supplied to the app; add it to the URL's query string and continue
-            // loading the app.  Downstream constructors of SkyAppRuntimeConfigParams
-            // will then pick up the environment ID from the query string.
-            if (!currentEnvId && envId) {
-              history.replaceState(
-                {},
-                '',
-                addQSParam(url, 'envid', envId)
-              );
-            }
-          });
+            url: currentUrl
+          };
+
+          return BBContextProvider.ensureContext(ensureContextArgs)
+            .then((args) => {
+              // The URL will remain the same if the required context is already present, in which
+              // case there's no need to update the URL.
+              if (args.url !== currentUrl) {
+                history.replaceState(
+                  {},
+                  '',
+                  args.url
+                );
+              }
+            });
         });
     } else {
       return Promise.resolve();
