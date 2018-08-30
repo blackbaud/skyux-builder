@@ -1,3 +1,23 @@
+# 1.20.0 (2018-08-30)
+
+**Note** Updating to this version of SKY UX Builder requires that SKY UX also be updated to 2.21.0 because it takes advantages of new features in SKY UX.
+
+- Minor tweaks to code coverage instrumentation for SKY UX libraries. [#457](https://github.com/blackbaud/skyux-builder/pull/457)
+- CSS imports now reference the new `@skyux/theme` library that is part of the latest version of SKY UX 2. [#458](https://github.com/blackbaud/skyux-builder/pull/458)
+- Added the ability to specify a `browserSet` for e2e tests similar to the option that exists for unit tests.  Currently the only supported `browserSet` value is `speedy`. [#459](https://github.com/blackbaud/skyux-builder/pull/459)
+- Addressed a minor issue when logging build status. [#460](https://github.com/blackbaud/skyux-builder/pull/460)
+- SPAs can now force a legal entity context and allow users to pick a legal entity from a list if the user belongs to more than one legal entity, or to automatically select a default legal entity if the user only belongs to one legal entity. To use this feature, ensure that the `parameters` section of `skyuxconfig.json` specifies `leid` as a required parameter. [#461](https://github.com/blackbaud/skyux-builder/pull/461) Example:
+
+```
+"params": {
+  "leid": {
+    "required": true
+  }
+}
+```
+
+- Updated `@blackbaud/auth-client` package to reflect a change in policy for changing BBID user session timeouts from 15 minutes of inactivity to 90 minutes. [#462](https://github.com/blackbaud/skyux-builder/pull/462)
+
 # 1.19.3 (2018-08-16)
 
 - Bugfix to allow SPAs to reference resource files in libraries even if the SPAs do not include resource files. [#449](https://github.com/blackbaud/skyux-builder/pull/449)
