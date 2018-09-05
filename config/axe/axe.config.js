@@ -50,6 +50,7 @@ const defaults = {
     'bypass': { 'enabled': true },
     'tabindex': { 'enabled': true },
 
+    // TEMP: this should be re-enabled when we upgrade to axe-core ^3.1.1
     'aria-allowed-attr': { 'enabled': false },
     'aria-required-attr': { 'enabled': true },
     'aria-required-children': { 'enabled': true },
