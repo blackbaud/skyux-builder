@@ -50,7 +50,7 @@ const defaults = {
     'bypass': { 'enabled': true },
     'tabindex': { 'enabled': true },
 
-    'aria-allowed-attr': { 'enabled': true },
+    'aria-allowed-attr': { 'enabled': false },
     'aria-required-attr': { 'enabled': true },
     'aria-required-children': { 'enabled': true },
     'aria-required-parent': { 'enabled': true },
