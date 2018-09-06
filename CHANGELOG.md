@@ -1,3 +1,7 @@
+# 1.20.1 (2018-09-06)
+
+ - Disabled the `aria-allowed-attr` rule in aXe a11y testing. This will be re-enabled when we can update to `axe-core` version `3.1.1`. [#465](https://github.com/blackbaud/skyux-builder/pull/465)
+
 # 1.20.0 (2018-08-30)
 
 **Note** Updating to this version of SKY UX Builder requires that SKY UX also be updated to 2.21.0 because it takes advantages of new features in SKY UX.
