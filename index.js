@@ -25,6 +25,15 @@ module.exports = {
       }
     });
 
+    if (argv.profiler) {
+      const v8 = require('v8');
+      const stats = v8.getHeapStatistics();
+      console.log('Debugging available memory:');
+      for (let key in stats) {
+        console.log(`${key} ${Math.round(stats[key] / 1024 / 1024 * 100) / 100} MB`);
+      }
+    }
+
     switch (command) {
       case 'build':
         require('./cli/build')(argv, getConfig(command), webpack);
