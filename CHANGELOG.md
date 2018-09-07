@@ -1,3 +1,7 @@
+# 1.20.2 (2018-09-06)
+
+- Replaced the expired local server certificate used with the `skyux serve` and `skyux e2e` commands. [#467](https://github.com/blackbaud/skyux-builder/pull/467)
+
 # 1.20.1 (2018-09-06)
 
  - Disabled the `aria-allowed-attr` rule in aXe a11y testing. This will be re-enabled when we can update to `axe-core` version `3.1.1`. [#465](https://github.com/blackbaud/skyux-builder/pull/465)
