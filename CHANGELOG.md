@@ -1,3 +1,7 @@
+# 1.21.0 (2018-09-13)
+
+- Added preload hook to the `skyux build-public-library` command to let plugins modify library files. [#469](https://github.com/blackbaud/skyux-builder/pull/469)
+
 # 1.20.2 (2018-09-06)
 
 - Replaced the expired local server certificate used with the `skyux serve` and `skyux e2e` commands. [#467](https://github.com/blackbaud/skyux-builder/pull/467)
