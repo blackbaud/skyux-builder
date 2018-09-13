@@ -101,6 +101,14 @@ export class SkyLibPlaceholderModule {}
   });
 }
 
+function processFiles(skyPagesConfig) {
+  const pluginFileProcessor = require('../lib/plugin-file-processor');
+  pluginFileProcessor.processFiles(
+    skyPagesConfig,
+    skyPagesConfigUtil.spaPathTemp('**', '*.*')
+  );
+}
+
 /**
  * Creates a UMD JavaScript bundle.
  * @param {*} skyPagesConfig
@@ -150,6 +158,7 @@ module.exports = (skyPagesConfig, webpack) => {
   writeTSConfig();
   writePlaceholderModule();
   copyRuntime();
+  processFiles(skyPagesConfig);
 
   return createBundle(skyPagesConfig, webpack)
     .then(() => transpile())
