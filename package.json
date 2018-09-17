@@ -113,7 +113,7 @@
     "zone.js": "0.8.10"
   },
   "devDependencies": {
-    "@blackbaud/skyux": "^2.24.0",
+    "@blackbaud/skyux": "2.25.0",
     "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
     "jasmine": "2.6.0",
