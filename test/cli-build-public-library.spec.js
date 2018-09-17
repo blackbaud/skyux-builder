@@ -12,6 +12,7 @@ describe('cli build-public-library', () => {
   let mockWebpack;
   let mockFs;
   let mockSpawn;
+  let mockPluginFileProcessor;
 
   beforeEach(() => {
     mockFs = {
@@ -40,6 +41,11 @@ describe('cli build-public-library', () => {
         }
       };
     };
+
+    mockPluginFileProcessor = {
+      processFiles: () => {}
+    };
+
     mock('../cli/utils/ts-linter', {
       lintSync: () => {
         return {
@@ -58,6 +64,7 @@ describe('cli build-public-library', () => {
       }
     });
 
+    mock('../lib/plugin-file-processor', mockPluginFileProcessor);
     mock('fs-extra', mockFs);
     mock('cross-spawn', mockSpawn);
 
@@ -189,6 +196,16 @@ export class SkyLibPlaceholderModule {}
       expect(spy).toHaveBeenCalledWith(
         new Error(`Angular compiler (ngc) exited with status code 1.`)
       );
+      done();
+    });
+  });
+
+  it('should process files', (done) => {
+    const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(mockPluginFileProcessor, 'processFiles').and.callThrough();
+
+    cliCommand({}, mockWebpack).then(() => {
+      expect(spy).toHaveBeenCalled();
       done();
     });
   });
