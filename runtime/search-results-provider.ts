@@ -1,5 +1,3 @@
-export abstract class SkyAppSearchResultsProvider {
-
-  public abstract getSearchResults(searchArgs: { searchText: string }): Promise<any>;
-
-}
+export {
+  SkyAppSearchResultsProvider
+} from '@skyux/omnibar-interop/search-results-provider';
