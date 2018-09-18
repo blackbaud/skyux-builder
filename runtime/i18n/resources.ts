@@ -1,3 +1,3 @@
 export {
   SkyAppResources
-} from '@skyux/i18n/resources';
+} from '@skyux/i18n/modules/i18n/resources';
