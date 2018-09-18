@@ -49,7 +49,6 @@ function getEntryPointFiles() {
   ];
 
   const testingPath = skyPagesConfigUtil.spaPathTemp('testing', 'index.ts');
-
   if (fs.existsSync(testingPath)) {
     files.push(testingPath);
   }
