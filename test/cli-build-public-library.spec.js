@@ -18,7 +18,8 @@ describe('cli build-public-library', () => {
     mockFs = {
       writeJSONSync() {},
       writeFileSync() {},
-      copySync() {}
+      copySync() {},
+      existsSync() {}
     };
 
     mockSpawn = {
@@ -70,8 +71,8 @@ describe('cli build-public-library', () => {
 
     spyOn(process, 'exit').and.callFake(() => {});
     spyOn(skyPagesConfigUtil, 'spaPath').and.returnValue('');
-    spyOn(skyPagesConfigUtil, 'spaPathTemp').and.callFake((fileName = '') => {
-      return fileName;
+    spyOn(skyPagesConfigUtil, 'spaPathTemp').and.callFake((...fragments) => {
+      return fragments.join('/');
     });
     spyOn(skyPagesConfigUtil, 'outPath').and.callFake((fileName = '') => {
       return fileName;
@@ -206,6 +207,18 @@ export class SkyLibPlaceholderModule {}
 
     cliCommand({}, mockWebpack).then(() => {
       expect(spy).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should include testing entry point if directory exists', (done) => {
+    spyOn(mockFs, 'existsSync').and.returnValue(true);
+    const spy = spyOn(mockFs, 'writeJSONSync').and.callThrough();
+    const cliCommand = mock.reRequire(requirePath);
+    cliCommand({}, mockWebpack).then(() => {
+      expect(spy).toHaveBeenCalled();
+      const files = spy.calls.argsFor(0)[1].files;
+      expect(files[1]).toEqual('testing/index.ts');
       done();
     });
   });
