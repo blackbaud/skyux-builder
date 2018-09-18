@@ -8,7 +8,7 @@ import {
 
 import {
   SkyI18nModule
-} from '@skyux/i18n/i18n.module';
+} from '@skyux/i18n/modules/i18n/i18n.module';
 
 @NgModule({
   imports: [
