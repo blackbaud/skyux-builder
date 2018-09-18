@@ -209,4 +209,6 @@ export class SkyLibPlaceholderModule {}
       done();
     });
   });
+
+  it('should include testing entry point if directory exists', () => {});
 });
