@@ -1,3 +1,8 @@
+# 1.22.0 (2018-09-19)
+
+- Added support for libraries to include an isolated "testing" module. [#471](https://github.com/blackbaud/skyux-builder/pull/471)
+- Upgraded `skyux-lib-help` to `1.3.1`. [#473](https://github.com/blackbaud/skyux-builder/pull/473)
+
 # 1.21.0 (2018-09-13)
 
 - Added preload hook to the `skyux build-public-library` command to let plugins modify library files. [#469](https://github.com/blackbaud/skyux-builder/pull/469)
