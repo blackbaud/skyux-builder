@@ -367,7 +367,7 @@ BBAuth.mock = true;`);
     expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: false });');
   });
 
-  it('adds SkyPactService and overrides AuthTokenProvider if calling pact command', () => {
+  it('should add SkyPactModule and override AuthTokenProvider if calling pact command', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     let runtime = runtimeUtils.getDefaultRuntime();
     runtime.command = 'pact';
@@ -377,11 +377,8 @@ BBAuth.mock = true;`);
       skyux: runtimeUtils.getDefaultSkyux()
     });
 
-    expect(source).toContain(`provide: SkyPactService`);
-    expect(source).toContain(`useClass: SkyPactService`);
-    expect(source).toContain(`deps: [SkyAppConfig]`);
+    expect(source).toContain(`SkyPactModule`);
     expect(source).toContain('SkyPactAuthTokenProvider');
-    expect(source).toContain('SkyPactService');
     expect(source).toContain(`{
       provide: SkyAuthTokenProvider,
       useClass: SkyPactAuthTokenProvider
