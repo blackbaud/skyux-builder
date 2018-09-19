@@ -1,3 +1,3 @@
 export {
   expect
-} from '@skyux-sdk/testing/matchers';
+} from '@skyux-sdk/testing/matchers/matchers';

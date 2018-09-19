@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 
 import {
-  SkyAppRouterLinkModule
+  SkyAppLinkModule
 } from '@skyux/router/modules/link/link.module';
 
 import {
@@ -12,11 +12,11 @@ import {
 
 @NgModule({
   imports: [
-    SkyAppRouterLinkModule,
+    SkyAppLinkModule,
     SkyI18nModule
   ],
   exports: [
-    SkyAppRouterLinkModule,
+    SkyAppLinkModule,
     SkyI18nModule
   ]
 })
