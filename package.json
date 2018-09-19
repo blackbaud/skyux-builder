@@ -55,7 +55,7 @@
     "@skyux-sdk/testing": "3.0.0-alpha.2",
     "@skyux/assets": "3.0.0-alpha.2",
     "@skyux/config": "3.0.0-alpha.1",
-    "@skyux/http": "3.0.0-alpha.3",
+    "@skyux/http": "3.0.0-alpha.4",
     "@skyux/i18n": "3.0.0-alpha.9",
     "@skyux/omnibar-interop": "3.0.0-alpha.0",
     "@skyux/router": "3.0.0-alpha.3",

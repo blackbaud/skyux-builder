@@ -192,16 +192,9 @@ describe('SKY UX Builder module generator', () => {
     );
   });
 
-  it('should only provide the SkyAuthHttp service if the app is configured to use auth', () => {
+  it('should only import the SkyAuthHttpModule if the app is configured to use auth', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
-    // Other items can exist so we're leaving out "import""
-    const expectedImport = `, SkyAuthHttp } from 'sky-pages-internal/runtime';`;
-
-    const expectedProvider = `{
-      provide: SkyAuthHttp,
-      useClass: SkyAuthHttp,
-      deps: [XHRBackend, RequestOptions, SkyAuthTokenProvider, SkyAppConfig]
-    }`;
+    const expectedImport = `SkyAuthHttpModule`;
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -209,7 +202,6 @@ describe('SKY UX Builder module generator', () => {
     });
 
     expect(source).not.toContain(expectedImport);
-    expect(source).not.toContain(expectedProvider);
 
     source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -219,7 +211,6 @@ describe('SKY UX Builder module generator', () => {
     });
 
     expect(source).toContain(expectedImport);
-    expect(source).toContain(expectedProvider);
   });
 
   it('should not add BBHelpModule if the help config does not exists.', () => {

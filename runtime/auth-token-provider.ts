@@ -1,3 +1,3 @@
 export {
   SkyAuthTokenProvider
-} from '@skyux/http/auth-token-provider';
+} from '@skyux/http/modules/auth-http/auth-token-provider';
