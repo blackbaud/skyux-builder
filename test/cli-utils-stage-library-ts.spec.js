@@ -14,8 +14,8 @@ describe('cli utils prepare-library-package', () => {
     spyOn(fs, 'removeSync').and.returnValue();
     mock('../config/sky-pages/sky-pages.config', {
       spaPath: () => '',
-      spaPathTempSrc: () => '',
-      spaPathTemp: () => ''
+      spaPathTempSrc: (...fragments) => ['src'].concat(fragments).join('/'),
+      spaPathTemp: (...fragments) => fragments.join('/')
     });
     util = require('../cli/utils/stage-library-ts');
   });
@@ -35,7 +35,7 @@ describe('cli utils prepare-library-package', () => {
   });
 
   it('should delete non-dist files', () => {
-    spyOn(glob, 'sync').and.callFake((pattern) => {
+    const spy = spyOn(glob, 'sync').and.callFake((pattern) => {
       if (pattern.match('.spec.')) {
         return ['index.spec.ts'];
       } else {
@@ -45,12 +45,13 @@ describe('cli utils prepare-library-package', () => {
 
     util();
     expect(fs.removeSync).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith('/**/*.ts');
   });
 
   it('should fetch file contents for html and css files within angular components', () => {
     let finalContents;
 
-    spyOn(glob, 'sync').and.callFake(pattern => {
+    const spy = spyOn(glob, 'sync').and.callFake(pattern => {
       if (pattern.match('.spec.')) {
         return [];
       } else {
@@ -84,6 +85,7 @@ describe('cli utils prepare-library-package', () => {
     util();
     expect(finalContents.match('<p></p>')).not.toEqual(null);
     expect(finalContents.match('p { color: black; }')).not.toEqual(null);
+    expect(spy).toHaveBeenCalledWith('/**/*.ts');
   });
 
   it('should handle multiline styleUrls array', () => {
