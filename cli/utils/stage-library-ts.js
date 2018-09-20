@@ -8,7 +8,7 @@ const sass = require('node-sass');
 const tildeImporter = require('node-sass-tilde-importer');
 
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
-const spaPathTempSrc = skyPagesConfigUtil.spaPathTempSrc();
+const spaPathTempSrc = skyPagesConfigUtil.spaPathTemp();
 
 function copySource() {
   fs.copySync(
