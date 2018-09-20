@@ -12,7 +12,11 @@ describe('bootstrapper', () => {
   let historyReplaceStateSpy: jasmine.Spy;
   let getUrlSpy: jasmine.Spy;
 
-  function validateContextProvided(testEnvId: string, testUrl: string, expectedUrl: string) {
+  function validateContextProvided(
+    testEnvId: string,
+    testUrl: string,
+    expectedUrl: string
+  ): Promise<any> {
     let contextPromiseResolve: any;
 
     const contextPromise = new Promise((resolve) => {

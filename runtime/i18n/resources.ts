@@ -1,5 +1,3 @@
-export interface SkyAppResources {
-  [key: string]: {
-    message: string
-  };
-}
+export {
+  SkyAppResources
+} from '@skyux/i18n/modules/i18n/resources';
