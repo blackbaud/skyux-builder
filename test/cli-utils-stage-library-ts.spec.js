@@ -6,7 +6,7 @@ const glob = require('glob');
 const mock = require('mock-require');
 const sass = require('node-sass');
 
-fdescribe('cli utils prepare-library-package', () => {
+describe('cli utils prepare-library-package', () => {
   let util;
 
   beforeEach(() => {
