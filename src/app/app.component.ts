@@ -277,25 +277,27 @@ export class AppComponent implements OnInit, OnDestroy {
       });
     }
 
-    if (omnibarConfig && this.config.runtime.params.get('addin') !== '1') {
-      if (this.omnibarProvider) {
-        this.omnibarProvider.ready().then(loadOmnibar);
-      } else {
-        loadOmnibar();
-      }
-    }
-
-    if (helpConfig && this.helpInitService) {
-      if (this.config.runtime.params.has('svcid')) {
-        helpConfig.extends = this.config.runtime.params.get('svcid');
+    if (this.config.runtime.params.get('addin') !== '1') {
+      if (omnibarConfig) {
+        if (this.omnibarProvider) {
+          this.omnibarProvider.ready().then(loadOmnibar);
+        } else {
+          loadOmnibar();
+        }
       }
 
-      if (skyuxHost && !helpConfig.locale) {
-        let browserLanguages = skyuxHost.acceptLanguage || '';
-        helpConfig.locale = browserLanguages.split(',')[0];
-      }
+      if (helpConfig && this.helpInitService) {
+        if (this.config.runtime.params.has('svcid')) {
+          helpConfig.extends = this.config.runtime.params.get('svcid');
+        }
 
-      this.helpInitService.load(helpConfig);
+        if (skyuxHost && !helpConfig.locale) {
+          let browserLanguages = skyuxHost.acceptLanguage || '';
+          helpConfig.locale = browserLanguages.split(',')[0];
+        }
+
+        this.helpInitService.load(helpConfig);
+      }
     }
   }
 }
