@@ -12,12 +12,14 @@ describe('cli build-public-library', () => {
   let mockWebpack;
   let mockFs;
   let mockSpawn;
+  let mockPluginFileProcessor;
 
   beforeEach(() => {
     mockFs = {
       writeJSONSync() {},
       writeFileSync() {},
-      copySync() {}
+      copySync() {},
+      existsSync() {}
     };
 
     mockSpawn = {
@@ -40,6 +42,11 @@ describe('cli build-public-library', () => {
         }
       };
     };
+
+    mockPluginFileProcessor = {
+      processFiles: () => {}
+    };
+
     mock('../cli/utils/ts-linter', {
       lintSync: () => {
         return {
@@ -58,13 +65,14 @@ describe('cli build-public-library', () => {
       }
     });
 
+    mock('../lib/plugin-file-processor', mockPluginFileProcessor);
     mock('fs-extra', mockFs);
     mock('cross-spawn', mockSpawn);
 
     spyOn(process, 'exit').and.callFake(() => {});
     spyOn(skyPagesConfigUtil, 'spaPath').and.returnValue('');
-    spyOn(skyPagesConfigUtil, 'spaPathTemp').and.callFake((fileName = '') => {
-      return fileName;
+    spyOn(skyPagesConfigUtil, 'spaPathTemp').and.callFake((...fragments) => {
+      return fragments.join('/');
     });
     spyOn(skyPagesConfigUtil, 'outPath').and.callFake((fileName = '') => {
       return fileName;
@@ -189,6 +197,28 @@ export class SkyLibPlaceholderModule {}
       expect(spy).toHaveBeenCalledWith(
         new Error(`Angular compiler (ngc) exited with status code 1.`)
       );
+      done();
+    });
+  });
+
+  it('should process files', (done) => {
+    const cliCommand = mock.reRequire(requirePath);
+    const spy = spyOn(mockPluginFileProcessor, 'processFiles').and.callThrough();
+
+    cliCommand({}, mockWebpack).then(() => {
+      expect(spy).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should include testing entry point if directory exists', (done) => {
+    spyOn(mockFs, 'existsSync').and.returnValue(true);
+    const spy = spyOn(mockFs, 'writeJSONSync').and.callThrough();
+    const cliCommand = mock.reRequire(requirePath);
+    cliCommand({}, mockWebpack).then(() => {
+      expect(spy).toHaveBeenCalled();
+      const files = spy.calls.argsFor(0)[1].files;
+      expect(files[1]).toEqual('testing/index.ts');
       done();
     });
   });

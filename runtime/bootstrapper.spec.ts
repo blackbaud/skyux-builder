@@ -15,7 +15,7 @@ describe('bootstrapper', () => {
   function validateContextProvided(testEnvId: string, testUrl: string, expectedUrl: string) {
     let contextPromiseResolve: any;
 
-    const contextPromise = new Promise((resolve, reject) => {
+    const contextPromise = new Promise((resolve) => {
       contextPromiseResolve = resolve;
     });
 
@@ -33,18 +33,23 @@ describe('bootstrapper', () => {
       };
 
       SkyAppBootstrapper.processBootstrapConfig().then(() => {
-        expect(historyReplaceStateSpy).toHaveBeenCalledWith(
-          {},
-          '',
-          expectedUrl
-        );
+        if (testUrl === expectedUrl) {
+          expect(historyReplaceStateSpy).not.toHaveBeenCalled();
+        } else {
+          expect(historyReplaceStateSpy).toHaveBeenCalledWith(
+            {},
+            '',
+            expectedUrl
+          );
+        }
 
         resolve();
       });
 
       contextPromiseResolve({
         envId: testEnvId,
-        svcId: 'abc'
+        svcId: 'abc',
+        url: 'https://example.com?envid=123'
       });
     });
   }
@@ -92,16 +97,15 @@ describe('bootstrapper', () => {
       'https://example.com',
       'https://example.com?envid=123'
     )
-      .then(() => validateContextProvided(
-        '12&3',
-        'https://example.com#test',
-        'https://example.com?envid=12%263#test'
-      ))
-      .then(() => validateContextProvided(
+      .then(done);
+  });
+
+  it('should not replace state when the resolved URL matches the current URL', (done) => {
+    validateContextProvided(
         '123',
-        'https://example.com?svcid=abc',
-        'https://example.com?svcid=abc&envid=123'
-      ))
+        'https://example.com?envid=123',
+        'https://example.com?envid=123'
+    )
       .then(done);
   });
 

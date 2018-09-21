@@ -14,8 +14,9 @@ const runBuild = require('./utils/run-build');
  */
 function build(argv, skyPagesConfig, webpack) {
   return runBuild(argv, skyPagesConfig, webpack)
-    .then(() => {
+    .then((stats) => {
       logger.info('Build successfully completed.');
+      return stats;
     })
     .catch(err => {
       logger.error(err);

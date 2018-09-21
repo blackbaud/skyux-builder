@@ -357,8 +357,9 @@ describe('AppComponent', () => {
     });
   });
 
-  it('should not load the omnibar if the addin param is 1', () => {
+  it('should not load the omnibar or help widget if the addin param is 1', () => {
     const spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyHelp = spyOn(mockHelpInitService, 'load');
 
     skyAppConfig.runtime.params.get = (key: string) => key === 'addin' ? '1' : undefined;
     skyAppConfig.skyux.omnibar = true;
@@ -366,6 +367,7 @@ describe('AppComponent', () => {
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar).not.toHaveBeenCalled();
+      expect(spyHelp).not.toHaveBeenCalled();
     });
   });
 

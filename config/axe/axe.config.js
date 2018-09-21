@@ -50,7 +50,8 @@ const defaults = {
     'bypass': { 'enabled': true },
     'tabindex': { 'enabled': true },
 
-    'aria-allowed-attr': { 'enabled': true },
+    // TODO: this should be re-enabled when we upgrade to axe-core ^3.1.1 (https://github.com/dequelabs/axe-core/issues/961)
+    'aria-allowed-attr': { 'enabled': false },
     'aria-required-attr': { 'enabled': true },
     'aria-required-children': { 'enabled': true },
     'aria-required-parent': { 'enabled': true },
