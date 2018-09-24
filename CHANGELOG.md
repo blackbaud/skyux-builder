@@ -1,3 +1,7 @@
+# 1.23.1 (2018-09-24)
+
+- Bugfix to re-add `SkyAuthHttp` to primary module's providers. [#476](https://github.com/blackbaud/skyux-builder/pull/476)
+
 # 1.23.0 (2018-09-24)
 
 - Fixed help widget to not display when SPA is in add-in mode. [#475](https://github.com/blackbaud/skyux-builder/pull/475)
