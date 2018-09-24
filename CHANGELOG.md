@@ -1,3 +1,8 @@
+# 1.23.0 (2018-09-24)
+
+- Fixed help widget to not display when SPA is in add-in mode. [#475](https://github.com/blackbaud/skyux-builder/pull/475)
+- Fixed library bundler to also transpile source files located in the root public directory. [#474](https://github.com/blackbaud/skyux-builder/pull/474)
+
 # 1.22.0 (2018-09-19)
 
 - Added support for libraries to include an isolated "testing" module. [#471](https://github.com/blackbaud/skyux-builder/pull/471)
