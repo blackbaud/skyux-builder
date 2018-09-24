@@ -1,5 +1,3 @@
-export interface SkyAppTestUtilityDomEventOptions {
-  bubbles?: boolean;
-  cancelable?: boolean;
-  keyboardEventInit?: KeyboardEventInit;
-}
+export {
+  SkyAppTestUtilityDomEventOptions
+} from '@skyux-sdk/testing/test-utility/test-utility-dom-event-options';

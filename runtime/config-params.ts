@@ -1,7 +1,3 @@
-export type SkyuxConfigParams = string[] | {
-  [key: string]: boolean | {
-    value?: any;
-    required?: boolean;
-    excludeFromRequests?: boolean;
-  }
-};
+export {
+  SkyuxConfigParams
+} from '@skyux/config/config-params';
