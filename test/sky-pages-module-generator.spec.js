@@ -194,7 +194,12 @@ describe('SKY UX Builder module generator', () => {
 
   it('should only import the SkyAuthHttpModule if the app is configured to use auth', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
-    const expectedImport = `SkyAuthHttpModule`;
+    const expectedImport = `{ SkyAuthHttp }`;
+    const expectedProvider = `{
+      provide: SkyAuthHttp,
+      useClass: SkyAuthHttp,
+      deps: [XHRBackend, RequestOptions, SkyAuthTokenProvider, SkyAppConfig]
+    }`;
 
     let source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -202,6 +207,7 @@ describe('SKY UX Builder module generator', () => {
     });
 
     expect(source).not.toContain(expectedImport);
+    expect(source).not.toContain(expectedProvider);
 
     source = generator.getSource({
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -211,6 +217,7 @@ describe('SKY UX Builder module generator', () => {
     });
 
     expect(source).toContain(expectedImport);
+    expect(source).toContain(expectedProvider);
   });
 
   it('should not add BBHelpModule if the help config does not exists.', () => {
@@ -367,7 +374,7 @@ BBAuth.mock = true;`);
     expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: false });');
   });
 
-  it('should add SkyPactModule and override AuthTokenProvider if calling pact command', () => {
+  it('should add SkyPactService and override AuthTokenProvider if calling pact command', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     let runtime = runtimeUtils.getDefaultRuntime();
     runtime.command = 'pact';
@@ -377,8 +384,11 @@ BBAuth.mock = true;`);
       skyux: runtimeUtils.getDefaultSkyux()
     });
 
-    expect(source).toContain(`SkyPactModule`);
+    expect(source).toContain(`provide: SkyPactService`);
+    expect(source).toContain(`useClass: SkyPactService`);
+    expect(source).toContain(`deps: [SkyAppConfig]`);
     expect(source).toContain('SkyPactAuthTokenProvider');
+    expect(source).toContain('SkyPactService');
     expect(source).toContain(`{
       provide: SkyAuthTokenProvider,
       useClass: SkyPactAuthTokenProvider
