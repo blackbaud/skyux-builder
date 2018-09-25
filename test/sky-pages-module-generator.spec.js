@@ -162,9 +162,7 @@ describe('SKY UX Builder module generator', () => {
 
   it('should only provide the SkyAuthHttp service if the app is configured to use auth', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
-    // Other items can exist so we're leaving out "import""
-    const expectedImport = `, SkyAuthHttp } from 'sky-pages-internal/runtime';`;
-
+    const expectedImport = `{ SkyAuthHttp }`;
     const expectedProvider = `{
       provide: SkyAuthHttp,
       useClass: SkyAuthHttp,
@@ -344,7 +342,7 @@ BBAuth.mock = true;`);
     expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: false });');
   });
 
-  it('adds SkyPactService and overrides AuthTokenProvider if calling pact command', () => {
+  it('should add SkyPactService and override AuthTokenProvider if calling pact command', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     let runtime = runtimeUtils.getDefaultRuntime();
     runtime.command = 'pact';

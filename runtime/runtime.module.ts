@@ -3,12 +3,12 @@ import {
 } from '@angular/core';
 
 import {
-  SkyI18nModule
-} from '@skyux/i18n';
+  SkyAppLinkModule
+} from '@skyux/router/modules/link/link.module';
 
 import {
-  SkyAppLinkModule
-} from '@skyux/router';
+  SkyI18nModule
+} from '@skyux/i18n/modules/i18n/i18n.module';
 
 @NgModule({
   imports: [

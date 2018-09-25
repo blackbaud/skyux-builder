@@ -33,7 +33,7 @@ import {
 import {
   SkyAppOmnibarProvider,
   SkyAppOmnibarReadyArgs,
-  SkyAppSearchResultsProvider,
+  SkyAppSearchResultsProvider
 } from '@skyux/omnibar-interop';
 
 import {
@@ -41,6 +41,7 @@ import {
   SkyAppViewportService
 } from '@skyux/theme';
 
+require('style-loader!@skyux/theme/css/sky.css');
 require('style-loader!./app.component.scss');
 
 let omnibarLoaded: boolean;
