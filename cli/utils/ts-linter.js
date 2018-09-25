@@ -19,11 +19,6 @@ function lintSync() {
   logger.info('Starting TSLint...');
 
   const spawnResult = spawn.sync('./node_modules/.bin/tslint', flags);
-  // if (!spawnResult.output) {
-  //   return {
-  //     exitCode: 0
-  //   };
-  // }
 
   // Convert buffers to strings.
   let output = [];
