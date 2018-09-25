@@ -72,7 +72,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     }),
 
     new CommonsChunkPlugin({
-      name: ['skyux', 'vendor', 'polyfills']
+      name: ['vendor', 'polyfills']
     }),
 
     new webpack.DefinePlugin({
