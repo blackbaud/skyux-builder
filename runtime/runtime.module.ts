@@ -3,31 +3,21 @@ import {
 } from '@angular/core';
 
 import {
-  SkyAppLinkDirective,
-  SkyAppLinkExternalDirective
-} from './directives';
+  SkyAppLinkModule
+} from '@skyux/router/modules/link/link.module';
 
 import {
-  SkyAppHostLocaleProvider,
-  SkyAppResourcesPipe,
-  SkyAppResourcesService
-} from './i18n';
+  SkyI18nModule
+} from '@skyux/i18n/modules/i18n/i18n.module';
 
 @NgModule({
-  declarations: [
-    SkyAppLinkDirective,
-    SkyAppLinkExternalDirective,
-    SkyAppResourcesPipe
+  imports: [
+    SkyAppLinkModule,
+    SkyI18nModule
   ],
   exports: [
-    SkyAppLinkDirective,
-    SkyAppLinkExternalDirective,
-    SkyAppResourcesPipe
-  ],
-  providers: [
-    SkyAppHostLocaleProvider,
-    SkyAppResourcesService
+    SkyAppLinkModule,
+    SkyI18nModule
   ]
 })
-/* istanbul ignore next */
 export class SkyAppRuntimeModule { }

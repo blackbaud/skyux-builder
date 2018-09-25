@@ -6,8 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { SkyPagesModule } from '../../../src/app/sky-pages.module';
 
-import { SkyAppResourcesService } from '../../../runtime/i18n';
-import { SkyAppResourcesTestService } from './i18n/resources-test.service';
+import { SkyAppResourcesService } from '@skyux/i18n';
+import { SkyAppResourcesTestService } from '@skyux/i18n/testing';
 
 @NgModule({
   imports: [

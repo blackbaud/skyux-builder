@@ -1,5 +1,5 @@
 {
-  "$schema": "./skyuxconfig-schema.json",
+  "$schema": "./node_modules/@skyux/config/skyuxconfig-schema.json",
   "mode": "advanced",
   "host": {
     "url": "https://host.nxt.blackbaud.com"

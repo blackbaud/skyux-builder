@@ -28,20 +28,26 @@ import {
 } from '@blackbaud/auth-client';
 
 import {
-  SkyAppConfig,
-  SkyAppOmnibarProvider,
-  SkyAppOmnibarReadyArgs,
-  SkyAppSearchResultsProvider,
-  SkyAppViewportService,
-  SkyAppWindowRef
-} from '@blackbaud/skyux-builder/runtime';
-
-import {
   HelpInitializationService
 } from '@blackbaud/skyux-lib-help';
 
 import {
-  SkyAppStyleLoader
+  SkyAppConfig
+} from '@skyux/config';
+
+import {
+  SkyAppWindowRef
+} from '@skyux/core';
+
+import {
+  SkyAppOmnibarProvider,
+  SkyAppOmnibarReadyArgs,
+  SkyAppSearchResultsProvider
+} from '@skyux/omnibar-interop';
+
+import {
+  SkyAppStyleLoader,
+  SkyAppViewportService
 } from '@skyux/theme';
 
 import {
@@ -357,8 +363,9 @@ describe('AppComponent', () => {
     });
   });
 
-  it('should not load the omnibar if the addin param is 1', () => {
+  it('should not load the omnibar or help widget if the addin param is 1', () => {
     const spyOmnibar = spyOn(BBOmnibar, 'load');
+    const spyHelp = spyOn(mockHelpInitService, 'load');
 
     skyAppConfig.runtime.params.get = (key: string) => key === 'addin' ? '1' : undefined;
     skyAppConfig.skyux.omnibar = true;
@@ -366,6 +373,7 @@ describe('AppComponent', () => {
     setup(skyAppConfig).then(() => {
       fixture.detectChanges();
       expect(spyOmnibar).not.toHaveBeenCalled();
+      expect(spyHelp).not.toHaveBeenCalled();
     });
   });
 
@@ -763,7 +771,7 @@ describe('AppComponent', () => {
 
     viewport
       .visible
-      .subscribe((value) => {
+      .subscribe((value: boolean) => {
         viewportVisible = value;
       });
 
