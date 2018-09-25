@@ -122,8 +122,6 @@ describe('cli utils run build', () => {
       expect(removeSpy).toHaveBeenCalledWith(
         skyPagesConfigUtil.spaPathTemp()
       );
-      expect(passedConfig.hasOwnProperty('skyuxPathAlias')).toBe(false);
-
       done();
     });
 
@@ -162,54 +160,6 @@ describe('cli utils run build', () => {
     mock.stop(f);
   });
 
-  it('should allow the SKY UX import path to be overridden', (done) => {
-    const generator = require('../lib/sky-pages-module-generator');
-
-    const f = '../config/webpack/build-aot.webpack.config';
-
-    mock(f, {
-      getWebpackConfig: () => ({})
-    });
-
-    let calledConfig;
-
-    spyOn(generator, 'getSource').and.callFake(function (c) {
-      calledConfig = c;
-      return 'TESTSOURCE';
-    });
-
-    mock.reRequire('../cli/utils/run-build')(
-      {},
-      {
-        runtime: runtimeUtils.getDefaultRuntime(),
-        skyux: {
-          compileMode: 'aot',
-          importPath: 'asdf'
-        }
-      },
-      () => ({
-        run: (cb) => {
-          cb(
-            null,
-            {
-              toJson: () => ({
-                errors: [],
-                warnings: []
-              })
-            }
-          );
-
-          // The default SKY UX Builder source files should be written first.
-          expect(calledConfig.runtime.skyuxPathAlias).toEqual('../../asdf');
-
-          mock.stop(f);
-          done();
-        }
-      })
-    );
-
-  });
-
   it('should allow the assets base URL to be specified', (done) => {
     const f = '../config/webpack/build-aot.webpack.config';
 
@@ -226,8 +176,7 @@ describe('cli utils run build', () => {
       {
         runtime: runtimeUtils.getDefaultRuntime(),
         skyux: {
-          compileMode: 'aot',
-          importPath: 'asdf'
+          compileMode: 'aot'
         }
       },
       () => ({

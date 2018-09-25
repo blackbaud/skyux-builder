@@ -66,6 +66,8 @@ function writeTSConfig() {
       'experimentalDecorators': true,
       'allowSyntheticDefaultImports': true,
       'sourceMap': true,
+      'importHelpers': true,
+      'noEmitHelpers': true,
       'noImplicitAny': true,
       'declaration': true,
       'skipLibCheck': true,

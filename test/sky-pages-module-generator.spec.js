@@ -16,6 +16,7 @@ describe('SKY UX Builder module generator', () => {
   let mockComponentGenerator;
   let mockAssetsGenerator;
   let mockRouteGenerator;
+  let mockLogger;
 
   beforeEach(() => {
     mockComponentGenerator = {
@@ -36,6 +37,10 @@ describe('SKY UX Builder module generator', () => {
       }
     };
 
+    mockLogger = {
+      warn() {}
+    };
+
     mockRouteGenerator = {
       getRoutes() {
         return {
@@ -49,6 +54,7 @@ describe('SKY UX Builder module generator', () => {
       }
     };
 
+    mock('@blackbaud/skyux-logger', mockLogger);
     mock('../lib/sky-pages-assets-generator', mockAssetsGenerator);
     mock('../lib/sky-pages-component-generator', mockComponentGenerator);
     mock('../lib/sky-pages-route-generator', mockRouteGenerator);
@@ -154,45 +160,7 @@ describe('SKY UX Builder module generator', () => {
     );
   });
 
-  it('should allow the SKY UX path alias to be overridden', () => {
-    const generator = mock.reRequire(GENERATOR_PATH);
-    const source = generator.getSource({
-      runtime: runtimeUtils.getDefaultRuntime({
-        skyuxPathAlias: 'custom'
-      }),
-      skyux: runtimeUtils.getDefaultSkyux()
-    });
-
-    expect(source).toContain(
-      `import {
-  SkyModule
-} from 'custom/core';`
-    );
-  });
-
-  it('should import individual SKY UX modules from config', () => {
-    const generator = mock.reRequire(GENERATOR_PATH);
-    const source = generator.getSource({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: runtimeUtils.getDefaultSkyux({
-        skyuxModules: [
-          'SkyAlertModule',
-          'SkyErrorModule',
-          'SkyModalModule'
-        ]
-      })
-    });
-
-    expect(source).toContain(
-      `import {
-  SkyAlertModule,
-  SkyErrorModule,
-  SkyModalModule
-} from '@blackbaud/skyux/dist/core';`
-    );
-  });
-
-  it('should only import the SkyAuthHttpModule if the app is configured to use auth', () => {
+  it('should only provide the SkyAuthHttp service if the app is configured to use auth', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     const expectedImport = `{ SkyAuthHttp }`;
     const expectedProvider = `{
@@ -393,5 +361,50 @@ BBAuth.mock = true;`);
       provide: SkyAuthTokenProvider,
       useClass: SkyPactAuthTokenProvider
     }`);
+  });
+
+  it('should add require statements for style sheets', () => {
+    const generator = mock.reRequire(GENERATOR_PATH);
+    const expectedRequire = `
+require('style-loader!@foo/bar/style.scss');
+require('style-loader!src/styles/custom.css');
+`;
+    const config = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: runtimeUtils.getDefaultSkyux()
+    };
+
+    config.skyux.app = {
+      styles: [
+        '@foo/bar/style.scss',
+        'src/styles/custom.css'
+      ]
+    };
+
+    const source = generator.getSource(config);
+
+    expect(source).toContain(expectedRequire);
+  });
+
+  it('should ignore external style sheets', () => {
+    const generator = mock.reRequire(GENERATOR_PATH);
+    const spy = spyOn(mockLogger, 'warn').and.callThrough();
+    const expectedRequire = '';
+    const config = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: runtimeUtils.getDefaultSkyux()
+    };
+
+    config.skyux.app = {
+      styles: [
+        'https://google.com/styles.css'
+      ]
+    };
+
+    const source = generator.getSource(config);
+
+    expect(source).toContain(expectedRequire);
+    expect(source).not.toContain(`require('style-loader!https://google.com/styles.css');`);
+    expect(spy.calls.first().args[0]).toContain('External style sheets are not permitted');
   });
 });

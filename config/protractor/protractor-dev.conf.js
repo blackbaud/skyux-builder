@@ -35,20 +35,20 @@ let config = {
       } else {
 
         const url = 'https://github.com/blackbaud/skyux-template';
-        const branch = 'builder-dev';
+        const branch = 'builder-dev-rc';
 
         console.log('Running command using full install.');
         common.rimrafPromise(common.tmp)
-          .then(() => common.exec(`git`, [
-            `clone`,
-            `-b`,
+          .then(() => common.exec('git', [
+            'clone',
+            '-b',
             branch,
-            `--single-branch`,
+            '--single-branch',
             url,
             common.tmp
           ]))
-          .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
-          .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
+          .then(() => common.exec('npm', ['install'], common.cwdOpts))
+          .then(() => common.exec('npm', ['install', '../'], common.cwdOpts))
           .then(resolve)
           .catch(reject);
 

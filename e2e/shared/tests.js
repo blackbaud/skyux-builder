@@ -19,7 +19,6 @@ module.exports = {
       'index.html',
       'metadata.json',
       'polyfills.js',
-      'skyux.js',
       'vendor.js'
     ].forEach(file => {
       expect(fs.existsSync(path.resolve(common.tmp, 'dist', file))).toEqual(true);

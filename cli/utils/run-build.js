@@ -24,6 +24,7 @@ function writeTSConfig() {
       'emitDecoratorMetadata': true,
       'experimentalDecorators': true,
       'sourceMap': true,
+      'importHelpers': true,
       'noEmitHelpers': true,
       'noImplicitAny': true,
       'rootDir': '.',
@@ -73,10 +74,6 @@ function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
       useTemplateUrl: true
     }
   };
-
-  if (skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.importPath) {
-    skyPagesConfigOverrides.runtime.skyuxPathAlias = '../../' + skyPagesConfig.skyux.importPath;
-  }
 
   const spaPathTempSrc = skyPagesConfigUtil.spaPathTempSrc();
 

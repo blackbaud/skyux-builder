@@ -108,18 +108,6 @@ describe('cli e2e', () => {
     mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
-  it('should catch protractor kitchen sink error', (done) => {
-    spyOn(logger, 'warn');
-    spyOn(process, 'exit').and.callFake(exitCode => {
-      expect(logger.warn).toHaveBeenCalledWith('Supressing protractor\'s "kitchen sink" error 199');
-      expect(exitCode).toEqual(0);
-      done();
-    });
-
-    EXIT_CODE = 199;
-    mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
-  });
-
   it('should install, start, and kill selenium only if a seleniumAddress is specified', (done) => {
     let killCalled = false;
 

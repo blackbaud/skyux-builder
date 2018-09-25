@@ -1,11 +1,10 @@
 /*jshint jasmine: true, node: true */
-/*global browser, element, by, $$*/
+/*global element, by*/
 'use strict';
 
 const fs = require('fs');
 const path = require('path');
 const common = require('../shared/common');
-const tests = require('../shared/tests');
 
 const tmpSrcApp = path.resolve(process.cwd(), common.tmp, 'src/app');
 const e2eRootPath = path.resolve(process.cwd(), 'e2e/skyux-lib-help-tests');
@@ -14,11 +13,55 @@ let originalHomePage;
 
 // Add the SkyModalDemoFormComponent to the entryComponents in the app-extras module.
 const mockAppExtras = `
-import { NgModule } from '@angular/core';
+import {
+  NgModule
+} from '@angular/core';
 
-import { SkyModalDemoFormComponent } from './modal-fixtures/modal-form-fixture.component';
+import {
+  SkyAlertModule
+} from '@blackbaud/skyux/dist/modules/alert';
+
+import {
+  SkyAvatarModule
+} from '@blackbaud/skyux/dist/modules/avatar';
+
+import {
+  SkyErrorModule
+} from '@blackbaud/skyux/dist/modules/error';
+
+import {
+  SkyKeyInfoModule
+} from '@blackbaud/skyux/dist/modules/key-info';
+
+import {
+  SkyModalModule
+} from '@blackbaud/skyux/dist/modules/modal';
+
+import {
+  SkyNavbarModule
+} from '@blackbaud/skyux/dist/modules/navbar';
+
+import {
+  SkyModalDemoFormComponent
+} from './modal-fixtures/modal-form-fixture.component';
 
 @NgModule({
+  imports: [
+    SkyAlertModule,
+    SkyAvatarModule,
+    SkyErrorModule,
+    SkyKeyInfoModule,
+    SkyModalModule,
+    SkyNavbarModule
+  ],
+  exports: [
+    SkyAlertModule,
+    SkyAvatarModule,
+    SkyErrorModule,
+    SkyKeyInfoModule,
+    SkyModalModule,
+    SkyNavbarModule
+  ],
   providers: [],
   entryComponents: [
     SkyModalDemoFormComponent
