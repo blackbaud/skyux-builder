@@ -1,3 +1,7 @@
+# 1.23.2 (2018-09-27)
+
+- Bugfix to address endless loop when running `skyux watch`. [#479](https://github.com/blackbaud/skyux-builder/pull/479)
+
 # 1.23.1 (2018-09-24)
 
 - Bugfix to re-add `SkyAuthHttp` to primary module's providers. [#476](https://github.com/blackbaud/skyux-builder/pull/476)
