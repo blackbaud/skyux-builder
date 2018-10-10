@@ -18,28 +18,21 @@ import {
 } from '@angular/core';
 
 import {
-  SkyAlertModule
-} from '@blackbaud/skyux/dist/modules/alert';
-
-import {
   SkyAvatarModule
-} from '@blackbaud/skyux/dist/modules/avatar';
+} from '@skyux/avatar';
 
 import {
   SkyErrorModule
-} from '@blackbaud/skyux/dist/modules/error';
+} from '@skyux/errors';
 
 import {
+  SkyAlertModule,
   SkyKeyInfoModule
-} from '@blackbaud/skyux/dist/modules/key-info';
+} from '@skyux/indicators';
 
 import {
   SkyModalModule
-} from '@blackbaud/skyux/dist/modules/modal';
-
-import {
-  SkyNavbarModule
-} from '@blackbaud/skyux/dist/modules/navbar';
+} from '@skyux/modals';
 
 import {
   SkyModalDemoFormComponent
@@ -51,16 +44,14 @@ import {
     SkyAvatarModule,
     SkyErrorModule,
     SkyKeyInfoModule,
-    SkyModalModule,
-    SkyNavbarModule
+    SkyModalModule
   ],
   exports: [
     SkyAlertModule,
     SkyAvatarModule,
     SkyErrorModule,
     SkyKeyInfoModule,
-    SkyModalModule,
-    SkyNavbarModule
+    SkyModalModule
   ],
   providers: [],
   entryComponents: [

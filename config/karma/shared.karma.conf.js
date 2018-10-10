@@ -91,6 +91,20 @@ function getConfig(config) {
       stats: 'minimal'
     },
 
+    // This is necessary to stop endless test runs for skyux watch.
+    // Without it, the coverage reports and .skypageslocales files will
+    //  trigger the `invalid` event, causing karma to constantly re-rerun
+    //  the tests.  This is a by-product of using `require.context`.
+    // https://github.com/webpack-contrib/karma-webpack/issues/253#issuecomment-335545430
+    webpackMiddleware: {
+      watchOptions: {
+        ignored: [
+          '**/coverage/**',
+          '**/.skypageslocales/**'
+        ]
+      }
+    },
+
     // This flag allows console.log calls to come through the cli
     browserConsoleLogOptions: {
       level: 'log'
