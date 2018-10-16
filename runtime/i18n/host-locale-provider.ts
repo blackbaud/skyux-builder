@@ -1,11 +1,10 @@
 import {
-  Injectable,
-  Optional
+  Injectable
 } from '@angular/core';
 
 import {
   SkyAppWindowRef
-} from '@skyux/core/modules/window';
+} from '../window-ref';
 
 import {
   Observable
@@ -25,17 +24,12 @@ export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
   public static readonly defaultLocale = 'en-US';
 
   constructor(
-    private windowRef: SkyAppWindowRef,
-    @Optional() private localeProvider?: SkyAppLocaleProvider
+    private windowRef: SkyAppWindowRef
   ) {
     super();
   }
 
   public getLocaleInfo(): Observable<SkyAppLocaleInfo> {
-    if (this.localeProvider) {
-      return this.localeProvider.getLocaleInfo();
-    }
-
     let locale: string;
 
     const skyuxHost = (this.windowRef.nativeWindow as any).SKYUX_HOST;
