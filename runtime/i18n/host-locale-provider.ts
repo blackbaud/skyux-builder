@@ -36,7 +36,8 @@ export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
       locale = acceptLanguage.split(',')[0];
     }
 
-    locale = locale || this.defaultLocale;
+    // We can remove the `any` reference after @skyux/i18n releases.
+    locale = locale || (this as any).defaultLocale;
 
     return Observable.of({
       locale: locale
