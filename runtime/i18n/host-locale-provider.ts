@@ -19,15 +19,14 @@ import {
 } from './locale-provider';
 
 @Injectable()
-export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
-
-  public static readonly defaultLocale = 'en-US';
+export class SkyAppHostLocaleProvider implements SkyAppLocaleProvider {
+  public get defaultLocale(): string {
+    return 'en-US';
+  }
 
   constructor(
     private windowRef: SkyAppWindowRef
-  ) {
-    super();
-  }
+  ) { }
 
   public getLocaleInfo(): Observable<SkyAppLocaleInfo> {
     let locale: string;
@@ -39,7 +38,7 @@ export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
       locale = acceptLanguage.split(',')[0];
     }
 
-    locale = locale || SkyAppHostLocaleProvider.defaultLocale;
+    locale = locale || this.defaultLocale;
 
     return Observable.of({
       locale: locale
