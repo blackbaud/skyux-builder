@@ -4,18 +4,13 @@
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
-const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const protractorLauncher = require('protractor/built/launcher');
 const logger = require('@blackbaud/skyux-logger');
-const get = require('lodash.get');
 
 const build = require('./utils/run-build');
 const server = require('./utils/server');
 const configResolver = require('./utils/config-resolver');
-
-// Disable this to quiet the output
-const spawnOptions = { stdio: 'inherit' };
 
 let seleniumServer;
 let start;
@@ -66,7 +61,7 @@ function spawnProtractor(configPath, chunks, port, skyPagesConfig) {
  * Spawns the selenium server if directConnect is not enabled.
  * @name spawnSelenium
  */
-function spawnSelenium(configPath, skyPagesConfig) {
+function spawnSelenium(configPath) {
 
   const config = require(configPath).config;
 
@@ -156,7 +151,7 @@ function e2e(command, argv, skyPagesConfig, webpack) {
         .all([
           spawnBuild(argv, skyPagesConfig, webpack),
           port,
-          spawnSelenium(configPath, skyPagesConfig)
+          spawnSelenium(configPath)
         ]);
     })
     .then(([chunks, port]) => {

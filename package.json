@@ -120,7 +120,6 @@
     "jscs": "3.0.7",
     "jshint": "2.9.4",
     "json-loader": "0.5.7",
-    "lodash.get": "4.4.2",
     "mock-require": "2.0.2",
     "proxyquire": "1.8.0",
     "rimraf": "2.6.1"
