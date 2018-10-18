@@ -211,6 +211,69 @@ describe('cli e2e', () => {
     mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
   });
 
+  function webdriverManagerUpdate(val) {
+    const config = {
+      skyux: {
+        testSettings: {
+          e2e: {
+            webdriverManagerUpdate: val
+          }
+        }
+      }
+    };
+
+    mock(configPath, {
+      config: { }
+    });
+
+    mock('../cli/utils/run-build', () => new Promise(resolve => {
+      resolve({
+        toJson: () => {
+          return {
+            chunks: CHUNKS
+          }
+        }
+      });
+    }));
+
+    const crossSpawnSpy = jasmine.createSpyObj('cross-spawn', ['sync']);
+    mock('cross-spawn', crossSpawnSpy);
+
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    mock.reRequire('../cli/e2e')(
+      'e2e',
+      ARGV,
+      val === undefined ? SKY_PAGES_CONFIG : config,
+      WEBPACK
+    );
+
+    return new Promise((resolve) => {
+      spyOn(process, 'exit').and.callFake(() => resolve(crossSpawnSpy));
+    });
+  }
+
+  it('should run webdriver-manager update command if setting not set (default)', (done) => {
+    webdriverManagerUpdate().then(crossSpawnSpy => {
+      expect(crossSpawnSpy.sync).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should run webdriver-manager update command if setting set to true', (done) => {
+    webdriverManagerUpdate(true).then(crossSpawnSpy => {
+      expect(crossSpawnSpy.sync).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('should not run webdriver-manager update command if setting set to false', (done) => {
+    webdriverManagerUpdate(false).then(crossSpawnSpy => {
+      expect(crossSpawnSpy.sync).not.toHaveBeenCalled();
+      done();
+    });
+  });
+
   it('should not continue if no e2e spec files exist', (done) => {
     mock('glob', {
       sync: path => []

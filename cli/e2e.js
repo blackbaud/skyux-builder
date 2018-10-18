@@ -8,6 +8,7 @@ const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const protractorLauncher = require('protractor/built/launcher');
 const logger = require('@blackbaud/skyux-logger');
+const get = require('lodash.get');
 
 const build = require('./utils/run-build');
 const server = require('./utils/server');
@@ -65,7 +66,8 @@ function spawnProtractor(configPath, chunks, port, skyPagesConfig) {
  * Spawns the selenium server if directConnect is not enabled.
  * @name spawnSelenium
  */
-function spawnSelenium(configPath) {
+function spawnSelenium(configPath, skyPagesConfig) {
+
   const config = require(configPath).config;
 
   return new Promise((resolve, reject) => {
@@ -90,25 +92,37 @@ function spawnSelenium(configPath) {
 
     // Otherwise we need to prep protractor's selenium
     } else {
+
+      const webdriverManagerUpdate = get(
+        skyPagesConfig,
+        'skyux.testSettings.e2e.webdriverManagerUpdate',
+        true
+      );
+
       const webdriverManagerPath = path.resolve(
         'node_modules',
         '.bin',
         'webdriver-manager'
       );
 
-      const results = spawn.sync(
-        webdriverManagerPath,
-        [
-          'update',
-          '--standalone', 'false',
-          '--gecko', 'false'
-        ],
-        spawnOptions
-      );
+      if (webdriverManagerUpdate !== false) {
+        logger.info('Updating webdriver.');
+        const results = spawn.sync(
+          webdriverManagerPath,
+          [
+            'update',
+            '--standalone', 'false',
+            '--gecko', 'false'
+          ],
+          spawnOptions
+        );
 
-      if (results.error) {
-        reject(results.error);
-        return;
+        if (results.error) {
+          reject(results.error);
+          return;
+        }
+      } else {
+        logger.info('Skipping updating webdriver.');
       }
 
       logger.info('Selenium server is ready.');
@@ -172,7 +186,7 @@ function e2e(command, argv, skyPagesConfig, webpack) {
         .all([
           spawnBuild(argv, skyPagesConfig, webpack),
           port,
-          spawnSelenium(configPath)
+          spawnSelenium(configPath, skyPagesConfig)
         ]);
     })
     .then(([chunks, port]) => {
