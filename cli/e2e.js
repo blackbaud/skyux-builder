@@ -93,39 +93,9 @@ function spawnSelenium(configPath, skyPagesConfig) {
     // Otherwise we need to prep protractor's selenium
     } else {
 
-      const webdriverManagerUpdate = get(
-        skyPagesConfig,
-        'skyux.testSettings.e2e.webdriverManagerUpdate',
-        true
-      );
+      logger.info('It is your responsibility to install the appropriate webdriver version.');
+      logger.info('Visit https://developer.blackbaud.com/skyux to learn more.');
 
-      const webdriverManagerPath = path.resolve(
-        'node_modules',
-        '.bin',
-        'webdriver-manager'
-      );
-
-      if (webdriverManagerUpdate !== false) {
-        logger.info('Updating webdriver.');
-        const results = spawn.sync(
-          webdriverManagerPath,
-          [
-            'update',
-            '--standalone', 'false',
-            '--gecko', 'false'
-          ],
-          spawnOptions
-        );
-
-        if (results.error) {
-          reject(results.error);
-          return;
-        }
-      } else {
-        logger.info('Skipping updating webdriver.');
-      }
-
-      logger.info('Selenium server is ready.');
       resolve();
     }
   });
