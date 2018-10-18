@@ -237,7 +237,7 @@ describe('cli e2e', () => {
           return Promise.reject();
         } else {
           return Promise.resolve({
-            chromeVersion: version
+            chromeDriverVersion: version
           });
         }
       }
