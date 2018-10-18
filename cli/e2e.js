@@ -71,8 +71,8 @@ function getChromeDriverVersion() {
 
     matcher.getChromeDriverVersion()
       .then(result => {
-        if (result.chromeVersion) {
-          resolve(result.chromeVersion);
+        if (result.chromeDriverVersion) {
+          resolve(result.chromeDriverVersion);
         } else {
           resolve(defaultVersion);
         }
@@ -113,7 +113,7 @@ function spawnSelenium(configPath) {
     } else {
 
       getChromeDriverVersion().then(version => {
-        logger.info('Updating webdriver.');
+        logger.info(`Updating webdriver to version ${version}`);
 
         const webdriverManagerPath = path.resolve(
           'node_modules',
