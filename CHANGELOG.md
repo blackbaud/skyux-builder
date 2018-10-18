@@ -1,3 +1,8 @@
+# 1.25.0 (2018-10-17)
+
+- Added support for `@skyux/i18n@3.2.0`. [#486](https://github.com/blackbaud/skyux-builder/pull/486)
+- Fixed bootstrapper to allow for TypeScript strict mode. [#464](https://github.com/blackbaud/skyux-builder/pull/464)
+
 # 1.24.0 (2018-10-01)
 
 - Updated auth-client library to pick up change that displays the omnibar inactivity prompt at a z-index high enough to display over SKY UX modals. [#481](https://github.com/blackbaud/skyux-builder/pull/481)
