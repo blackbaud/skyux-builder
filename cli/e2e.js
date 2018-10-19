@@ -112,6 +112,8 @@ function spawnSelenium(configPath) {
     // Otherwise we need to prep protractor's selenium
     } else {
 
+      logger.info(`Getting webdriver version.`);
+
       getChromeDriverVersion().then(version => {
         logger.info(`Updating webdriver to version ${version}`);
 
