@@ -1,3 +1,8 @@
+# 1.26.0 (2018-10-19)
+
+- Updated `skyux e2e` to automatically install appropriate ChromeDriver version for the installed version of Chrome. Previous functionality was to always install the latest version, which caused version mismatches.
+- Added support for developing builder on Node 8.
+
 # 1.25.0 (2018-10-17)
 
 - Added support for `@skyux/i18n@3.2.0`. [#486](https://github.com/blackbaud/skyux-builder/pull/486)
