@@ -16,6 +16,7 @@ describe('SKY UX Builder module generator', () => {
   let mockComponentGenerator;
   let mockAssetsGenerator;
   let mockRouteGenerator;
+  let mockLogger;
 
   beforeEach(() => {
     mockComponentGenerator = {
@@ -49,6 +50,11 @@ describe('SKY UX Builder module generator', () => {
       }
     };
 
+    mockLogger = {
+      warn() {}
+    };
+
+    mock('@blackbaud/skyux-logger', mockLogger);
     mock('../lib/sky-pages-assets-generator', mockAssetsGenerator);
     mock('../lib/sky-pages-component-generator', mockComponentGenerator);
     mock('../lib/sky-pages-route-generator', mockRouteGenerator);
@@ -121,7 +127,9 @@ describe('SKY UX Builder module generator', () => {
       skyux: runtimeUtils.getDefaultSkyux()
     });
     expect(source).toContain('NotFoundComponent');
-    expect(source).not.toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
+    expect(source).not.toContain(
+      `template: \`<iframe src="https://host.nxt.blackbaud.com/errors/notfound"`
+    );
   });
 
   it('should handle 404', () => {
@@ -393,5 +401,49 @@ BBAuth.mock = true;`);
       provide: SkyAuthTokenProvider,
       useClass: SkyPactAuthTokenProvider
     }`);
+  });
+
+  it('should add require statements for style sheets', () => {
+    const generator = mock.reRequire(GENERATOR_PATH);
+    const expectedRequire = `
+require('style-loader!@foo/bar/style.scss');
+require('style-loader!src/styles/custom.css');
+`;
+    const config = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: runtimeUtils.getDefaultSkyux()
+    };
+
+    config.skyux.app = {
+      styles: [
+        '@foo/bar/style.scss',
+        'src/styles/custom.css'
+      ]
+    };
+
+    const source = generator.getSource(config);
+    expect(source).toContain(expectedRequire);
+  });
+
+  it('should ignore external style sheets', () => {
+    const generator = mock.reRequire(GENERATOR_PATH);
+    const spy = spyOn(mockLogger, 'warn').and.callThrough();
+    const expectedRequire = '';
+
+    const config = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: runtimeUtils.getDefaultSkyux()
+    };
+
+    config.skyux.app = {
+      styles: [
+        'https://google.com/styles.css'
+      ]
+    };
+
+    const source = generator.getSource(config);
+    expect(source).toContain(expectedRequire);
+    expect(source).not.toContain(`require('style-loader!https://google.com/styles.css');`);
+    expect(spy.calls.first().args[0]).toContain('External style sheets are not permitted');
   });
 });
