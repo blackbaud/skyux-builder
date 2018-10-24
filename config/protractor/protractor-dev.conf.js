@@ -47,8 +47,23 @@ let config = {
             url,
             common.tmp
           ]))
-          .then(() => common.exec(`npm`, [`i`, '--only=prod'], common.cwdOpts))
-          .then(() => common.exec(`npm`, [`i`, `../`], common.cwdOpts))
+          .then(() => {
+
+            // This method attempts to take what would be installed from builder in to the SPA.
+            // It was the only reliable way I could convince NPM to install everything needed.
+            const spaPkgPath = path.resolve(common.tmp, 'package.json');
+            const spaPkgJson = fs.readJsonSync(spaPkgPath);
+
+            const builderPkgPath = path.resolve('package.json');
+            const builderPkgJson = fs.readJsonSync(builderPkgPath);
+
+            Object.keys(builderPkgJson.dependencies).forEach(dep => {
+              spaPkgJson.dependencies[dep] = builderPkgJson.dependencies[dep];
+            });
+
+            fs.writeJsonSync(spaPkgPath, spaPkgJson, { spaces: 2 });
+          })
+          .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
           .then(resolve)
           .catch(reject);
 

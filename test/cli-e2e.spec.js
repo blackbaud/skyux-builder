@@ -81,6 +81,10 @@ describe('cli e2e', () => {
       resolve: () => configPath
     });
 
+    mock('chromedriver-version-matcher', {
+      getChromeDriverVersion: () => Promise.resolve()
+    });
+
     spyOn(process, 'on').and.callFake((evt, cb) => {
       if (evt === 'exit') {
         PROTRACTOR_CB = cb;
@@ -209,6 +213,74 @@ describe('cli e2e', () => {
     });
 
     mock.reRequire('../cli/e2e')('e2e', ARGV, SKY_PAGES_CONFIG, WEBPACK);
+  });
+
+  function webdriverManagerUpdate(version, expected, done) {
+
+    mock(configPath, {
+      config: { }
+    });
+
+    mock('../cli/utils/run-build', () => new Promise(resolve => {
+      resolve({
+        toJson: () => {
+          return {
+            chunks: CHUNKS
+          }
+        }
+      });
+    }));
+
+    mock('chromedriver-version-matcher', {
+      getChromeDriverVersion: () => {
+        if (version === undefined) {
+          return Promise.reject();
+        } else {
+          return Promise.resolve({
+            chromeDriverVersion: version
+          });
+        }
+      }
+    });
+
+    const spyCrossSpawnSync = jasmine.createSpy('sync').and.callFake(() => ({ error: '' }));
+    mock('cross-spawn', {
+      sync: spyCrossSpawnSync
+    });
+
+    spyOn(fs, 'existsSync').and.returnValue(true);
+
+    mock.reRequire('../cli/e2e')(
+      'e2e',
+      ARGV,
+      SKY_PAGES_CONFIG,
+      WEBPACK
+    );
+
+    spyOn(process, 'exit').and.callFake(() => {
+      expect(spyCrossSpawnSync.calls.argsFor(0)[1]).toEqual([
+        'update',
+        '--standalone',
+        'false',
+        '--gecko',
+        'false',
+        '--versions.chrome',
+        expected
+      ]);
+      done();
+    });
+  }
+
+  it('should run webdriver-manager update command with the required version', (done) => {
+    webdriverManagerUpdate('123', '123', done);
+  });
+
+  it('should run webdriver-manager update command with latest if no version found', (done) => {
+    webdriverManagerUpdate('', 'latest', done);
+  });
+
+  it('should run webdriver-manager update command with latest if finding version fails', (done) => {
+    webdriverManagerUpdate(undefined, 'latest', done);
   });
 
   it('should not continue if no e2e spec files exist', (done) => {

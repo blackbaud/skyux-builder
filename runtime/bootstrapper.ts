@@ -28,7 +28,7 @@ export class SkyAppBootstrapper {
 
           const params = new SkyAppRuntimeConfigParams(
             currentUrl,
-            this.config.params
+            this.config.params!
           );
 
           const ensureContextArgs: BBContextArgs = {
