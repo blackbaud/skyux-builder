@@ -91,7 +91,7 @@ describe('cli build-public-library', () => {
 
   it('should copy the runtime folder before compiling then clean it before packaging', (done) => {
     const cliCommand = mock.reRequire(requirePath);
-    const spy = spyOn(mockFs, 'copySync').and.callThrough();
+    const spy = spyOn(mockFs, 'copySync');
     cliCommand({}, mockWebpack).then(() => {
       expect(spy).toHaveBeenCalledWith('runtime', 'runtime');
       expect(rimraf.sync).toHaveBeenCalledTimes(4);
@@ -111,7 +111,7 @@ describe('cli build-public-library', () => {
 
   it('should write a tsconfig.json file', (done) => {
     const cliCommand = mock.reRequire(requirePath);
-    const spy = spyOn(mockFs, 'writeJSONSync').and.callThrough();
+    const spy = spyOn(mockFs, 'writeJSONSync');
     cliCommand({}, mockWebpack).then(() => {
       const firstArg = spy.calls.argsFor(0)[0];
       expect(firstArg).toEqual('tsconfig.json');
@@ -121,7 +121,7 @@ describe('cli build-public-library', () => {
 
   it('should write a placeholder module file', (done) => {
     const cliCommand = mock.reRequire(requirePath);
-    const spy = spyOn(mockFs, 'writeFileSync').and.callThrough();
+    const spy = spyOn(mockFs, 'writeFileSync');
     cliCommand({}, mockWebpack).then(() => {
       const args = spy.calls.argsFor(0);
       expect(args[0]).toEqual('main.ts');
@@ -176,7 +176,7 @@ export class SkyLibPlaceholderModule {}
 
   it('should handle transpilation errors', (done) => {
     const cliCommand = mock.reRequire(requirePath);
-    const spy = spyOn(logger, 'error').and.callThrough();
+    const spy = spyOn(logger, 'error');
     spyOn(mockSpawn, 'sync').and.returnValue({
       err: 'something bad happened'
     });
@@ -203,7 +203,7 @@ export class SkyLibPlaceholderModule {}
 
   it('should process files', (done) => {
     const cliCommand = mock.reRequire(requirePath);
-    const spy = spyOn(mockPluginFileProcessor, 'processFiles').and.callThrough();
+    const spy = spyOn(mockPluginFileProcessor, 'processFiles');
 
     cliCommand({}, mockWebpack).then(() => {
       expect(spy).toHaveBeenCalled();
@@ -213,7 +213,7 @@ export class SkyLibPlaceholderModule {}
 
   it('should include testing entry point if directory exists', (done) => {
     spyOn(mockFs, 'existsSync').and.returnValue(true);
-    const spy = spyOn(mockFs, 'writeJSONSync').and.callThrough();
+    const spy = spyOn(mockFs, 'writeJSONSync');
     const cliCommand = mock.reRequire(requirePath);
     cliCommand({}, mockWebpack).then(() => {
       expect(spy).toHaveBeenCalled();

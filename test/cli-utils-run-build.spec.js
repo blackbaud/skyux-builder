@@ -293,6 +293,10 @@ describe('cli utils run build', () => {
       done();
     });
 
+    mock('../config/webpack/build.webpack.config', {
+      getWebpackConfig: () => ({})
+    });
+
     mock.reRequire('../cli/utils/run-build')({ serve: true }, runtimeUtils.getDefault(), () => ({
       run: (cb) => {
         cb(

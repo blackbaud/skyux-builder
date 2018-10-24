@@ -29,6 +29,7 @@ describe('config sky-pages', () => {
     const existsSync = fs.existsSync;
 
     spyOn(logger, 'info');
+    spyOn(logger, 'error');
     spyOn(process, 'cwd').and.returnValue(tempSpaReference);
     spyOn(fs, 'existsSync').and.callFake(filename => {
 

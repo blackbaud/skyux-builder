@@ -243,6 +243,12 @@ describe('cli test', () => {
       sync: path => []
     });
 
+    mock('karma', {
+      config: {
+        parseConfig: () => ({})
+      }
+    });
+
     mock.reRequire('../cli/test')('test');
     expect(logger.info).toHaveBeenCalledWith(
       'No spec files located. Skipping test command.'

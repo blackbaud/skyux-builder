@@ -73,10 +73,14 @@ describe('config webpack build-aot', () => {
     mock.stop(f);
   });
 
-  it('should write metadata.json file and match entries order', () => {
+  fit('should write metadata.json file and match entries order', () => {
     let json;
     spyOn(fs, 'writeFileSync').and.callFake((file, content) => {
       json = JSON.parse(content);
+    });
+
+    mock('../config/webpack/build.webpack.config', {
+      getWebpackConfig: () => ({})
     });
 
     const lib = require('../config/webpack/build-aot.webpack.config');

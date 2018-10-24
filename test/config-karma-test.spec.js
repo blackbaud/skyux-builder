@@ -12,7 +12,7 @@ describe('config karma test', () => {
       called = true;
     });
   });
-  
+
   afterEach(() => {
     mock.stop(path);
   });

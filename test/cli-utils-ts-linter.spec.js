@@ -20,6 +20,7 @@ describe('cli util ts-linter', () => {
 
   it('should spawn tslint', () => {
     let _executed = false;
+    spyOn(logger, 'error');
     spyOn(logger, 'info').and.returnValue();
     mock('../config/sky-pages/sky-pages.config', {
       spaPath: (filePath) => filePath

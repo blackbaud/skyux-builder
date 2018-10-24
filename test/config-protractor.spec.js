@@ -4,11 +4,13 @@
 describe('config protractor test', () => {
 
   const mock = require('mock-require');
+  const logger = require('@blackbaud/skyux-logger');
 
   let lib;
   let config;
 
   beforeEach(() => {
+    spyOn(logger, 'info');
     lib = mock.reRequire('../config/protractor/protractor.conf.js');
     config = lib.config;
   });
