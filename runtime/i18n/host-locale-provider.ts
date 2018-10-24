@@ -27,7 +27,7 @@ export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
   }
 
   public getLocaleInfo(): Observable<SkyAppLocaleInfo> {
-    let locale: string;
+    let locale: string | undefined;
 
     const skyuxHost = (this.windowRef.nativeWindow as any).SKYUX_HOST;
 
