@@ -127,7 +127,9 @@ describe('SKY UX Builder module generator', () => {
       skyux: runtimeUtils.getDefaultSkyux()
     });
     expect(source).toContain('NotFoundComponent');
-    expect(source).not.toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
+    expect(source).not.toContain(
+      `template: \`<iframe src="https://host.nxt.blackbaud.com/errors/notfound"`
+    );
   });
 
   it('should handle 404', () => {
