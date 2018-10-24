@@ -1,6 +1,6 @@
 # 1.26.1 (2018-10-24)
 
-- Fixed issue with using Builder when `strictNullChecks` is enabled (thanks @bentefay!). [#487](https://github.com/blackbaud/skyux-builder/pull/487) Thanks [@bentefay](https://github.com/bentefay)!
+- Fixed issue with using Builder when `strictNullChecks` is enabled. [#487](https://github.com/blackbaud/skyux-builder/pull/487) Thanks [@bentefay](https://github.com/bentefay)!
 
 
 # 1.26.0 (2018-10-19)
