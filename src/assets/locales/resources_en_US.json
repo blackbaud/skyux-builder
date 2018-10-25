@@ -1,0 +1,6 @@
+{
+  "skyux_builder_page_not_found_iframe_title": {
+    "message": "Page not found",
+    "_description": "A string value to represent the Page Not Found iframe title attribute."
+  }
+}

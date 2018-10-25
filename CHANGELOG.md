@@ -1,3 +1,8 @@
+# 1.26.1 (2018-10-24)
+
+- Fixed issue with using Builder when `strictNullChecks` is enabled. [#487](https://github.com/blackbaud/skyux-builder/pull/487) Thanks [@bentefay](https://github.com/bentefay)!
+
+
 # 1.26.0 (2018-10-19)
 
 - Updated `skyux e2e` to automatically install appropriate ChromeDriver version for the installed version of Chrome. Previous functionality was to always install the latest version, which caused version mismatches.
