@@ -352,7 +352,8 @@ describe('SKY UX Builder route generator', () => {
         handle404: true
       }
     });
-    expect(routes.definitions)
-      .toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
+    expect(routes.definitions).toContain(
+      `template: \`<iframe src="https://host.nxt.blackbaud.com/errors/notfound"`
+    );
   });
 });
