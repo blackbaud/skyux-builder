@@ -22,7 +22,7 @@ describe('config webpack build-aot', () => {
   });
 
   it('should expose a getWebpackConfig method', () => {
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
@@ -32,7 +32,7 @@ describe('config webpack build-aot', () => {
       getWebpackConfig: () => ({ module: { rules: [] } })
     });
 
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
 
     const skyPagesConfig = {
       runtime: runtimeUtils.getDefaultRuntime({
@@ -59,7 +59,7 @@ describe('config webpack build-aot', () => {
       getWebpackConfig: () => ({ module: { rules: [] } })
     });
 
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
 
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -79,11 +79,14 @@ describe('config webpack build-aot', () => {
       json = JSON.parse(content);
     });
 
-    mock('../config/webpack/build.webpack.config', {
-      getWebpackConfig: () => ({})
+    mock('webpack', {
+      DefinePlugin: function() {},
+      optimize: {
+        UglifyJsPlugin: function () {}
+      }
     });
 
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {
@@ -155,7 +158,7 @@ describe('config webpack build-aot', () => {
   });
 
   it('should add the SKY_PAGES_READY_X variable to each entry, replacing periods', () => {
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {
@@ -215,7 +218,7 @@ describe('config webpack build-aot', () => {
       })
     });
 
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
 
     const skyPagesConfig = {
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -256,7 +259,7 @@ describe('config webpack build-aot', () => {
       })
     });
 
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
 
     const skyPagesConfig = {
       runtime: runtimeUtils.getDefaultRuntime(),
