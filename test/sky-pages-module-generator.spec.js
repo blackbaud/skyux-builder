@@ -54,6 +54,10 @@ describe('SKY UX Builder module generator', () => {
       }
     };
 
+    mockLogger = {
+      warn() {}
+    };
+
     mock('@blackbaud/skyux-logger', mockLogger);
     mock('../lib/sky-pages-assets-generator', mockAssetsGenerator);
     mock('../lib/sky-pages-component-generator', mockComponentGenerator);
@@ -127,7 +131,9 @@ describe('SKY UX Builder module generator', () => {
       skyux: runtimeUtils.getDefaultSkyux()
     });
     expect(source).toContain('NotFoundComponent');
-    expect(source).not.toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
+    expect(source).not.toContain(
+      `template: \`<iframe src="https://host.nxt.blackbaud.com/errors/notfound"`
+    );
   });
 
   it('should handle 404', () => {
@@ -382,7 +388,6 @@ require('style-loader!src/styles/custom.css');
     };
 
     const source = generator.getSource(config);
-
     expect(source).toContain(expectedRequire);
   });
 
@@ -402,7 +407,6 @@ require('style-loader!src/styles/custom.css');
     };
 
     const source = generator.getSource(config);
-
     expect(source).toContain(expectedRequire);
     expect(source).not.toContain(`require('style-loader!https://google.com/styles.css');`);
     expect(spy.calls.first().args[0]).toContain('External style sheets are not permitted');
