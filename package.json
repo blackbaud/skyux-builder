@@ -19,9 +19,6 @@
     "type": "git",
     "url": "git+https://github.com/blackbaud/skyux-builder.git"
   },
-  "engines": {
-    "node": ">= 6.11.1"
-  },
   "keywords": [],
   "author": "Blackbaud",
   "license": "ISC",
