@@ -102,10 +102,12 @@ function getConfig(config) {
     // The function below ignores all files execpt the `src` directory.
     webpackMiddleware: {
       watchOptions: {
-        // Returning true means the file sholud be ignored
+        // Returning `true` means the file should be ignored.
         // Fat-Arrow functions do not work as chokidar will inspect this method.
         ignored: function (item) {
-          return item.indexOf(srcPath) === -1;
+          const resolvedPath = path.resolve(item);
+          const ignore = (resolvedPath.indexOf(srcPath) === -1);
+          return ignore;
         }
       }
     },
