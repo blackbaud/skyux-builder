@@ -137,10 +137,14 @@ describe('config karma shared', () => {
       getWebpackConfig: () => {}
     });
 
+    spyOn(path, 'resolve').and.callThrough();
+
     mock.reRequire('../config/karma/shared.karma.conf')({
       set: (config) => {
         const filter = config.webpackMiddleware.watchOptions.ignored;
         expect(filter).toBeDefined();
+
+        expect(path.resolve).toHaveBeenCalled();
         expect(filter(path.join(process.cwd(), 'src'))).toBe(false);
         expect(filter(path.join(process.cwd(), 'node_modules'))).toBe(true);
         expect(filter(path.join(process.cwd(), '.skypageslocales'))).toBe(true);
