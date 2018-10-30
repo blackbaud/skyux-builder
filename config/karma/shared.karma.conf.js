@@ -104,7 +104,7 @@ function getConfig(config) {
       watchOptions: {
         // Returning true means the file sholud be ignored
         // Fat-Arrow functions do not work as chokidar will inspect this method.
-        ignored: function(item) {
+        ignored: function (item) {
           return item.indexOf(srcPath) === -1;
         }
       }
