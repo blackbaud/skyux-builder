@@ -103,7 +103,10 @@ function getConfig(config) {
     webpackMiddleware: {
       watchOptions: {
         // Returning true means the file sholud be ignored
-        ignored: (item) => item.indexOf(srcPath) === -1
+        // Fat-Arrow functions do not work as chokidar will inspect this method.
+        ignored: function(item) {
+          return item.indexOf(srcPath) === -1;
+        }
       }
     },
 
