@@ -39,11 +39,11 @@ let config = {
 
         console.log('Running command using full install.');
         common.rimrafPromise(common.tmp)
-          .then(() => common.exec('git', [
-            'clone',
-            '-b',
+          .then(() => common.exec(`git`, [
+            `clone`,
+            `-b`,
             branch,
-            '--single-branch',
+            `--single-branch`,
             url,
             common.tmp
           ]))
@@ -68,7 +68,7 @@ let config = {
           })
           .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
           .then(() => {
-            // Copy builder's source to node_modules.
+            // Copy builder's local source to node_modules.
             const files = [
               'cli',
               'config',
@@ -86,8 +86,15 @@ let config = {
               'tsconfig.json',
               'tslint.json'
             ];
-            files.forEach((file) => {
-              fs.copySync(file, `.e2e-tmp/node_modules/@blackbaud/skyux-builder/${file}`);
+
+            files.forEach(file => {
+              fs.copySync(
+                file,
+                path.resolve(
+                  common.tmp,
+                  `node_modules/@blackbaud/skyux-builder/${file}`
+                )
+              );
             });
           })
           .then(resolve)
