@@ -13,7 +13,7 @@ import {
 
 import {
   Observable
-} from 'rxjs/Observable';
+} from 'rxjs';
 
 @Injectable()
 export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {

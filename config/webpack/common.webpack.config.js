@@ -93,6 +93,13 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       {}
     ),
 
+    // See: https://github.com/angular/angular/issues/20357#issuecomment-343683491
+    new ContextReplacementPlugin(
+      /\@angular(\\|\/)core(\\|\/)fesm5/,
+      spaPath('src'),
+      {}
+    ),
+
     new OutputKeepAlivePlugin({
       enabled: argv['output-keep-alive']
     })
