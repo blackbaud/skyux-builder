@@ -42,6 +42,8 @@ function getConfig(config) {
   const minimist = require('minimist');
   const argv = minimist(process.argv.slice(2));
   const path = require('path');
+  const srcPath = path.join(process.cwd(), 'src');
+
   let testWebpackConfig = require('../webpack/test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
 
@@ -96,12 +98,17 @@ function getConfig(config) {
     //  trigger the `invalid` event, causing karma to constantly re-rerun
     //  the tests.  This is a by-product of using `require.context`.
     // https://github.com/webpack-contrib/karma-webpack/issues/253#issuecomment-335545430
+    // By using require.context in our @skyux/i18n library ALL project files are watched by default.
+    // The function below ignores all files execpt the `src` directory.
     webpackMiddleware: {
       watchOptions: {
-        ignored: [
-          '**/coverage/**',
-          '**/.skypageslocales/**'
-        ]
+        // Returning `true` means the file should be ignored.
+        // Fat-Arrow functions do not work as chokidar will inspect this method.
+        ignored: function (item) {
+          const resolvedPath = path.resolve(item);
+          const ignore = (resolvedPath.indexOf(srcPath) === -1);
+          return ignore;
+        }
       }
     },
 

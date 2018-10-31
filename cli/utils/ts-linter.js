@@ -22,18 +22,16 @@ function lintSync() {
 
   // Convert buffers to strings.
   let output = [];
-  if (spawnResult.output) {
-    spawnResult.output.forEach((buffer) => {
-      if (buffer === null) {
-        return;
-      }
+  spawnResult.output.forEach((buffer) => {
+    if (buffer === null) {
+      return;
+    }
 
-      const str = buffer.toString().trim();
-      if (str) {
-        output.push(str);
-      }
-    });
-  }
+    const str = buffer.toString().trim();
+    if (str) {
+      output.push(str);
+    }
+  });
 
   // Convert multi-line errors into single errors.
   let errors = [];
