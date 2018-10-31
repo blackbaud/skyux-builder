@@ -1,6 +1,7 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
+const path = require('path');
 const mock = require('mock-require');
 
 describe('config karma shared', () => {
@@ -121,6 +122,33 @@ describe('config karma shared', () => {
     mock.reRequire('../config/karma/shared.karma.conf')({
       set: (config) => {
         expect(config.colors).toBe(false);
+      }
+    });
+  });
+
+  it('should ignore anything outside the src directory in webpackMiddleware', () => {
+    mock('../config/sky-pages/sky-pages.config.js', {
+      getSkyPagesConfig: () => ({
+        skyux: {}
+      })
+    });
+
+    mock(testConfigFilename, {
+      getWebpackConfig: () => {}
+    });
+
+    spyOn(path, 'resolve').and.callThrough();
+
+    mock.reRequire('../config/karma/shared.karma.conf')({
+      set: (config) => {
+        const filter = config.webpackMiddleware.watchOptions.ignored;
+        expect(filter).toBeDefined();
+
+        expect(path.resolve).toHaveBeenCalled();
+        expect(filter(path.join(process.cwd(), 'src'))).toBe(false);
+        expect(filter(path.join(process.cwd(), 'node_modules'))).toBe(true);
+        expect(filter(path.join(process.cwd(), '.skypageslocales'))).toBe(true);
+        expect(filter(path.join(process.cwd(), 'coverage'))).toBe(true);
       }
     });
   });
