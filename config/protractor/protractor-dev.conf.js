@@ -61,9 +61,42 @@ let config = {
               spaPkgJson.dependencies[dep] = builderPkgJson.dependencies[dep];
             });
 
+            // Remove any installed versions of Builder.
+            delete spaPkgJson.devDependencies['@blackbaud/skyux-builder'];
+
             fs.writeJsonSync(spaPkgPath, spaPkgJson, { spaces: 2 });
           })
           .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
+          .then(() => {
+            // Copy builder's local source to node_modules.
+            const files = [
+              'cli',
+              'config',
+              'e2e',
+              'lib',
+              'loader',
+              'plugin',
+              'runtime',
+              'src',
+              'ssl',
+              'utils',
+              'index.js',
+              'package.json',
+              'skyuxconfig.json',
+              'tsconfig.json',
+              'tslint.json'
+            ];
+
+            files.forEach(file => {
+              fs.copySync(
+                file,
+                path.resolve(
+                  common.tmp,
+                  `node_modules/@blackbaud/skyux-builder/${file}`
+                )
+              );
+            });
+          })
           .then(resolve)
           .catch(reject);
 
