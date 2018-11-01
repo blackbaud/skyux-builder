@@ -61,15 +61,23 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       break;
   }
 
+  const htmlWebpackPluginConfig = {
+    template: skyPagesConfig.runtime.app.template,
+    inject: skyPagesConfig.runtime.app.inject,
+    runtime: skyPagesConfig.runtime,
+    skyux: skyPagesConfig.skyux
+    // chunksSortMode: 'manual',
+    // chunks: ['app', 'vendor', 'polyfills']
+  };
+
+  console.log('htmlwebpackconfig:', htmlWebpackPluginConfig);
+
   let plugins = [
     // Some properties are required on the root object passed to HtmlWebpackPlugin
-    new HtmlWebpackPlugin({
-      template: skyPagesConfig.runtime.app.template,
-      inject: skyPagesConfig.runtime.app.inject,
-      runtime: skyPagesConfig.runtime,
-      skyux: skyPagesConfig.skyux,
-      chunksSortMode: 'manual',
-      chunks: ['app', 'vendor', 'polyfills']
+    new HtmlWebpackPlugin(htmlWebpackPluginConfig),
+
+    new webpack.DefinePlugin({
+      'skyPagesConfig': JSON.stringify(skyPagesConfig)
     }),
 
     new LoaderOptionsPlugin({
@@ -172,7 +180,39 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     plugins,
     optimization: {
       splitChunks: {
-        chunks: 'all'
+        // See: https://stackoverflow.com/a/50403910/6178885
+        cacheGroups: {
+          app: {
+            name: 'app',
+            chunks: chunk => chunk.name == 'app',
+            reuseExistingChunk: true,
+            priority: 1,
+            test: module =>
+              /[\\/]node_modules[\\/]/.test(module.context),
+            minChunks: 1,
+            minSize: 0
+          },
+          vendor: {
+            name: 'vendor',
+            chunks: chunk => chunk.name == 'vendor',
+            reuseExistingChunk: true,
+            priority: 2,
+            test: module =>
+              /[\\/]node_modules[\\/]/.test(module.context),
+            minChunks: 1,
+            minSize: 0
+          },
+          polyfills: {
+            name: 'polyfills',
+            chunks: chunk => chunk.name == 'polyfills',
+            reuseExistingChunk: true,
+            priority: 3,
+            test: module =>
+              /[\\/]node_modules[\\/]/.test(module.context),
+            minChunks: 1,
+            minSize: 0
+          }
+        }
       }
     }
   };

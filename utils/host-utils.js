@@ -52,7 +52,7 @@ function getScripts(chunks) {
     return chunks.metadata;
   }
 
-  sorter.dependency(chunks).forEach((chunk) => {
+  sorter.dependency(chunks, undefined, {}).forEach((chunk) => {
     scripts.push({
       name: chunk.files[0]
     });
