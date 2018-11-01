@@ -66,11 +66,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     inject: skyPagesConfig.runtime.app.inject,
     runtime: skyPagesConfig.runtime,
     skyux: skyPagesConfig.skyux
-    // chunksSortMode: 'manual',
-    // chunks: ['app', 'vendor', 'polyfills']
   };
-
-  console.log('htmlwebpackconfig:', htmlWebpackPluginConfig);
 
   let plugins = [
     // Some properties are required on the root object passed to HtmlWebpackPlugin
