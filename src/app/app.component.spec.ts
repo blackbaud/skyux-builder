@@ -59,7 +59,6 @@ describe('AppComponent', () => {
   let mockWindow: any;
   let comp: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
-  let parseParams: any;
   let searchArgs: BBOmnibarSearchArgs;
   let navigateParams: any;
   let navigateByUrlParams: any;
@@ -211,7 +210,7 @@ describe('AppComponent', () => {
           get: (key: any) => false,
           has: (key: any) => false,
           hasAllRequiredParams: () => true,
-          parse: (p: any) => parseParams = p
+          parse: (p: any) => p
         }
       },
       skyux: {

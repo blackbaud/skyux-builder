@@ -6,7 +6,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
-const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
@@ -68,15 +67,9 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       template: skyPagesConfig.runtime.app.template,
       inject: skyPagesConfig.runtime.app.inject,
       runtime: skyPagesConfig.runtime,
-      skyux: skyPagesConfig.skyux
-    }),
-
-    new CommonsChunkPlugin({
-      name: ['vendor', 'polyfills']
-    }),
-
-    new webpack.DefinePlugin({
-      'skyPagesConfig': JSON.stringify(skyPagesConfig)
+      skyux: skyPagesConfig.skyux,
+      chunksSortMode: 'manual',
+      chunks: ['app', 'vendor', 'polyfills']
     }),
 
     new LoaderOptionsPlugin({
@@ -114,6 +107,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   }
 
   return {
+    mode: 'production',
     entry: {
       polyfills: [outPath('src', 'polyfills.ts')],
       vendor: [outPath('src', 'vendor.ts')],
@@ -172,14 +166,15 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         {
           test: /\.html$/,
           loader: 'raw-loader'
-        },
-        {
-          test: /\.json$/,
-          loader: 'json-loader'
         }
       ]
     },
-    plugins
+    plugins,
+    optimization: {
+      splitChunks: {
+        chunks: 'all'
+      }
+    }
   };
 }
 

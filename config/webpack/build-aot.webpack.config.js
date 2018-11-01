@@ -1,9 +1,8 @@
 /*jslint node: true */
 'use strict';
 
-const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
-const ngtools = require('@ngtools/webpack');
+const AotPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const SaveMetadata = require('../../plugin/save-metadata');
 
@@ -47,20 +46,22 @@ function getWebpackConfig(skyPagesConfig, argv) {
       ]
     },
     plugins: [
-      new ngtools.AotPlugin({
+      new AotPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
         entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule',
         // Type checking handled by Builder's ts-linter utility.
         typeChecking: false
       }),
-      SaveMetadata,
-      new webpack.optimize.UglifyJsPlugin({
+      SaveMetadata
+    ],
+    optimization: {
+      minimize: {
         beautify: false,
         comments: false,
         compress: { warnings: false },
         mangle: { screw_ie8: true, keep_fnames: true }
-      })
-    ]
+      }
+    }
   });
 }
 

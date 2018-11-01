@@ -88,15 +88,16 @@ function getWebpackConfig(skyPagesConfig) {
         tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
         entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
         sourceMap: true
-      }),
-
-      new webpack.optimize.UglifyJsPlugin({
+      })
+    ],
+    optimization: {
+      minimize: {
         beautify: false,
         comments: false,
         compress: { warnings: false },
         mangle: { screw_ie8: true, keep_fnames: true }
-      })
-    ]
+      }
+    }
   };
 }
 

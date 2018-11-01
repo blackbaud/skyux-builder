@@ -38,14 +38,16 @@ function getWebpackConfig(skyPagesConfig, argv) {
       ]
     },
     plugins: [
-      SaveMetadata,
-      new webpack.optimize.UglifyJsPlugin({
+      SaveMetadata
+    ],
+    optimization: {
+      minimize: {
         beautify: false,
         comments: false,
-        mangle: { screw_ie8: true, keep_fnames: true },
-        sourceMap: true
-      })
-    ]
+        compress: { warnings: false },
+        mangle: { screw_ie8: true, keep_fnames: true }
+      }
+    }
   });
 }
 

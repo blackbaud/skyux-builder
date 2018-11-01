@@ -10,7 +10,6 @@ function getConfig(config) {
 
   const path = require('path');
 
-  const DefinePlugin = require('webpack/lib/DefinePlugin');
   const testWebpackConfig = require('../webpack/test.webpack.config');
   const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
   const testKarmaConf = require('./test.karma.conf');
@@ -22,13 +21,6 @@ function getConfig(config) {
 
   // Import shared karma config
   testKarmaConf(config);
-
-  // First DefinePlugin wins so we want to override the normal src/app/ value in ROOT_DIR
-  webpackConfig.plugins.unshift(
-    new DefinePlugin({
-      'ROOT_DIR': JSON.stringify(srcPath)
-    })
-  );
 
   // Adjust the loader src path.
   webpackConfig.module.rules[webpackConfig.module.rules.length - 1].include = srcPath;

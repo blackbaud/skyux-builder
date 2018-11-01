@@ -12,7 +12,8 @@ import {
 } from '@skyux/i18n';
 
 import {
-  Observable
+  Observable,
+  of
 } from 'rxjs';
 
 @Injectable()
@@ -35,7 +36,7 @@ export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
 
     locale = locale || this.defaultLocale;
 
-    return Observable.of({
+    return of({
       locale: locale
     });
   }
