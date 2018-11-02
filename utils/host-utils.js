@@ -58,6 +58,9 @@ function getScripts(chunks) {
     });
   });
 
+  // Webpack reversed the order of these scripts
+  scripts.reverse();
+
   return scripts;
 }
 
