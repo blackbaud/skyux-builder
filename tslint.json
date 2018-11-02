@@ -66,7 +66,6 @@
     "no-string-literal": false,
     "no-switch-case-fall-through": true,
     "no-unused-expression": true,
-    "no-unused-variable": true,
     "no-use-before-declare": true,
     "no-var-keyword": true,
     "radix": true,
@@ -146,7 +145,7 @@
     "no-forward-ref": true,
     "use-life-cycle-interface": true,
     "use-pipe-transform-interface": true,
-    "pipe-naming": [true, "camelCase", "sky"],
+    "pipe-prefix": "sky",
     "component-class-suffix": true,
     "directive-class-suffix": true
   }
