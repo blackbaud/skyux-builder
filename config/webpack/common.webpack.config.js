@@ -61,14 +61,16 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       break;
   }
 
+  const htmlWebpackPluginConfig = {
+    template: skyPagesConfig.runtime.app.template,
+    inject: skyPagesConfig.runtime.app.inject,
+    runtime: skyPagesConfig.runtime,
+    skyux: skyPagesConfig.skyux
+  };
+
   let plugins = [
     // Some properties are required on the root object passed to HtmlWebpackPlugin
-    new HtmlWebpackPlugin({
-      template: skyPagesConfig.runtime.app.template,
-      inject: skyPagesConfig.runtime.app.inject,
-      runtime: skyPagesConfig.runtime,
-      skyux: skyPagesConfig.skyux
-    }),
+    new HtmlWebpackPlugin(htmlWebpackPluginConfig),
 
     new webpack.DefinePlugin({
       'skyPagesConfig': JSON.stringify(skyPagesConfig)
@@ -168,41 +170,50 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         {
           test: /\.html$/,
           loader: 'raw-loader'
+        },
+        {
+          // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
+          // Removing this will cause deprecation warnings to appear.
+          // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
+          test: /[\/\\]@angular[\/\\]core[\/\\].+\.js$/,
+          parser: { system: true }  // enable SystemJS
         }
       ]
     },
     plugins,
     optimization: {
       splitChunks: {
-        // See: https://stackoverflow.com/a/50403910/6178885
         cacheGroups: {
           app: {
             name: 'app',
-            chunks: chunk => chunk.name == 'app',
+            chunks: chunk => chunk.name === 'app',
             reuseExistingChunk: true,
             priority: 1,
-            test: module =>
-              /[\\/]node_modules[\\/]/.test(module.context),
+            test: function (module) {
+              return /[\\/]node_modules[\\/]/.test(module.context);
+            },
             minChunks: 1,
             minSize: 0
           },
           vendor: {
             name: 'vendor',
-            chunks: chunk => chunk.name == 'vendor',
+            chunks: chunk => chunk.name === 'vendor',
             reuseExistingChunk: true,
             priority: 2,
-            test: module =>
-              /[\\/]node_modules[\\/]/.test(module.context),
+            test: function (module) {
+              return /[\\/]node_modules[\\/]/.test(module.context);
+            },
             minChunks: 1,
             minSize: 0
           },
           polyfills: {
             name: 'polyfills',
-            chunks: chunk => chunk.name == 'polyfills',
+            chunks: chunk => chunk.name === 'polyfills',
             reuseExistingChunk: true,
             priority: 3,
-            test: module =>
-              /[\\/]node_modules[\\/]/.test(module.context),
+            test: function (module) {
+              return /[\\/]node_modules[\\/]/.test(module.context);
+            },
             minChunks: 1,
             minSize: 0
           }
