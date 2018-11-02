@@ -61,16 +61,14 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       break;
   }
 
-  const htmlWebpackPluginConfig = {
-    template: skyPagesConfig.runtime.app.template,
-    inject: skyPagesConfig.runtime.app.inject,
-    runtime: skyPagesConfig.runtime,
-    skyux: skyPagesConfig.skyux
-  };
-
   let plugins = [
     // Some properties are required on the root object passed to HtmlWebpackPlugin
-    new HtmlWebpackPlugin(htmlWebpackPluginConfig),
+    new HtmlWebpackPlugin({
+      template: skyPagesConfig.runtime.app.template,
+      inject: skyPagesConfig.runtime.app.inject,
+      runtime: skyPagesConfig.runtime,
+      skyux: skyPagesConfig.skyux
+    }),
 
     new webpack.DefinePlugin({
       'skyPagesConfig': JSON.stringify(skyPagesConfig)

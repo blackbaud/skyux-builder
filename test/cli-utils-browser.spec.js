@@ -6,14 +6,14 @@ const mock = require('mock-require');
 const merge = require('../utils/merge');
 const logger = require('@blackbaud/skyux-logger');
 
+const hostUtils = require('../utils/host-utils');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('browser utils', () => {
+
   let openCalled;
   let openParamUrl;
   let openParamBrowser;
-  let browserUtils;
-  let hostUtils;
 
   beforeEach(() => {
     openCalled = false;
@@ -25,19 +25,6 @@ describe('browser utils', () => {
       openParamUrl = url;
       openParamBrowser = browser;
     });
-
-    mock('html-webpack-plugin/lib/chunksorter', {
-      dependency: () => {
-        return [{
-          files: [{}]
-        }];
-      }
-    });
-
-    hostUtils = mock.reRequire('../utils/host-utils');
-    browserUtils = mock.reRequire('../cli/utils/browser');
-
-    spyOn(hostUtils, 'getScripts').and.returnValue([]);
 
     spyOn(logger, 'info');
   });
@@ -58,7 +45,7 @@ describe('browser utils', () => {
       port: ''
     }, settings);
 
-    browserUtils(
+    mock.reRequire('../cli/utils/browser')(
       merged.argv,
       merged.skyPagesConfig,
       merged.stats,
@@ -127,8 +114,8 @@ describe('browser utils', () => {
     expect(parsed.query.noid).not.toBeDefined();
   });
 
-  it('should pass through envid and svcid, but not other flags from the command' +
-    'line when config specifies a params object',
+  it(
+    'should pass through envid and svcid, but not other flags from the command line when ' + 'config specifies a params object',
     () => {
       const settings = bind({
         argv: {

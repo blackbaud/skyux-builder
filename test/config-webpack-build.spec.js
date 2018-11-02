@@ -2,7 +2,7 @@
 'use strict';
 
 const fs = require('fs');
-// const mock = require('mock-require');
+const mock = require('mock-require');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack build', () => {
@@ -11,32 +11,32 @@ describe('config webpack build', () => {
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
-  // it('should merge the common webpack config with overrides', () => {
-  //   const f = './common.webpack.config';
-  //   mock(f, {
-  //     getWebpackConfig: () => ({})
-  //   });
+  it('should merge the common webpack config with overrides', () => {
+    const f = './common.webpack.config';
+    mock(f, {
+      getWebpackConfig: () => ({})
+    });
 
-  //   const lib = require('../config/webpack/build.webpack.config');
+    const lib = require('../config/webpack/build.webpack.config');
 
-  //   const skyPagesConfig = {
-  //     runtime: runtimeUtils.getDefaultRuntime(),
-  //     skyux: {
-  //       command: 'CUSTOM_COMMAND'
-  //     }
-  //   };
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime(),
+      skyux: {
+        command: 'CUSTOM_COMMAND'
+      }
+    };
 
-  //   const config = lib.getWebpackConfig(skyPagesConfig);
+    const config = lib.getWebpackConfig(skyPagesConfig);
 
-  //   config.plugins.forEach(plugin => {
-  //     if (plugin.name === 'DefinePlugin') {
-  //       const command = JSON.parse(plugin.options.skyPagesConfig).skyux.command;
-  //       expect(command).toBe(skyPagesConfig.skyux.command);
-  //     }
-  //   });
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'DefinePlugin') {
+        const command = JSON.parse(plugin.options.skyPagesConfig).skyux.command;
+        expect(command).toBe(skyPagesConfig.skyux.command);
+      }
+    });
 
-  //   mock.stop(f);
-  // });
+    mock.stop(f);
+  });
 
   it('should write metadata.json file and match entries order', () => {
     let json;

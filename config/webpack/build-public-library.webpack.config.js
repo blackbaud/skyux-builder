@@ -1,9 +1,8 @@
 /*jslint node: true */
 'use strict';
 
-const ngtools = require('@ngtools/webpack');
+const { AngularCompilerPlugin } = require('@ngtools/webpack');
 const fs = require('fs-extra');
-const webpack = require('webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 
 function parseRegExp(name) {
@@ -84,7 +83,7 @@ function getWebpackConfig(skyPagesConfig) {
       // Generates an AoT JavaScript bundle.
       // TODO: Remove this in favor of Angular's native library bundler,
       // once we've upgraded to Angular version 6.
-      new ngtools.AotPlugin({
+      new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
         entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
         sourceMap: true

@@ -2,6 +2,7 @@
 'use strict';
 
 const path = require('path');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
@@ -119,6 +120,18 @@ function getWebpackConfig(skyPagesConfig, argv) {
           context: __dirname,
           skyPagesConfig: skyPagesConfig
         }
+      }),
+
+      new DefinePlugin({
+        'ENV': JSON.stringify(ENV),
+        'HMR': false,
+        'process.env': {
+          'ENV': JSON.stringify(ENV),
+          'NODE_ENV': JSON.stringify(ENV),
+          'HMR': false
+        },
+        'ROOT_DIR': JSON.stringify(srcPath),
+        'skyPagesConfig': JSON.stringify(skyPagesConfig),
       }),
 
       new ContextReplacementPlugin(

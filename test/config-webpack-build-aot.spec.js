@@ -11,7 +11,7 @@ describe('config webpack build-aot', () => {
 
   beforeEach(() => {
     mock(ngtoolsWebpackPath, {
-      AngularCompilerPlugin: function () {
+      AotPlugin: function () {
 
       }
     });
@@ -26,32 +26,32 @@ describe('config webpack build-aot', () => {
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
-  // it('should merge the common webpack config with overrides', () => {
-  //   const f = '../config/webpack/common.webpack.config';
-  //   mock(f, {
-  //     getWebpackConfig: () => ({ module: { rules: [] } })
-  //   });
+  it('should merge the common webpack config with overrides', () => {
+    const f = '../config/webpack/common.webpack.config';
+    mock(f, {
+      getWebpackConfig: () => ({ module: { rules: [] } })
+    });
 
-  //   const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = require('../config/webpack/build-aot.webpack.config');
 
-  //   const skyPagesConfig = {
-  //     runtime: runtimeUtils.getDefaultRuntime({
-  //       command: 'CUSTOM_COMMAND'
-  //     }),
-  //     skyux: {}
-  //   };
+    const skyPagesConfig = {
+      runtime: runtimeUtils.getDefaultRuntime({
+        command: 'CUSTOM_COMMAND'
+      }),
+      skyux: {}
+    };
 
-  //   const config = lib.getWebpackConfig(skyPagesConfig);
+    const config = lib.getWebpackConfig(skyPagesConfig);
 
-  //   config.plugins.forEach(plugin => {
-  //     if (plugin.name === 'DefinePlugin') {
-  //       const command = JSON.parse(plugin.options.skyPagesConfig.runtime.command);
-  //       expect(command).toBe(skyPagesConfig.runtime.command);
-  //     }
-  //   });
+    config.plugins.forEach(plugin => {
+      if (plugin.name === 'DefinePlugin') {
+        const command = JSON.parse(plugin.options.skyPagesConfig.runtime.command);
+        expect(command).toBe(skyPagesConfig.runtime.command);
+      }
+    });
 
-  //   mock.stop(f);
-  // });
+    mock.stop(f);
+  });
 
   it('should use the AoT entry module', () => {
     const f = '../config/webpack/common.webpack.config';

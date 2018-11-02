@@ -2,7 +2,7 @@
 'use strict';
 
 const webpackMerge = require('webpack-merge');
-const AotPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
+const { AngularCompilerPlugin } = require('@ngtools/webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const SaveMetadata = require('../../plugin/save-metadata');
 
@@ -46,7 +46,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
       ]
     },
     plugins: [
-      new AotPlugin({
+      new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
         entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule',
         // Type checking handled by Builder's ts-linter utility.
