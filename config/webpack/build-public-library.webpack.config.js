@@ -90,12 +90,7 @@ function getWebpackConfig(skyPagesConfig) {
       })
     ],
     optimization: {
-      minimize: {
-        beautify: false,
-        comments: false,
-        compress: { warnings: false },
-        mangle: { screw_ie8: true, keep_fnames: true }
-      }
+      minimize: true
     }
   };
 }
