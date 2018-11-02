@@ -183,41 +183,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     plugins,
     optimization: {
       splitChunks: {
-        cacheGroups: {
-          app: {
-            name: 'app',
-            chunks: chunk => chunk.name === 'app',
-            reuseExistingChunk: true,
-            priority: 1,
-            test: function (module) {
-              return /[\\/]node_modules[\\/]/.test(module.context);
-            },
-            minChunks: 1,
-            minSize: 0
-          },
-          vendor: {
-            name: 'vendor',
-            chunks: chunk => chunk.name === 'vendor',
-            reuseExistingChunk: true,
-            priority: 2,
-            test: function (module) {
-              return /[\\/]node_modules[\\/]/.test(module.context);
-            },
-            minChunks: 1,
-            minSize: 0
-          },
-          polyfills: {
-            name: 'polyfills',
-            chunks: chunk => chunk.name === 'polyfills',
-            reuseExistingChunk: true,
-            priority: 3,
-            test: function (module) {
-              return /[\\/]node_modules[\\/]/.test(module.context);
-            },
-            minChunks: 1,
-            minSize: 0
-          }
-        }
+        chunks: 'all'
       }
     }
   };
