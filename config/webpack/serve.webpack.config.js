@@ -36,7 +36,12 @@ function getWebpackConfig(argv, skyPagesConfig) {
   const common = require('./common.webpack.config').getWebpackConfig(skyPagesConfig, argv);
 
   return webpackMerge(common, {
+    mode: 'development',
+
+    devtool: 'cheap-module-source-map',
+
     watch: true,
+
     module: {
       rules: [
         {
@@ -61,6 +66,38 @@ function getWebpackConfig(argv, skyPagesConfig) {
         }
       ]
     },
+
+    plugins: [
+      new NamedModulesPlugin(),
+      WebpackPluginDone,
+      new LoaderOptionsPlugin({
+        context: __dirname,
+        debug: true
+      }),
+      new HotModuleReplacementPlugin()
+    ],
+
+    optimization: {
+      splitChunks: {
+        chunks: 'async',
+        minSize: 30000,
+        minChunks: 1,
+        maxAsyncRequests: 5,
+        maxInitialRequests: 3,
+        automaticNameDelimiter: '~',
+        name: true,
+        cacheGroups: {
+          vendor: {
+            name: 'vendor',
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            enforce: true
+          }
+        }
+      },
+      minimize: false
+    },
+
     devServer: {
       compress: true,
       inline: true,
@@ -77,18 +114,12 @@ function getWebpackConfig(argv, skyPagesConfig) {
         key: fs.readFileSync(path.join(__dirname, '../../ssl/server.key')),
         cert: fs.readFileSync(path.join(__dirname, '../../ssl/server.crt'))
       },
+      watchOptions: {
+        aggregateTimeout: 300,
+        poll: 1000
+      },
       publicPath: skyPagesConfigUtil.getAppBase(skyPagesConfig)
-    },
-    devtool: 'source-map',
-    plugins: [
-      new NamedModulesPlugin(),
-      WebpackPluginDone,
-      new LoaderOptionsPlugin({
-        context: __dirname,
-        debug: true
-      }),
-      new HotModuleReplacementPlugin()
-    ]
+    }
   });
 }
 

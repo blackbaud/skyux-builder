@@ -44,6 +44,8 @@ function getWebpackConfig(skyPagesConfig, argv) {
   let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   let config = {
+    mode: 'development',
+
     devtool: 'inline-source-map',
 
     resolveLoader: {
@@ -109,6 +111,15 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {
           test: /\.html$/,
           loader: 'raw-loader'
+        },
+        {
+          // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
+          // Removing this will cause deprecation warnings to appear.
+          // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
+          test: /[\/\\]@angular[\/\\]core[\/\\].+\.js$/,
+          parser: {
+            system: true
+          }
         }
       ]
     },
@@ -139,8 +150,19 @@ function getWebpackConfig(skyPagesConfig, argv) {
         /angular(\\|\/)core(\\|\/)@angular/,
         skyPagesConfigUtil.spaPath('src'),
         {}
+      ),
+
+      // See: https://github.com/angular/angular/issues/20357#issuecomment-343683491
+      new ContextReplacementPlugin(
+        /\@angular(\\|\/)core(\\|\/)fesm5/,
+        spaPath('src'),
+        {}
       )
-    ]
+    ],
+
+    optimization: {
+      minimize: false
+    }
   };
 
   if (runCoverage) {

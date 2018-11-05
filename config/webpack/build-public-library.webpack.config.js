@@ -47,17 +47,23 @@ function getWebpackConfig(skyPagesConfig) {
     .map(key => parseRegExp(key));
 
   return {
+    mode: 'production',
+
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
+
     output: {
       path: skyPagesConfigUtil.spaPath('dist', 'bundles'),
       filename: 'bundle.umd.js',
       libraryTarget: 'umd',
       library: libraryName
     },
+
     externals,
+
     resolve: {
       extensions: ['.js', '.ts']
     },
+
     module: {
       rules: [
         {
@@ -79,6 +85,7 @@ function getWebpackConfig(skyPagesConfig) {
         }
       ]
     },
+
     plugins: [
       // Generates an AoT JavaScript bundle.
       // TODO: Remove this in favor of Angular's native library bundler,
@@ -86,12 +93,10 @@ function getWebpackConfig(skyPagesConfig) {
       new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
         entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
+        typeChecking: false,
         sourceMap: true
       })
-    ],
-    optimization: {
-      minimize: true
-    }
+    ]
   };
 }
 

@@ -111,7 +111,6 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   }
 
   return {
-    mode: 'production',
     entry: {
       polyfills: [outPath('src', 'polyfills.ts')],
       vendor: [outPath('src', 'vendor.ts')],
@@ -176,7 +175,9 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
           // Removing this will cause deprecation warnings to appear.
           // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
           test: /[\/\\]@angular[\/\\]core[\/\\].+\.js$/,
-          parser: { system: true }  // enable SystemJS
+          parser: {
+            system: true
+          }
         }
       ]
     },

@@ -27,7 +27,6 @@ function writeTSConfig() {
       'importHelpers': true,
       'noEmitHelpers': true,
       'noImplicitAny': true,
-      'rootDir': '.',
       'inlineSources': true,
       'declaration': true,
       'skipLibCheck': true,
@@ -35,13 +34,14 @@ function writeTSConfig() {
         'es2015',
         'dom'
       ],
-      'types': [
-        'jasmine',
-        'node'
+      'typeRoots': [
+        skyPagesConfigUtil.spaPath('node_modules/@types')
       ]
     },
-    'files': [
-      './app/app.module.ts'
+    'include': [
+      skyPagesConfigUtil.outPath('runtime', '**', '*'),
+      skyPagesConfigUtil.outPath('src', '**', '*'),
+      skyPagesConfigUtil.spaPathTempSrc('**', '*')
     ],
     'exclude': [
       'node_modules',
@@ -51,9 +51,7 @@ function writeTSConfig() {
     'compileOnSave': false,
     'buildOnSave': false,
     'angularCompilerOptions': {
-      'debug': true,
-      'genDir': './ngfactory',
-      'skipMetadataEmit': true
+      'preserveWhitespaces': false
     }
   };
 

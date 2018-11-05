@@ -26,43 +26,51 @@ function getWebpackConfig(skyPagesConfig, argv) {
       return (!isPreloader);
     });
 
-  return webpackMerge(commonConfig, {
+  const config = webpackMerge(commonConfig, {
+    mode: 'production',
+
+    // Disable sourcemaps for production:
+    // https://webpack.js.org/configuration/devtool/#production
+    devtool: false,
+
     entry: {
       polyfills: [skyPagesConfigUtil.spaPathTempSrc('polyfills.ts')],
       vendor: [skyPagesConfigUtil.spaPathTempSrc('vendor.ts')],
       app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
 
-    // Disable sourcemaps for production:
-    // https://webpack.js.org/configuration/devtool/#production
-    devtool: undefined,
-
     module: {
       rules: [
         {
-          test: /\.ts$/,
-          loader: '@ngtools/webpack'
+          test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
+          loaders: ['@ngtools/webpack']
+        },
+        {
+          test: /\.js$/,
+          loader: '@angular-devkit/build-optimizer/webpack-loader',
+          options: {
+            sourceMap: false
+          }
         }
       ]
     },
+
     plugins: [
       new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule',
+        mainPath: skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts'),
         // Type checking handled by Builder's ts-linter utility.
         typeChecking: false
       }),
       SaveMetadata
     ],
+
     optimization: {
-      minimize: {
-        beautify: false,
-        comments: false,
-        compress: { warnings: false },
-        mangle: { screw_ie8: true, keep_fnames: true }
-      }
+      minimize: false
     }
   });
+
+  return config;
 }
 
 module.exports = {

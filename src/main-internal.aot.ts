@@ -1,8 +1,16 @@
-import { platformBrowser } from '@angular/platform-browser';
-import { AppModuleNgFactory } from './ngfactory/app/app.module.ngfactory';
+import {
+  platformBrowserDynamic
+} from '@angular/platform-browser-dynamic';
 
-import { SkyAppBootstrapper } from '@blackbaud/skyux-builder/runtime/bootstrapper';
+import {
+  SkyAppBootstrapper
+} from '@blackbaud/skyux-builder/runtime/bootstrapper';
 
-SkyAppBootstrapper.processBootstrapConfig().then(() => {
-  platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
-});
+import {
+  AppModule
+} from './app/app.module';
+
+SkyAppBootstrapper.processBootstrapConfig()
+  .then(() => {
+    platformBrowserDynamic().bootstrapModule(AppModule);
+  });
