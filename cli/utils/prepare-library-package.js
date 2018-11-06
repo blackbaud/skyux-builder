@@ -7,7 +7,7 @@ const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
 function makePackageFileForDist() {
   const contents = fs.readJsonSync(
-    skyPagesConfigUtil.spaPath('package.json')
+    skyPagesConfigUtil.spaPath('src', 'app', 'public', 'package.json')
   );
   contents.module = 'index.js';
   contents.main = 'bundles/bundle.umd.js';
