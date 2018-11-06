@@ -63,11 +63,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         typeChecking: false
       }),
       SaveMetadata
-    ],
-
-    optimization: {
-      minimize: false
-    }
+    ]
   });
 
   return config;

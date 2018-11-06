@@ -77,27 +77,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
       new HotModuleReplacementPlugin()
     ],
 
-    optimization: {
-      splitChunks: {
-        chunks: 'async',
-        minSize: 30000,
-        minChunks: 1,
-        maxAsyncRequests: 5,
-        maxInitialRequests: 3,
-        automaticNameDelimiter: '~',
-        name: true,
-        cacheGroups: {
-          vendor: {
-            name: 'vendor',
-            test: /[\\/]node_modules[\\/]/,
-            priority: -10,
-            enforce: true
-          }
-        }
-      },
-      minimize: false
-    },
-
     devServer: {
       compress: true,
       inline: true,
