@@ -26,18 +26,18 @@ function getWebpackConfig(skyPagesConfig, argv) {
       return (!isPreloader);
     });
 
-  const config = webpackMerge(commonConfig, {
+  return webpackMerge(commonConfig, {
     mode: 'production',
-
-    // Disable sourcemaps for production:
-    // https://webpack.js.org/configuration/devtool/#production
-    devtool: false,
 
     entry: {
       polyfills: [skyPagesConfigUtil.spaPathTempSrc('polyfills.ts')],
       vendor: [skyPagesConfigUtil.spaPathTempSrc('vendor.ts')],
       app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
+
+    // Disable sourcemaps for production:
+    // https://webpack.js.org/configuration/devtool/#production
+    devtool: false,
 
     module: {
       rules: [
@@ -54,7 +54,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
         }
       ]
     },
-
     plugins: [
       new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
@@ -65,8 +64,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
       SaveMetadata
     ]
   });
-
-  return config;
 }
 
 module.exports = {

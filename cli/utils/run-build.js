@@ -49,10 +49,7 @@ function writeTSConfig() {
       '**/*.spec.ts'
     ],
     'compileOnSave': false,
-    'buildOnSave': false,
-    'angularCompilerOptions': {
-      'preserveWhitespaces': false
-    }
+    'buildOnSave': false
   };
 
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'), config);

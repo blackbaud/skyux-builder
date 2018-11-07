@@ -1,16 +1,8 @@
-import {
-  platformBrowserDynamic
-} from '@angular/platform-browser-dynamic';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
 
-import {
-  SkyAppBootstrapper
-} from '@blackbaud/skyux-builder/runtime/bootstrapper';
+import { SkyAppBootstrapper } from '@blackbaud/skyux-builder/runtime/bootstrapper';
 
-import {
-  AppModule
-} from './app/app.module';
-
-SkyAppBootstrapper.processBootstrapConfig()
-  .then(() => {
-    platformBrowserDynamic().bootstrapModule(AppModule);
-  });
+SkyAppBootstrapper.processBootstrapConfig().then(() => {
+  platformBrowserDynamic().bootstrapModule(AppModule);
+});

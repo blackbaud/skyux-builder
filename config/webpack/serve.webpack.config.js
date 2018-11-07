@@ -38,10 +38,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
   return webpackMerge(common, {
     mode: 'development',
 
-    devtool: 'cheap-module-source-map',
-
     watch: true,
-
     module: {
       rules: [
         {
@@ -66,17 +63,6 @@ function getWebpackConfig(argv, skyPagesConfig) {
         }
       ]
     },
-
-    plugins: [
-      new NamedModulesPlugin(),
-      WebpackPluginDone,
-      new LoaderOptionsPlugin({
-        context: __dirname,
-        debug: true
-      }),
-      new HotModuleReplacementPlugin()
-    ],
-
     devServer: {
       compress: true,
       inline: true,
@@ -98,7 +84,17 @@ function getWebpackConfig(argv, skyPagesConfig) {
         poll: 1000
       },
       publicPath: skyPagesConfigUtil.getAppBase(skyPagesConfig)
-    }
+    },
+    devtool: 'source-map',
+    plugins: [
+      new NamedModulesPlugin(),
+      WebpackPluginDone,
+      new LoaderOptionsPlugin({
+        context: __dirname,
+        debug: true
+      }),
+      new HotModuleReplacementPlugin()
+    ]
   });
 }
 

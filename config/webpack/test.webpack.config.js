@@ -158,11 +158,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         spaPath('src'),
         {}
       )
-    ],
-
-    optimization: {
-      minimize: false
-    }
+    ]
   };
 
   if (runCoverage) {

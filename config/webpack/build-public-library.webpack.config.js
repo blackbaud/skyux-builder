@@ -50,20 +50,16 @@ function getWebpackConfig(skyPagesConfig) {
     mode: 'production',
 
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
-
     output: {
       path: skyPagesConfigUtil.spaPath('dist', 'bundles'),
       filename: 'bundle.umd.js',
       libraryTarget: 'umd',
       library: libraryName
     },
-
     externals,
-
     resolve: {
       extensions: ['.js', '.ts']
     },
-
     module: {
       rules: [
         {
@@ -85,11 +81,8 @@ function getWebpackConfig(skyPagesConfig) {
         }
       ]
     },
-
     plugins: [
       // Generates an AoT JavaScript bundle.
-      // TODO: Remove this in favor of Angular's native library bundler,
-      // once we've upgraded to Angular version 6.
       new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
         entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
