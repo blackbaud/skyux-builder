@@ -27,6 +27,7 @@ function writeTSConfig() {
       'importHelpers': true,
       'noEmitHelpers': true,
       'noImplicitAny': true,
+      'noResolve': false,
       'inlineSources': true,
       'declaration': true,
       'skipLibCheck': true,
