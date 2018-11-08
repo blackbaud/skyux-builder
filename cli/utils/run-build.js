@@ -27,7 +27,6 @@ function writeTSConfig() {
       'importHelpers': true,
       'noEmitHelpers': true,
       'noImplicitAny': true,
-      'noResolve': false,
       'inlineSources': true,
       'declaration': true,
       'skipLibCheck': true,
@@ -85,7 +84,19 @@ function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
   // before writing the file to disk.
   skyPagesModuleSource = assetsProcessor.processAssets(
     skyPagesModuleSource,
-    assetsProcessor.getAssetsUrl(skyPagesConfig, assetsBaseUrl, assetsRel)
+    assetsProcessor.getAssetsUrl(skyPagesConfig, assetsBaseUrl, assetsRel),
+    (filePathWithHash, physicalFilePath) => {
+
+      const path = require('path');
+      const newPath = path.resolve(
+        skyPagesConfigUtil.spaPath('dist'),
+        filePathWithHash
+      );
+
+      fs.ensureFileSync(newPath);
+      const contents = fs.readFileSync(physicalFilePath, { encoding: 'utf-8' });
+      fs.writeFileSync(newPath, contents);
+    }
   );
 
   fs.copySync(
@@ -112,6 +123,10 @@ function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
 
 function cleanupAot() {
   fs.removeSync(skyPagesConfigUtil.spaPathTemp());
+}
+
+function cleanupDist() {
+  fs.removeSync(skyPagesConfigUtil.spaPath('dist'));
 }
 
 function buildServe(argv, skyPagesConfig, webpack, isAot) {
@@ -163,6 +178,7 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
  * @param {*} cancelProcessExit
  */
 function build(argv, skyPagesConfig, webpack) {
+  cleanupDist();
 
   const lintResult = tsLinter.lintSync();
   const isAot = skyPagesConfig &&
