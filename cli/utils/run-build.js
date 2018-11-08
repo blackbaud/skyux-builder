@@ -87,6 +87,10 @@ function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
     assetsProcessor.getAssetsUrl(skyPagesConfig, assetsBaseUrl, assetsRel),
     (filePathWithHash, physicalFilePath) => {
 
+      // File contents are not respected by @ngtools/webpack,
+      // so we need to write the locale files ourselves.
+      // See: https://github.com/angular/angular-cli/issues/6701
+      // See: https://github.com/angular/angular-cli/issues/8870
       const path = require('path');
       const newPath = path.resolve(
         skyPagesConfigUtil.spaPath('dist'),

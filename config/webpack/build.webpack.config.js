@@ -41,7 +41,6 @@ function getWebpackConfig(skyPagesConfig, argv) {
         }
       ]
     },
-
     plugins: [
       SaveMetadata
     ]

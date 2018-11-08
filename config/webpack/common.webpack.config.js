@@ -11,11 +11,6 @@ const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
 
-// This will fix a mapping bug for the latest version of rxjs-compat.
-// See: https://github.com/ReactiveX/rxjs/issues/4070#issuecomment-429191227
-const rxPaths = require('rxjs/_esm5/path-mapping')();
-rxPaths['rxjs/internal/Observable'] = 'rxjs/_esm5/internal/Observable';
-
 function spaPath() {
   return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
 }
@@ -49,7 +44,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     outPath('node_modules')
   ];
 
-  const alias = Object.assign({}, rxPaths, aliasBuilder.buildAliasList(skyPagesConfig));
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
   const logFormat = getLogFormat(skyPagesConfig, argv);
