@@ -1,7 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const SaveMetadata = require('../../plugin/save-metadata');
 
