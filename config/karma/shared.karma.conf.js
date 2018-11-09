@@ -96,6 +96,7 @@ function getConfig(config) {
 
         return newCollector;
       },
+
       _onExit: function (done) {
         // The karma-coverage library does not use the coverage summary from the remapped source
         // code, so its built-in code coverage check uses numbers that don't match what's reported
