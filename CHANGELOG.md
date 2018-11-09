@@ -1,7 +1,21 @@
+# 1.29.0 (2018-11-09)
+
+- Added support for `@blackbaud/auth-client@2.12.0` which allows permission scopes to specify a legal entity ID. [#498](https://github.com/blackbaud/skyux-builder/pull/498)
+
+# 1.28.0 (2018-11-08)
+
+- Added support for `@skyux/i18n@3.3.0`. [#496](https://github.com/blackbaud/skyux-builder/pull/496)
+
+# 1.27.0 (2018-10-31)
+
+- Added config option to include style sheets in bundle. [#484](https://github.com/blackbaud/skyux-builder/pull/484)
+- Added support for Node.js 8. [#490](https://github.com/blackbaud/skyux-builder/pull/490)
+- Bugfix to allow custom `NotFoundComponent`. [#485](https://github.com/blackbaud/skyux-builder/pull/485)
+- Bugfix to address endless loops and crashes during unit tests. [#492](https://github.com/blackbaud/skyux-builder/pull/492)
+
 # 1.26.1 (2018-10-24)
 
 - Fixed issue with using Builder when `strictNullChecks` is enabled. [#487](https://github.com/blackbaud/skyux-builder/pull/487) Thanks [@bentefay](https://github.com/bentefay)!
-
 
 # 1.26.0 (2018-10-19)
 

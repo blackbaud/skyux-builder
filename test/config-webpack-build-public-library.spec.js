@@ -20,7 +20,7 @@ describe('config webpack build public library', () => {
     };
 
     mockNgTools = {
-      AotPlugin: function () {}
+      AngularCompilerPlugin: function () {}
     };
 
     skyPagesConfig = {
@@ -119,7 +119,7 @@ describe('config webpack build public library', () => {
 
   it('should setup AOT compilation', () => {
     const lib = mock.reRequire(configPath);
-    const spy = spyOn(mockNgTools, 'AotPlugin').and.callThrough();
+    const spy = spyOn(mockNgTools, 'AngularCompilerPlugin').and.callThrough();
 
     lib.getWebpackConfig(skyPagesConfig);
 
