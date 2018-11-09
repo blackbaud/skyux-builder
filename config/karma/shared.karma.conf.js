@@ -8,27 +8,15 @@ const logger = require('@blackbaud/skyux-logger');
  * @param {*} config
  */
 function getCoverageThreshold(skyPagesConfig) {
-
-  function getProperty(threshold) {
-    return {
-      global: {
-        statements: threshold,
-        branches: threshold,
-        functions: threshold,
-        lines: threshold
-      }
-    };
-  }
-
   switch (skyPagesConfig.skyux.codeCoverageThreshold) {
     case 'none':
-      return getProperty(0);
+      return 0;
 
     case 'standard':
-      return getProperty(80);
+      return 80;
 
     case 'strict':
-      return getProperty(100);
+      return 100;
   }
 }
 
@@ -47,6 +35,8 @@ function getConfig(config) {
   let testWebpackConfig = require('../webpack/test.webpack.config');
   let remapIstanbul = require('remap-istanbul');
 
+  const utils = require('istanbul').utils;
+
   // See minimist documentation regarding `argv._` https://github.com/substack/minimist
   let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
 
@@ -57,6 +47,8 @@ function getConfig(config) {
 
   preprocessors[specBundle] = ['coverage', 'webpack', 'sourcemap'];
   preprocessors[specStyles] = ['webpack'];
+
+  let remapCoverageSummary;
 
   config.set({
     basePath: '',
@@ -77,15 +69,75 @@ function getConfig(config) {
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
-      check: getCoverageThreshold(skyPagesConfig),
       reporters: [
         { type: 'json' },
         { type: 'html' },
         { type: 'text-summary' },
-        { type: 'lcov' }
+        { type: 'lcov' },
+        { type: 'in-memory' }
       ],
       _onWriteReport: function (collector) {
-        return remapIstanbul.remap(collector.getFinalCoverage());
+        const newCollector = remapIstanbul.remap(collector.getFinalCoverage());
+
+        if (!remapCoverageSummary) {
+          // Cache the remapped coverage summary so we can evaluate it in the _onExit() hook.
+          let summaries = [];
+
+          newCollector.files().forEach((file) => {
+            summaries.push(
+              utils.summarizeFileCoverage(
+                newCollector.fileCoverageFor(file)
+              )
+            );
+          });
+
+          remapCoverageSummary = utils.mergeSummaryObjects.apply(null, summaries);
+        }
+
+        return newCollector;
+      },
+      _onExit: function (done) {
+        // The karma-coverage library does not use the coverage summary from the remapped source
+        // code, so its built-in code coverage check uses numbers that don't match what's reported
+        // to the user.  This will use the coverage summary generated from the remapped source code.
+        var keys = [
+          'statements',
+          'branches',
+          'lines',
+          'functions'
+        ];
+
+        const actuals = remapCoverageSummary;
+        const name = 'global';
+        const threshold = getCoverageThreshold(skyPagesConfig);
+
+        let coverageFailed;
+
+        keys.forEach(function (key) {
+          var actual = actuals[key].pct;
+          var actualUncovered = actuals[key].total - actuals[key].covered;
+
+          if (threshold < 0) {
+            if (threshold * -1 < actualUncovered) {
+              coverageFailed = true;
+              logger.error('Uncovered count for ' + key + ' (' + actualUncovered +
+                ') exceeds ' + name + ' threshold (' + -1 * threshold + ')');
+            }
+          } else {
+            if (actual < threshold) {
+              coverageFailed = true;
+              logger.error('Coverage for ' + key + ' (' + actual +
+                '%) does not meet ' + name + ' threshold (' + threshold + '%)');
+            }
+          }
+        });
+
+        if (coverageFailed) {
+          logger.info(`Karma has exited with 1.`);
+          process.exit(1);
+        }
+
+        done();
       }
     },
     webpackServer: {
