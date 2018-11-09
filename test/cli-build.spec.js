@@ -5,9 +5,12 @@ const mock = require('mock-require');
 const logger = require('@blackbaud/skyux-logger');
 
 describe('cli build', () => {
+  beforeEach(() => {
+    spyOn(logger, 'info');
+    spyOn(logger, 'error');
+  });
 
   it('should log when the build is completed successfully', (done) => {
-    spyOn(logger, 'info');
     mock('../cli/utils/run-build', () => Promise.resolve());
 
     mock.reRequire('../cli/build')('build', {}, {}).then(() => {
@@ -28,7 +31,6 @@ describe('cli build', () => {
   it('should log errors and set exit code to 1', (done) => {
     const errors = 'errors';
 
-    spyOn(logger, 'error');
     spyOn(process, 'exit');
 
     mock('../cli/utils/run-build', () => Promise.reject(errors));

@@ -5,6 +5,11 @@ const mock = require('mock-require');
 const logger = require('@blackbaud/skyux-logger');
 
 describe('utils/config-resolver.js', () => {
+  beforeEach(() => {
+    spyOn(logger, 'info').and.callThrough();
+    spyOn(logger, 'warn').and.callThrough();
+    spyOn(logger, 'error').and.callThrough();
+  });
 
   afterEach(() => {
     mock.stopAll();
@@ -39,7 +44,6 @@ describe('utils/config-resolver.js', () => {
   });
 
   it('should handle finding zero external configurations', () => {
-    spyOn(logger, 'error');
     spyOn(process, 'exit');
 
     const config = setup('test', [], false, {});
@@ -55,9 +59,6 @@ describe('utils/config-resolver.js', () => {
   });
 
   it('should warn if multiple external config files found, but default to first', () => {
-    spyOn(logger, 'warn');
-    spyOn(logger, 'info');
-
     const results = [
       'one-too.js',
       'many-files.js'

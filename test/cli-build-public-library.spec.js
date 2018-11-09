@@ -176,7 +176,7 @@ export class SkyLibPlaceholderModule {}
 
   it('should handle transpilation errors', (done) => {
     const cliCommand = mock.reRequire(requirePath);
-    const spy = spyOn(logger, 'error').and.callThrough();
+    const spy = spyOn(logger, 'error');
     spyOn(mockSpawn, 'sync').and.returnValue({
       err: 'something bad happened'
     });
