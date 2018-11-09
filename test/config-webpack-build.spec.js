@@ -1,23 +1,45 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const fs = require('fs');
 const mock = require('mock-require');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack build', () => {
+  let mockFsExtra;
+  let mockWebpackConfig;
+
+  beforeEach(() => {
+    mockFsExtra = {
+      existsSync() {},
+      writeFileSync() {}
+    };
+
+    mockWebpackConfig = {
+      module: {
+        rules: []
+      }
+    };
+
+    mock('fs-extra', mockFsExtra);
+
+    mock('../config/webpack/common.webpack.config', {
+      getWebpackConfig: () => {
+        return mockWebpackConfig;
+      }
+    });
+  });
+
+  afterEach(() => {
+    mock.stopAll();
+  });
+
   it('should expose a getWebpackConfig method', () => {
-    const lib = require('../config/webpack/build.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build.webpack.config');
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
   it('should merge the common webpack config with overrides', () => {
-    const f = './common.webpack.config';
-    mock(f, {
-      getWebpackConfig: () => ({})
-    });
-
-    const lib = require('../config/webpack/build.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build.webpack.config');
 
     const skyPagesConfig = {
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -34,17 +56,19 @@ describe('config webpack build', () => {
         expect(command).toBe(skyPagesConfig.skyux.command);
       }
     });
-
-    mock.stop(f);
   });
 
   it('should write metadata.json file and match entries order', () => {
     let json;
-    spyOn(fs, 'writeFileSync').and.callFake((file, content) => {
+
+    const writeSpy = spyOn(mockFsExtra, 'writeFileSync').and.callFake((file, content) => {
       json = JSON.parse(content);
     });
 
-    const lib = require('../config/webpack/build.webpack.config');
+    // Need to refresh cache in order to spy on fs-extra.
+    mock.reRequire('../plugin/save-metadata');
+
+    const lib = mock.reRequire('../config/webpack/build.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
@@ -107,15 +131,17 @@ describe('config webpack build', () => {
       }
     });
 
-    expect(fs.writeFileSync).toHaveBeenCalled();
-    expect(json[0].name).toEqual('test3.js');
+    expect(writeSpy).toHaveBeenCalled();
+
+    // Host Utils reverses the scripts.
+    expect(json[0].name).toEqual('test2.js');
     expect(json[1].name).toEqual('test1.js');
-    expect(json[2].name).toEqual('test2.js');
+    expect(json[2].name).toEqual('test3.js');
   });
 
   it('should add the SKY_PAGES_READY_X variable to each entry', () => {
 
-    const lib = require('../config/webpack/build.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
