@@ -89,20 +89,6 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(expectedImport);
   });
 
-  it('should export modules from the runtimeModuleExports', () => {
-    const generator = mock.reRequire(GENERATOR_PATH);
-    const expectedExport = 'SkyAppRuntimeModule';
-
-    const source = generator.getSource({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: runtimeUtils.getDefaultSkyux()
-    });
-
-    const moduleExports = getModuleList('exports', source);
-
-    expect(moduleExports).toContain(expectedExport);
-  });
-
   it('should import modules from the runtimeModuleImports', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     const expectedImport = 'CommonModule';
