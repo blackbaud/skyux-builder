@@ -218,7 +218,9 @@ describe('config karma shared', () => {
           expect(mergeSummaryObjectsSpy).toHaveBeenCalledTimes(1);
 
           // Verify the tests pass or fail based on the coverage percentage.
-          config.coverageReporter._onExit(() => {});
+          const doneSpy = jasmine.createSpy('done');
+
+          config.coverageReporter._onExit(doneSpy);
 
           if (testPct < threshold) {
             expect(exitSpy).toHaveBeenCalledWith(1);
@@ -235,6 +237,8 @@ describe('config karma shared', () => {
             expect(errorSpy).not.toHaveBeenCalled();
             expect(infoSpy).not.toHaveBeenCalledWith('Karma has exited with 1.');
           }
+
+          expect(doneSpy).toHaveBeenCalled();
         }
       });
     }
