@@ -111,13 +111,12 @@ function getConfig(config) {
             'functions'
           ];
 
-          const actuals = remapCoverageSummary;
           const threshold = getCoverageThreshold(skyPagesConfig);
 
           let coverageFailed;
 
           keys.forEach(function (key) {
-            var actual = actuals[key].pct;
+            var actual = remapCoverageSummary[key].pct;
 
             if (actual < threshold) {
               coverageFailed = true;
