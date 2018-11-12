@@ -59,33 +59,6 @@ describe('config karma shared', () => {
     });
   });
 
-  function checkCodeCoverage(configValue, threshold) {
-
-    mock('../config/sky-pages/sky-pages.config.js', {
-      getSkyPagesConfig: () => ({
-        skyux: {
-          codeCoverageThreshold: configValue
-        }
-      })
-    });
-
-    mock(testConfigFilename, {
-      getWebpackConfig: () => {}
-    });
-
-    mock.reRequire('../config/karma/shared.karma.conf')({
-      set: (config) => {
-        expect(config.coverageReporter.check).toEqual({
-          global: {
-            statements: threshold,
-            branches: threshold,
-            functions: threshold,
-            lines: threshold
-          }
-        });
-      }
-    });
-  }
 
   it('should not add the check property when codeCoverageThreshold is not defined', () => {
     mock('../config/sky-pages/sky-pages.config.js', {
@@ -103,18 +76,6 @@ describe('config karma shared', () => {
         expect(config.coverageReporter.check).toBeUndefined();
       }
     });
-  });
-
-  it('should handle codeCoverageThreshold set to "none"', () => {
-    checkCodeCoverage('none', 0);
-  });
-
-  it('should handle codeCoverageThreshold set to "standard"', () => {
-    checkCodeCoverage('standard', 80);
-  });
-
-  it('should handle codeCoverageThreshold set to "strict"', () => {
-    checkCodeCoverage('strict', 100);
   });
 
   it('should pass the logColor flag to the config', () => {
@@ -150,6 +111,148 @@ describe('config karma shared', () => {
         expect(filter(path.join(process.cwd(), '.skypageslocales'))).toBe(true);
         expect(filter(path.join(process.cwd(), 'coverage'))).toBe(true);
       }
+    });
+  });
+
+  describe('code coverage', () => {
+    let errorSpy;
+    let exitSpy;
+    let infoSpy;
+
+    const coverageProps = [
+      'statements',
+      'branches',
+      'lines',
+      'functions'
+    ];
+
+    beforeEach(() => {
+      mock(testConfigFilename, {
+        getWebpackConfig: () => {}
+      });
+
+      errorSpy = jasmine.createSpy('error');
+      infoSpy = jasmine.createSpy('info');
+
+      exitSpy = spyOn(process, 'exit');
+
+      mock('@blackbaud/skyux-logger', {
+        error: errorSpy,
+        info: infoSpy
+      });
+
+      mock('remap-istanbul', {
+        remap: () => {
+          return {
+            fileCoverageFor: () => { },
+            files: () => [
+              'test.js'
+            ]
+          };
+        }
+      });
+    });
+
+    function createMergeSummaryObjectSpy(testPct) {
+      return jasmine.createSpy('mergeSummaryObjects').and.callFake(() => {
+        const summary = {};
+
+        coverageProps.forEach((key) => {
+          summary[key] = {
+            pct: testPct
+          };
+        });
+
+        return summary;
+      });
+    }
+
+    function mockIstanbul(mergeSummaryObjects) {
+      mock('istanbul', {
+        utils: {
+          summarizeFileCoverage: () => {},
+          mergeSummaryObjects
+        }
+      });
+    }
+
+    function mockConfig(codeCoverageThreshold) {
+      mock('../config/sky-pages/sky-pages.config.js', {
+        getSkyPagesConfig: () => ({
+          skyux: {
+            codeCoverageThreshold
+          }
+        })
+      });
+    }
+
+    function resetSpies() {
+      errorSpy.calls.reset();
+      infoSpy.calls.reset();
+      exitSpy.calls.reset();
+    }
+
+    function checkCodeCoverage(thresholdName, threshold, testPct) {
+      const mergeSummaryObjectsSpy = createMergeSummaryObjectSpy(testPct);
+
+      mockIstanbul(mergeSummaryObjectsSpy);
+      mockConfig(thresholdName);
+
+      resetSpies();
+
+      mock.reRequire('../config/karma/shared.karma.conf')({
+        set: (config) => {
+          const fakeCollector = {
+            getFinalCoverage: () => {
+              return {
+                files: () => []
+              };
+            }
+          };
+
+          // Simulate multiple reporters and verify that the merged coverage summary
+          // is only created once.
+          config.coverageReporter._onWriteReport(fakeCollector);
+          config.coverageReporter._onWriteReport(fakeCollector);
+
+          expect(mergeSummaryObjectsSpy).toHaveBeenCalledTimes(1);
+
+          // Verify the tests pass or fail based on the coverage percentage.
+          config.coverageReporter._onExit(() => {});
+
+          if (testPct < threshold) {
+            expect(exitSpy).toHaveBeenCalledWith(1);
+
+            coverageProps.forEach((key) => {
+              expect(errorSpy).toHaveBeenCalledWith(
+                `Coverage for ${key} (${testPct}%) does not meet global threshold (${threshold}%)`
+              );
+            });
+
+            expect(infoSpy).toHaveBeenCalledWith('Karma has exited with 1.');
+          } else {
+            expect(exitSpy).not.toHaveBeenCalled();
+            expect(errorSpy).not.toHaveBeenCalled();
+            expect(infoSpy).not.toHaveBeenCalledWith('Karma has exited with 1.');
+          }
+        }
+      });
+    }
+
+    it('should handle codeCoverageThreshold set to "none"', () => {
+      checkCodeCoverage('none', 0, 0);
+      checkCodeCoverage('none', 0, 1);
+    });
+
+    it('should handle codeCoverageThreshold set to "standard"', () => {
+      checkCodeCoverage('standard', 80, 79);
+      checkCodeCoverage('standard', 80, 80);
+      checkCodeCoverage('standard', 80, 81);
+    });
+
+    it('should handle codeCoverageThreshold set to "strict"', () => {
+      checkCodeCoverage('strict', 100, 99);
+      checkCodeCoverage('strict', 100, 100);
     });
   });
 

@@ -98,44 +98,39 @@ function getConfig(config) {
       },
 
       _onExit: function (done) {
-        // The karma-coverage library does not use the coverage summary from the remapped source
-        // code, so its built-in code coverage check uses numbers that don't match what's reported
-        // to the user.  This will use the coverage summary generated from the remapped source code.
-        var keys = [
-          'statements',
-          'branches',
-          'lines',
-          'functions'
-        ];
-
-        const actuals = remapCoverageSummary;
-        const name = 'global';
         const threshold = getCoverageThreshold(skyPagesConfig);
 
-        let coverageFailed;
+        if (threshold) {
+          // The karma-coverage library does not use the coverage summary from the remapped source
+          // code, so its built-in code coverage check uses numbers that don't match what's reported
+          // to the user.  This will use the coverage summary generated from the remapped source code.
+          var keys = [
+            'statements',
+            'branches',
+            'lines',
+            'functions'
+          ];
 
-        keys.forEach(function (key) {
-          var actual = actuals[key].pct;
-          var actualUncovered = actuals[key].total - actuals[key].covered;
+          const actuals = remapCoverageSummary;
+          const threshold = getCoverageThreshold(skyPagesConfig);
 
-          if (threshold < 0) {
-            if (threshold * -1 < actualUncovered) {
-              coverageFailed = true;
-              logger.error('Uncovered count for ' + key + ' (' + actualUncovered +
-                ') exceeds ' + name + ' threshold (' + -1 * threshold + ')');
-            }
-          } else {
+          let coverageFailed;
+
+          keys.forEach(function (key) {
+            var actual = actuals[key].pct;
+
             if (actual < threshold) {
               coverageFailed = true;
-              logger.error('Coverage for ' + key + ' (' + actual +
-                '%) does not meet ' + name + ' threshold (' + threshold + '%)');
+              logger.error(
+                `Coverage for ${key} (${actual}%) does not meet global threshold (${threshold}%)`
+              );
             }
-          }
-        });
+          });
 
-        if (coverageFailed) {
-          logger.info(`Karma has exited with 1.`);
-          process.exit(1);
+          if (coverageFailed) {
+            logger.info(`Karma has exited with 1.`);
+            process.exit(1);
+          }
         }
 
         done();
