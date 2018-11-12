@@ -192,7 +192,7 @@ describe('config karma shared', () => {
       exitSpy.calls.reset();
     }
 
-    function checkCodeCoverage(thresholdName, threshold, testPct) {
+    function checkCodeCoverage(thresholdName, threshold, testPct, shouldPass) {
       const mergeSummaryObjectsSpy = createMergeSummaryObjectSpy(testPct);
 
       mockIstanbul(mergeSummaryObjectsSpy);
@@ -222,7 +222,11 @@ describe('config karma shared', () => {
 
           config.coverageReporter._onExit(doneSpy);
 
-          if (testPct < threshold) {
+          if (shouldPass) {
+            expect(exitSpy).not.toHaveBeenCalled();
+            expect(errorSpy).not.toHaveBeenCalled();
+            expect(infoSpy).not.toHaveBeenCalledWith('Karma has exited with 1.');
+          } else {
             expect(exitSpy).toHaveBeenCalledWith(1);
 
             coverageProps.forEach((key) => {
@@ -232,10 +236,6 @@ describe('config karma shared', () => {
             });
 
             expect(infoSpy).toHaveBeenCalledWith('Karma has exited with 1.');
-          } else {
-            expect(exitSpy).not.toHaveBeenCalled();
-            expect(errorSpy).not.toHaveBeenCalled();
-            expect(infoSpy).not.toHaveBeenCalledWith('Karma has exited with 1.');
           }
 
           expect(doneSpy).toHaveBeenCalled();
@@ -244,19 +244,19 @@ describe('config karma shared', () => {
     }
 
     it('should handle codeCoverageThreshold set to "none"', () => {
-      checkCodeCoverage('none', 0, 0);
-      checkCodeCoverage('none', 0, 1);
+      checkCodeCoverage('none', 0, 0, true);
+      checkCodeCoverage('none', 0, 1, true);
     });
 
     it('should handle codeCoverageThreshold set to "standard"', () => {
-      checkCodeCoverage('standard', 80, 79);
-      checkCodeCoverage('standard', 80, 80);
-      checkCodeCoverage('standard', 80, 81);
+      checkCodeCoverage('standard', 80, 79, false);
+      checkCodeCoverage('standard', 80, 80, true);
+      checkCodeCoverage('standard', 80, 81, true);
     });
 
     it('should handle codeCoverageThreshold set to "strict"', () => {
-      checkCodeCoverage('strict', 100, 99);
-      checkCodeCoverage('strict', 100, 100);
+      checkCodeCoverage('strict', 100, 99, false);
+      checkCodeCoverage('strict', 100, 100, true);
     });
   });
 
