@@ -1,3 +1,11 @@
+# 1.29.0 (2018-11-09)
+
+- Added support for `@blackbaud/auth-client@2.12.0` which allows permission scopes to specify a legal entity ID. [#498](https://github.com/blackbaud/skyux-builder/pull/498)
+
+# 1.28.0 (2018-11-08)
+
+- Added support for `@skyux/i18n@3.3.0`. [#496](https://github.com/blackbaud/skyux-builder/pull/496)
+
 # 1.27.0 (2018-10-31)
 
 - Added config option to include style sheets in bundle. [#484](https://github.com/blackbaud/skyux-builder/pull/484)
