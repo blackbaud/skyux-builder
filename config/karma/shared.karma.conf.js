@@ -103,7 +103,8 @@ function getConfig(config) {
         if (threshold) {
           // The karma-coverage library does not use the coverage summary from the remapped source
           // code, so its built-in code coverage check uses numbers that don't match what's reported
-          // to the user.  This will use the coverage summary generated from the remapped source code.
+          // to the user.  This will use the coverage summary generated from the remapped
+          // source code.
           var keys = [
             'statements',
             'branches',
