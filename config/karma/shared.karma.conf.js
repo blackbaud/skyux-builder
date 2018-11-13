@@ -84,18 +84,11 @@ function getConfig(config) {
 
         const threshold = getCoverageThreshold(skyPagesConfig);
 
+        // The karma-coverage library does not use the coverage summary from the remapped source
+        // code, so its built-in code coverage check uses numbers that don't match what's reported
+        // to the user.  This will use the coverage summary generated from the remapped
+        // source code.
         if (threshold) {
-          // The karma-coverage library does not use the coverage summary from the remapped source
-          // code, so its built-in code coverage check uses numbers that don't match what's reported
-          // to the user.  This will use the coverage summary generated from the remapped
-          // source code.
-          var keys = [
-            'statements',
-            'branches',
-            'lines',
-            'functions'
-          ];
-
           // When calling the _onWriteReport() method, karma-coverage loops through each reporter,
           // then for each reporter loops through each browser.  Since karma-coverage doesn't
           // supply this method with any information about the reporter or browser for which this
@@ -123,6 +116,13 @@ function getConfig(config) {
                 null,
                 summaries
               );
+
+            let keys = [
+              'statements',
+              'branches',
+              'lines',
+              'functions'
+            ];
 
             keys.forEach((key) => {
               let actual = remapCoverageSummary[key].pct;
