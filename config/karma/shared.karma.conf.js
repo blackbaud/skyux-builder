@@ -48,7 +48,8 @@ function getConfig(config) {
   preprocessors[specBundle] = ['coverage', 'webpack', 'sourcemap'];
   preprocessors[specStyles] = ['webpack'];
 
-  let remapCoverageSummary;
+  let onWriteReportIndex = -1;
+  let coverageFailed;
 
   config.set({
     basePath: '',
@@ -77,27 +78,10 @@ function getConfig(config) {
         { type: 'in-memory' }
       ],
       _onWriteReport: function (collector) {
+        onWriteReportIndex++;
+
         const newCollector = remapIstanbul.remap(collector.getFinalCoverage());
 
-        if (!remapCoverageSummary) {
-          // Cache the remapped coverage summary so we can evaluate it in the _onExit() hook.
-          let summaries = [];
-
-          newCollector.files().forEach((file) => {
-            summaries.push(
-              utils.summarizeFileCoverage(
-                newCollector.fileCoverageFor(file)
-              )
-            );
-          });
-
-          remapCoverageSummary = utils.mergeSummaryObjects.apply(null, summaries);
-        }
-
-        return newCollector;
-      },
-
-      _onExit: function (done) {
         const threshold = getCoverageThreshold(skyPagesConfig);
 
         if (threshold) {
@@ -112,25 +96,61 @@ function getConfig(config) {
             'functions'
           ];
 
-          const threshold = getCoverageThreshold(skyPagesConfig);
+          // When calling the _onWriteReport() method, karma-coverage loops through each reporter,
+          // then for each reporter loops through each browser.  Since karma-coverage doesn't
+          // supply this method with any information about the reporter or browser for which this
+          // method is being called, we must calculate it by looking at how many times the method
+          // has been called.
+          const browserIndex = Math.floor(onWriteReportIndex / this.reporters.length);
 
-          let coverageFailed;
+          if (onWriteReportIndex % this.reporters.length === 0) {
+            // The karma-coverage library has moved to the next browser and has started the first
+            // reporter for that browser, so evaluate the code coverage now.
+            const browserName = config.browsers[browserIndex];
 
-          keys.forEach(function (key) {
-            var actual = remapCoverageSummary[key].pct;
+            let summaries = [];
 
-            if (actual < threshold) {
-              coverageFailed = true;
-              logger.error(
-                `Coverage for ${key} (${actual}%) does not meet global threshold (${threshold}%)`
+            newCollector.files().forEach((file) => {
+              summaries.push(
+                utils.summarizeFileCoverage(
+                  newCollector.fileCoverageFor(file)
+                )
               );
-            }
-          });
+            });
 
-          if (coverageFailed) {
-            logger.info(`Karma has exited with 1.`);
-            process.exit(1);
+            const remapCoverageSummary =
+              utils.mergeSummaryObjects.apply(
+                null,
+                summaries
+              );
+
+            keys.forEach((key) => {
+              let actual = remapCoverageSummary[key].pct;
+
+              if (actual < threshold) {
+                coverageFailed = true;
+                logger.error(
+                  `Coverage in ${browserName} for ${key} (${actual}%) does not meet ` +
+                  `global threshold (${threshold}%)`
+                );
+              }
+            });
           }
+        }
+
+        // It's possible the user is running the watch command, so the field we're
+        // using to track the number of calls to _onWriteReport() needs to be reset
+        // after each run.
+        if (onWriteReportIndex === (this.reporters.length * config.browsers.length - 1)) {
+          onWriteReportIndex = -1;
+        }
+
+        return newCollector;
+      },
+      _onExit: (done) => {
+        if (coverageFailed) {
+          logger.info('Karma has exited with 1.');
+          process.exit(1);
         }
 
         done();

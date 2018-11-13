@@ -22,13 +22,8 @@ describe('config karma shared', () => {
     });
 
     mock.reRequire('../config/karma/shared.karma.conf')({
-      set: (config) => {
-        const collector = {
-          getFinalCoverage: () => ({})
-        };
+      set: () => {
         expect(called).toEqual(true);
-        expect(typeof config.coverageReporter._onWriteReport).toEqual('function');
-        expect(config.coverageReporter._onWriteReport(collector)).toBeDefined();
         done();
       }
     });
@@ -200,8 +195,17 @@ describe('config karma shared', () => {
 
       resetSpies();
 
+      const browsers = ['Chrome', 'Firefox'];
+      const reporters = [
+        { type: 'json' },
+        { type: 'html' }
+      ];
+
       mock.reRequire('../config/karma/shared.karma.conf')({
+        browsers: browsers,
         set: (config) => {
+          config.coverageReporter.reporters = reporters;
+
           const fakeCollector = {
             getFinalCoverage: () => {
               return {
@@ -210,12 +214,18 @@ describe('config karma shared', () => {
             }
           };
 
-          // Simulate multiple reporters and verify that the merged coverage summary
-          // is only created once.
-          config.coverageReporter._onWriteReport(fakeCollector);
-          config.coverageReporter._onWriteReport(fakeCollector);
+          // Simulate multiple reporters/browsers the same way that karma-coverage does.
+          reporters.forEach(() => {
+            browsers.forEach(() => {
+              config.coverageReporter._onWriteReport(fakeCollector);
+            });
+          });
 
-          expect(mergeSummaryObjectsSpy).toHaveBeenCalledTimes(1);
+          // Code coverage should be evaluated once per browser unless the threshold is 0,
+          // in which case it should not be called at all.
+          expect(mergeSummaryObjectsSpy).toHaveBeenCalledTimes(
+            threshold === 0 ? 0 : browsers.length
+          );
 
           // Verify the tests pass or fail based on the coverage percentage.
           const doneSpy = jasmine.createSpy('done');
@@ -229,11 +239,14 @@ describe('config karma shared', () => {
           } else {
             expect(exitSpy).toHaveBeenCalledWith(1);
 
-            coverageProps.forEach((key) => {
-              expect(errorSpy).toHaveBeenCalledWith(
-                `Coverage for ${key} (${testPct}%) does not meet global threshold (${threshold}%)`
-              );
-            });
+            browsers.forEach((browserName) => {
+              coverageProps.forEach((key) => {
+                expect(errorSpy).toHaveBeenCalledWith(
+                  `Coverage in ${browserName} for ${key} (${testPct}%) does not meet ` +
+                  `global threshold (${threshold}%)`
+                );
+              });
+            })
 
             expect(infoSpy).toHaveBeenCalledWith('Karma has exited with 1.');
           }
