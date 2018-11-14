@@ -5,7 +5,7 @@ const mock = require('mock-require');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-describe('index.ejs template', () => {
+xdescribe('index.ejs template', () => {
   beforeEach(() => {
     mock('../lib/locale-assets-processor', {
       prepareLocaleFiles() {}
