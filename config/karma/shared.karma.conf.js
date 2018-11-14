@@ -32,18 +32,19 @@ function getConfig(config) {
   const path = require('path');
   const srcPath = path.join(process.cwd(), 'src');
 
-  let testWebpackConfig = require('../webpack/test.webpack.config');
-  let remapIstanbul = require('remap-istanbul');
+  const testWebpackConfig = require('../webpack/test.webpack.config');
+  const remapIstanbul = require('remap-istanbul');
 
   const utils = require('istanbul').utils;
 
   // See minimist documentation regarding `argv._` https://github.com/substack/minimist
-  let skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
+  const skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
 
   // Using __dirname so this file can be extended from other configuration file locations
   const specBundle = `${__dirname}/../../utils/spec-bundle.js`;
   const specStyles = `${__dirname}/../../utils/spec-styles.js`;
-  let preprocessors = {};
+
+  const preprocessors = {};
 
   preprocessors[specBundle] = ['coverage', 'webpack', 'sourcemap'];
   preprocessors[specStyles] = ['webpack'];
@@ -101,7 +102,7 @@ function getConfig(config) {
             // reporter for that browser, so evaluate the code coverage now.
             const browserName = config.browsers[browserIndex];
 
-            let summaries = [];
+            const summaries = [];
 
             newCollector.files().forEach((file) => {
               summaries.push(
@@ -117,7 +118,7 @@ function getConfig(config) {
                 summaries
               );
 
-            let keys = [
+            const keys = [
               'statements',
               'branches',
               'lines',
