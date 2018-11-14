@@ -68,5 +68,5 @@ function getWebpackConfig(skyPagesConfig, argv) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };

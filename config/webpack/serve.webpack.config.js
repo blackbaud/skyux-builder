@@ -35,10 +35,22 @@ function getWebpackConfig(argv, skyPagesConfig) {
 
   const common = require('./common.webpack.config').getWebpackConfig(skyPagesConfig, argv);
 
+  // Revert to environment defaults when serving.
+  delete common.optimization;
+
   return webpackMerge(common, {
     mode: 'development',
 
+    devtool: 'source-map',
+
     watch: true,
+
+    // Do not use hashes during a serve.
+    output: {
+      filename: '[name].js',
+      chunkFilename: '[name].chunk.js'
+    },
+
     module: {
       rules: [
         {
@@ -63,6 +75,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
         }
       ]
     },
+
     devServer: {
       compress: true,
       inline: true,
@@ -85,7 +98,7 @@ function getWebpackConfig(argv, skyPagesConfig) {
       },
       publicPath: skyPagesConfigUtil.getAppBase(skyPagesConfig)
     },
-    devtool: 'source-map',
+
     plugins: [
       new NamedModulesPlugin(),
       WebpackPluginDone,
@@ -99,5 +112,5 @@ function getWebpackConfig(argv, skyPagesConfig) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };

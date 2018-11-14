@@ -116,7 +116,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     output: {
       filename: '[name].[contenthash].js',
       chunkFilename: '[name].[contenthash].chunk.js',
-      path: spaPath('dist'),
+      path: spaPath('dist')
     },
     resolveLoader: {
       modules: resolves
@@ -202,5 +202,5 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };
