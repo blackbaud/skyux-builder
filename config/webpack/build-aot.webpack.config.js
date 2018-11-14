@@ -26,12 +26,11 @@ function getWebpackConfig(skyPagesConfig, argv) {
       return (!isPreloader);
     });
 
-  return webpackMerge(commonConfig, {
+  const config = webpackMerge(commonConfig, {
     mode: 'production',
 
     entry: {
       polyfills: [skyPagesConfigUtil.spaPathTempSrc('polyfills.ts')],
-      vendor: [skyPagesConfigUtil.spaPathTempSrc('vendor.ts')],
       app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
 
@@ -64,6 +63,8 @@ function getWebpackConfig(skyPagesConfig, argv) {
       SaveMetadata
     ]
   });
+
+  return config;
 }
 
 module.exports = {

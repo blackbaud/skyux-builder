@@ -111,12 +111,11 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   return {
     entry: {
       polyfills: [outPath('src', 'polyfills.ts')],
-      vendor: [outPath('src', 'vendor.ts')],
       app: [appPath]
     },
     output: {
-      filename: '[name].js',
-      chunkFilename: '[id].chunk.js',
+      filename: '[name].[hash].js',
+      chunkFilename: '[name].[id].[hash].js',
       path: spaPath('dist'),
     },
     resolveLoader: {
@@ -169,10 +168,6 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
           loader: 'raw-loader'
         },
         {
-          test: /\.json$/,
-          loader: 'json-loader'
-        },
-        {
           // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
           // Removing this will cause deprecation warnings to appear.
           // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
@@ -183,7 +178,27 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
         }
       ]
     },
-    plugins
+    plugins,
+    optimization: {
+      moduleIds: 'hashed',
+      noEmitOnErrors: true,
+      splitChunks: {
+        cacheGroups: {
+          angular: {
+            test: /[\\/]node_modules[\\/]@angular[\\/]/,
+            name: 'angular',
+            reuseExistingChunk: true,
+            chunks: 'all'
+          },
+          skyux: {
+            test: /[\\/]node_modules[\\/](@skyux|@blackbaud)[\\/]/,
+            name: 'skyux',
+            reuseExistingChunk: true,
+            chunks: 'all'
+          }
+        }
+      }
+    }
   };
 }
 
