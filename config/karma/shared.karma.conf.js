@@ -147,6 +147,7 @@ function getConfig(config) {
 
         return newCollector;
       },
+
       _onExit: (done) => {
         if (coverageFailed) {
           logger.info('Karma has exited with 1.');
