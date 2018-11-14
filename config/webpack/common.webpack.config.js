@@ -183,18 +183,18 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       moduleIds: 'hashed',
       noEmitOnErrors: true,
       splitChunks: {
+        chunks: 'all',
         cacheGroups: {
-          angular: {
-            test: /[\\/]node_modules[\\/]@angular[\\/]/,
-            name: 'angular',
-            reuseExistingChunk: true,
-            chunks: 'all'
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            priority: -2 // zero is default
           },
           skyux: {
             test: /[\\/]node_modules[\\/](@skyux|@blackbaud)[\\/]/,
             name: 'skyux',
-            reuseExistingChunk: true,
-            chunks: 'all'
+            chunks: 'all',
+            priority: -1
           }
         }
       }
