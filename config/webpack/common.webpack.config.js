@@ -191,7 +191,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
             priority: -2 // zero is default
           },
           skyux: {
-            test: /[\\/]node_modules[\\/](@skyux|@blackbaud)[\\/]/,
+            test: /[\\/]node_modules[\\/]@skyux[\\/]/,
             name: 'skyux',
             priority: -1
           }
