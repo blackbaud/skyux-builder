@@ -114,8 +114,8 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       app: [appPath]
     },
     output: {
-      filename: '[name].[hash].js',
-      chunkFilename: '[name].[id].[hash].js',
+      filename: '[name].[contenthash].js',
+      chunkFilename: '[name].[contenthash].chunk.js',
       path: spaPath('dist'),
     },
     resolveLoader: {
@@ -193,7 +193,6 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
           skyux: {
             test: /[\\/]node_modules[\\/](@skyux|@blackbaud)[\\/]/,
             name: 'skyux',
-            chunks: 'all',
             priority: -1
           }
         }
