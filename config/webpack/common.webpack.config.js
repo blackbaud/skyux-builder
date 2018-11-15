@@ -188,7 +188,12 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
             name: 'vendor',
-            priority: -2 // zero is default
+            priority: -3 // zero is default
+          },
+          polyfill: {
+            test: /[\\/]node_modules[\\/](core-js|web-animations-js|zone\.js)[\\/]/,
+            name: 'pollyfill', // Chunk names cannot match an entry point.
+            priority: -2
           },
           skyux: {
             test: /[\\/]node_modules[\\/]@skyux[\\/]/,
