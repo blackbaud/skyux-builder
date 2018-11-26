@@ -2,7 +2,7 @@
 'use strict';
 
 const util = require('util');
-const open = require('open');
+const open = require('opn');
 const logger = require('@blackbaud/skyux-logger');
 const hostUtils = require('../../utils/host-utils');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
@@ -79,12 +79,16 @@ function browser(argv, skyPagesConfig, stats, port) {
       localUrl += queryStringBase;
 
       logger.info(`Launching Local URL: ${localUrl}`);
-      open(localUrl, argv.browser);
+      open(localUrl, {
+        app: argv.browser
+      });
       break;
 
     case 'host':
       logger.info(`Launching Host URL: ${hostUrl}`);
-      open(hostUrl, argv.browser);
+      open(hostUrl, {
+        app: argv.browser
+      });
       break;
 
     default:

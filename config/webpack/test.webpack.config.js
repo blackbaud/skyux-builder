@@ -113,6 +113,10 @@ function getWebpackConfig(skyPagesConfig, argv) {
           loader: 'raw-loader'
         },
         {
+          test: /\.json$/,
+          loader: 'json-loader'
+        },
+        {
           // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
           // Removing this will cause deprecation warnings to appear.
           // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
