@@ -8,7 +8,6 @@ env:
 
 node_js:
   - "8"
-  - "6"
 
 script: "npm run lint && npm run $TEST_COMMAND"
 
