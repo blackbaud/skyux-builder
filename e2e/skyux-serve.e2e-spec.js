@@ -31,14 +31,12 @@ describe('skyux serve', () => {
   it('should render shared nav component', tests.renderSharedNavComponent);
   it('should follow routerLink and render about component', tests.followRouterLinkRenderAbout);
 
-  it('should should include script tags', (done) => {
+  it('should include script tags', (done) => {
     browser.getPageSource()
       .then(source => {
         let previousIndex = -1;
         [
           'polyfills.js',
-          'vendor.js',
-          'skyux.js',
           'app.js'
         ].forEach(file => {
           const currentIndex = source.indexOf(`<script src="${file}"></script>`);
