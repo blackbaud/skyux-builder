@@ -3,9 +3,17 @@
 
 const mock = require('mock-require');
 const logger = require('@blackbaud/skyux-logger');
-const config = require('../config/sky-pages/sky-pages.config');
 
 describe('@blackbaud/skyux-builder', () => {
+  let config;
+
+  beforeEach(() => {
+    config = mock.reRequire('../config/sky-pages/sky-pages.config');
+  });
+
+  afterEach(() => {
+    mock.stopAll();
+  });
 
   it('should expose a runCommand method', () => {
     const lib = mock.reRequire('../index');
@@ -58,7 +66,7 @@ describe('@blackbaud/skyux-builder', () => {
     };
 
     Object.keys(cmds).forEach((key) => {
-      mock('../cli/' + cmds[key].lib, () => {
+      mock(`../cli/${cmds[key].lib}`, () => {
         cmds[key].called = true;
       });
       lib.runCommand(cmds[key].cmd, {});
@@ -73,7 +81,7 @@ describe('@blackbaud/skyux-builder', () => {
     const cmd = 'junk-command-that-does-not-exist';
     const lib = mock.reRequire('../index');
 
-    expect(lib.runCommand(cmd, {})).toBe(false);
+    expect(lib.runCommand(cmd, {})).toEqual(false);
     expect(config.getSkyPagesConfig).not.toHaveBeenCalled();
   });
 
@@ -82,6 +90,8 @@ describe('@blackbaud/skyux-builder', () => {
     spyOn(config, 'getSkyPagesConfig');
 
     const cmd = 'build';
+    mock(`../cli/${cmd}`, () => {});
+
     const lib = mock.reRequire('../index');
 
     expect(lib.runCommand(cmd, {})).toBe(true);

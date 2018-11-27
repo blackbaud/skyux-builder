@@ -5,7 +5,7 @@ const mock = require('mock-require');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-xdescribe('index.ejs template', () => {
+describe('index.ejs template', () => {
   beforeEach(() => {
     mock('../lib/locale-assets-processor', {
       prepareLocaleFiles() {}
@@ -26,7 +26,7 @@ xdescribe('index.ejs template', () => {
     mock('../config/webpack/build.webpack.config', {
       getWebpackConfig: (skyPagesConfig) => ({
         entry: {
-          test: ['test.js']
+          test: ['./test/fixtures/index-ejs-test.js']
         },
         plugins: [
           new HtmlWebpackPlugin({
