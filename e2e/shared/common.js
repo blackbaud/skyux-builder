@@ -54,10 +54,10 @@ function bindServe() {
     webpackServer.stderr.on('data', data => log(data));
     webpackServer.stdout.on('data', data => {
       const dataAsString = log(data);
-      if (dataAsString.indexOf('webpack: Compiled successfully.') > -1) {
+      if (dataAsString.indexOf('Compiled successfully.') > -1) {
         resolve(_port);
       }
-      if (dataAsString.indexOf('webpack: Failed to compile.') > -1) {
+      if (dataAsString.indexOf('Failed to compile.') > -1) {
         reject(dataAsString);
       }
     });
