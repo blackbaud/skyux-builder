@@ -13,6 +13,7 @@ function getConfig(command) {
 module.exports = {
   runCommand: (command, argv) => {
     const shorthand = {
+      f: 'force',
       l: 'launch',
       b: 'browser',
       s: 'serve'
