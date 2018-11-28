@@ -154,7 +154,7 @@ function generate(argv) {
   try {
     const type = argv._[1];
     const name = argv._[2];
-    const force = argv['force'];
+    const force = argv.force;
 
     switch (type) {
       case 'component':
