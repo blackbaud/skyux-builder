@@ -21,7 +21,10 @@ describe('cli utils run build', () => {
     mockAssetsProcessor = {
       setSkyAssetsLoaderUrl() {},
       getAssetsUrl: () => '',
-      processAssets: (content) => content
+      processAssets: (content, assetsUrl, callback) => {
+        callback('file-with-hash.json', 'physical-file-path.json');
+        return content;
+      }
     };
 
     mockFsExtra = {
@@ -29,6 +32,9 @@ describe('cli utils run build', () => {
       emptyDirSync() {},
       ensureDirSync() {},
       ensureFileSync() {},
+      readFileSync() {
+        return '{}';
+      },
       removeSync() {},
       writeFileSync() {},
       writeJSONSync() {},
@@ -171,7 +177,10 @@ describe('cli utils run build', () => {
       })
     );
 
-    mock.stop(f);
+    expect(writeFileSpy).toHaveBeenCalledWith(
+      skyPagesConfigUtil.outPath('dist', 'file-with-hash.json'),
+      '{}'
+    );
   });
 
   it('should allow the assets base URL to be specified', (done) => {
@@ -213,7 +222,6 @@ describe('cli utils run build', () => {
               undefined
             );
           } finally {
-            mock.stop(f);
             done();
           }
         }
