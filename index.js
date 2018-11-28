@@ -52,6 +52,7 @@ module.exports = {
         require('./cli/version')();
         break;
       case 'generate':
+      case 'g':
         require('./cli/generate')(argv);
         break;
       default:

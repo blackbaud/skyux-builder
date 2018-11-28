@@ -54,6 +54,10 @@ describe('@blackbaud/skyux-builder', () => {
       'generate': {
         cmd: 'generate',
         lib: 'generate'
+      },
+      'g': {
+        cmd: 'generate',
+        lib: 'generate'
       }
     };
 
