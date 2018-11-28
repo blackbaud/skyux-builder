@@ -1,6 +1,6 @@
 # 1.30.0 (2018-11-26)
 
-- Added `SkyAuthHttpClientModule` that can be used in conjunction with Angular's `HttpClient` to make authenticated calls to services backed by Blackbaud ID. (blackbaud/skyux-http#11)[https://github.com/blackbaud/skyux-http/pull/11]
+- Added `SkyAuthHttpClientModule` that can be used in conjunction with Angular's `HttpClient` to make authenticated calls to services backed by Blackbaud ID. [blackbaud/skyux-http#11](https://github.com/blackbaud/skyux-http/pull/11)
 - Fixed coverage reports to accurately match against configured thresholds. [#499](https://github.com/blackbaud/skyux-builder/pull/499)
 
 # 1.29.0 (2018-11-09)
