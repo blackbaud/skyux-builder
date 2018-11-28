@@ -26,7 +26,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
       return (!isPreloader);
     });
 
-  const config = webpackMerge(commonConfig, {
+  return webpackMerge(commonConfig, {
     mode: 'production',
 
     entry: {
@@ -63,10 +63,8 @@ function getWebpackConfig(skyPagesConfig, argv) {
       SaveMetadata
     ]
   });
-
-  return config;
 }
 
 module.exports = {
-  getWebpackConfig
+  getWebpackConfig: getWebpackConfig
 };

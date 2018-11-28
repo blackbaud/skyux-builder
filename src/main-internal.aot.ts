@@ -3,7 +3,7 @@ import { AppModule } from './app/app.module';
 
 import { SkyAppBootstrapper } from '@blackbaud/skyux-builder/runtime/bootstrapper';
 
-// We can use the dynaimc bootstrapper with @ngtools/webpack.
+// We can now use the dynamic bootstrapper with @ngtools/webpack.
 // See: https://blog.craftlab.hu/multiple-solutions-for-angular-ahead-of-time-aot-compilation-c474d9a0d508#71de
 
 SkyAppBootstrapper.processBootstrapConfig().then(() => {

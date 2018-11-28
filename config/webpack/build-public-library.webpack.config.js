@@ -86,7 +86,7 @@ function getWebpackConfig(skyPagesConfig) {
       new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
         entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
-        sourceMap: false,
+        sourceMap: true,
         typeChecking: false
       })
     ]

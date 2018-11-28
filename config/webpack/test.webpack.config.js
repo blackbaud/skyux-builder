@@ -152,6 +152,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {}
       ),
 
+      // Suppress the "request of a dependency is an expression" warnings.
       // See: https://github.com/angular/angular/issues/20357#issuecomment-343683491
       new ContextReplacementPlugin(
         /\@angular(\\|\/)core(\\|\/)fesm5/,
