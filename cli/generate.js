@@ -74,7 +74,7 @@ export class ${name} {
 }
 `;
 
-  safeFileWrite(pathParts, fileName + '.ts', fileContent, force);
+  safeFileWrite(pathParts, `${fileName}.ts`, fileContent, force);
 }
 
 function generateComponentSpec(pathParts, fileName, name, nameSnakeCase, force) {
@@ -118,15 +118,15 @@ describe('${nameWithSpaces} component', () => {
 });
 `;
 
-  safeFileWrite(pathParts, fileName + '.spec.ts', fileContent, force);
+  safeFileWrite(pathParts, `${fileName}.spec.ts`, fileContent, force);
 }
 
 function generateComponentHtml(pathParts, fileName, force) {
-  safeFileWrite(pathParts, fileName + '.html', '', force);
+  safeFileWrite(pathParts, `${fileName}.html`, '', force);
 }
 
 function generateComponentScss(pathParts, fileName, force) {
-  safeFileWrite(pathParts, fileName + '.scss', '', force);
+  safeFileWrite(pathParts, `${fileName}.scss`, '', force);
 }
 
 function getPathParts(name) {
