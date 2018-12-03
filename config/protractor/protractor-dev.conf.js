@@ -62,7 +62,7 @@ let config = {
             });
 
             // Remove any installed versions of Builder.
-            delete spaPkgJson.devDependencies['@blackbaud/skyux-builder'];
+            delete spaPkgJson.devDependencies['@skyux-sdk/builder'];
 
             fs.writeJsonSync(spaPkgPath, spaPkgJson, { spaces: 2 });
           })
@@ -92,7 +92,7 @@ let config = {
                 file,
                 path.resolve(
                   common.tmp,
-                  `node_modules/@blackbaud/skyux-builder/${file}`
+                  `node_modules/@skyux-sdk/builder/${file}`
                 )
               );
             });

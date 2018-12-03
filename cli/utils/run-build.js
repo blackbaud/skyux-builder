@@ -65,7 +65,7 @@ function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
       // Node package name rather than a local path; otherwise TypeScript will treat them as
       // different types and Angular will throw an error when trying to inject an instance
       // of a class (such as SkyAuthHttp) by its type.
-      runtimeAlias: '@blackbaud/skyux-builder/runtime',
+      runtimeAlias: '@skyux-sdk/builder/runtime',
       useTemplateUrl: true
     }
   };

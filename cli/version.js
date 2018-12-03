@@ -10,7 +10,7 @@ const logger = require('@blackbaud/skyux-logger');
  */
 function version() {
   const packageJson = require(path.resolve(__dirname, '..', 'package.json'));
-  logger.info('@blackbaud/skyux-builder: %s', packageJson.version);
+  logger.info('@skyux-sdk/builder: %s', packageJson.version);
 }
 
 module.exports = version;
