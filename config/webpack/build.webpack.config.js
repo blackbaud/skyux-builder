@@ -1,7 +1,6 @@
 /*jslint node: true */
 'use strict';
 
-const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const SaveMetadata = require('../../plugin/save-metadata');
 
@@ -12,9 +11,13 @@ const SaveMetadata = require('../../plugin/save-metadata');
  */
 function getWebpackConfig(skyPagesConfig, argv) {
   const common = require('./common.webpack.config');
+  const commonConfig = common.getWebpackConfig(skyPagesConfig, argv);
 
-  return webpackMerge(common.getWebpackConfig(skyPagesConfig, argv), {
-    devtool: 'source-map',
+  return webpackMerge(commonConfig, {
+    mode: 'production',
+
+    devtool: false,
+
     module: {
       rules: [
         {
@@ -38,13 +41,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
       ]
     },
     plugins: [
-      SaveMetadata,
-      new webpack.optimize.UglifyJsPlugin({
-        beautify: false,
-        comments: false,
-        mangle: { screw_ie8: true, keep_fnames: true },
-        sourceMap: true
-      })
+      SaveMetadata
     ]
   });
 }

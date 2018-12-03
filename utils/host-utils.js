@@ -52,11 +52,14 @@ function getScripts(chunks) {
     return chunks.metadata;
   }
 
-  sorter.dependency(chunks).forEach((chunk) => {
+  sorter.dependency(chunks, undefined, {}).forEach((chunk) => {
     scripts.push({
       name: chunk.files[0]
     });
   });
+
+  // Webpack reversed the order of these scripts
+  scripts.reverse();
 
   return scripts;
 }

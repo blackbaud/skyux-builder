@@ -3,6 +3,7 @@
 'use strict';
 
 const fs = require('fs');
+const glob = require('glob');
 const path = require('path');
 const common = require('./common');
 
@@ -15,14 +16,22 @@ module.exports = {
 
   verifyFiles: (done) => {
     [
-      'app.js',
       'index.html',
-      'metadata.json',
-      'polyfills.js',
-      'vendor.js'
+      'metadata.json'
     ].forEach(file => {
       expect(fs.existsSync(path.resolve(common.tmp, 'dist', file))).toEqual(true);
     });
+
+    [
+      'app.*.js',
+      'polyfills.*.js',
+      'skyux.*.chunk.js',
+      'vendor.*.chunk.js'
+    ].forEach((file) => {
+      const files = glob.sync(path.resolve(common.tmp, 'dist', file));
+      expect(files.length).toEqual(1);
+    });
+
     done();
   },
 

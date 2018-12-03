@@ -73,4 +73,11 @@ describe('SKY UX plugin file processor', () => {
     processor.processFiles(config);
     expect(fs.writeFileSync).not.toHaveBeenCalled();
   });
+
+  it('should allow for a custom root directory', () => {
+    const spy = spyOn(glob, 'sync').and.callThrough();
+    const processor = mock.reRequire(processorPath);
+    processor.processFiles(config, 'foo/bar');
+    expect(spy.calls.argsFor(0)[0]).toEqual('foo/bar');
+  });
 });

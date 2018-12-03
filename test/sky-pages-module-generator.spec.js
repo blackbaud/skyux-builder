@@ -54,6 +54,10 @@ describe('SKY UX Builder module generator', () => {
       }
     };
 
+    mockLogger = {
+      warn() {}
+    };
+
     mock('@blackbaud/skyux-logger', mockLogger);
     mock('../lib/sky-pages-assets-generator', mockAssetsGenerator);
     mock('../lib/sky-pages-component-generator', mockComponentGenerator);
@@ -85,20 +89,6 @@ describe('SKY UX Builder module generator', () => {
     expect(source).toContain(expectedImport);
   });
 
-  it('should export modules from the runtimeModuleExports', () => {
-    const generator = mock.reRequire(GENERATOR_PATH);
-    const expectedExport = 'SkyAppRuntimeModule';
-
-    const source = generator.getSource({
-      runtime: runtimeUtils.getDefaultRuntime(),
-      skyux: runtimeUtils.getDefaultSkyux()
-    });
-
-    const moduleExports = getModuleList('exports', source);
-
-    expect(moduleExports).toContain(expectedExport);
-  });
-
   it('should import modules from the runtimeModuleImports', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     const expectedImport = 'CommonModule';
@@ -127,7 +117,9 @@ describe('SKY UX Builder module generator', () => {
       skyux: runtimeUtils.getDefaultSkyux()
     });
     expect(source).toContain('NotFoundComponent');
-    expect(source).not.toContain("template: '<sky-error errorType=\"notfound\"></sky-error>'");
+    expect(source).not.toContain(
+      `template: \`<iframe src="https://host.nxt.blackbaud.com/errors/notfound"`
+    );
   });
 
   it('should handle 404', () => {
@@ -162,9 +154,7 @@ describe('SKY UX Builder module generator', () => {
 
   it('should only provide the SkyAuthHttp service if the app is configured to use auth', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
-    // Other items can exist so we're leaving out "import""
-    const expectedImport = `, SkyAuthHttp } from 'sky-pages-internal/runtime';`;
-
+    const expectedImport = `{ SkyAuthHttp }`;
     const expectedProvider = `{
       provide: SkyAuthHttp,
       useClass: SkyAuthHttp,
@@ -344,7 +334,7 @@ BBAuth.mock = true;`);
     expect(source).toContain('routing = RouterModule.forRoot(routes, { useHash: false });');
   });
 
-  it('adds SkyPactService and overrides AuthTokenProvider if calling pact command', () => {
+  it('should add SkyPactService and override AuthTokenProvider if calling pact command', () => {
     const generator = mock.reRequire(GENERATOR_PATH);
     let runtime = runtimeUtils.getDefaultRuntime();
     runtime.command = 'pact';
@@ -384,7 +374,6 @@ require('style-loader!src/styles/custom.css');
     };
 
     const source = generator.getSource(config);
-
     expect(source).toContain(expectedRequire);
   });
 
@@ -404,7 +393,6 @@ require('style-loader!src/styles/custom.css');
     };
 
     const source = generator.getSource(config);
-
     expect(source).toContain(expectedRequire);
     expect(source).not.toContain(`require('style-loader!https://google.com/styles.css');`);
     expect(spy.calls.first().args[0]).toContain('External style sheets are not permitted');

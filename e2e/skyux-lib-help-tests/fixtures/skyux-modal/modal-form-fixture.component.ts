@@ -4,7 +4,7 @@ import {
 
 import {
   SkyModalInstance
-} from '@blackbaud/skyux/dist/modules/modal';
+} from '@skyux/modals';
 
 @Component({
   selector: 'sky-modal-form',

@@ -76,7 +76,7 @@ function generateComponentSpec(pathParts, fileName, name, nameSnakeCase) {
 import {
   expect,
   SkyAppTestModule
-} from '@blackbaud/skyux-builder/runtime/testing/browser';
+} from '@skyux-sdk/testing';
 
 import {
   ${name}

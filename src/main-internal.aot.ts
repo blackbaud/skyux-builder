@@ -1,8 +1,11 @@
-import { platformBrowser } from '@angular/platform-browser';
-import { AppModuleNgFactory } from './ngfactory/app/app.module.ngfactory';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
 
 import { SkyAppBootstrapper } from '@blackbaud/skyux-builder/runtime/bootstrapper';
 
+// We can now use the dynamic bootstrapper with @ngtools/webpack.
+// See: https://blog.craftlab.hu/multiple-solutions-for-angular-ahead-of-time-aot-compilation-c474d9a0d508#71de
+
 SkyAppBootstrapper.processBootstrapConfig().then(() => {
-  platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
+  platformBrowserDynamic().bootstrapModule(AppModule);
 });

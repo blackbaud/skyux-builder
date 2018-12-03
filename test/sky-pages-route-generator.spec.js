@@ -352,7 +352,8 @@ describe('SKY UX Builder route generator', () => {
         handle404: true
       }
     });
-    expect(routes.definitions)
-      .toContain(`template: \`<iframe src="https://host.nxt.blackbaud.com/errors/notfound" style="border:0;height:100vh;width:100%;" [title]="'builder_page_not_found_iframe_title' | skyAppResources"></iframe>\``);
+    expect(routes.definitions).toContain(
+      `template: \`<iframe src="https://host.nxt.blackbaud.com/errors/notfound"`
+    );
   });
 });

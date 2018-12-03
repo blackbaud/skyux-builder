@@ -6,7 +6,6 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
-const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
@@ -71,10 +70,6 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       skyux: skyPagesConfig.skyux
     }),
 
-    new CommonsChunkPlugin({
-      name: ['skyux', 'vendor', 'polyfills']
-    }),
-
     new webpack.DefinePlugin({
       'skyPagesConfig': JSON.stringify(skyPagesConfig)
     }),
@@ -89,6 +84,13 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     new ContextReplacementPlugin(
       // The (\\|\/) piece accounts for path separators in *nix and Windows
       /angular(\\|\/)core(\\|\/)@angular/,
+      spaPath('src'),
+      {}
+    ),
+
+    // See: https://github.com/angular/angular/issues/20357#issuecomment-343683491
+    new ContextReplacementPlugin(
+      /\@angular(\\|\/)core(\\|\/)fesm5/,
       spaPath('src'),
       {}
     ),
@@ -109,13 +111,12 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
   return {
     entry: {
       polyfills: [outPath('src', 'polyfills.ts')],
-      vendor: [outPath('src', 'vendor.ts')],
       app: [appPath]
     },
     output: {
-      filename: '[name].js',
-      chunkFilename: '[id].chunk.js',
-      path: spaPath('dist'),
+      filename: '[name].[contenthash].js',
+      chunkFilename: '[name].[contenthash].chunk.js',
+      path: spaPath('dist')
     },
     resolveLoader: {
       modules: resolves
@@ -167,12 +168,41 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
           loader: 'raw-loader'
         },
         {
-          test: /\.json$/,
-          loader: 'json-loader'
+          // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
+          // Removing this will cause deprecation warnings to appear.
+          // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
+          test: /[\/\\]@angular[\/\\]core[\/\\].+\.js$/,
+          parser: {
+            system: true
+          }
         }
       ]
     },
-    plugins
+    plugins,
+    optimization: {
+      moduleIds: 'hashed',
+      noEmitOnErrors: true,
+      splitChunks: {
+        chunks: 'all',
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            priority: -3 // zero is default
+          },
+          polyfill: {
+            test: /[\\/]node_modules[\\/](core-js|web-animations-js|zone\.js)[\\/]/,
+            name: 'pollyfill', // Chunk names cannot match an entry point.
+            priority: -2
+          },
+          skyux: {
+            test: /[\\/]node_modules[\\/]@skyux[\\/]/,
+            name: 'skyux',
+            priority: -1
+          }
+        }
+      }
+    }
   };
 }
 

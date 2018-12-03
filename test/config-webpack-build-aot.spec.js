@@ -1,18 +1,35 @@
 /*jshint jasmine: true, node: true */
 'use strict';
 
-const fs = require('fs');
 const mock = require('mock-require');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('config webpack build-aot', () => {
-  const ngtoolsWebpackPath = '@ngtools/webpack';
+  let mockFsExtra;
+  let mockWebpackConfig;
 
   beforeEach(() => {
-    mock(ngtoolsWebpackPath, {
-      AotPlugin: function () {
+    mockFsExtra = {
+      existsSync() {},
+      writeFileSync() {}
+    };
 
+    mockWebpackConfig = {
+      module: {
+        rules: []
+      }
+    };
+
+    mock('fs-extra', mockFsExtra);
+
+    mock('@ngtools/webpack', {
+      AngularCompilerPlugin: function () {}
+    });
+
+    mock('../config/webpack/common.webpack.config', {
+      getWebpackConfig: () => {
+        return mockWebpackConfig;
       }
     });
   });
@@ -22,17 +39,12 @@ describe('config webpack build-aot', () => {
   });
 
   it('should expose a getWebpackConfig method', () => {
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
     expect(typeof lib.getWebpackConfig).toEqual('function');
   });
 
   it('should merge the common webpack config with overrides', () => {
-    const f = '../config/webpack/common.webpack.config';
-    mock(f, {
-      getWebpackConfig: () => ({ module: { rules: [] } })
-    });
-
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
 
     const skyPagesConfig = {
       runtime: runtimeUtils.getDefaultRuntime({
@@ -49,37 +61,31 @@ describe('config webpack build-aot', () => {
         expect(command).toBe(skyPagesConfig.runtime.command);
       }
     });
-
-    mock.stop(f);
   });
 
   it('should use the AoT entry module', () => {
-    const f = '../config/webpack/common.webpack.config';
-    mock(f, {
-      getWebpackConfig: () => ({ module: { rules: [] } })
-    });
-
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
 
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
     });
 
-    expect(
-      config.entry.app[0]
-    ).toBe(skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts'));
-
-    mock.stop(f);
+    expect(config.entry.app[0])
+      .toBe(skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts'));
   });
 
   it('should write metadata.json file and match entries order', () => {
     let json;
-    spyOn(fs, 'writeFileSync').and.callFake((file, content) => {
+
+    spyOn(mockFsExtra, 'writeFileSync').and.callFake((file, content) => {
       json = JSON.parse(content);
     });
 
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    // Need to refresh cache in order to spy on fs-extra.
+    mock.reRequire('../plugin/save-metadata');
+
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {
@@ -144,14 +150,16 @@ describe('config webpack build-aot', () => {
       }
     });
 
-    expect(fs.writeFileSync).toHaveBeenCalled();
-    expect(json[0].name).toEqual('test3.js');
+    expect(mockFsExtra.writeFileSync).toHaveBeenCalled();
+
+    // Host Utils reverses the scripts.
+    expect(json[0].name).toEqual('test2.js');
     expect(json[1].name).toEqual('test1.js');
-    expect(json[2].name).toEqual('test2.js');
+    expect(json[2].name).toEqual('test3.js');
   });
 
   it('should add the SKY_PAGES_READY_X variable to each entry, replacing periods', () => {
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
     const config = lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {
@@ -194,24 +202,22 @@ describe('config webpack build-aot', () => {
   });
 
   it('should remove the sky-processor loader from the rules array', () => {
-    const f = '../config/webpack/common.webpack.config';
     const loaderName = '/sky-processor/';
-    mock(f, {
-      getWebpackConfig: () => ({
-        module: {
-          rules: [
-            {
-              loader: 'test-loader'
-            },
-            {
-              loader: loaderName
-            }
-          ]
-        }
-      })
-    });
 
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    mockWebpackConfig = {
+      module: {
+        rules: [
+          {
+            loader: 'test-loader'
+          },
+          {
+            loader: loaderName
+          }
+        ]
+      }
+    };
+
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
 
     const skyPagesConfig = {
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -219,40 +225,30 @@ describe('config webpack build-aot', () => {
     };
 
     const config = lib.getWebpackConfig(skyPagesConfig);
-
-    let found = false;
-
-    config.module.rules.forEach((rule) => {
-      if (found) {
-        return;
-      }
-
-      found = (rule.loader && rule.loader.indexOf(loaderName) > -1);
+    const found = !!config.module.rules.find((rule) => {
+      return (rule.loader && rule.loader.indexOf(loaderName) > -1);
     });
 
     expect(found).toEqual(false);
-    expect(config.module.rules.length).toEqual(2);
   });
 
   it('should remove the sky-processor loader from the rules array (on Windows)', () => {
-    const f = '../config/webpack/common.webpack.config';
     const loaderName = '\\sky-processor\\';
-    mock(f, {
-      getWebpackConfig: () => ({
-        module: {
-          rules: [
-            {
-              loader: 'test-loader'
-            },
-            {
-              loader: loaderName
-            }
-          ]
-        }
-      })
-    });
 
-    const lib = require('../config/webpack/build-aot.webpack.config');
+    mockWebpackConfig = {
+      module: {
+        rules: [
+          {
+            loader: 'test-loader'
+          },
+          {
+            loader: loaderName
+          }
+        ]
+      }
+    };
+
+    const lib = mock.reRequire('../config/webpack/build-aot.webpack.config');
 
     const skyPagesConfig = {
       runtime: runtimeUtils.getDefaultRuntime(),
@@ -260,19 +256,11 @@ describe('config webpack build-aot', () => {
     };
 
     const config = lib.getWebpackConfig(skyPagesConfig);
-
-    let found = false;
-
-    config.module.rules.forEach((rule) => {
-      if (found) {
-        return;
-      }
-
-      found = (rule.loader && rule.loader.indexOf(loaderName) > -1);
+    const found = !!config.module.rules.find((rule) => {
+      return (rule.loader && rule.loader.indexOf(loaderName) > -1);
     });
 
     expect(found).toEqual(false);
-    expect(config.module.rules.length).toEqual(2);
   });
 
 });

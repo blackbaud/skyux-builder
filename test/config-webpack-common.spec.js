@@ -76,7 +76,7 @@ describe('config webpack common', () => {
     });
 
     const lib = mock.reRequire('../config/webpack/common.webpack.config');
-    const config = lib.getWebpackConfig({
+    lib.getWebpackConfig({
       runtime: runtimeUtils.getDefaultRuntime(),
       skyux: {}
     }, {

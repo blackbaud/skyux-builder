@@ -44,6 +44,8 @@ function getWebpackConfig(skyPagesConfig, argv) {
   let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   let config = {
+    mode: 'development',
+
     devtool: 'inline-source-map',
 
     resolveLoader: {
@@ -100,7 +102,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
               loader: 'angular2-template-loader'
             }
           ],
-          exclude: [/\.e2e\.ts$/]
+          exclude: [/\.e2e-spec\.ts$/]
         },
         {
           test: /\.s?css$/,
@@ -109,6 +111,15 @@ function getWebpackConfig(skyPagesConfig, argv) {
         {
           test: /\.html$/,
           loader: 'raw-loader'
+        },
+        {
+          // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
+          // Removing this will cause deprecation warnings to appear.
+          // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
+          test: /[\/\\]@angular[\/\\]core[\/\\].+\.js$/,
+          parser: {
+            system: true
+          }
         }
       ]
     },
@@ -138,6 +149,14 @@ function getWebpackConfig(skyPagesConfig, argv) {
         // The (\\|\/) piece accounts for path separators in *nix and Windows
         /angular(\\|\/)core(\\|\/)@angular/,
         skyPagesConfigUtil.spaPath('src'),
+        {}
+      ),
+
+      // Suppress the "request of a dependency is an expression" warnings.
+      // See: https://github.com/angular/angular/issues/20357#issuecomment-343683491
+      new ContextReplacementPlugin(
+        /\@angular(\\|\/)core(\\|\/)fesm5/,
+        spaPath('src'),
         {}
       )
     ]

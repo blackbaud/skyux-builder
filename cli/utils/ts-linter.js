@@ -6,7 +6,6 @@ const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
 
 const flags = [
-  '--type-check',
   '--project',
   skyPagesConfigUtil.spaPath('tsconfig.json'),
   '--config',

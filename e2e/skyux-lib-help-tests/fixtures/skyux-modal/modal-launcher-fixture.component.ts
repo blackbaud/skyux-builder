@@ -4,7 +4,7 @@ import {
 
 import {
   SkyModalService
-} from '@blackbaud/skyux/dist/modules/modal';
+} from '@skyux/modals';
 
 import {
   HelpWidgetService

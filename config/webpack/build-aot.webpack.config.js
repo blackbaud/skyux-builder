@@ -1,9 +1,8 @@
 /*jslint node: true */
 'use strict';
 
-const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
-const ngtools = require('@ngtools/webpack');
+const { AngularCompilerPlugin } = require('@ngtools/webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const SaveMetadata = require('../../plugin/save-metadata');
 
@@ -28,38 +27,40 @@ function getWebpackConfig(skyPagesConfig, argv) {
     });
 
   return webpackMerge(commonConfig, {
+    mode: 'production',
+
     entry: {
       polyfills: [skyPagesConfigUtil.spaPathTempSrc('polyfills.ts')],
-      vendor: [skyPagesConfigUtil.spaPathTempSrc('vendor.ts')],
       app: [skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts')]
     },
 
     // Disable sourcemaps for production:
     // https://webpack.js.org/configuration/devtool/#production
-    devtool: undefined,
+    devtool: false,
 
     module: {
       rules: [
         {
-          test: /\.ts$/,
-          loader: '@ngtools/webpack'
+          test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
+          loaders: ['@ngtools/webpack']
+        },
+        {
+          test: /\.js$/,
+          loader: '@angular-devkit/build-optimizer/webpack-loader',
+          options: {
+            sourceMap: false
+          }
         }
       ]
     },
     plugins: [
-      new ngtools.AotPlugin({
+      new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTempSrc('app', 'app.module') + '#AppModule',
+        mainPath: skyPagesConfigUtil.spaPathTempSrc('main-internal.aot.ts'),
         // Type checking handled by Builder's ts-linter utility.
         typeChecking: false
       }),
-      SaveMetadata,
-      new webpack.optimize.UglifyJsPlugin({
-        beautify: false,
-        comments: false,
-        compress: { warnings: false },
-        mangle: { screw_ie8: true, keep_fnames: true }
-      })
+      SaveMetadata
     ]
   });
 }

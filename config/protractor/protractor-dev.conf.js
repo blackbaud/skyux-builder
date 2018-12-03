@@ -39,16 +39,64 @@ let config = {
 
         console.log('Running command using full install.');
         common.rimrafPromise(common.tmp)
-          .then(() => common.exec('git', [
-            'clone',
-            '-b',
+          .then(() => common.exec(`git`, [
+            `clone`,
+            `-b`,
             branch,
-            '--single-branch',
+            `--single-branch`,
             url,
             common.tmp
           ]))
-          .then(() => common.exec('npm', ['install'], common.cwdOpts))
-          .then(() => common.exec('npm', ['install', '../'], common.cwdOpts))
+          .then(() => {
+
+            // This method attempts to take what would be installed from builder in to the SPA.
+            // It was the only reliable way I could convince NPM to install everything needed.
+            const spaPkgPath = path.resolve(common.tmp, 'package.json');
+            const spaPkgJson = fs.readJsonSync(spaPkgPath);
+
+            const builderPkgPath = path.resolve('package.json');
+            const builderPkgJson = fs.readJsonSync(builderPkgPath);
+
+            Object.keys(builderPkgJson.dependencies).forEach(dep => {
+              spaPkgJson.dependencies[dep] = builderPkgJson.dependencies[dep];
+            });
+
+            // Remove any installed versions of Builder.
+            delete spaPkgJson.devDependencies['@blackbaud/skyux-builder'];
+
+            fs.writeJsonSync(spaPkgPath, spaPkgJson, { spaces: 2 });
+          })
+          .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
+          .then(() => {
+            // Copy builder's local source to node_modules.
+            const files = [
+              'cli',
+              'config',
+              'e2e',
+              'lib',
+              'loader',
+              'plugin',
+              'runtime',
+              'src',
+              'ssl',
+              'utils',
+              'index.js',
+              'package.json',
+              'skyuxconfig.json',
+              'tsconfig.json',
+              'tslint.json'
+            ];
+
+            files.forEach(file => {
+              fs.copySync(
+                file,
+                path.resolve(
+                  common.tmp,
+                  `node_modules/@blackbaud/skyux-builder/${file}`
+                )
+              );
+            });
+          })
           .then(resolve)
           .catch(reject);
 

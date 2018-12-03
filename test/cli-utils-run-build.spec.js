@@ -9,6 +9,7 @@ const localeAssetsProcessor = require('../lib/locale-assets-processor');
 describe('cli utils run build', () => {
   let mockAssetsProcessor;
   let mockLocaleProcessor;
+  let mockFsExtra;
 
   beforeEach(() => {
     mockLocaleProcessor = {
@@ -20,7 +21,24 @@ describe('cli utils run build', () => {
     mockAssetsProcessor = {
       setSkyAssetsLoaderUrl() {},
       getAssetsUrl: () => '',
-      processAssets: (content) => content
+      processAssets: (content, assetsUrl, callback) => {
+        callback('file-with-hash.json', 'physical-file-path.json');
+        return content;
+      }
+    };
+
+    mockFsExtra = {
+      copySync() {},
+      emptyDirSync() {},
+      ensureDirSync() {},
+      ensureFileSync() {},
+      readFileSync() {
+        return '{}';
+      },
+      removeSync() {},
+      writeFileSync() {},
+      writeJSONSync() {},
+      writeJsonSync() {}
     };
 
     spyOn(process, 'exit').and.callFake(() => {});
@@ -36,6 +54,7 @@ describe('cli utils run build', () => {
     });
     mock('../lib/locale-assets-processor', mockLocaleProcessor);
     mock('../lib/assets-processor', mockAssetsProcessor);
+    mock('fs-extra', mockFsExtra);
   });
 
   afterEach(() => {
@@ -75,7 +94,6 @@ describe('cli utils run build', () => {
   });
 
   it('should write files to disk in AoT compile mode', (done) => {
-    const fs = require('fs-extra');
     const generator = require('../lib/sky-pages-module-generator');
     const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
@@ -85,10 +103,10 @@ describe('cli utils run build', () => {
       getWebpackConfig: () => ({})
     });
 
-    const writeJSONSpy = spyOn(fs, 'writeJSONSync');
-    const copySpy = spyOn(fs, 'copySync');
-    const writeFileSpy = spyOn(fs, 'writeFileSync');
-    const removeSpy = spyOn(fs, 'removeSync');
+    const writeJSONSpy = spyOn(mockFsExtra, 'writeJSONSync');
+    const copySpy = spyOn(mockFsExtra, 'copySync');
+    const writeFileSpy = spyOn(mockFsExtra, 'writeFileSync');
+    const removeSpy = spyOn(mockFsExtra, 'removeSync');
 
     let passedConfig;
     spyOn(generator, 'getSource').and.callFake(function (c) {
@@ -151,13 +169,18 @@ describe('cli utils run build', () => {
     expect(writeJSONSpy).toHaveBeenCalledWith(
       skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'),
       jasmine.objectContaining({
-        'files': [
-          './app/app.module.ts'
+        'include': [
+          skyPagesConfigUtil.outPath('runtime', '**', '*'),
+          skyPagesConfigUtil.outPath('src', '**', '*'),
+          skyPagesConfigUtil.spaPathTempSrc('**', '*')
         ]
       })
     );
 
-    mock.stop(f);
+    expect(writeFileSpy).toHaveBeenCalledWith(
+      skyPagesConfigUtil.outPath('dist', 'file-with-hash.json'),
+      '{}'
+    );
   });
 
   it('should allow the assets base URL to be specified', (done) => {
@@ -199,7 +222,6 @@ describe('cli utils run build', () => {
               undefined
             );
           } finally {
-            mock.stop(f);
             done();
           }
         }

@@ -20,10 +20,10 @@ describe('browser utils', () => {
     openParamUrl = '';
     openParamBrowser = undefined;
 
-    mock('open', (url, browser) => {
+    mock('opn', (url, options) => {
       openCalled = true;
       openParamUrl = url;
-      openParamBrowser = browser;
+      openParamBrowser = options.app;
     });
 
     spyOn(logger, 'info');

@@ -1,3 +1,91 @@
+# 1.30.0 (2018-11-26)
+
+- Added `SkyAuthHttpClientModule` that can be used in conjunction with Angular's `HttpClient` to make authenticated calls to services backed by Blackbaud ID. [blackbaud/skyux-http#11](https://github.com/blackbaud/skyux-http/pull/11)
+- Fixed coverage reports to accurately match against configured thresholds. [#499](https://github.com/blackbaud/skyux-builder/pull/499)
+
+# 1.29.0 (2018-11-09)
+
+- Added support for `@blackbaud/auth-client@2.12.0` which allows permission scopes to specify a legal entity ID. [#498](https://github.com/blackbaud/skyux-builder/pull/498)
+
+# 1.28.0 (2018-11-08)
+
+- Added support for `@skyux/i18n@3.3.0`. [#496](https://github.com/blackbaud/skyux-builder/pull/496)
+
+# 1.27.0 (2018-10-31)
+
+- Added config option to include style sheets in bundle. [#484](https://github.com/blackbaud/skyux-builder/pull/484)
+- Added support for Node.js 8. [#490](https://github.com/blackbaud/skyux-builder/pull/490)
+- Bugfix to allow custom `NotFoundComponent`. [#485](https://github.com/blackbaud/skyux-builder/pull/485)
+- Bugfix to address endless loops and crashes during unit tests. [#492](https://github.com/blackbaud/skyux-builder/pull/492)
+
+# 1.26.1 (2018-10-24)
+
+- Fixed issue with using Builder when `strictNullChecks` is enabled. [#487](https://github.com/blackbaud/skyux-builder/pull/487) Thanks [@bentefay](https://github.com/bentefay)!
+
+# 1.26.0 (2018-10-19)
+
+- Updated `skyux e2e` to automatically install appropriate ChromeDriver version for the installed version of Chrome. Previous functionality was to always install the latest version, which caused version mismatches.
+- Added support for developing builder on Node 8.
+
+# 1.25.0 (2018-10-17)
+
+- Added support for `@skyux/i18n@3.2.0`. [#486](https://github.com/blackbaud/skyux-builder/pull/486)
+- Fixed bootstrapper to allow for TypeScript strict mode. [#464](https://github.com/blackbaud/skyux-builder/pull/464)
+
+# 1.24.0 (2018-10-01)
+
+- Updated auth-client library to pick up change that displays the omnibar inactivity prompt at a z-index high enough to display over SKY UX modals. [#481](https://github.com/blackbaud/skyux-builder/pull/481)
+
+# 1.23.2 (2018-09-27)
+
+- Bugfix to address endless loop when running `skyux watch`. [#479](https://github.com/blackbaud/skyux-builder/pull/479)
+
+# 1.23.1 (2018-09-24)
+
+- Bugfix to re-add `SkyAuthHttp` to primary module's providers. [#476](https://github.com/blackbaud/skyux-builder/pull/476)
+
+# 1.23.0 (2018-09-24)
+
+- Fixed help widget to not display when SPA is in add-in mode. [#475](https://github.com/blackbaud/skyux-builder/pull/475)
+- Fixed library bundler to also transpile source files located in the root public directory. [#474](https://github.com/blackbaud/skyux-builder/pull/474)
+
+# 1.22.0 (2018-09-19)
+
+- Added support for libraries to include an isolated "testing" module. [#471](https://github.com/blackbaud/skyux-builder/pull/471)
+- Upgraded `skyux-lib-help` to `1.3.1`. [#473](https://github.com/blackbaud/skyux-builder/pull/473)
+
+# 1.21.0 (2018-09-13)
+
+- Added preload hook to the `skyux build-public-library` command to let plugins modify library files. [#469](https://github.com/blackbaud/skyux-builder/pull/469)
+
+# 1.20.2 (2018-09-06)
+
+- Replaced the expired local server certificate used with the `skyux serve` and `skyux e2e` commands. [#467](https://github.com/blackbaud/skyux-builder/pull/467)
+
+# 1.20.1 (2018-09-06)
+
+ - Disabled the `aria-allowed-attr` rule in aXe a11y testing. This will be re-enabled when we can update to `axe-core` version `3.1.1`. [#465](https://github.com/blackbaud/skyux-builder/pull/465)
+
+# 1.20.0 (2018-08-30)
+
+**Note** Updating to this version of SKY UX Builder requires that SKY UX also be updated to 2.21.0 because it takes advantages of new features in SKY UX.
+
+- Minor tweaks to code coverage instrumentation for SKY UX libraries. [#457](https://github.com/blackbaud/skyux-builder/pull/457)
+- CSS imports now reference the new `@skyux/theme` library that is part of the latest version of SKY UX 2. [#458](https://github.com/blackbaud/skyux-builder/pull/458)
+- Added the ability to specify a `browserSet` for e2e tests similar to the option that exists for unit tests.  Currently the only supported `browserSet` value is `speedy`. [#459](https://github.com/blackbaud/skyux-builder/pull/459)
+- Addressed a minor issue when logging build status. [#460](https://github.com/blackbaud/skyux-builder/pull/460)
+- SPAs can now force a legal entity context and allow users to pick a legal entity from a list if the user belongs to more than one legal entity, or to automatically select a default legal entity if the user only belongs to one legal entity. To use this feature, ensure that the `parameters` section of `skyuxconfig.json` specifies `leid` as a required parameter. [#461](https://github.com/blackbaud/skyux-builder/pull/461) Example:
+
+```
+"params": {
+  "leid": {
+    "required": true
+  }
+}
+```
+
+- Updated `@blackbaud/auth-client` package to reflect a change in policy for changing BBID user session timeouts from 15 minutes of inactivity to 90 minutes. [#462](https://github.com/blackbaud/skyux-builder/pull/462)
+
 # 1.19.3 (2018-08-16)
 
 - Bugfix to allow SPAs to reference resource files in libraries even if the SPAs do not include resource files. [#449](https://github.com/blackbaud/skyux-builder/pull/449)

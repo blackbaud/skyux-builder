@@ -4,16 +4,29 @@
 const mock = require('mock-require');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config.js');
 
 describe('index.ejs template', () => {
+  beforeEach(() => {
+    mock('../lib/locale-assets-processor', {
+      prepareLocaleFiles() {}
+    });
+
+    mock('../cli/utils/ts-linter', {
+      lintSync: () => 0
+    });
+  });
+
+  afterEach(() => {
+    mock.stopAll();
+  });
 
   it('should support external css & js in the correct locations', (done) => {
+    const skyPagesConfigUtil = mock.reRequire('../config/sky-pages/sky-pages.config.js');
 
     mock('../config/webpack/build.webpack.config', {
       getWebpackConfig: (skyPagesConfig) => ({
         entry: {
-          test: ['test.js']
+          test: ['./test/fixtures/index-ejs-test.js']
         },
         plugins: [
           new HtmlWebpackPlugin({
@@ -64,11 +77,8 @@ describe('index.ejs template', () => {
       })
     });
 
-    mock('../cli/utils/ts-linter', {
-      lintSync: () => 0
-    });
+    const config = skyPagesConfigUtil.getSkyPagesConfig('build');
 
-    let config = skyPagesConfigUtil.getSkyPagesConfig('build');
     config.skyux = {
       app: {
         externals: {
@@ -106,9 +116,10 @@ describe('index.ejs template', () => {
         }
       }
     };
+
     spyOn(process, 'exit').and.callFake(() => {});
-    mock.reRequire('../cli/build')({}, config, webpack);
+    const build = mock.reRequire('../cli/build');
 
+    build({}, config, webpack);
   });
-
 });
