@@ -82,22 +82,4 @@ describe('cli utils prepare-library-package', () => {
 
     expect(loggerSpy).toHaveBeenCalledWith('File(s) not found: README.md');
   });
-
-  it('should fail if consumers do not include a package.json file for their library', () => {
-    const spy = spyOn(process, 'exit').and.callFake(() => {});
-    spyOn(mockFsExtra, 'existsSync').and.callFake((file) => {
-      if (file.indexOf('package.json')) {
-        return false;
-      }
-
-      return true;
-    });
-
-    const loggerSpy = spyOn(mockLogger, 'error');
-
-    util();
-
-    expect(loggerSpy).toHaveBeenCalledWith('SKY UX library failed to compile!');
-    expect(spy).toHaveBeenCalledWith(1);
-  });
 });
