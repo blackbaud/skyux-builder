@@ -3,11 +3,24 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const logger = require('@blackbaud/skyux-logger');
 
-function resolveFilePath(pathParts, fileName) {
+function safeFileWrite(pathParts, fileName, fileContent, force) {
+  const resolvedFileName = path.resolve('src', 'app', ...pathParts, fileName);
+  const resolvedFileExists = fs.existsSync(resolvedFileName);
+
+  if (resolvedFileExists && !force) {
+    logger.warn(`${resolvedFileName} already exists. Use --force to overwrite.`);
+    return;
+  }
+
+  if (resolvedFileExists) {
+    logger.warn(`${resolvedFileName} already exists. Forcefully overwriting.`);
+  }
+
   fs.ensureDirSync(path.resolve('src', 'app', ...pathParts));
-
-  return path.resolve('src', 'app', ...pathParts, fileName);
+  fs.writeFileSync(resolvedFileName, fileContent);
+  logger.info(`Successfully created ${resolvedFileName}.`);
 }
 
 function properCase(name) {
@@ -45,9 +58,8 @@ function snakeCase(name) {
   return nameSnake;
 }
 
-function generateComponentTs(pathParts, fileName, name, nameSnakeCase) {
-  fs.writeFileSync(
-    resolveFilePath(pathParts, fileName + '.ts'),
+function generateComponentTs(pathParts, fileName, name, nameSnakeCase, force) {
+  const fileContent =
 `import {
   Component
 } from '@angular/core';
@@ -60,15 +72,14 @@ function generateComponentTs(pathParts, fileName, name, nameSnakeCase) {
 export class ${name} {
 
 }
-`
-  );
+`;
+
+  safeFileWrite(pathParts, `${fileName}.ts`, fileContent, force);
 }
 
-function generateComponentSpec(pathParts, fileName, name, nameSnakeCase) {
-  let nameWithSpaces = properCase(nameSnakeCase.replace(/\-/g, ' '));
-
-  fs.writeFileSync(
-    resolveFilePath(pathParts, fileName + '.spec.ts'),
+function generateComponentSpec(pathParts, fileName, name, nameSnakeCase, force) {
+  const nameWithSpaces = properCase(nameSnakeCase.replace(/\-/g, ' '));
+  const fileContent =
 `import {
   TestBed
 } from '@angular/core/testing';
@@ -105,29 +116,24 @@ describe('${nameWithSpaces} component', () => {
   });
 
 });
-`
-  );
+`;
+
+  safeFileWrite(pathParts, `${fileName}.spec.ts`, fileContent, force);
 }
 
-function generateComponentHtml(pathParts, fileName) {
-  fs.writeFileSync(
-    resolveFilePath(pathParts, fileName + '.html'),
-    ''
-  );
+function generateComponentHtml(pathParts, fileName, force) {
+  safeFileWrite(pathParts, `${fileName}.html`, '', force);
 }
 
-function generateComponentScss(pathParts, fileName) {
-  fs.writeFileSync(
-    resolveFilePath(pathParts, fileName + '.scss'),
-    ''
-  );
+function generateComponentScss(pathParts, fileName, force) {
+  safeFileWrite(pathParts, `${fileName}.scss`, '', force);
 }
 
 function getPathParts(name) {
   return name.replace(/\\/g, '/').split('/');
 }
 
-function generateComponent(name) {
+function generateComponent(name, force) {
   const pathParts = getPathParts(name);
 
   const classNameWithoutComponent = properCase(pathParts.pop());
@@ -138,21 +144,22 @@ function generateComponent(name) {
 
   const fileName = `${nameSnakeCase}.component`;
 
-  generateComponentTs(pathParts, fileName, className, nameSnakeCase);
-  generateComponentSpec(pathParts, fileName, className, nameSnakeCase);
-  generateComponentHtml(pathParts, fileName);
-  generateComponentScss(pathParts, fileName);
+  generateComponentTs(pathParts, fileName, className, nameSnakeCase, force);
+  generateComponentSpec(pathParts, fileName, className, nameSnakeCase, force);
+  generateComponentHtml(pathParts, fileName, force);
+  generateComponentScss(pathParts, fileName, force);
 }
 
 function generate(argv) {
   try {
-    let type = argv._[1];
-    let name = argv._[2];
+    const type = argv._[1];
+    const name = argv._[2];
+    const force = argv.force;
 
     switch (type) {
       case 'component':
       case 'c':
-        generateComponent(name);
+        generateComponent(name, force);
         break;
     }
   } catch (err) {

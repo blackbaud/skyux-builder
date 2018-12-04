@@ -54,6 +54,10 @@ describe('@blackbaud/skyux-builder', () => {
       'generate': {
         cmd: 'generate',
         lib: 'generate'
+      },
+      'g': {
+        cmd: 'generate',
+        lib: 'generate'
       }
     };
 
@@ -91,11 +95,13 @@ describe('@blackbaud/skyux-builder', () => {
   it('should process shorthand tags', (done) => {
     const argv = {
       l: 'showForLaunch',
-      b: 'showForBrowser'
+      b: 'showForBrowser',
+      f: 'showForForce'
     };
     mock('../cli/test', (c, a) => {
       expect(a.launch).toEqual(argv.l);
       expect(a.browser).toEqual(argv.b);
+      expect(a.force).toEqual(argv.f);
       done();
     });
     const lib = require('../index');
