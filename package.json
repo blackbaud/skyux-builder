@@ -12,7 +12,7 @@
     "protractor": "protractor ./config/protractor/protractor-dev.conf.js",
     "jscs": "jscs cli config lib loader plugin src utils index.js",
     "jshint": "jshint cli config lib loader plugin src utils index.js",
-    "lint": "npm run jshint && npm run jscs",
+    "lint": "node ./node_modules/.bin/eslint -c .eslintrc cli config lib loader plugin utils index.js",
     "test": "npm run lint && npm run coverage && npm run e2e"
   },
   "repository": {
@@ -147,6 +147,7 @@
     "@types/core-js": "2.5.0",
     "codelyzer": "4.5.0",
     "core-js": "2.6.1",
+    "eslint": "5.11.1",
     "jscs": "3.0.7",
     "jshint": "2.9.7",
     "mock-require": "3.0.2",

@@ -64,7 +64,7 @@ function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
     }
 
     if (config.devServer.hot) {
-      const hot = `webpack/hot/only-dev-server`;
+      const hot = 'webpack/hot/only-dev-server';
       Object.keys(config.entry).forEach((entry) => {
         config.entry[entry].unshift(hot);
       });

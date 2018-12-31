@@ -97,7 +97,7 @@ function pact(command, argv) {
           });
         } else {
           logger
-            .error(`Pact proxy path is invalid.  Expected format is base/provider-name/api-path.`);
+            .error('Pact proxy path is invalid. Expected format is base/provider-name/api-path.');
         }
       })
         .on('connect', () => {

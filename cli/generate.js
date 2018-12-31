@@ -65,7 +65,7 @@ export class ${name} {
 }
 
 function generateComponentSpec(pathParts, fileName, name, nameSnakeCase) {
-  let nameWithSpaces = properCase(nameSnakeCase.replace(/\-/g, ' '));
+  let nameWithSpaces = properCase(nameSnakeCase.replace(/-/g, ' '));
 
   fs.writeFileSync(
     resolveFilePath(pathParts, fileName + '.spec.ts'),
