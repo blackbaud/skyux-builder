@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const webpackMerge = require('webpack-merge');
 const { AngularCompilerPlugin } = require('@ngtools/webpack');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
@@ -15,7 +12,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
   const common = require('./common.webpack.config');
 
   // Webpackmege will attempt to merge each entries array, so we need to delete it
-  let commonConfig = common.getWebpackConfig(skyPagesConfig, argv);
+  const commonConfig = common.getWebpackConfig(skyPagesConfig, argv);
   commonConfig.entry = null;
 
   // Since the preloader is executed against the file system during an AoT build,
@@ -66,5 +63,5 @@ function getWebpackConfig(skyPagesConfig, argv) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };

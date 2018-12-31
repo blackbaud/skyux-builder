@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const path = require('path');
 const glob = require('glob');
 const fs = require('fs-extra');
@@ -13,7 +10,7 @@ function getPath(command, platform, root, dir) {
   switch (command) {
     case 'e2e':
     case 'visual':
-      filename = `config/protractor/protractor.conf.js`;
+      filename = 'config/protractor/protractor.conf.js';
       break;
 
     // Defaulting to karma so dev-runtime and src-app can be passed in via our test suite.
@@ -45,7 +42,7 @@ function resolve(command, argv) {
 
   let config;
   if (external.length > 1) {
-    logger.warn(`Found multiple external config files.`);
+    logger.warn('Found multiple external config files.');
     external = external.slice(0, 1);
   }
 

@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const fs = require('fs-extra');
 const path = require('path');
 
@@ -47,8 +44,8 @@ function snakeCase(name) {
 
 function generateComponentTs(pathParts, fileName, name, nameSnakeCase) {
   fs.writeFileSync(
-    resolveFilePath(pathParts, fileName + '.ts'),
-`import {
+    resolveFilePath(pathParts, `${fileName}.ts`),
+    `import {
   Component
 } from '@angular/core';
 
@@ -65,11 +62,11 @@ export class ${name} {
 }
 
 function generateComponentSpec(pathParts, fileName, name, nameSnakeCase) {
-  let nameWithSpaces = properCase(nameSnakeCase.replace(/-/g, ' '));
+  const nameWithSpaces = properCase(nameSnakeCase.replace(/-/g, ' '));
 
   fs.writeFileSync(
-    resolveFilePath(pathParts, fileName + '.spec.ts'),
-`import {
+    resolveFilePath(pathParts, `${fileName}.spec.ts`),
+    `import {
   TestBed
 } from '@angular/core/testing';
 
@@ -111,14 +108,14 @@ describe('${nameWithSpaces} component', () => {
 
 function generateComponentHtml(pathParts, fileName) {
   fs.writeFileSync(
-    resolveFilePath(pathParts, fileName + '.html'),
+    resolveFilePath(pathParts, `${fileName}.html`),
     ''
   );
 }
 
 function generateComponentScss(pathParts, fileName) {
   fs.writeFileSync(
-    resolveFilePath(pathParts, fileName + '.scss'),
+    resolveFilePath(pathParts, `${fileName}.scss`),
     ''
   );
 }
@@ -146,13 +143,15 @@ function generateComponent(name) {
 
 function generate(argv) {
   try {
-    let type = argv._[1];
-    let name = argv._[2];
+    const type = argv._[1];
+    const name = argv._[2];
 
     switch (type) {
       case 'component':
       case 'c':
         generateComponent(name);
+        break;
+      default:
         break;
     }
   } catch (err) {

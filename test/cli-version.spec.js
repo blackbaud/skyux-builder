@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const path = require('path');
 const proxyquire = require('proxyquire');
 const logger = require('@blackbaud/skyux-logger');

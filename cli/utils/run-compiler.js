@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const logger = require('@blackbaud/skyux-logger');
 
 const runCompiler = (webpack, config) => {
@@ -9,13 +6,15 @@ const runCompiler = (webpack, config) => {
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
       if (err) {
-        return reject(err);
+        reject(err);
+        return;
       }
 
       const jsonStats = stats.toJson();
 
       if (jsonStats.errors.length) {
-        return reject(jsonStats.errors);
+        reject(jsonStats.errors);
+        return;
       }
 
       if (jsonStats.warnings.length) {

@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const mock = require('mock-require');
 
 const PROCESSOR_PATH = '../lib/locale-assets-processor';

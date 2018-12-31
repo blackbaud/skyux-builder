@@ -1,13 +1,10 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const mock = require('mock-require');
 
 describe('Assets utilities', () => {
 
   beforeEach(() => {
     mock('hash-file', {
-      sync: function () {
+      sync() {
         return 'abcdefg';
       }
     });

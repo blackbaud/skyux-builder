@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 describe('config protractor test', () => {
 
   const mock = require('mock-require');

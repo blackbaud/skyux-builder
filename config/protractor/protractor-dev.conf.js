@@ -1,15 +1,13 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
+const logger = require('@blackbaud/skyux-logger');
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('../../utils/merge');
-const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
+const { SpecReporter } = require('jasmine-spec-reporter');
 
-const common = require('../../e2e/shared/common');
 const commonConfig = require('./protractor.conf');
+const common = require('../../e2e/shared/common');
+const merge = require('../../utils/merge');
 
-let config = {
+const config = {
   specs: [
     path.join(process.cwd(), 'e2e', '**', '*.e2e-spec.js')
   ],
@@ -23,12 +21,12 @@ let config = {
 
       if (fs.existsSync(common.tmp) && !process.argv.includes('--clean')) {
 
-        console.log('');
-        console.log('*********');
-        console.log('Running fast e2e tests');
-        console.log(`Delete ${common.tmp} to have the install steps run.`);
-        console.log('*********');
-        console.log('');
+        logger.info('');
+        logger.info('*********');
+        logger.info('Running fast e2e tests');
+        logger.info(`Delete ${common.tmp} to have the install steps run.`);
+        logger.info('*********');
+        logger.info('');
 
         resolve();
 
@@ -37,13 +35,13 @@ let config = {
         const url = 'https://github.com/blackbaud/skyux-template';
         const branch = 'builder-dev-rc';
 
-        console.log('Running command using full install.');
+        logger.info('Running command using full install.');
         common.rimrafPromise(common.tmp)
-          .then(() => common.exec(`git`, [
-            `clone`,
-            `-b`,
+          .then(() => common.exec('git', [
+            'clone',
+            '-b',
             branch,
-            `--single-branch`,
+            '--single-branch',
             url,
             common.tmp
           ]))
@@ -66,7 +64,7 @@ let config = {
 
             fs.writeJsonSync(spaPkgPath, spaPkgJson, { spaces: 2 });
           })
-          .then(() => common.exec(`npm`, [`i`], common.cwdOpts))
+          .then(() => common.exec('npm', ['i'], common.cwdOpts))
           .then(() => {
             // Copy builder's local source to node_modules.
             const files = [
@@ -112,8 +110,11 @@ let config = {
 if (process.env.TRAVIS) {
   config.capabilities = {
     browserName: 'chrome',
-    'chromeOptions': {
-      'args': ['--disable-extensions --ignore-certificate-errors']
+    chromeOptions: {
+      args: [
+        '--disable-extensions',
+        '--ignore-certificate-errors'
+      ]
     }
   };
 }

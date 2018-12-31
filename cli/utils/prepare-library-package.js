@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const fs = require('fs-extra');
 const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');

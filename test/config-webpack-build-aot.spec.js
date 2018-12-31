@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const mock = require('mock-require');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 const runtimeUtils = require('../utils/runtime-test-utils');

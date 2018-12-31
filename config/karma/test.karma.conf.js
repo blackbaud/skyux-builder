@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 /**
  * Requires the shared karma config and sets any local properties.
  * @name getConfig
@@ -8,7 +5,7 @@
  */
 function getConfig(config) {
   require('./shared.karma.conf')(config);
-  let configuration = {
+  const configuration = {
     browsers: [
       'Chrome'
     ],

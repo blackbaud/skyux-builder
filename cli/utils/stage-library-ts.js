@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
@@ -8,6 +5,7 @@ const sass = require('node-sass');
 const tildeImporter = require('node-sass-tilde-importer');
 
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
+
 const spaPathTempSrc = skyPagesConfigUtil.spaPathTemp();
 
 function copySource() {
@@ -18,25 +16,58 @@ function copySource() {
 }
 
 function deleteNonDistFiles() {
-  let files = glob.sync(`${spaPathTempSrc}/**/*.spec.ts`);
+  const files = glob.sync(`${spaPathTempSrc}/**/*.spec.ts`);
   files.forEach(file => fs.removeSync(file));
 }
 
-function inlineHtmlCss() {
-  const templateUrlRegEx = /templateUrl\:\s*'(.+?\.html)'/gi;
-  const styleUrlsRegEx = /styleUrls\:\s*\[\s*'(.+?\.scss)'\s*]/gi;
+function getHtmlContents(filePath) {
+  return fs.readFileSync(filePath).toString();
+}
 
-  let files = glob.sync(`${spaPathTempSrc}/**/*.ts`);
+function compileSass(filePath) {
+  return sass.renderSync({
+    file: filePath,
+    importer: tildeImporter,
+    outputStyle: 'compressed'
+  }).css;
+}
+
+function getFileContents(filePath) {
+  let contents = '';
+  switch (path.extname(filePath)) {
+    case '.scss':
+      contents = compileSass(filePath);
+      break;
+    case '.html':
+      contents = getHtmlContents(filePath);
+      break;
+    default:
+      break;
+  }
+
+  contents = contents
+    .toString()
+    .replace(/\\f/g, '\\\\f')
+    .replace(/`/g, '\\`');
+
+  return `\`${contents}\``;
+}
+
+function inlineHtmlCss() {
+  const templateUrlRegEx = /templateUrl:\s*'(.+?\.html)'/gi;
+  const styleUrlsRegEx = /styleUrls:\s*\[\s*'(.+?\.scss)'\s*]/gi;
+
+  const files = glob.sync(`${spaPathTempSrc}/**/*.ts`);
 
   files.forEach((file) => {
+    const dirname = path.dirname(file);
     let fileContents = fs.readFileSync(file, { encoding: 'utf8' });
-    let dirname = path.dirname(file);
     let matches;
 
     // templateUrl
     matches = templateUrlRegEx.exec(fileContents);
     while (matches) {
-      let requireFile = path.join(dirname, matches[1]);
+      const requireFile = path.join(dirname, matches[1]);
       let requireContents = getFileContents(requireFile);
       requireContents = `template: ${requireContents}`;
       fileContents = fileContents.replace(matches[0], requireContents);
@@ -51,7 +82,7 @@ function inlineHtmlCss() {
     // styleUrls
     matches = styleUrlsRegEx.exec(fileContents);
     while (matches) {
-      let requireFile = path.join(dirname, matches[1]);
+      const requireFile = path.join(dirname, matches[1]);
       let requireContents = getFileContents(requireFile);
       requireContents = `styles: [${requireContents}]`;
       fileContents = fileContents.replace(matches[0], requireContents);
@@ -61,38 +92,6 @@ function inlineHtmlCss() {
 
     fs.writeFileSync(file, fileContents, { encoding: 'utf8' });
   });
-}
-
-function getFileContents(filePath) {
-  let contents = '';
-  switch (path.extname(filePath)) {
-    case '.scss':
-      contents = compileSass(filePath);
-      break;
-
-    case '.html':
-      contents = getHtmlContents(filePath);
-      break;
-  }
-
-  contents = contents
-    .toString()
-    .replace(/\\f/g, '\\\\f')
-    .replace(/`/g, '\\`');
-
-  return '`' + contents + '`';
-}
-
-function getHtmlContents(filePath) {
-  return fs.readFileSync(filePath).toString();
-}
-
-function compileSass(filePath) {
-  return sass.renderSync({
-    file: filePath,
-    importer: tildeImporter,
-    outputStyle: 'compressed'
-  }).css;
 }
 
 module.exports = () => {

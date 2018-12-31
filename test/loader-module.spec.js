@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 describe('SKY UX Builder Webpack module loader', () => {
 
   let loader;

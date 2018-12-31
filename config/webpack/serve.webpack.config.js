@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const webpackMerge = require('webpack-merge');
@@ -112,5 +109,5 @@ function getWebpackConfig(argv, skyPagesConfig) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };

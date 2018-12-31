@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const fs = require('fs-extra');
 const merge = require('../../utils/merge');
 
@@ -16,47 +13,47 @@ const runCompiler = require('./run-compiler');
 const tsLinter = require('./ts-linter');
 
 function writeTSConfig() {
-  var config = {
-    'compilerOptions': {
-      'target': 'es5',
-      'module': 'es2015',
-      'moduleResolution': 'node',
-      'emitDecoratorMetadata': true,
-      'experimentalDecorators': true,
-      'sourceMap': true,
-      'importHelpers': true,
-      'noEmitHelpers': true,
-      'noImplicitAny': true,
-      'inlineSources': true,
-      'declaration': true,
-      'skipLibCheck': true,
-      'lib': [
+  const config = {
+    compilerOptions: {
+      target: 'es5',
+      module: 'es2015',
+      moduleResolution: 'node',
+      emitDecoratorMetadata: true,
+      experimentalDecorators: true,
+      sourceMap: true,
+      importHelpers: true,
+      noEmitHelpers: true,
+      noImplicitAny: true,
+      inlineSources: true,
+      declaration: true,
+      skipLibCheck: true,
+      lib: [
         'es2015',
         'dom'
       ],
-      'typeRoots': [
+      typeRoots: [
         skyPagesConfigUtil.spaPath('node_modules/@types')
       ]
     },
-    'include': [
+    include: [
       skyPagesConfigUtil.outPath('runtime', '**', '*'),
       skyPagesConfigUtil.outPath('src', '**', '*'),
       skyPagesConfigUtil.spaPathTempSrc('**', '*')
     ],
-    'exclude': [
+    exclude: [
       'node_modules',
       skyPagesConfigUtil.outPath('node_modules'),
       '**/*.spec.ts'
     ],
-    'compileOnSave': false,
-    'buildOnSave': false
+    compileOnSave: false,
+    buildOnSave: false
   };
 
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTempSrc('tsconfig.json'), config);
 }
 
 function stageAot(skyPagesConfig, assetsBaseUrl, assetsRel) {
-  let skyPagesConfigOverrides = {
+  const skyPagesConfigOverrides = {
     runtime: {
       spaPathAlias: '../..',
       skyPagesOutAlias: '../..',
@@ -133,20 +130,6 @@ function cleanupDist() {
   fs.removeSync(skyPagesConfigUtil.spaPath('dist'));
 }
 
-function buildServe(argv, skyPagesConfig, webpack, isAot) {
-  const base = skyPagesConfigUtil.getAppBase(skyPagesConfig);
-  return server
-    .start(base)
-    .then(port => {
-      argv.assets = argv.assets || `https://localhost:${port}`;
-      return buildCompiler(argv, skyPagesConfig, webpack, isAot)
-        .then(stats => {
-          browser(argv, skyPagesConfig, stats, port);
-          return stats;
-        });
-    });
-}
-
 function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
   const assetsBaseUrl = argv.assets || '';
   const assetsRel = argv.assetsrel;
@@ -173,6 +156,20 @@ function buildCompiler(argv, skyPagesConfig, webpack, isAot) {
     });
 }
 
+function buildServe(argv, skyPagesConfig, webpack, isAot) {
+  const base = skyPagesConfigUtil.getAppBase(skyPagesConfig);
+  return server
+    .start(base)
+    .then(port => {
+      argv.assets = argv.assets || `https://localhost:${port}`;
+      return buildCompiler(argv, skyPagesConfig, webpack, isAot)
+        .then(stats => {
+          browser(argv, skyPagesConfig, stats, port);
+          return stats;
+        });
+    });
+}
+
 /**
  * Executes the build command.
  * @name build
@@ -191,12 +188,12 @@ function build(argv, skyPagesConfig, webpack) {
 
   if (lintResult.exitCode > 0) {
     return Promise.reject(lintResult.errors);
-  } else {
-    localeAssetsProcessor.prepareLocaleFiles();
-    const name = argv.serve ? buildServe : buildCompiler;
-
-    return name(argv, skyPagesConfig, webpack, isAot);
   }
+
+  localeAssetsProcessor.prepareLocaleFiles();
+  const name = argv.serve ? buildServe : buildCompiler;
+
+  return name(argv, skyPagesConfig, webpack, isAot);
 }
 
 module.exports = build;

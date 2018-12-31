@@ -1,12 +1,10 @@
-/*jshint jasmine: true, node: true */
-'use strict';
 const common = require('./shared/common');
 const tests = require('./shared/tests');
 
 function prepareBuild() {
   const opts = { mode: 'easy', name: 'dist', compileMode: 'jit' };
   return common.prepareBuild(opts)
-    .catch(err => console.error);
+    .catch(console.error);
 }
 
 describe('skyux build jit', () => {

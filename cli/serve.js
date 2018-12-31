@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const portfinder = require('portfinder');
 const logger = require('@blackbaud/skyux-logger');
 const assetsProcessor = require('../lib/assets-processor');
@@ -44,7 +41,7 @@ function getPort(config, skyPagesConfig) {
 function serve(argv, skyPagesConfig, webpack, WebpackDevServer) {
 
   const webpackConfig = require('../config/webpack/serve.webpack.config');
-  let config = webpackConfig.getWebpackConfig(argv, skyPagesConfig);
+  const config = webpackConfig.getWebpackConfig(argv, skyPagesConfig);
 
   getPort(config, skyPagesConfig).then(port => {
     const localUrl = `https://localhost:${port}`;

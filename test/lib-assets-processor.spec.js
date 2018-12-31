@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const mock = require('mock-require');
 const path = require('path');
 
@@ -109,10 +106,8 @@ describe('SKY assets configuration module', () => {
     );
 
     expect(content).toBe(
-      // jscs:disable maximumLineLength
 `<img src="https://example.com/base/assets/images/[HASH]image.svg" (click)="someMethod()" [class.some-style="condition"]>
 <img src="https://example.com/base/assets/[HASH]measure.png" />, such as to compare their performance.`
-      // jscs:enable
     );
   });
 

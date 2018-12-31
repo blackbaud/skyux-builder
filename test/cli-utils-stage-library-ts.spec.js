@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const fs = require('fs-extra');
 const glob = require('glob');
 const mock = require('mock-require');

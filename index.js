@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const config = require('./config/sky-pages/sky-pages.config');

@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const path = require('path');
 const logger = require('@blackbaud/skyux-logger');
 

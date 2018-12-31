@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const logger = require('@blackbaud/skyux-logger');
 
 /**
@@ -15,6 +12,7 @@ function getCoverageThreshold(skyPagesConfig) {
     case 'standard':
       return 80;
 
+    default:
     case 'strict':
       return 100;
   }
@@ -66,8 +64,8 @@ function getConfig(config) {
         watched: false
       }
     ],
-    preprocessors: preprocessors,
-    skyPagesConfig: skyPagesConfig,
+    preprocessors,
+    skyPagesConfig,
     webpack: testWebpackConfig.getWebpackConfig(skyPagesConfig, argv),
     coverageReporter: {
       dir: path.join(process.cwd(), 'coverage'),
@@ -78,7 +76,7 @@ function getConfig(config) {
         { type: 'lcov' },
         { type: 'in-memory' }
       ],
-      _onWriteReport: function (collector) {
+      _onWriteReport(collector) {
         onWriteReportIndex++;
 
         const newCollector = remapIstanbul.remap(collector.getFinalCoverage());
@@ -126,7 +124,7 @@ function getConfig(config) {
             ];
 
             keys.forEach((key) => {
-              let actual = remapCoverageSummary[key].pct;
+              const actual = remapCoverageSummary[key].pct;
 
               if (actual < threshold) {
                 coverageFailed = true;
@@ -149,7 +147,7 @@ function getConfig(config) {
         return newCollector;
       },
 
-      _onExit: function (done) {
+      _onExit(done) {
         if (coverageFailed) {
           logger.info('Karma has exited with 1.');
           process.exit(1);
@@ -174,7 +172,7 @@ function getConfig(config) {
       watchOptions: {
         // Returning `true` means the file should be ignored.
         // Fat-Arrow functions do not work as chokidar will inspect this method.
-        ignored: function (item) {
+        ignored(item) {
           const resolvedPath = path.resolve(item);
           const ignore = (resolvedPath.indexOf(srcPath) === -1);
           return ignore;

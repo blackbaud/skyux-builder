@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const portfinder = require('portfinder');
@@ -68,6 +65,6 @@ function stop() {
 }
 
 module.exports = {
-  start: start,
-  stop: stop
+  start,
+  stop
 };

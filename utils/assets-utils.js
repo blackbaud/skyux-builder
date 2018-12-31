@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const hashFile = require('hash-file');
 const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 
@@ -13,11 +10,13 @@ const skyPagesConfigUtil = require('../config/sky-pages/sky-pages.config');
 function getFilePathWithHash(filePath, rel) {
   const indexOfLastDot = filePath.lastIndexOf('.');
 
-  let filePathWithHash = filePath.substr(0, indexOfLastDot) +
-    '.' +
-    hashFile.sync(skyPagesConfigUtil.spaPath('src', filePath)) +
-    '.' +
-    filePath.substr(indexOfLastDot + 1);
+  let filePathWithHash = [
+    filePath.substr(0, indexOfLastDot),
+    '.',
+    hashFile.sync(skyPagesConfigUtil.spaPath('src', filePath)),
+    '.',
+    filePath.substr(indexOfLastDot + 1)
+  ].join('');
 
   if (!rel) {
     const srcPath = skyPagesConfigUtil.spaPath('src');
@@ -41,6 +40,6 @@ function getUrl(baseUrl, filePath) {
 }
 
 module.exports = {
-  getFilePathWithHash: getFilePathWithHash,
-  getUrl: getUrl
+  getFilePathWithHash,
+  getUrl
 };

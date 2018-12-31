@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 /**
  * Indents a string the specified number of "tabs" (two spaces = one tab).
  * @param {*} count The number of "tabs" to indent.
@@ -11,5 +8,5 @@ function indent(count, s) {
 }
 
 module.exports = {
-  indent: indent
+  indent
 };

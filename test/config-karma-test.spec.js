@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const mock = require('mock-require');
 
 describe('config karma test', () => {
@@ -12,7 +9,7 @@ describe('config karma test', () => {
       called = true;
     });
   });
-  
+
   afterEach(() => {
     mock.stop(path);
   });

@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 /**
  * Requires the shared karma config and sets any local properties.
  * @name getConfig

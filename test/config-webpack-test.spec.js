@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const path = require('path');
 const runtimeUtils = require('../utils/runtime-test-utils');
 

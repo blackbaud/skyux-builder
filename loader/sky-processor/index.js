@@ -1,11 +1,9 @@
-/*jshint node: true*/
-'use strict';
-
 const logger = require('@blackbaud/skyux-logger');
+
 let plugins;
 
 const getPluginContents = (skyPagesConfig) => {
-  let contents = [];
+  const contents = [];
 
   if (skyPagesConfig &&
     skyPagesConfig.skyux &&
@@ -26,7 +24,7 @@ const getPluginContents = (skyPagesConfig) => {
 
 const processContent = (content, callbackName, ...additionalArgs) => {
   plugins.forEach(plugin => {
-    let callback = plugin[callbackName];
+    const callback = plugin[callbackName];
     if (typeof callback === 'function') {
       content = callback.call({}, content, ...additionalArgs) || content;
     }

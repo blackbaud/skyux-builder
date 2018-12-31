@@ -1,21 +1,18 @@
-/*jshint node: true*/
-/*global browser, element, by*/
-'use strict';
-
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('../../utils/merge');
 const rimraf = require('rimraf');
 const portfinder = require('portfinder');
 const HttpServer = require('http-server');
 const childProcessSpawn = require('cross-spawn');
+
+const merge = require('../../utils/merge');
 
 const tmp = './.e2e-tmp/';
 const cwdOpts = { cwd: tmp };
 
 const skyuxConfigPath = path.resolve(process.cwd(), tmp, 'skyuxconfig.json');
 const appExtrasPath = path.resolve(process.cwd(), tmp, 'src/app/app-extras.module.ts');
-const cliPath = `../e2e/shared/cli`;
+const cliPath = '../e2e/shared/cli';
 
 let skyuxConfigOriginal;
 let appExtrasOriginal;

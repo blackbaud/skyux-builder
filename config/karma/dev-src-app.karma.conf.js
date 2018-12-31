@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 /**
  * Requires the shared karma config and sets any local properties.
  * @name getConfig
@@ -18,7 +15,7 @@ function getConfig(config) {
   const runtimePath = path.resolve(process.cwd(), 'runtime');
   const srcPath = path.resolve(process.cwd(), 'src', 'app');
   const skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig('test');
-  let webpackConfig = testWebpackConfig.getWebpackConfig(skyPagesConfig);
+  const webpackConfig = testWebpackConfig.getWebpackConfig(skyPagesConfig);
 
   // Import shared karma config
   testKarmaConf(config);
@@ -26,7 +23,7 @@ function getConfig(config) {
   // First DefinePlugin wins so we want to override the normal src/app/ value in ROOT_DIR
   webpackConfig.plugins.unshift(
     new DefinePlugin({
-      'ROOT_DIR': JSON.stringify(srcPath)
+      ROOT_DIR: JSON.stringify(srcPath)
     })
   );
 

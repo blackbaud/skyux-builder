@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const fs = require('fs-extra');
 const glob = require('glob');
 const path = require('path');
@@ -49,8 +46,8 @@ function spawnProtractor(configPath, chunks, port, skyPagesConfig) {
   protractorLauncher.init(configPath, {
     params: {
       localUrl: `https://localhost:${port}`,
-      chunks: chunks,
-      skyPagesConfig: skyPagesConfig
+      chunks,
+      skyPagesConfig
     }
   });
   process.on('exit', killServers);
@@ -60,11 +57,11 @@ function spawnProtractor(configPath, chunks, port, skyPagesConfig) {
  * Calls the getChromeDriverVersion method in our library, but handles any errors.
  */
 function getChromeDriverVersion() {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const defaultVersion = 'latest';
 
     matcher.getChromeDriverVersion()
-      .then(result => {
+      .then((result) => {
         if (result.chromeDriverVersion) {
           resolve(result.chromeDriverVersion);
         } else {
@@ -80,8 +77,7 @@ function getChromeDriverVersion() {
  * @name spawnSelenium
  */
 function spawnSelenium(configPath) {
-
-  const config = require(configPath).config;
+  const { config } = require(configPath);
 
   return new Promise((resolve, reject) => {
     logger.info('Spawning selenium...');
@@ -108,7 +104,7 @@ function spawnSelenium(configPath) {
 
       logger.info('Getting webdriver version.');
 
-      getChromeDriverVersion().then(version => {
+      getChromeDriverVersion().then((version) => {
         logger.info(`Updating webdriver to version ${version}`);
 
         const webdriverManagerPath = path.resolve(
@@ -180,12 +176,13 @@ function e2e(command, argv, skyPagesConfig, webpack) {
 
   if (specsGlob.length === 0) {
     logger.info('No spec files located. Skipping e2e command.');
-    return killServers(0);
+    killServers(0);
+    return;
   }
 
   server.start()
     .then((port) => {
-      argv.assets = 'https://localhost:' + port;
+      argv.assets = `https://localhost:${port}`;
 
       // The assets URL is built by combining the assets URL above with
       // the app's root directory, but in e2e tests the assets files
@@ -209,7 +206,7 @@ function e2e(command, argv, skyPagesConfig, webpack) {
         skyPagesConfig
       );
     })
-    .catch(err => {
+    .catch((err) => {
       logger.error(err);
       killServers(1);
     });

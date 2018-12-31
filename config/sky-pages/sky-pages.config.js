@@ -1,10 +1,8 @@
-/*jshint node: true*/
-'use strict';
-
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('../../utils/merge');
 const logger = require('@blackbaud/skyux-logger');
+
+const merge = require('../../utils/merge');
 
 /**
  * Resolves a path given a root path and an array-like arguments object.
@@ -15,7 +13,7 @@ const logger = require('@blackbaud/skyux-logger');
 */
 function resolve(root, args) {
   args = root.concat(Array.prototype.slice.call(args));
-  return path.resolve.apply(path, args);
+  return path.resolve(...args);
 }
 
 function readConfig(file) {
@@ -34,21 +32,21 @@ module.exports = {
    * @param {argv} Optional arguments from command line
    * @returns [SkyPagesConfig] skyPagesConfig
    */
-  getSkyPagesConfig: function (command) {
+  getSkyPagesConfig(command) {
 
     let skyuxConfig = {};
     const hierarchy = [
       {
-        fileName: `App Builder skyuxconfig.json`,
-        filePath: this.outPath(`skyuxconfig.json`)
+        fileName: 'App Builder skyuxconfig.json',
+        filePath: this.outPath('skyuxconfig.json')
       },
       {
         fileName: `App Builder skyuxconfig.${command}.json`,
         filePath: this.outPath(`skyuxconfig.${command}.json`)
       },
       {
-        fileName: `SPA skyuxconfig.json`,
-        filePath: this.spaPath(`skyuxconfig.json`)
+        fileName: 'SPA skyuxconfig.json',
+        filePath: this.spaPath('skyuxconfig.json')
       },
       {
         fileName: `SPA skyuxconfig.${command}.json`,
@@ -63,13 +61,13 @@ module.exports = {
       }
     });
 
-    let config = {
+    const config = {
       runtime: {
         app: {
           inject: false,
           template: this.outPath('src', 'main.ejs')
         },
-        command: command,
+        command,
         componentsPattern: '**/*.component.ts',
         componentsIgnorePattern: './public/**/*',
         includeRouteModule: true,
@@ -94,7 +92,7 @@ module.exports = {
    * @name getAppName
    * @returns {String} appName
    */
-  getAppBase: function (skyPagesConfig) {
+  getAppBase(skyPagesConfig) {
     let name = '';
 
     if (skyPagesConfig.skyux.name) {
@@ -111,7 +109,7 @@ module.exports = {
       }
     }
 
-    return '/' + name.replace(/blackbaud-skyux-spa-/gi, '') + '/';
+    return `/${name.replace(/blackbaud-skyux-spa-/gi, '')}/`;
   },
 
   /**
@@ -119,8 +117,8 @@ module.exports = {
    * contained in this project (@blackbaud/skyux-builder).
    * @returns {String} The fully-qualified path.
    */
-  outPath: function () {
-    return resolve([__dirname, '..', '..'], arguments);
+  outPath(...args) {
+    return resolve([__dirname, '..', '..'], args);
   },
 
   /**
@@ -128,8 +126,8 @@ module.exports = {
    * contained in the SPA project.
    * @returns {String} The fully-qualified path.
    */
-  spaPath: function () {
-    return resolve([process.cwd()], arguments);
+  spaPath(...args) {
+    return resolve([process.cwd()], args);
   },
 
   /**
@@ -137,8 +135,8 @@ module.exports = {
    * contained in the temp source folder in the SPA project.
    * @returns {String} The fully-qualified path.
    */
-  spaPathTemp: function () {
-    return resolve([this.spaPath(), '.skypagestmp'], arguments);
+  spaPathTemp(...args) {
+    return resolve([this.spaPath(), '.skypagestmp'], args);
   },
 
   /**
@@ -146,7 +144,7 @@ module.exports = {
    * contained in the temp folder in the SPA project.
    * @returns {String} The fully-qualified path.
    */
-  spaPathTempSrc: function () {
-    return resolve([this.spaPathTemp(), 'src'], arguments);
+  spaPathTempSrc(...args) {
+    return resolve([this.spaPathTemp(), 'src'], args);
   }
 };

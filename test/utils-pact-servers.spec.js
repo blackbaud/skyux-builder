@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 describe('pact-servers', () => {
 
   it('should save and get pact servers', () => {

@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const path = require('path');
 const minimist = require('minimist');
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
@@ -11,7 +8,7 @@ const argv = minimist(process.argv.slice(2));
 const skyPagesConfig = require('../sky-pages/sky-pages.config').getSkyPagesConfig(argv._[0]);
 
 exports.config = {
-  skyPagesConfig: skyPagesConfig,
+  skyPagesConfig,
   allScriptsTimeout: 11000,
   specs: [
     path.join(
@@ -22,9 +19,12 @@ exports.config = {
     )
   ],
   capabilities: {
-    'browserName': 'chrome',
-    'chromeOptions': {
-      'args': ['--disable-extensions --ignore-certificate-errors']
+    browserName: 'chrome',
+    chromeOptions: {
+      args: [
+        '--disable-extensions',
+        '--ignore-certificate-errors'
+      ]
     }
   },
   directConnect: true,
@@ -35,11 +35,11 @@ exports.config = {
     defaultTimeoutInterval: 30000
   },
   useAllAngular2AppRoots: true,
-  beforeLaunch: function () {
+  beforeLaunch() {
     require('ts-node').register({ ignore: false });
   },
 
-  onPrepare: function () {
+  onPrepare() {
     jasmine.getEnv().addReporter(new SpecReporter());
   }
 };

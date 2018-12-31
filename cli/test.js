@@ -1,13 +1,10 @@
-/*jslint node: true */
-'use strict';
-
 /**
  * Spawns the karma test command.
  * @name test
  */
 function test(command, argv) {
   const logger = require('@blackbaud/skyux-logger');
-  const Server = require('karma').Server;
+  const { Server } = require('karma');
   const path = require('path');
   const glob = require('glob');
   const tsLinter = require('./utils/ts-linter');
@@ -59,7 +56,8 @@ function test(command, argv) {
 
   if (specsGlob.length === 0) {
     logger.info('No spec files located. Skipping test command.');
-    return onExit(0);
+    onExit(0);
+    return;
   }
 
   const server = new Server(karmaConfig, onExit);

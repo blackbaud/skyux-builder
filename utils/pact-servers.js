@@ -1,7 +1,4 @@
-/*jslint node: true */
-'use strict';
-
-let pactServers = {};
+const pactServers = {};
 let pactProxyServer = '';
 
 /**
@@ -17,7 +14,11 @@ module.exports = {
    * @param {string|number} port - The port of the pact server
    */
   savePactServer: (providerName, host, port) => {
-    pactServers[providerName] = { host: host, port: port, fullUrl: `http://${host}:${port}` };
+    pactServers[providerName] = {
+      host,
+      port,
+      fullUrl: `http://${host}:${port}`
+    };
   },
 
   /**

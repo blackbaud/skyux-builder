@@ -1,5 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
 const common = require('./shared/common');
 const tests = require('./shared/tests');
 

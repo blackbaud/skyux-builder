@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 /**
  * For longer builds, this plugin periodically prints to the
  * console to reset any timeouts associated with watched output.

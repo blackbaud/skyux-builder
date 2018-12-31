@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const spawn = require('cross-spawn');
 const logger = require('@blackbaud/skyux-logger');
 const skyPagesConfigUtil = require('../../config/sky-pages/sky-pages.config');
@@ -20,7 +17,7 @@ function lintSync() {
   const spawnResult = spawn.sync('./node_modules/.bin/tslint', flags);
 
   // Convert buffers to strings.
-  let output = [];
+  const output = [];
   spawnResult.output.forEach((buffer) => {
     if (buffer === null) {
       return;
@@ -45,7 +42,7 @@ function lintSync() {
 
   return {
     exitCode: spawnResult.status,
-    errors: errors
+    errors
   };
 }
 

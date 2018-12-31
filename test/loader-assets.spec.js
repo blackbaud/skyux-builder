@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const mock = require('mock-require');
 
 describe('SKY UX assets Webpack loader', () => {
@@ -10,19 +7,19 @@ describe('SKY UX assets Webpack loader', () => {
 
   beforeEach(() => {
     mock('fs-extra', {
-      readFileSync: function () {
+      readFileSync() {
         return 'zxcv';
       }
     });
 
     mock('hash-file', {
-      sync: function () {
+      sync() {
         return 'abcdefg';
       }
     });
 
     mock('loader-utils', {
-      getOptions: function () {
+      getOptions() {
         return {
           baseUrl: 'https://localhost:1234/base/'
         };
@@ -51,19 +48,19 @@ describe('SKY UX assets Webpack loader', () => {
 
     const config = {
       _compiler: {
-        plugin: function () { }
+        plugin() { }
       },
       options: {
         SKY_PAGES: {
           entries: []
         }
       },
-      emitFile: function () { }
+      emitFile() { }
     };
 
     const emitFileSpy = spyOn(config, 'emitFile');
 
-    let modifiedHtml = loader.apply(config, [html]);
+    const modifiedHtml = loader.apply(config, [html]);
 
     // Verify the referenced file is emitted to Webpack's output.
     expect(emitFileSpy.calls.count()).toBe(3);
@@ -77,8 +74,7 @@ describe('SKY UX assets Webpack loader', () => {
 <img src="https://localhost:1234/base/assets/image.abcdefg.jpg">
 <img src="https://localhost:1234/base/assets/image2.abcdefg.jpg">
 <img src="https://localhost:1234/base/assets/image.3.abcdefg.jpg">
-`
-    );
+`);
   });
 
 });

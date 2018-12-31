@@ -1,11 +1,6 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const fs = require('fs-extra');
-const glob = require('glob');
 const path = require('path');
 const mock = require('mock-require');
-const spawn = require('cross-spawn');
 const selenium = require('selenium-standalone');
 const logger = require('@blackbaud/skyux-logger');
 

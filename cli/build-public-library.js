@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const spawn = require('cross-spawn');
 const fs = require('fs-extra');
 const rimraf = require('rimraf');
@@ -57,32 +54,32 @@ function getEntryPointFiles() {
 }
 
 function writeTSConfig() {
-  var config = {
-    'compilerOptions': {
-      'target': 'es5',
-      'module': 'es2015',
-      'moduleResolution': 'node',
-      'emitDecoratorMetadata': true,
-      'experimentalDecorators': true,
-      'allowSyntheticDefaultImports': true,
-      'sourceMap': true,
-      'importHelpers': true,
-      'noEmitHelpers': true,
-      'noImplicitAny': true,
-      'declaration': true,
-      'skipLibCheck': true,
-      'lib': [
+  const config = {
+    compilerOptions: {
+      target: 'es5',
+      module: 'es2015',
+      moduleResolution: 'node',
+      emitDecoratorMetadata: true,
+      experimentalDecorators: true,
+      allowSyntheticDefaultImports: true,
+      sourceMap: true,
+      importHelpers: true,
+      noEmitHelpers: true,
+      noImplicitAny: true,
+      declaration: true,
+      skipLibCheck: true,
+      lib: [
         'dom',
         'es6'
       ],
-      'types': [
+      types: [
         'jasmine',
         'node'
       ],
-      'outDir': skyPagesConfigUtil.spaPath('dist'),
-      'rootDir': skyPagesConfigUtil.spaPathTemp(),
-      'baseUrl': '.',
-      'paths': {
+      outDir: skyPagesConfigUtil.spaPath('dist'),
+      rootDir: skyPagesConfigUtil.spaPathTemp(),
+      baseUrl: '.',
+      paths: {
         '@blackbaud/skyux-builder/*': [
           '*'
         ],
@@ -91,7 +88,7 @@ function writeTSConfig() {
         ]
       }
     },
-    'files': getEntryPointFiles()
+    files: getEntryPointFiles()
   };
 
   fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);

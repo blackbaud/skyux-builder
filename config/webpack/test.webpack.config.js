@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const path = require('path');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const LoaderOptionsPlugin = require('webpack/lib/LoaderOptionsPlugin');
@@ -8,12 +5,12 @@ const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin')
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
 
-function spaPath() {
-  return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
+function spaPath(...args) {
+  return skyPagesConfigUtil.spaPath(args);
 }
 
-function outPath() {
-  return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+function outPath(...args) {
+  return skyPagesConfigUtil.outPath(args);
 }
 
 function getWebpackConfig(skyPagesConfig, argv) {
@@ -41,9 +38,9 @@ function getWebpackConfig(skyPagesConfig, argv) {
 
   skyPagesConfig.runtime.includeRouteModule = false;
 
-  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
+  const alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
-  let config = {
+  const config = {
     mode: 'development',
 
     devtool: 'inline-source-map',
@@ -53,7 +50,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
     },
 
     resolve: {
-      alias: alias,
+      alias,
       modules: resolves,
       extensions: [
         '.js',
@@ -116,7 +113,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
           // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
           // Removing this will cause deprecation warnings to appear.
           // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
-          test: /[\/\\]@angular[\/\\]core[\/\\].+\.js$/,
+          test: /[/\\]@angular[/\\]core[/\\].+\.js$/,
           parser: {
             system: true
           }
@@ -129,20 +126,20 @@ function getWebpackConfig(skyPagesConfig, argv) {
         debug: true,
         options: {
           context: __dirname,
-          skyPagesConfig: skyPagesConfig
+          skyPagesConfig
         }
       }),
 
       new DefinePlugin({
-        'ENV': JSON.stringify(ENV),
-        'HMR': false,
+        ENV: JSON.stringify(ENV),
+        HMR: false,
         'process.env': {
-          'ENV': JSON.stringify(ENV),
-          'NODE_ENV': JSON.stringify(ENV),
-          'HMR': false
+          ENV: JSON.stringify(ENV),
+          NODE_ENV: JSON.stringify(ENV),
+          HMR: false
         },
-        'ROOT_DIR': JSON.stringify(srcPath),
-        'skyPagesConfig': JSON.stringify(skyPagesConfig),
+        ROOT_DIR: JSON.stringify(srcPath),
+        skyPagesConfig: JSON.stringify(skyPagesConfig),
       }),
 
       new ContextReplacementPlugin(
@@ -155,7 +152,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
       // Suppress the "request of a dependency is an expression" warnings.
       // See: https://github.com/angular/angular/issues/20357#issuecomment-343683491
       new ContextReplacementPlugin(
-        /\@angular(\\|\/)core(\\|\/)fesm5/,
+        /@angular(\\|\/)core(\\|\/)fesm5/,
         spaPath('src'),
         {}
       )
@@ -193,5 +190,5 @@ function getWebpackConfig(skyPagesConfig, argv) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };

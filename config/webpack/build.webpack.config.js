@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const webpackMerge = require('webpack-merge');
 const SaveMetadata = require('../../plugin/save-metadata');
 
@@ -47,5 +44,5 @@ function getWebpackConfig(skyPagesConfig, argv) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };

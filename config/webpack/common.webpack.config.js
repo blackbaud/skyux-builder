@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const logger = require('@blackbaud/skyux-logger');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -11,15 +8,16 @@ const { OutputKeepAlivePlugin } = require('../../plugin/output-keep-alive');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
 const aliasBuilder = require('./alias-builder');
 
-function spaPath() {
-  return skyPagesConfigUtil.spaPath.apply(skyPagesConfigUtil, arguments);
+function spaPath(...args) {
+  return skyPagesConfigUtil.spaPath(args);
 }
 
-function outPath() {
-  return skyPagesConfigUtil.outPath.apply(skyPagesConfigUtil, arguments);
+function outPath(...args) {
+  return skyPagesConfigUtil.outPath(args);
 }
 
 function getLogFormat(skyPagesConfig, argv) {
+  // eslint-disable-next-line no-prototype-builtins
   if (argv.hasOwnProperty('logFormat')) {
     return argv.logFormat;
   }
@@ -44,7 +42,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     outPath('node_modules')
   ];
 
-  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
+  const alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
   const logFormat = getLogFormat(skyPagesConfig, argv);
@@ -61,7 +59,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       break;
   }
 
-  let plugins = [
+  const plugins = [
     // Some properties are required on the root object passed to HtmlWebpackPlugin
     new HtmlWebpackPlugin({
       template: skyPagesConfig.runtime.app.template,
@@ -71,13 +69,13 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     }),
 
     new webpack.DefinePlugin({
-      'skyPagesConfig': JSON.stringify(skyPagesConfig)
+      skyPagesConfig: JSON.stringify(skyPagesConfig)
     }),
 
     new LoaderOptionsPlugin({
       options: {
         context: __dirname,
-        skyPagesConfig: skyPagesConfig
+        skyPagesConfig
       }
     }),
 
@@ -90,7 +88,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
 
     // See: https://github.com/angular/angular/issues/20357#issuecomment-343683491
     new ContextReplacementPlugin(
-      /\@angular(\\|\/)core(\\|\/)fesm5/,
+      /@angular(\\|\/)core(\\|\/)fesm5/,
       spaPath('src'),
       {}
     ),
@@ -122,7 +120,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
       modules: resolves
     },
     resolve: {
-      alias: alias,
+      alias,
       modules: resolves,
       extensions: [
         '.js',
@@ -171,7 +169,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
           // Mark files inside `@angular/core` as using SystemJS style dynamic imports.
           // Removing this will cause deprecation warnings to appear.
           // See: https://github.com/angular/angular/issues/21560#issuecomment-433601967
-          test: /[\/\\]@angular[\/\\]core[\/\\].+\.js$/,
+          test: /[/\\]@angular[/\\]core[/\\].+\.js$/,
           parser: {
             system: true
           }
@@ -207,5 +205,5 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };

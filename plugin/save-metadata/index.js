@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
@@ -33,7 +30,7 @@ module.exports = function SaveMetadata() {
 
   this.plugin('done', (stats) => {
 
-    let metadata = [];
+    const metadata = [];
     hostUtils.getScripts(stats.toJson().chunks).forEach(script => {
       metadata.push({
         name: script.name,

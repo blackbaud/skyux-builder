@@ -1,12 +1,9 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const url = require('url');
 const mock = require('mock-require');
-const merge = require('../utils/merge');
 const logger = require('@blackbaud/skyux-logger');
 
 const hostUtils = require('../utils/host-utils');
+const merge = require('../utils/merge');
 const runtimeUtils = require('../utils/runtime-test-utils');
 
 describe('browser utils', () => {

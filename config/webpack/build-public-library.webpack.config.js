@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const { AngularCompilerPlugin } = require('@ngtools/webpack');
 const fs = require('fs-extra');
 const skyPagesConfigUtil = require('../sky-pages/sky-pages.config');
@@ -9,7 +6,7 @@ function parseRegExp(name) {
   const escaped = name
     .replace(/\./g, String.raw`\.`)
     .replace(/\//g, String.raw`\/`)
-    .replace(/\-/g, String.raw`\-`);
+    .replace(/-/g, String.raw`\-`);
   return new RegExp(`^${escaped}`);
 }
 
@@ -85,7 +82,7 @@ function getWebpackConfig(skyPagesConfig) {
       // Generates an AoT JavaScript bundle.
       new AngularCompilerPlugin({
         tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
+        entryModule: `${skyPagesConfigUtil.spaPathTemp('main.ts')}#SkyLibPlaceholderModule`,
         sourceMap: false,
         typeChecking: false
       })
@@ -94,5 +91,5 @@ function getWebpackConfig(skyPagesConfig) {
 }
 
 module.exports = {
-  getWebpackConfig: getWebpackConfig
+  getWebpackConfig
 };

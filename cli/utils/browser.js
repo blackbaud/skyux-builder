@@ -1,6 +1,3 @@
-/*jslint node: true */
-'use strict';
-
 const util = require('util');
 const open = require('opn');
 const logger = require('@blackbaud/skyux-logger');
@@ -30,7 +27,7 @@ function getQueryStringFromArgv(argv, skyPagesConfig) {
       .filter(configParam => configParams[configParam]);
   }
 
-  let found = [];
+  const found = [];
   params.forEach(param => {
     if (argv[param]) {
       found.push(`${param}=${encodeURIComponent(argv[param])}`);

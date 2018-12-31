@@ -1,8 +1,5 @@
-/*jshint node: true*/
-'use strict';
-
 function addRuntimeAlias(webpackConfig, runtimePath, path) {
-  webpackConfig.resolve.alias['@blackbaud/skyux-builder/runtime' + path] = runtimePath + path;
+  webpackConfig.resolve.alias[`@blackbaud/skyux-builder/runtime${path}`] = runtimePath + path;
 }
 
 /**
@@ -21,7 +18,7 @@ function getConfig(config) {
 
   const runtimePath = path.resolve(process.cwd(), 'runtime');
   const skyPagesConfig = skyPagesConfigUtil.getSkyPagesConfig('test');
-  let webpackConfig = testWebpackConfig.getWebpackConfig(skyPagesConfig);
+  const webpackConfig = testWebpackConfig.getWebpackConfig(skyPagesConfig);
 
   // Import shared karma config
   testKarmaConf(config);
@@ -29,7 +26,7 @@ function getConfig(config) {
   // First DefinePlugin wins so we want to override the normal src/app/ value in ROOT_DIR
   webpackConfig.plugins.unshift(
     new DefinePlugin({
-      'ROOT_DIR': JSON.stringify(runtimePath)
+      ROOT_DIR: JSON.stringify(runtimePath)
     })
   );
 

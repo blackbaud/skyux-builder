@@ -1,6 +1,3 @@
-/*jshint jasmine: true, node: true */
-'use strict';
-
 const mock = require('mock-require');
 const glob = require('glob');
 const localeAssetsProcessor = require('../lib/locale-assets-processor');

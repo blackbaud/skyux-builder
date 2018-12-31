@@ -1,6 +1,3 @@
-/*jshint node: true*/
-'use strict';
-
 const logger = require('@blackbaud/skyux-logger');
 const runBuild = require('./utils/run-build');
 
@@ -18,7 +15,7 @@ function build(argv, skyPagesConfig, webpack) {
       logger.info('Build successfully completed.');
       return stats;
     })
-    .catch(err => {
+    .catch((err) => {
       logger.error(err);
       process.exit(1);
     });

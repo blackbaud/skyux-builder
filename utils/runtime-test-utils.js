@@ -1,17 +1,14 @@
-/*jslint node: true */
-'use strict';
-
 const merge = require('../utils/merge');
 
 module.exports = {
-  getDefault: function (runtime, skyux) {
+  getDefault(runtime, skyux) {
     return {
       runtime: this.getDefaultRuntime(runtime),
       skyux: this.getDefaultSkyux(skyux)
     };
   },
 
-  getDefaultRuntime: function (runtime) {
+  getDefaultRuntime(runtime) {
     return merge({
       app: {
         base: '',
@@ -32,7 +29,7 @@ module.exports = {
     }, runtime);
   },
 
-  getDefaultSkyux: function (skyux) {
+  getDefaultSkyux(skyux) {
     return merge({
       host: {
         url: ''

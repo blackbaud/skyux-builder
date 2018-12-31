@@ -1,7 +1,3 @@
-/*jshint jasmine: true, node: true */
-/*global element, by, $$, protractor, browser*/
-'use strict';
-
 const fs = require('fs');
 const glob = require('glob');
 const path = require('path');

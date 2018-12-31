@@ -1,7 +1,3 @@
-/*jshint jasmine: true, node: true */
-/*global element, by*/
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const common = require('../shared/common');
@@ -96,16 +92,16 @@ function addModalToHomePage() {
   }
 
   common.writeAppExtras(mockAppExtras);
-  const content = `<help-modal-launcher></help-modal-launcher>`;
+  const content = '<help-modal-launcher></help-modal-launcher>';
   common.writeAppFile('home.component.html', content, 'utf8');
 }
 
 describe('skyux lib help', () => {
   beforeAll((done) => {
     prepareBuild()
-    .then(() => {
-      done();
-    });
+      .then(() => {
+        done();
+      });
     addModalToHomePage();
   });
 
@@ -123,9 +119,9 @@ describe('skyux lib help', () => {
    * changed the class names that accomplish this style override.
    */
   it('should hide the invoker when a full page modal is opened', () => {
-    let invoker = element(by.id('bb-help-invoker'));
-    let regularModalButton = element(by.id('regular-modal-launcher'));
-    let fullPageButton = element(by.id('full-page-modal-launcher'));
+    const invoker = element(by.id('bb-help-invoker'));
+    const regularModalButton = element(by.id('regular-modal-launcher'));
+    const fullPageButton = element(by.id('full-page-modal-launcher'));
 
     expect(invoker.isDisplayed()).toBe(true);
 
