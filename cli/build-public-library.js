@@ -57,7 +57,7 @@ function getEntryPointFiles() {
 }
 
 function writeTSConfig() {
-  var config = {
+  const config = {
     'compilerOptions': {
       'target': 'es5',
       'module': 'es2015',

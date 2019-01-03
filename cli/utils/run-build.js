@@ -16,7 +16,7 @@ const runCompiler = require('./run-compiler');
 const tsLinter = require('./ts-linter');
 
 function writeTSConfig() {
-  var config = {
+  const config = {
     'compilerOptions': {
       'target': 'es5',
       'module': 'es2015',
@@ -191,12 +191,12 @@ function build(argv, skyPagesConfig, webpack) {
 
   if (lintResult.exitCode > 0) {
     return Promise.reject(lintResult.errors);
-  } else {
-    localeAssetsProcessor.prepareLocaleFiles();
-    const name = argv.serve ? buildServe : buildCompiler;
-
-    return name(argv, skyPagesConfig, webpack, isAot);
   }
+
+  localeAssetsProcessor.prepareLocaleFiles();
+  const name = argv.serve ? buildServe : buildCompiler;
+
+  return name(argv, skyPagesConfig, webpack, isAot);
 }
 
 module.exports = build;

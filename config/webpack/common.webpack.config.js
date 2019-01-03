@@ -20,6 +20,7 @@ function outPath() {
 }
 
 function getLogFormat(skyPagesConfig, argv) {
+  // eslint-disable-next-line no-prototype-builtins
   if (argv.hasOwnProperty('logFormat')) {
     return argv.logFormat;
   }

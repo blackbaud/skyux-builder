@@ -19,6 +19,7 @@ module.exports = function () {
     fs.writeFileSync(moduleResolved, template.replace(regex, `// TS (${ts}`));
   }
 
+  // eslint-disable-next-line no-underscore-dangle
   this._compiler.plugin('invalid', function (filename) {
     const filenameParsed = path.parse(filename);
     switch (filenameParsed.ext) {

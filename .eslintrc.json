@@ -1,0 +1,42 @@
+{
+  "extends": "airbnb-base",
+  "env": {
+    "jasmine": true
+  },
+  "rules": {
+    "arrow-body-style": "off",
+    "arrow-parens": "off",
+    "comma-dangle": "off",
+    "consistent-return": "off",
+    "default-case": "off",
+    "func-names": "off",
+    "global-require": "off",
+    "import/newline-after-import": "off",
+    "import/no-dynamic-require": "off",
+    "import/order": "off",
+    "lines-around-directive": "off",
+    "no-console": "off",
+    "no-multi-assign": "off",
+    "no-param-reassign": "off",
+    "no-plusplus": "off",
+    "no-use-before-define": "off",
+    "no-useless-escape": "off",
+    "object-curly-newline": "off",
+    "object-shorthand": "off",
+    "operator-linebreak": "off",
+    "padded-blocks": "off",
+    "prefer-arrow-callback": "off",
+    "prefer-const": "off",
+    "prefer-destructuring": "off",
+    "prefer-rest-params": "off",
+    "prefer-spread": "off",
+    "prefer-template": "off",
+    "quote-props": "off",
+    "quotes": ["error", "single", {
+      "allowTemplateLiterals": true,
+      "avoidEscape": true
+    }],
+    "spaced-comment": "off",
+    "strict": "off"
+  }
+}

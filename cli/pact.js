@@ -103,7 +103,7 @@ function pact(command, argv) {
         .on('connect', () => {
           logger
             .info(
-            `Pact proxy server successfully started on http://localhost:${ports[ports.length - 1]}`
+              `Pact proxy server successfully started on http://localhost:${ports[ports.length - 1]}`
             );
         })
         .listen(ports[ports.length - 1], 'localhost');
