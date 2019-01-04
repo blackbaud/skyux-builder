@@ -48,7 +48,7 @@ function snakeCase(name) {
 function generateComponentTs(pathParts, fileName, name, nameSnakeCase) {
   fs.writeFileSync(
     resolveFilePath(pathParts, fileName + '.ts'),
-`import {
+    `import {
   Component
 } from '@angular/core';
 
@@ -69,7 +69,7 @@ function generateComponentSpec(pathParts, fileName, name, nameSnakeCase) {
 
   fs.writeFileSync(
     resolveFilePath(pathParts, fileName + '.spec.ts'),
-`import {
+    `import {
   TestBed
 } from '@angular/core/testing';
 

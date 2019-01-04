@@ -33,7 +33,7 @@ function resolve(url, localUrl, chunks, skyPagesConfig) {
   }
 
   const delimeter = url.indexOf('?') === -1 ? '?' : '&';
-  const encoded = new Buffer(JSON.stringify(config)).toString('base64');
+  const encoded = Buffer.from(JSON.stringify(config)).toString('base64');
   const base = skyPagesConfigUtil.getAppBase(skyPagesConfig);
   const resolved = `${host}${base}${url}${delimeter}local=true&_cfg=${encoded}`;
 
