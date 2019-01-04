@@ -19,8 +19,8 @@ testing.getTestBed().initTestEnvironment(
 
 // Then we find all the tests.
 const testContext = skyPagesConfig.runtime.command === 'pact' ?
-require.context(ROOT_DIR, true, /\.pact-spec\.ts/) :
-require.context(ROOT_DIR, true, /\.spec\.ts/);
+  require.context(ROOT_DIR, true, /\.pact-spec\.ts/) :
+  require.context(ROOT_DIR, true, /\.spec\.ts/);
 
 // And load the modules.
 function requireAll(requireContext) {

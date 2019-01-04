@@ -26,11 +26,11 @@ function outPath() {
  * @param {String} moduleName
  * @param {String} path
  */
-function setSpaAlias(alias, moduleName, path) {
-  let resolvedPath = spaPath(path);
+function setSpaAlias(alias, moduleName, filePath) {
+  let resolvedPath = spaPath(filePath);
 
   if (!fs.existsSync(resolvedPath)) {
-    resolvedPath = outPath(path);
+    resolvedPath = outPath(filePath);
   }
 
   alias['sky-pages-internal/' + moduleName] = resolvedPath;
