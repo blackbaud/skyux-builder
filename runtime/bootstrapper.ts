@@ -37,7 +37,7 @@ export class SkyAppBootstrapper {
           };
 
           return BBContextProvider.ensureContext(ensureContextArgs)
-            .then((args: any) => {
+            .then((args) => {
               // The URL will remain the same if the required context is already present, in which
               // case there's no need to update the URL.
               if (args.url !== currentUrl) {

@@ -6,10 +6,6 @@ env:
   - TEST_COMMAND=coverage
   - TEST_COMMAND=e2e
 
-node_js:
-  - "8"
-  - "6"
-
 script: "npm run lint && npm run $TEST_COMMAND"
 
 addons:
