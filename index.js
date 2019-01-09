@@ -13,6 +13,7 @@ function getConfig(command) {
 module.exports = {
   runCommand: (command, argv) => {
     const shorthand = {
+      f: 'force',
       l: 'launch',
       b: 'browser',
       s: 'serve'
@@ -52,6 +53,7 @@ module.exports = {
         require('./cli/version')();
         break;
       case 'generate':
+      case 'g':
         require('./cli/generate')(argv);
         break;
       default:
