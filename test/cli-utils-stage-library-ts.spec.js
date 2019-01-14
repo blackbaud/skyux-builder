@@ -38,9 +38,9 @@ describe('cli utils prepare-library-package', () => {
     const spy = spyOn(glob, 'sync').and.callFake((pattern) => {
       if (pattern.match('.spec.')) {
         return ['index.spec.ts'];
-      } else {
-        return [];
       }
+
+      return [];
     });
 
     util();
@@ -54,9 +54,9 @@ describe('cli utils prepare-library-package', () => {
     const spy = spyOn(glob, 'sync').and.callFake(pattern => {
       if (pattern.match('.spec.')) {
         return [];
-      } else {
-        return ['index.component.ts'];
       }
+
+      return ['index.component.ts'];
     });
 
     spyOn(fs, 'readFileSync').and.callFake(filePath => {
@@ -94,9 +94,9 @@ describe('cli utils prepare-library-package', () => {
     spyOn(glob, 'sync').and.callFake(pattern => {
       if (pattern.match('.spec.')) {
         return [];
-      } else {
-        return ['index.component.ts'];
       }
+
+      return ['index.component.ts'];
     });
 
     spyOn(fs, 'readFileSync').and.callFake(filePath => {
@@ -135,9 +135,9 @@ describe('cli utils prepare-library-package', () => {
     spyOn(glob, 'sync').and.callFake(pattern => {
       if (pattern.match('.spec.')) {
         return [];
-      } else {
-        return ['index.component.ts'];
       }
+
+      return ['index.component.ts'];
     });
 
     spyOn(fs, 'readFileSync').and.callFake(filePath => {

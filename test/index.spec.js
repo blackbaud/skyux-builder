@@ -62,6 +62,10 @@ describe('@skyux-sdk/builder', () => {
       'generate': {
         cmd: 'generate',
         lib: 'generate'
+      },
+      'g': {
+        cmd: 'generate',
+        lib: 'generate'
       }
     };
 
@@ -101,11 +105,13 @@ describe('@skyux-sdk/builder', () => {
   it('should process shorthand tags', (done) => {
     const argv = {
       l: 'showForLaunch',
-      b: 'showForBrowser'
+      b: 'showForBrowser',
+      f: 'showForForce'
     };
     mock('../cli/test', (c, a) => {
       expect(a.launch).toEqual(argv.l);
       expect(a.browser).toEqual(argv.b);
+      expect(a.force).toEqual(argv.f);
       done();
     });
     const lib = mock.reRequire('../index');
