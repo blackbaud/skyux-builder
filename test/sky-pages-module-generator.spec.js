@@ -230,13 +230,12 @@ describe('SKY UX Builder module generator', () => {
 
     expect(moduleImports).toContain(expectedImport);
 
-    let sourceWithoutRouting = generator.getSource(
-      {
-        runtime: runtimeUtils.getDefaultRuntime({
-          includeRouteModule: false
-        }),
-        skyux: runtimeUtils.getDefaultSkyux()
-      });
+    const sourceWithoutRouting = generator.getSource({
+      runtime: runtimeUtils.getDefaultRuntime({
+        includeRouteModule: false
+      }),
+      skyux: runtimeUtils.getDefaultSkyux()
+    });
 
     moduleImports = getModuleList('imports', sourceWithoutRouting);
 
@@ -254,7 +253,8 @@ describe('SKY UX Builder module generator', () => {
 
     expect(source).toContain(
       `import { enableProdMode } from '@angular/core';
-enableProdMode();`);
+enableProdMode();`
+    );
   });
 
   it('should put auth-client in mock mode if the command is e2e', () => {
@@ -268,7 +268,8 @@ enableProdMode();`);
 
     expect(source).toContain(
       `import { BBAuth } from '@blackbaud/auth-client';
-BBAuth.mock = true;`);
+BBAuth.mock = true;`
+    );
   });
 
   it('should add routes to skyPagesConfig.runtime', () => {

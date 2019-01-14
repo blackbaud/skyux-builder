@@ -12,8 +12,8 @@ describe('config webpack common', () => {
 
     let existsSync = fs.existsSync;
 
-    spyOn(fs, 'existsSync').and.callFake(function (path) {
-      if (path.indexOf('app-extras.module') >= 0) {
+    spyOn(fs, 'existsSync').and.callFake(function (filePath) {
+      if (filePath.indexOf('app-extras.module') >= 0) {
         return spaVersionExists;
       }
 
