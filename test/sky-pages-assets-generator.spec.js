@@ -44,13 +44,17 @@ describe('SKY UX Builder assets generator', () => {
 
     expect(source).toBe(
 `export class ${generator.getClassName()} {
-  public getUrl(filePath: string): string {
-    const pathMap: {[key: string]: any} = {
-      'a/b/c/d.jpg': '~/assets/a/b/c/d.jpg',
+  private pathMap: {[key: string]: any} = {
+    'a/b/c/d.jpg': '~/assets/a/b/c/d.jpg',
       'e/f.jpg': '~/assets/e/f.jpg'
-    };
+  };
 
-    return pathMap[filePath];
+  public getUrl(filePath: string): string {
+    return this.pathMap[filePath];
+  }
+
+  public getAllUrls(): {[key: string]: any} {
+    return this.pathMap;
   }
 }`
     );
@@ -73,13 +77,17 @@ describe('SKY UX Builder assets generator', () => {
     // is governed by the locale assets processor.
     expect(source).toBe(
 `export class SkyAppAssetsImplService {
-  public getUrl(filePath: string): string {
-    const pathMap: {[key: string]: any} = {
-      'locales/BASENAME': '~/assets/BASENAME',
+  private pathMap: {[key: string]: any} = {
+    'locales/BASENAME': '~/assets/BASENAME',
       'locales/BASENAME': '~/assets/BASENAME'
-    };
+  };
 
-    return pathMap[filePath];
+  public getUrl(filePath: string): string {
+    return this.pathMap[filePath];
+  }
+
+  public getAllUrls(): {[key: string]: any} {
+    return this.pathMap;
   }
 }`
     );
@@ -103,12 +111,16 @@ describe('SKY UX Builder assets generator', () => {
     // is governed by the locale assets processor.
     expect(source).toBe(
 `export class SkyAppAssetsImplService {
-  public getUrl(filePath: string): string {
-    const pathMap: {[key: string]: any} = {
-      'locales/BASENAME': '~/assets/BASENAME'
-    };
+  private pathMap: {[key: string]: any} = {
+    'locales/BASENAME': '~/assets/BASENAME'
+  };
 
-    return pathMap[filePath];
+  public getUrl(filePath: string): string {
+    return this.pathMap[filePath];
+  }
+
+  public getAllUrls(): {[key: string]: any} {
+    return this.pathMap;
   }
 }`
     );
