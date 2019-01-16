@@ -10,7 +10,7 @@ import {
 
 import {
   SkyAppBootstrapper
-} from '@blackbaud/skyux-builder/runtime/bootstrapper';
+} from '@skyux-sdk/builder/runtime/bootstrapper';
 
 import {
   AppModule

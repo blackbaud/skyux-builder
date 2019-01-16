@@ -4,7 +4,7 @@
 const mock = require('mock-require');
 const logger = require('@blackbaud/skyux-logger');
 
-describe('@blackbaud/skyux-builder', () => {
+describe('@skyux-sdk/builder', () => {
   let config;
 
   beforeEach(() => {

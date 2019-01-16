@@ -35,7 +35,7 @@ let config = {
       } else {
 
         const url = 'https://github.com/blackbaud/skyux-template';
-        const branch = 'builder-dev-rc';
+        const branch = 'builder-dev-rc-rename-package';
 
         console.log('Running command using full install.');
         common.rimrafPromise(common.tmp)
@@ -62,7 +62,7 @@ let config = {
             });
 
             // Remove any installed versions of Builder.
-            delete spaPkgJson.devDependencies['@blackbaud/skyux-builder'];
+            delete spaPkgJson.devDependencies['@skyux-sdk/builder'];
 
             fs.writeJsonSync(spaPkgPath, spaPkgJson, { spaces: 2 });
           })
@@ -92,7 +92,7 @@ let config = {
                 file,
                 path.resolve(
                   common.tmp,
-                  `node_modules/@blackbaud/skyux-builder/${file}`
+                  `node_modules/@skyux-sdk/builder/${file}`
                 )
               );
             });

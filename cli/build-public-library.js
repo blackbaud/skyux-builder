@@ -83,7 +83,7 @@ function writeTSConfig() {
       'rootDir': skyPagesConfigUtil.spaPathTemp(),
       'baseUrl': '.',
       'paths': {
-        '@blackbaud/skyux-builder/*': [
+        '@skyux-sdk/builder/*': [
           '*'
         ],
         '.skypageslocales/*': [

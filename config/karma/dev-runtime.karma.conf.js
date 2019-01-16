@@ -2,7 +2,7 @@
 'use strict';
 
 function addRuntimeAlias(webpackConfig, runtimePath, path) {
-  webpackConfig.resolve.alias['@blackbaud/skyux-builder/runtime' + path] = runtimePath + path;
+  webpackConfig.resolve.alias['@skyux-sdk/builder/runtime' + path] = runtimePath + path;
 }
 
 /**
