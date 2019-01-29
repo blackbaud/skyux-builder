@@ -1,3 +1,8 @@
+# 1.31.0 (2019-01-29)
+
+ - Added support for `@skyux/config@3.3.0`. [#510](https://github.com/blackbaud/skyux-builder/pull/510)
+ - Added checks for existing file to `skyux generate`. [#500](https://github.com/blackbaud/skyux-builder/pull/500)
+
 # 1.30.0 (2018-11-26)
 
 - Added `SkyAuthHttpClientModule` that can be used in conjunction with Angular's `HttpClient` to make authenticated calls to services backed by Blackbaud ID. (blackbaud/skyux-http#11)[https://github.com/blackbaud/skyux-http/pull/11]
