@@ -1,3 +1,7 @@
+# 1.31.1 (2019-01-04)
+
+- Backporting a fix for `webpack-dev-server` in order to support Node 10. [#512](https://github.com/blackbaud/skyux-builder/pull/512)
+
 # 1.31.0 (2019-01-29)
 
  - Added support for `@skyux/config@3.3.0`. [#510](https://github.com/blackbaud/skyux-builder/pull/510)
