@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.31.0",
+  "version": "1.31.1",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
@@ -107,7 +107,7 @@
     "typescript": "2.3.2",
     "web-animations-js": "2.2.5",
     "webpack": "2.5.1",
-    "webpack-dev-server": "2.4.5",
+    "webpack-dev-server": "blackbaud/webpack-dev-server#v2",
     "webpack-merge": "4.1.0",
     "winston": "2.3.1",
     "zone.js": "0.8.10"
