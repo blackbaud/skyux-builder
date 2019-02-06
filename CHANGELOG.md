@@ -1,4 +1,4 @@
-# 1.31.1 (2019-01-04)
+# 1.31.1 (2019-02-04)
 
 - Backported fix for `webpack-dev-server` to support Node 10. [#512](https://github.com/blackbaud/skyux-builder/pull/512)
 
