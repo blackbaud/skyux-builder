@@ -37,8 +37,6 @@ export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
     return locale;
   }
 
-  private currentLocaleInfo: SkyAppLocaleInfo;
-
   constructor(
     private windowRef: SkyAppWindowRef
   ) {
@@ -46,14 +44,10 @@ export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
   }
 
   public getLocaleInfo(): Observable<SkyAppLocaleInfo> {
-    if (this.currentLocaleInfo) {
-      return Observable.of(this.currentLocaleInfo);
-    }
-
-    this.currentLocaleInfo = {
+    const localeInfo: SkyAppLocaleInfo = {
       locale: this.currentLocale
     };
 
-    return Observable.of(this.currentLocaleInfo);
+    return Observable.of(localeInfo);
   }
 }
