@@ -10,6 +10,8 @@ import {
   Observable
 } from 'rxjs/Observable';
 
+import 'rxjs/add/observable/of';
+
 import {
   SkyAppLocaleInfo
 } from './locale-info';
@@ -20,13 +22,7 @@ import {
 
 @Injectable()
 export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
-  constructor(
-    private windowRef: SkyAppWindowRef
-  ) {
-    super();
-  }
-
-  public getLocaleInfo(): Observable<SkyAppLocaleInfo> {
+  public get currentLocale(): string {
     let locale: string | undefined;
 
     const skyuxHost = (this.windowRef.nativeWindow as any).SKYUX_HOST;
@@ -38,8 +34,26 @@ export class SkyAppHostLocaleProvider extends SkyAppLocaleProvider {
 
     locale = locale || this.defaultLocale;
 
-    return Observable.of({
-      locale: locale
-    });
+    return locale;
+  }
+
+  private currentLocaleInfo: SkyAppLocaleInfo;
+
+  constructor(
+    private windowRef: SkyAppWindowRef
+  ) {
+    super();
+  }
+
+  public getLocaleInfo(): Observable<SkyAppLocaleInfo> {
+    if (this.currentLocaleInfo) {
+      return Observable.of(this.currentLocaleInfo);
+    }
+
+    this.currentLocaleInfo = {
+      locale: this.currentLocale
+    };
+
+    return Observable.of(this.currentLocaleInfo);
   }
 }

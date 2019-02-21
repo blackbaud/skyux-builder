@@ -3,14 +3,17 @@ import {
 } from './host-locale-provider';
 
 describe('Host locale provider', () => {
+  let mockWindowRef: any;
 
-  const mockWindowRef: any = {
-    nativeWindow: {
-      SKYUX_HOST: {
-        acceptLanguage: 'en-GB'
+  beforeEach(() => {
+    mockWindowRef = {
+      nativeWindow: {
+        SKYUX_HOST: {
+          acceptLanguage: 'en-GB'
+        }
       }
-    }
-  };
+    };
+  });
 
   it('should get locale info from the global SKYUX_HOST variable', (done) => {
     const localeProvider = new SkyAppHostLocaleProvider(mockWindowRef);
@@ -35,4 +38,9 @@ describe('Host locale provider', () => {
       });
     }
   );
+
+  it('should expose the current locale synchronously', () => {
+    const localeProvider = new SkyAppHostLocaleProvider(mockWindowRef);
+    expect(localeProvider.currentLocale).toBe('en-GB');
+  });
 });
