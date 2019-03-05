@@ -52,7 +52,7 @@
     "@skyux-sdk/pact": "3.0.1",
     "@skyux-sdk/testing": "3.0.0",
     "@skyux/assets": "3.0.0",
-    "@skyux/config": "3.3.0",
+    "@skyux/config": "3.5.0",
     "@skyux/http": "3.2.0",
     "@skyux/i18n": "3.5.0",
     "@skyux/omnibar-interop": "3.1.0",
