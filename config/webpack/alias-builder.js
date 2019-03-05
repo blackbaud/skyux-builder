@@ -48,6 +48,14 @@ module.exports = {
       alias['@blackbaud/skyux/dist'] = spaPath(skyPagesConfig.skyux.importPath);
     }
 
+    // Allow SPAs to provide custom module aliases.
+    const moduleAliases = skyPagesConfig.skyux.moduleAliases;
+    if (moduleAliases) {
+      Object.keys(moduleAliases).forEach((key) => {
+        alias[key] = spaPath(moduleAliases[key]);
+      });
+    }
+
     setSpaAlias(
       alias,
       'src/app/app-extras.module',
