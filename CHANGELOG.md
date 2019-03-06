@@ -1,6 +1,6 @@
 # 1.32.0 (2019-04-03)
 
-- Added configuration to allow for custom build-time module resolution. [#517](https://github.com/blackbaud/skyux-builder/pull/517)
+- Added configuration option to allow for custom module resolution at build time. [#517](https://github.com/blackbaud/skyux-builder/pull/517)
 
 # 1.31.1 (2019-02-04)
 
