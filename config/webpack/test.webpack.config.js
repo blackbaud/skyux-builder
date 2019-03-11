@@ -41,7 +41,7 @@ function getWebpackConfig(skyPagesConfig, argv) {
 
   skyPagesConfig.runtime.includeRouteModule = false;
 
-  let alias = aliasBuilder.buildAliasList(skyPagesConfig, argv);
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   let config = {
     devtool: 'inline-source-map',

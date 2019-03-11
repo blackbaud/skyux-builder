@@ -45,7 +45,7 @@ function getWebpackConfig(skyPagesConfig, argv = {}) {
     outPath('node_modules')
   ];
 
-  let alias = aliasBuilder.buildAliasList(skyPagesConfig, argv);
+  let alias = aliasBuilder.buildAliasList(skyPagesConfig);
 
   const outConfigMode = skyPagesConfig && skyPagesConfig.skyux && skyPagesConfig.skyux.mode;
   const logFormat = getLogFormat(skyPagesConfig, argv);
