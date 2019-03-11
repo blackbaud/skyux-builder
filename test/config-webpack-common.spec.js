@@ -186,4 +186,42 @@ describe('config webpack common', () => {
     expect(alias['@skyux/foo']).toBe(path.join(process.cwd(), './src/app/public'));
   });
 
+  it('should allow for custom alias resolution for builds', () => {
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
+
+    const config = lib.getWebpackConfig({
+      runtime: runtimeUtils.getDefaultRuntime({
+        command: 'build'
+      }),
+      skyux: {
+        moduleAliases: {
+          '@skyux/foo': './src/app/public'
+        }
+      }
+    });
+
+    const alias = config.resolve.alias;
+
+    expect(alias['@skyux/foo']).toBe(path.join(process.cwd(), '.skypagestmp/src/app/public'));
+  });
+
+  it('should allow for custom alias resolution for e2e', () => {
+    const lib = mock.reRequire('../config/webpack/common.webpack.config');
+
+    const config = lib.getWebpackConfig({
+      runtime: runtimeUtils.getDefaultRuntime({
+        command: 'e2e'
+      }),
+      skyux: {
+        moduleAliases: {
+          '@skyux/foo': './src/app/public'
+        }
+      }
+    });
+
+    const alias = config.resolve.alias;
+
+    expect(alias['@skyux/foo']).toBe(path.join(process.cwd(), '.skypagestmp/src/app/public'));
+  });
+
 });
