@@ -1,4 +1,8 @@
-# 1.32.0 (2019-04-03)
+# 1.32.1 (2019-03-11)
+
+- Fixed module aliases to work properly for `skyux build` and `skyux e2e` commands. [#519](https://github.com/blackbaud/skyux-builder/pull/519)
+
+# 1.32.0 (2019-03-04)
 
 - Added configuration option to allow for custom module resolution at build time. [#517](https://github.com/blackbaud/skyux-builder/pull/517)
 
