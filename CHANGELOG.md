@@ -1,3 +1,7 @@
+# 1.33.0 (2019-03-19)
+
+- Added support for `@skyux/i18n@3.5.1` and `@blackbaud/auth-client@2.13.0`. [#523](https://github.com/blackbaud/skyux-builder/pull/523)
+
 # 1.32.1 (2019-03-11)
 
 - Fixed module aliases to work properly for `skyux build` and `skyux e2e` commands. [#519](https://github.com/blackbaud/skyux-builder/pull/519)
