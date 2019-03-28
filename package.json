@@ -1,6 +1,6 @@
 {
   "name": "@blackbaud/skyux-builder",
-  "version": "1.33.0",
+  "version": "1.33.1",
   "description": "Builds the output of a SKY UX application.",
   "main": "index.js",
   "scripts": {
@@ -54,7 +54,7 @@
     "@skyux/assets": "3.0.0",
     "@skyux/config": "3.5.0",
     "@skyux/http": "3.2.0",
-    "@skyux/i18n": "3.5.1",
+    "@skyux/i18n": "3.5.2",
     "@skyux/omnibar-interop": "3.1.0",
     "@skyux/router": "3.1.0",
     "@types/core-js": "0.9.41",
@@ -113,7 +113,7 @@
     "zone.js": "0.8.10"
   },
   "devDependencies": {
-    "@blackbaud/skyux": "2.43.0",
+    "@blackbaud/skyux": "2.46.1",
     "cross-spawn": "5.1.0",
     "istanbul": "0.4.5",
     "jasmine": "2.6.0",
