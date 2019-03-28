@@ -1,3 +1,7 @@
+# 1.33.1 (2019-03-28)
+
+- Added support for `@skyux/i18n@3.5.2` which fixes a circular reference error for later versions of SKY UX.
+
 # 1.33.0 (2019-03-19)
 
 - Added support for `@skyux/i18n@3.5.1` and `@blackbaud/auth-client@2.13.0`. [#523](https://github.com/blackbaud/skyux-builder/pull/523)
