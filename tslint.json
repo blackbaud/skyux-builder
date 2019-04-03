@@ -150,6 +150,9 @@
     "pipe-naming": [true, "camelCase", "sky"],
     "component-class-suffix": true,
     "directive-class-suffix": true,
-    "no-focused-tests": true
+    "no-focused-tests": true,
+    "no-disabled-tests": {
+      "severity": "warning"
+    }
   }
 }
