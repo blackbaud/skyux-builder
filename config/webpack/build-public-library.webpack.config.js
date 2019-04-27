@@ -53,8 +53,7 @@ function getWebpackConfig(skyPagesConfig) {
       path: skyPagesConfigUtil.spaPath('dist', 'bundles'),
       filename: 'bundle.umd.js',
       libraryTarget: 'umd',
-      library: libraryName,
-      umdNamedDefine: true
+      library: libraryName
     },
     externals,
     resolve: {
