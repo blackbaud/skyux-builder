@@ -57,42 +57,27 @@ function getEntryPointFiles() {
 }
 
 function writeTSConfig() {
-  var config = {
-    'compilerOptions': {
-      'target': 'es5',
-      'module': 'es2015',
-      'moduleResolution': 'node',
-      'emitDecoratorMetadata': true,
-      'experimentalDecorators': true,
-      'allowSyntheticDefaultImports': true,
-      'sourceMap': true,
-      'noImplicitAny': true,
-      'declaration': true,
-      'skipLibCheck': true,
-      'lib': [
-        'dom',
-        'es6'
+  const config = {
+    compilerOptions: {
+      declaration: true,
+      experimentalDecorators: true,
+      lib: [
+        'es2015',
+        'dom'
       ],
-      'types': [
-        'jasmine',
-        'node'
-      ],
-      'outDir': skyPagesConfigUtil.spaPath('dist'),
-      'rootDir': skyPagesConfigUtil.spaPathTemp(),
-      'baseUrl': '.',
-      'paths': {
-        '@blackbaud/skyux-builder/*': [
-          '*'
-        ],
-        '.skypageslocales/*': [
-          '../src/assets/locales/*'
-        ]
-      }
+      module: 'commonjs',
+      outDir: skyPagesConfigUtil.spaPath('dist'),
+      rootDir: skyPagesConfigUtil.spaPathTemp(),
+      sourceMap: true,
+      target: 'es5'
     },
-    'files': getEntryPointFiles()
+    files: getEntryPointFiles()
   };
 
-  fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);
+  fs.writeJsonSync(
+    skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
+    config
+  );
 }
 
 /**
@@ -143,7 +128,9 @@ function transpile() {
         '--project',
         skyPagesConfigUtil.spaPathTemp('tsconfig.json')
       ],
-      { stdio: 'inherit' }
+      {
+        stdio: 'inherit'
+      }
     );
 
     // Catch ngc errors.
@@ -167,7 +154,7 @@ module.exports = (skyPagesConfig, webpack) => {
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();
-  writePlaceholderModule();
+  // writePlaceholderModule();
   copyRuntime();
   processFiles(skyPagesConfig);
 

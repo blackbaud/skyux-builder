@@ -48,23 +48,33 @@ function getWebpackConfig(skyPagesConfig) {
     .map(key => parseRegExp(key));
 
   return {
+    devtool: 'source-map',
+
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
+
     output: {
       path: skyPagesConfigUtil.spaPath('dist', 'bundles'),
       filename: 'bundle.umd.js',
       libraryTarget: 'umd',
-      library: libraryName
+      library: libraryName,
+      umdNamedDefine: true
     },
+
     externals,
+
     resolve: {
       extensions: ['.js', '.ts']
     },
+
     module: {
       rules: [
         {
           test: /\.ts$/,
-          use: ['awesome-typescript-loader', 'angular2-template-loader'],
-          exclude: [/\.(spec|e2e)\.ts$/]
+          use: [
+            'awesome-typescript-loader',
+            'angular2-template-loader'
+          ],
+          exclude: [/\.(spec|e2e-spec)\.ts$/]
         },
         {
           test: /\.html$/,
@@ -80,16 +90,8 @@ function getWebpackConfig(skyPagesConfig) {
         }
       ]
     },
-    plugins: [
-      // Generates an AoT JavaScript bundle.
-      // TODO: Remove this in favor of Angular's native library bundler,
-      // once we've upgraded to Angular version 6.
-      new ngtools.AotPlugin({
-        tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
-        entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
-        sourceMap: true
-      }),
 
+    plugins: [
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,
         comments: false,
