@@ -48,10 +48,7 @@ function getWebpackConfig(skyPagesConfig) {
     .map(key => parseRegExp(key));
 
   return {
-    devtool: 'source-map',
-
     entry: skyPagesConfigUtil.spaPathTemp('index.ts'),
-
     output: {
       path: skyPagesConfigUtil.spaPath('dist', 'bundles'),
       filename: 'bundle.umd.js',
@@ -59,22 +56,16 @@ function getWebpackConfig(skyPagesConfig) {
       library: libraryName,
       umdNamedDefine: true
     },
-
     externals,
-
     resolve: {
       extensions: ['.js', '.ts']
     },
-
     module: {
       rules: [
         {
           test: /\.ts$/,
-          use: [
-            'awesome-typescript-loader',
-            'angular2-template-loader'
-          ],
-          exclude: [/\.(spec|e2e-spec)\.ts$/]
+          use: ['awesome-typescript-loader', 'angular2-template-loader'],
+          exclude: [/\.(spec|e2e)\.ts$/]
         },
         {
           test: /\.html$/,
@@ -90,7 +81,6 @@ function getWebpackConfig(skyPagesConfig) {
         }
       ]
     },
-
     plugins: [
       // Generates an AoT JavaScript bundle.
       // TODO: Remove this in favor of Angular's native library bundler,

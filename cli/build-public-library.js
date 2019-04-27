@@ -57,27 +57,41 @@ function getEntryPointFiles() {
 }
 
 function writeTSConfig() {
-  const config = {
-    compilerOptions: {
-      declaration: true,
-      experimentalDecorators: true,
-      lib: [
-        'es2015',
-        'dom'
+  var config = {
+    'compilerOptions': {
+      'target': 'es5',
+      'module': 'commonjs',
+      'emitDecoratorMetadata': true,
+      'experimentalDecorators': true,
+      'allowSyntheticDefaultImports': true,
+      'sourceMap': true,
+      'noImplicitAny': true,
+      'declaration': true,
+      'skipLibCheck': true,
+      'lib': [
+        'dom',
+        'es6'
       ],
-      module: 'commonjs',
-      outDir: skyPagesConfigUtil.spaPath('dist'),
-      rootDir: skyPagesConfigUtil.spaPathTemp(),
-      sourceMap: true,
-      target: 'es5'
+      'types': [
+        'jasmine',
+        'node'
+      ],
+      'outDir': skyPagesConfigUtil.spaPath('dist'),
+      'rootDir': skyPagesConfigUtil.spaPathTemp(),
+      'baseUrl': '.',
+      'paths': {
+        '@blackbaud/skyux-builder/*': [
+          '*'
+        ],
+        '.skypageslocales/*': [
+          '../src/assets/locales/*'
+        ]
+      }
     },
-    files: getEntryPointFiles()
+    'files': getEntryPointFiles()
   };
 
-  fs.writeJsonSync(
-    skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
-    config
-  );
+  fs.writeJSONSync(skyPagesConfigUtil.spaPathTemp('tsconfig.json'), config);
 }
 
 /**
