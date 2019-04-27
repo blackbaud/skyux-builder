@@ -92,6 +92,15 @@ function getWebpackConfig(skyPagesConfig) {
     },
 
     plugins: [
+      // Generates an AoT JavaScript bundle.
+      // TODO: Remove this in favor of Angular's native library bundler,
+      // once we've upgraded to Angular version 6.
+      new ngtools.AotPlugin({
+        tsConfigPath: skyPagesConfigUtil.spaPathTemp('tsconfig.json'),
+        entryModule: skyPagesConfigUtil.spaPathTemp('main.ts') + '#SkyLibPlaceholderModule',
+        sourceMap: true
+      }),
+
       new webpack.optimize.UglifyJsPlugin({
         beautify: false,
         comments: false,

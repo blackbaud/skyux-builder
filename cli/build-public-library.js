@@ -128,9 +128,7 @@ function transpile() {
         '--project',
         skyPagesConfigUtil.spaPathTemp('tsconfig.json')
       ],
-      {
-        stdio: 'inherit'
-      }
+      { stdio: 'inherit' }
     );
 
     // Catch ngc errors.
@@ -154,7 +152,7 @@ module.exports = (skyPagesConfig, webpack) => {
   cleanAll();
   stageTypeScriptFiles();
   writeTSConfig();
-  // writePlaceholderModule();
+  writePlaceholderModule();
   copyRuntime();
   processFiles(skyPagesConfig);
 
