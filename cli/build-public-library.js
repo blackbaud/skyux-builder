@@ -61,6 +61,7 @@ function writeTSConfig() {
     'compilerOptions': {
       'target': 'es5',
       'module': 'commonjs',
+      'moduleResolution': 'node',
       'emitDecoratorMetadata': true,
       'experimentalDecorators': true,
       'allowSyntheticDefaultImports': true,
