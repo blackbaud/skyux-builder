@@ -1,3 +1,7 @@
+# 1.34.0 (2019-04-29)
+
+- Added support for `@skyux/i18n@3.6.0` and `@skyux/router@3.1.1`.
+
 # 1.33.1 (2019-03-28)
 
 - Added support for `@skyux/i18n@3.5.2` which fixes a circular reference error for later versions of SKY UX.
