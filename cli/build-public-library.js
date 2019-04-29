@@ -60,7 +60,7 @@ function writeTSConfig() {
   var config = {
     'compilerOptions': {
       'target': 'es5',
-      'module': 'commonjs',
+      'module': 'umd',
       'moduleResolution': 'node',
       'emitDecoratorMetadata': true,
       'experimentalDecorators': true,
