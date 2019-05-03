@@ -3,6 +3,7 @@
 
 const logger = require('@blackbaud/skyux-logger');
 const mock = require('mock-require');
+const path = require('path');
 
 describe('server utils', () => {
 
@@ -111,5 +112,18 @@ describe('server utils', () => {
       expect(err).toBe(customPortError);
       done();
     });
+  });
+
+  it('should allow the distPath to be specified', (done) => {
+    spyOn(path, 'resolve').and.callThrough();
+
+    const customDistPath = 'custom-dist';
+    const server = bind();
+
+    server.start('custom-root', customDistPath)
+      .then(() => {
+        expect(path.resolve).toHaveBeenCalledWith(process.cwd(), customDistPath);
+        done();
+      });
   });
 });

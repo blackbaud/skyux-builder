@@ -17,10 +17,10 @@ let server;
  * Starts the httpServer
  * @name start
  */
-function start(root) {
+function start(root, distPath) {
   return new Promise((resolve, reject) => {
 
-    const dist = path.resolve(process.cwd(), 'dist');
+    const dist = path.resolve(process.cwd(), distPath || 'dist');
 
     logger.info('Creating web server');
     app.use(cors());

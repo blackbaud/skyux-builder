@@ -4,11 +4,12 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const merge = require('../../utils/merge');
 const rimraf = require('rimraf');
 const portfinder = require('portfinder');
-const HttpServer = require('http-server');
 const childProcessSpawn = require('cross-spawn');
+
+const merge = require('../../utils/merge');
+const server = require('../../cli/utils/server');
 
 const tmp = './.e2e-tmp/';
 const cwdOpts = { cwd: tmp };
@@ -20,18 +21,15 @@ const cliPath = `../e2e/shared/cli`;
 let skyuxConfigOriginal;
 let appExtrasOriginal;
 let webpackServer;
-let httpServer;
 let _exitCode;
 let _port;
 
 /**
- * Closes the http-server if it's running.
+ * Stops the server.
  * Kills the serve process if it's running.
  */
 function afterAll() {
-  if (httpServer) {
-    httpServer.close();
-  }
+  server.stop();
 
   if (webpackServer) {
     webpackServer.kill();
@@ -108,7 +106,7 @@ function log(buffer) {
 
 /**
  * Run build given the following skyuxconfig object.
- * Spawns http-server and resolves when ready.
+ * Starts server and resolves when ready.
  */
 function prepareBuild(config) {
 
@@ -120,18 +118,8 @@ function prepareBuild(config) {
     // Reset skyuxconfig.json
     resetConfig();
 
-    // Create our server
-    httpServer = HttpServer.createServer({ root: tmp, cache: 0 });
-
-    return new Promise((resolve, reject) => {
-      portfinder.getPortPromise()
-        .then(port => {
-          httpServer.listen(port, 'localhost', () => {
-            browser.get(`http://localhost:${port}/dist/`).then(resolve, reject);
-          });
-        })
-        .catch(err => reject(err));
-    });
+    return server.start('unused-root', tmp)
+      .then(port => browser.get(`https://localhost:${port}/dist/`));
   }
 
   writeConfig(config);
