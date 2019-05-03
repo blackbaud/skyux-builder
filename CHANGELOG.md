@@ -1,3 +1,7 @@
+# 1.34.1 (2019-05-02)
+
+- Replaced use of `http-server` during internal e2e tests. [#527](https://github.com/blackbaud/skyux-builder/pull/527)
+
 # 1.34.0 (2019-04-29)
 
 - Added support for `@skyux/i18n@3.6.1` and `@skyux/router@3.1.1`. [#526](https://github.com/blackbaud/skyux-builder/pull/526)
