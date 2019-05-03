@@ -1,6 +1,7 @@
 {
   "rulesDirectory": [
-    "codelyzer"
+    "codelyzer",
+    "tslint-jasmine-rules"
   ],
   "rules": {
     "member-access": true,
@@ -148,6 +149,10 @@
     "use-pipe-transform-interface": true,
     "pipe-naming": [true, "camelCase", "sky"],
     "component-class-suffix": true,
-    "directive-class-suffix": true
+    "directive-class-suffix": true,
+    "no-focused-tests": true,
+    "no-disabled-tests": {
+      "severity": "warning"
+    }
   }
 }

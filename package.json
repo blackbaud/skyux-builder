@@ -103,6 +103,7 @@
     "ts-helpers": "1.1.2",
     "ts-node": "3.0.4",
     "tslint": "5.2.0",
+    "tslint-jasmine-rules": "1.5.1",
     "typescript": "2.3.2",
     "web-animations-js": "2.2.5",
     "webpack": "2.5.1",
