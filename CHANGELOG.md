@@ -1,3 +1,7 @@
+# 1.35.0 (2019-05-07)
+
+- Updated `auth-client` to `2.14.0`. [#529](https://github.com/blackbaud/skyux-builder/pull/529)
+
 # 1.34.1 (2019-05-02)
 
 - Replaced use of `http-server` during internal e2e tests. [#527](https://github.com/blackbaud/skyux-builder/pull/527)
