@@ -1,3 +1,7 @@
+# 1.36.0 (2019-06-13)
+
+- Updated `auth-client` to `2.15.1`. [#531](https://github.com/blackbaud/skyux-builder/pull/531)
+
 # 1.35.0 (2019-05-07)
 
 - Updated `auth-client` to `2.14.0`. [#529](https://github.com/blackbaud/skyux-builder/pull/529)
