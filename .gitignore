@@ -42,6 +42,9 @@ jspm_packages
 yarn.lock
 package-lock.json
 
-#IntelliJ
-.idea
+======
+# IntelliJ IDEA files
+.idea/
 *.iml
+*.ipr
+*.iws
