@@ -9,6 +9,13 @@ jobs:
   alert:
     runs-on: ubuntu-latest
     steps:
+      - name: Block Concurrent Executions
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 30
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+    steps:
       - name: Print context
         env:
           EVENT_PAYLOAD: ${{ toJson(github.event) }}
