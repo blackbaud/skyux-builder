@@ -6,7 +6,7 @@ name: Sync issue to Azure DevOps work item
       [deleted, closed, reopened, labeled, unlabeled]
 
 jobs:
-  alert:
+  sync:
     runs-on: ubuntu-latest
     steps:
       - name: Block Concurrent Executions
@@ -15,7 +15,6 @@ jobs:
           poll-interval-seconds: 30
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-    steps:
       - name: Print context
         env:
           EVENT_PAYLOAD: ${{ toJson(github.event) }}
